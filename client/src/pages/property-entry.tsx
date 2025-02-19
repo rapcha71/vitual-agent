@@ -263,11 +263,11 @@ export default function PropertyEntry() {
       const file = new File([blob], "image.jpg", { type: "image/jpeg" });
 
       const options = {
-        maxSizeMB: 1, 
-        maxWidthOrHeight: 1920, 
+        maxSizeMB: 1,
+        maxWidthOrHeight: 1920,
         useWebWorker: true,
-        initialQuality: 0.8, 
-        alwaysKeepResolution: false, 
+        initialQuality: 0.8,
+        alwaysKeepResolution: false,
         onProgress: (progress: number) => {
           console.log('Compression progress:', progress);
         }
@@ -431,7 +431,7 @@ export default function PropertyEntry() {
       <PhonePreview>
         <header className="bg-[#FF5733] px-4 py-3">
           <div className="flex flex-col items-center">
-            <img 
+            <img
               src="/attached_assets/Logo de Virtual agent logo largo_upscayl_2x_realesrgan-x4plus.png"
               alt="Virtual Agent"
               className="h-10 w-auto"
@@ -494,11 +494,20 @@ export default function PropertyEntry() {
                     <Camera className="h-8 w-8 mb-2" />
                     <span>Foto del Rótulo</span>
                     {form.watch("images.sign") && (
-                      <img
-                        src={form.watch("images.sign")}
-                        alt="Sign Preview"
-                        className="absolute inset-0 w-full h-full object-cover rounded-lg opacity-50"
-                      />
+                      <>
+                        <img
+                          src={form.watch("images.sign")}
+                          alt="Sign Preview"
+                          className="absolute inset-0 w-full h-full object-cover rounded-lg opacity-50"
+                        />
+                        <button
+                          type="button"
+                          onClick={testOCR}
+                          className="absolute bottom-2 left-1/2 -translate-x-1/2 bg-white text-[#FF5733] px-4 py-1 rounded-full text-sm shadow-md hover:bg-gray-50"
+                        >
+                          Verificar OCR
+                        </button>
+                      </>
                     )}
                   </button>
 
@@ -618,22 +627,22 @@ export default function PropertyEntry() {
       </Dialog>
 
       <Dialog open={showOcrDialog} onOpenChange={setShowOcrDialog}>
-        <DialogContent>
+        <DialogContent className="sm:max-w-md">
           <DialogHeader>
-            <DialogTitle>OCR Test Results</DialogTitle>
+            <DialogTitle>Resultados del OCR</DialogTitle>
             <DialogDescription>
-              Here are the results from processing your sign image:
+              Aquí están los resultados del procesamiento de la imagen del rótulo:
             </DialogDescription>
           </DialogHeader>
           <div className="space-y-4">
             <div>
-              <h4 className="font-medium mb-2">Extracted Text:</h4>
+              <h4 className="font-medium mb-2">Texto Extraído:</h4>
               <p className="text-sm text-muted-foreground whitespace-pre-wrap">
-                {ocrTestResult?.extractedText || "No text extracted"}
+                {ocrTestResult?.extractedText || "No se extrajo texto"}
               </p>
             </div>
             <div>
-              <h4 className="font-medium mb-2">Phone Numbers Found:</h4>
+              <h4 className="font-medium mb-2">Números de Teléfono Encontrados:</h4>
               {ocrTestResult?.phoneNumbers?.length ? (
                 <ul className="list-disc list-inside">
                   {ocrTestResult.phoneNumbers.map((phone, i) => (
@@ -641,7 +650,7 @@ export default function PropertyEntry() {
                   ))}
                 </ul>
               ) : (
-                <p className="text-sm text-muted-foreground">No phone numbers found</p>
+                <p className="text-sm text-muted-foreground">No se encontraron números de teléfono</p>
               )}
             </div>
           </div>

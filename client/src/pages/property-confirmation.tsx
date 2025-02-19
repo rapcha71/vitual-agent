@@ -35,11 +35,13 @@ export default function PropertyConfirmation() {
                 <p className="text-3xl font-bold mt-2 text-[#FF5733]">193407</p>
               </div>
 
-              <img 
-                src="/emoji-success.png" 
-                alt="Success"
-                className="w-24 h-24 mx-auto mt-6"
-              />
+              <div className="mt-6">
+                <img 
+                  src="/emoji-success.png" 
+                  alt="Success"
+                  className="w-24 h-24 mx-auto"
+                />
+              </div>
             </div>
 
             <button
