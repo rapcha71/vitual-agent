@@ -3,7 +3,7 @@ import { useQuery } from "@tanstack/react-query";
 import { Property } from "@shared/schema";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { ChevronLeft, LogOut, Image, MapPin, Plus, Shield } from "lucide-react";
+import { ChevronLeft, LogOut, Image, MapPin, Plus, Shield, Book } from "lucide-react";
 import { useLocation } from "wouter";
 import { Table, TableBody, TableCaption, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { compressImageForThumbnail } from "@/lib/utils";
@@ -27,10 +27,18 @@ export default function DashboardPage() {
   const { user, logoutMutation } = useAuth();
   const [, setLocation] = useLocation();
   const [propertiesWithThumbnails, setPropertiesWithThumbnails] = useState<PropertyWithThumbnails[]>([]);
+  const [mapLoading, setMapLoading] = useState(true);
 
   const { data: properties = [], isLoading } = useQuery<Property[]>({
     queryKey: ['/api/properties'],
   });
+
+  // Count properties by type
+  const propertyCounts = {
+    house: properties.filter(p => p.propertyType === 'house').length,
+    land: properties.filter(p => p.propertyType === 'land').length,
+    commercial: properties.filter(p => p.propertyType === 'commercial').length,
+  };
 
   useEffect(() => {
     const generateThumbnails = async () => {
@@ -68,18 +76,12 @@ export default function DashboardPage() {
     }
   }, [properties]);
 
-  // Count properties by type
-  const propertyCounts = {
-    house: properties.filter(p => p.propertyType === 'house').length,
-    land: properties.filter(p => p.propertyType === 'land').length,
-    commercial: properties.filter(p => p.propertyType === 'commercial').length,
-  };
-
   useEffect(() => {
     const initMap = async () => {
       try {
         if (!import.meta.env.VITE_GOOGLE_MAPS_API_KEY) {
           console.error('Google Maps API key is missing');
+          setMapLoading(false);
           return;
         }
 
@@ -114,8 +116,10 @@ export default function DashboardPage() {
             });
           });
         }
+        setMapLoading(false);
       } catch (error) {
         console.error('Error loading Google Maps:', error);
+        setMapLoading(false);
       }
     };
 
@@ -168,10 +172,16 @@ export default function DashboardPage() {
       <main className="p-4 space-y-4">
         <div className="flex justify-between items-center">
           <h1 className="text-2xl font-bold">Mi Panel</h1>
-          <Button onClick={() => setLocation("/property/new")}>
-            <Plus className="h-4 w-4 mr-2" />
-            Agregar Propiedad
-          </Button>
+          <div className="flex gap-2">
+            <Button onClick={() => setLocation("/property/new")}>
+              <Plus className="h-4 w-4 mr-2" />
+              Agregar Propiedad
+            </Button>
+            <Button variant="outline" onClick={() => window.open('/reglamento.pdf', '_blank')}>
+              <Book className="h-4 w-4 mr-2" />
+              Ver Reglamento
+            </Button>
+          </div>
         </div>
 
         <Card>
@@ -319,7 +329,13 @@ export default function DashboardPage() {
                   id="map" 
                   className="w-full h-[600px] rounded-lg relative bg-gray-100"
                   style={{ minHeight: '600px' }}
-                />
+                >
+                  {mapLoading && (
+                    <div className="absolute inset-0 flex items-center justify-center bg-gray-100/80">
+                      <Loader2 className="h-8 w-8 animate-spin text-primary" />
+                    </div>
+                  )}
+                </div>
               </CardContent>
             </Card>
           </TabsContent>
