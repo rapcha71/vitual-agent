@@ -16,10 +16,12 @@ import { useForm } from "react-hook-form";
 import { useAuth } from "@/hooks/use-auth";
 import { insertUserSchema } from "@shared/schema";
 import { Redirect } from "wouter";
-
+import { useToast } from "@/hooks/use-toast";
 
 export default function AuthPage() {
   const { user, loginMutation, registerMutation } = useAuth();
+  const { toast } = useToast();
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   const loginForm = useForm({
     resolver: zodResolver(insertUserSchema.pick({ username: true, password: true })),
@@ -40,7 +42,46 @@ export default function AuthPage() {
     },
   });
 
-  if (user) {
+  const handleLogin = async (data: any) => {
+    try {
+      setIsSubmitting(true);
+      await loginMutation.mutateAsync(data);
+      toast({
+        title: "Inicio de sesión exitoso",
+        description: "Bienvenido de vuelta",
+      });
+    } catch (error: any) {
+      toast({
+        title: "Error de inicio de sesión",
+        description: error.message || "Por favor verifica tus credenciales",
+        variant: "destructive",
+      });
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
+
+  const handleRegister = async (data: any) => {
+    try {
+      setIsSubmitting(true);
+      await registerMutation.mutateAsync(data);
+      toast({
+        title: "Registro exitoso",
+        description: "Tu cuenta ha sido creada correctamente",
+      });
+    } catch (error: any) {
+      toast({
+        title: "Error de registro",
+        description: error.message || "No se pudo completar el registro",
+        variant: "destructive",
+      });
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
+
+  // Solo redirigir si el usuario está autenticado y no hay operaciones pendientes
+  if (user && !isSubmitting && !loginMutation.isPending && !registerMutation.isPending) {
     return <Redirect to="/" />;
   }
 
@@ -70,7 +111,7 @@ export default function AuthPage() {
             <TabsContent value="login">
               <Form {...loginForm}>
                 <form 
-                  onSubmit={loginForm.handleSubmit((data) => loginMutation.mutate(data))} 
+                  onSubmit={loginForm.handleSubmit(handleLogin)} 
                   className="space-y-4"
                 >
                   <FormField
@@ -104,7 +145,7 @@ export default function AuthPage() {
                   <Button 
                     type="submit" 
                     className="w-full bg-[#FF5733] hover:bg-[#FF5733]/90"
-                    disabled={loginMutation.isPending}
+                    disabled={isSubmitting || loginMutation.isPending}
                   >
                     {loginMutation.isPending ? "Iniciando sesión..." : "Iniciar Sesión"}
                   </Button>
@@ -115,7 +156,7 @@ export default function AuthPage() {
             <TabsContent value="register">
               <Form {...registerForm}>
                 <form 
-                  onSubmit={registerForm.handleSubmit((data) => registerMutation.mutate(data))} 
+                  onSubmit={registerForm.handleSubmit(handleRegister)} 
                   className="space-y-4"
                 >
                   <FormField
@@ -200,7 +241,7 @@ export default function AuthPage() {
                   <Button 
                     type="submit" 
                     className="w-full bg-[#FF5733] hover:bg-[#FF5733]/90"
-                    disabled={registerMutation.isPending}
+                    disabled={isSubmitting || registerMutation.isPending}
                   >
                     {registerMutation.isPending ? "Registrando..." : "Registrarse"}
                   </Button>
