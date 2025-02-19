@@ -12,10 +12,14 @@ import { Camera, MapPin, X } from "lucide-react";
 import { useLocation } from "wouter";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import imageCompression from "browser-image-compression";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { apiRequest } from "@/lib/queryClient";
+import { nanoid } from "nanoid";
 
 export default function PropertyEntry() {
   const [, setLocation] = useLocation();
   const { toast } = useToast();
+  const queryClient = useQueryClient();
   const [isCapturing, setIsCapturing] = useState(false);
   const [activeCamera, setActiveCamera] = useState<"sign" | "property" | null>(null);
   const [stream, setStream] = useState<MediaStream | null>(null);
@@ -29,8 +33,31 @@ export default function PropertyEntry() {
       propertyType: "",
       signPhoneNumber: "",
       location: { lat: 0, lng: 0 },
-      propertyId: "",
+      propertyId: nanoid(),
       images: { sign: "", property: "" }
+    }
+  });
+
+  // Create property mutation
+  const createPropertyMutation = useMutation({
+    mutationFn: (data: any) => apiRequest('/api/properties', {
+      method: 'POST',
+      body: JSON.stringify(data)
+    }),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['/api/properties'] });
+      toast({
+        title: "Success",
+        description: "Property has been successfully added"
+      });
+      setLocation("/");
+    },
+    onError: (error: any) => {
+      toast({
+        title: "Error",
+        description: error.message || "Failed to add property",
+        variant: "destructive"
+      });
     }
   });
 
@@ -199,18 +226,9 @@ export default function PropertyEntry() {
 
   const onSubmit = async (data: any) => {
     try {
-      // Submit logic here
-      toast({
-        title: "Property Added",
-        description: "Property has been successfully added for analysis"
-      });
-      setLocation("/");
+      await createPropertyMutation.mutateAsync(data);
     } catch (error) {
-      toast({
-        title: "Error",
-        description: "Failed to add property",
-        variant: "destructive"
-      });
+      console.error('Error submitting property:', error);
     }
   };
 
@@ -304,8 +322,12 @@ export default function PropertyEntry() {
                 </Button>
               </div>
 
-              <Button type="submit" className="w-full" disabled={isCompressing}>
-                Submit Property
+              <Button 
+                type="submit" 
+                className="w-full" 
+                disabled={isCompressing || createPropertyMutation.isPending}
+              >
+                {createPropertyMutation.isPending ? "Submitting..." : "Submit Property"}
               </Button>
             </form>
           </Form>
