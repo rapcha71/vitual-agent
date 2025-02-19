@@ -3,7 +3,7 @@ import { useQuery } from "@tanstack/react-query";
 import { PropertyWithUser } from "@shared/schema";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { ChevronLeft, LogOut } from "lucide-react";
+import { ChevronLeft, LogOut, Book } from "lucide-react";
 import { useLocation } from "wouter";
 import { Table, TableBody, TableCaption, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { RegulationsDialog } from "@/components/ui/regulations-dialog";
@@ -34,7 +34,8 @@ export default function AdminPage() {
           >
             <ChevronLeft className="h-5 w-5" />
           </Button>
-          <div className="flex items-center">
+          <div className="flex items-center gap-4">
+            <RegulationsDialog />
             <img 
               src="/assets/logo.png"
               alt="Virtual Agent"
@@ -50,10 +51,6 @@ export default function AdminPage() {
             <LogOut className="h-5 w-5" />
           </Button>
         </header>
-
-        <div className="flex justify-end mb-4">
-          <RegulationsDialog />
-        </div>
 
         <Card>
           <CardHeader>
