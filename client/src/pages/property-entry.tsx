@@ -16,6 +16,13 @@ import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { apiRequest } from "@/lib/queryClient";
 import { nanoid } from "nanoid";
 
+// Assume MarkerColors is defined elsewhere, e.g., in a constants file
+const MarkerColors = {
+  house: 'red',
+  land: 'green',
+  'commercial': 'blue'
+};
+
 export default function PropertyEntry() {
   const [, setLocation] = useLocation();
   const { toast } = useToast();
@@ -41,12 +48,31 @@ export default function PropertyEntry() {
     }
   });
 
-  // Create property mutation
+  // Update the createPropertyMutation to handle the API request properly
   const createPropertyMutation = useMutation({
-    mutationFn: (data: any) => apiRequest('/api/properties', {
-      method: 'POST',
-      body: JSON.stringify(data)
-    }),
+    mutationFn: async (formData: any) => {
+      // Get marker color based on property type
+      const propertyData = {
+        ...formData,
+        markerColor: MarkerColors[formData.propertyType]
+      };
+
+      const response = await fetch('/api/properties', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(propertyData),
+        credentials: 'include'
+      });
+
+      if (!response.ok) {
+        const error = await response.json();
+        throw new Error(error.message || 'Failed to submit property');
+      }
+
+      return response.json();
+    },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['/api/properties'] });
       toast({
@@ -55,7 +81,7 @@ export default function PropertyEntry() {
       });
       setLocation("/");
     },
-    onError: (error: any) => {
+    onError: (error: Error) => {
       toast({
         title: "Error",
         description: error.message || "Failed to add property",
@@ -64,7 +90,6 @@ export default function PropertyEntry() {
     }
   });
 
-  // Get available cameras
   const getDevices = async () => {
     try {
       const devices = await navigator.mediaDevices.enumerateDevices();
@@ -83,7 +108,6 @@ export default function PropertyEntry() {
     return () => cleanup();
   }, []);
 
-  // Cleanup function for camera stream
   const cleanup = () => {
     if (stream) {
       stream.getTracks().forEach(track => track.stop());
@@ -96,7 +120,6 @@ export default function PropertyEntry() {
     setIsCapturing(false);
   };
 
-  // Handle camera access
   const startCamera = async (type: "sign" | "property") => {
     try {
       cleanup();
@@ -127,7 +150,6 @@ export default function PropertyEntry() {
     }
   };
 
-  // Handle file upload
   const handleFileUpload = async (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
     if (!file || !activeCamera) return;
@@ -168,7 +190,6 @@ export default function PropertyEntry() {
     }
   };
 
-  // Handle photo capture
   const capturePhoto = async () => {
     if (!videoRef.current || !canvasRef.current || !activeCamera) return;
 
@@ -184,11 +205,9 @@ export default function PropertyEntry() {
       context.drawImage(video, 0, 0);
       const imageData = canvas.toDataURL('image/jpeg');
 
-      // Compress the image before storing
       const compressedImage = await compressImage(imageData);
       form.setValue(`images.${activeCamera}`, compressedImage);
 
-      // Show success message with compression info
       const originalSize = Math.round(imageData.length / 1024);
       const compressedSize = Math.round(compressedImage.length / 1024);
       const savings = Math.round(((originalSize - compressedSize) / originalSize) * 100);
@@ -209,19 +228,15 @@ export default function PropertyEntry() {
     }
   };
 
-  // Compress image
   const compressImage = async (imageDataUrl: string): Promise<string> => {
     try {
       setIsCompressing(true);
 
-      // Convert base64 to blob
       const response = await fetch(imageDataUrl);
       const blob = await response.blob();
 
-      // Create a File object from the Blob
       const file = new File([blob], "image.jpg", { type: "image/jpeg" });
 
-      // Compression options
       const options = {
         maxSizeMB: 1,
         maxWidthOrHeight: 1920,
@@ -231,10 +246,8 @@ export default function PropertyEntry() {
         }
       };
 
-      // Compress the image
       const compressedFile = await imageCompression(file, options);
 
-      // Convert compressed blob back to base64
       return new Promise((resolve) => {
         const reader = new FileReader();
         reader.onloadend = () => resolve(reader.result as string);
@@ -253,7 +266,6 @@ export default function PropertyEntry() {
     }
   };
 
-  // Handle location capture
   const captureLocation = () => {
     if ("geolocation" in navigator) {
       navigator.geolocation.getCurrentPosition(
@@ -287,6 +299,24 @@ export default function PropertyEntry() {
 
   const onSubmit = async (data: any) => {
     try {
+      if (!data.images.sign || !data.images.property) {
+        toast({
+          title: "Error",
+          description: "Please capture both sign and property photos",
+          variant: "destructive"
+        });
+        return;
+      }
+
+      if (data.location.lat === 0 && data.location.lng === 0) {
+        toast({
+          title: "Error",
+          description: "Please capture the property location",
+          variant: "destructive"
+        });
+        return;
+      }
+
       await createPropertyMutation.mutateAsync(data);
     } catch (error) {
       console.error('Error submitting property:', error);
@@ -352,9 +382,9 @@ export default function PropertyEntry() {
                     <Camera className="h-8 w-8 mb-2" />
                     <span>Capture Sign Photo</span>
                     {form.watch("images.sign") && (
-                      <img 
-                        src={form.watch("images.sign")} 
-                        alt="Sign Preview" 
+                      <img
+                        src={form.watch("images.sign")}
+                        alt="Sign Preview"
                         className="absolute inset-0 w-full h-full object-cover rounded-md opacity-50"
                       />
                     )}
@@ -369,9 +399,9 @@ export default function PropertyEntry() {
                     <Camera className="h-8 w-8 mb-2" />
                     <span>Capture Property Photo</span>
                     {form.watch("images.property") && (
-                      <img 
-                        src={form.watch("images.property")} 
-                        alt="Property Preview" 
+                      <img
+                        src={form.watch("images.property")}
+                        alt="Property Preview"
                         className="absolute inset-0 w-full h-full object-cover rounded-md opacity-50"
                       />
                     )}
@@ -397,9 +427,9 @@ export default function PropertyEntry() {
                 </Button>
               </div>
 
-              <Button 
-                type="submit" 
-                className="w-full" 
+              <Button
+                type="submit"
+                className="w-full"
                 disabled={isCompressing || createPropertyMutation.isPending}
               >
                 {createPropertyMutation.isPending ? "Submitting..." : "Submit Property"}
@@ -415,8 +445,8 @@ export default function PropertyEntry() {
         <DialogContent className="sm:max-w-lg">
           <DialogHeader>
             <DialogTitle>
-              {isCompressing ? 
-                "Compressing Image..." : 
+              {isCompressing ?
+                "Compressing Image..." :
                 `Capture ${activeCamera === "sign" ? "Sign" : "Property"} Photo`
               }
             </DialogTitle>
