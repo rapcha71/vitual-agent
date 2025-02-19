@@ -435,7 +435,7 @@ export default function PropertyEntry() {
   return (
     <div className="flex items-center justify-center min-h-screen bg-gray-100">
       <PhonePreview>
-        <header className="bg-[#FF5733] px-4 py-3">
+        <header className="bg-[#F05023] px-4 py-3">
           <div className="flex items-center justify-between">
             <Button 
               variant="ghost" 
@@ -507,7 +507,7 @@ export default function PropertyEntry() {
                 <div className="grid gap-4">
                   <button
                     type="button"
-                    className="h-32 flex flex-col items-center justify-center relative border-2 border-gray-300 rounded-lg hover:border-[#FF5733] transition-colors"
+                    className="h-32 flex flex-col items-center justify-center relative border-2 border-gray-300 rounded-lg hover:border-[#F05023] transition-colors"
                     onClick={() => startCamera("sign")}
                     disabled={isCompressing}
                   >
@@ -523,7 +523,7 @@ export default function PropertyEntry() {
                         <button
                           type="button"
                           onClick={testOCR}
-                          className="absolute bottom-2 left-1/2 -translate-x-1/2 bg-white text-[#FF5733] px-4 py-1 rounded-full text-sm shadow-md hover:bg-gray-50"
+                          className="absolute bottom-2 left-1/2 -translate-x-1/2 bg-white text-[#F05023] px-4 py-1 rounded-full text-sm shadow-md hover:bg-gray-50"
                         >
                           Verificar OCR
                         </button>
@@ -533,7 +533,7 @@ export default function PropertyEntry() {
 
                   <button
                     type="button"
-                    className="h-32 flex flex-col items-center justify-center relative border-2 border-gray-300 rounded-lg hover:border-[#FF5733] transition-colors"
+                    className="h-32 flex flex-col items-center justify-center relative border-2 border-gray-300 rounded-lg hover:border-[#F05023] transition-colors"
                     onClick={() => startCamera("property")}
                     disabled={isCompressing}
                   >
@@ -552,7 +552,7 @@ export default function PropertyEntry() {
 
               <button
                 type="button"
-                className="w-full h-32 flex flex-col items-center justify-center border-2 border-gray-300 rounded-lg hover:border-[#FF5733] transition-colors"
+                className="w-full h-32 flex flex-col items-center justify-center border-2 border-gray-300 rounded-lg hover:border-[#F05023] transition-colors"
                 onClick={captureLocation}
               >
                 <MapPin className="h-8 w-8 mb-2" />
@@ -566,7 +566,7 @@ export default function PropertyEntry() {
 
               <button
                 type="submit"
-                className="w-full bg-[#FF5733] text-white py-3 rounded-md font-semibold disabled:opacity-50"
+                className="w-full bg-[#F05023] text-white py-3 rounded-md font-semibold disabled:opacity-50"
                 disabled={isCompressing || createPropertyMutation.isPending}
               >
                 {createPropertyMutation.isPending ? "Enviando..." : "Enviar Propiedad"}

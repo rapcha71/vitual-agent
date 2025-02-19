@@ -86,10 +86,10 @@ export default function AuthPage() {
   return (
     <div className="flex items-center justify-center min-h-screen bg-gray-100">
       <PhonePreview>
-        <header className="bg-[#FF5733] px-4 py-3">
+        <header className="bg-[#F05023] px-4 py-3">
           <div className="flex flex-col items-center">
             <img 
-              src="/attached_assets/Logo de Virtual agent logo largo_upscayl_2x_realesrgan-x4plus.png"
+              src="/assets/logo.png"
               alt="Virtual Agent"
               className="h-10 w-auto"
             />
@@ -142,7 +142,7 @@ export default function AuthPage() {
 
                   <Button 
                     type="submit" 
-                    className="w-full bg-[#FF5733] hover:bg-[#FF5733]/90"
+                    className="w-full bg-[#F05023] hover:bg-[#F05023]/90"
                     disabled={loginMutation.isPending}
                   >
                     {loginMutation.isPending ? "Iniciando sesión..." : "Iniciar Sesión"}
@@ -238,7 +238,7 @@ export default function AuthPage() {
 
                   <Button 
                     type="submit" 
-                    className="w-full bg-[#FF5733] hover:bg-[#FF5733]/90"
+                    className="w-full bg-[#F05023] hover:bg-[#F05023]/90"
                     disabled={registerMutation.isPending}
                   >
                     {registerMutation.isPending ? "Registrando..." : "Registrarse"}

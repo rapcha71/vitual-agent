@@ -12,7 +12,7 @@ export default function ProfilePage() {
   return (
     <div className="flex items-center justify-center min-h-screen bg-gray-100">
       <PhonePreview>
-        <header className="bg-[#FF5733] px-4 py-3">
+        <header className="bg-[#F05023] px-4 py-3">
           <div className="flex items-center justify-between">
             <Button 
               variant="ghost" 
