@@ -552,7 +552,7 @@ export default function PropertyEntry() {
 
               <button
                 type="button"
-                className="w-full h-32 flex flex-col items-center justify-center border-2 border-gray-300 rounded-lg hover:border-[#F05023] transition-colors"
+                className="w-full h-32 flex flex-col items-center justify-center border-2 border-gray-300 rounded-lg hover:border-[#F05023] transition-colors bg-white/95 backdrop-blur-sm"
                 onClick={captureLocation}
               >
                 <MapPin className="h-8 w-8 mb-2" />
