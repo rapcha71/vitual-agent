@@ -4,6 +4,7 @@ import { setupAuth } from "./auth";
 import { storage } from "./storage";
 import { insertPropertySchema } from "@shared/schema";
 import { nanoid } from "nanoid";
+import ocrService from "./services/ocr";
 import { GoogleSheetsStorage } from "./storage/google-sheets";
 
 export async function registerRoutes(app: Express): Promise<Server> {
@@ -69,11 +70,28 @@ export async function registerRoutes(app: Express): Promise<Server> {
       const propertyData = insertPropertySchema.parse(req.body);
       const propertyId = nanoid();
 
-      // Create the property
+      // Extract text from sign image if present
+      let extractedPhoneNumber = '';
+      if (propertyData.images.sign) {
+        try {
+          const extractedText = await ocrService.extractTextFromBase64Image(propertyData.images.sign);
+          const phoneNumbers = await ocrService.extractPhoneNumbers(extractedText);
+          if (phoneNumbers.length > 0) {
+            extractedPhoneNumber = phoneNumbers[0];
+            console.log('Extracted phone number from sign:', extractedPhoneNumber);
+          }
+        } catch (error) {
+          console.error('Error processing sign image:', error);
+          // Continue without OCR if it fails
+        }
+      }
+
+      // Create the property with extracted phone number if found
       const property = await storage.createProperty({
         ...propertyData,
         userId: req.user.id,
-        propertyId
+        propertyId,
+        signPhoneNumber: extractedPhoneNumber || propertyData.signPhoneNumber
       });
 
       console.log("Property created successfully:", property.propertyId);
