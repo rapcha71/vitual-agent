@@ -6,12 +6,16 @@ import { insertPropertySchema } from "@shared/schema";
 import { nanoid } from "nanoid";
 import ocrService from "./services/ocr";
 import { GoogleSheetsStorage } from "./storage/google-sheets";
-import type { 
-  GenerateRegistrationOptionsOpts,
-  GenerateAuthenticationOptionsOpts,
-  VerifyRegistrationResponseOpts,
-  VerifyAuthenticationResponseOpts,
-  AuthenticatorTransport 
+import { 
+  generateRegistrationOptions,
+  verifyRegistrationResponse,
+  generateAuthenticationOptions,
+  verifyAuthenticationResponse,
+  type GenerateRegistrationOptionsOpts,
+  type GenerateAuthenticationOptionsOpts,
+  type VerifyRegistrationResponseOpts,
+  type VerifyAuthenticationResponseOpts,
+  type AuthenticatorTransport 
 } from "@simplewebauthn/server";
 
 export async function registerRoutes(app: Express): Promise<Server> {
