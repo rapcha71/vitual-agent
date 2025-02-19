@@ -110,7 +110,7 @@ export default function AuthPage() {
                 <Form {...loginForm}>
                   <form 
                     onSubmit={loginForm.handleSubmit(handleLogin)} 
-                    className="space-y-4 bg-white/90 backdrop-blur-sm rounded-lg p-4"
+                    className="space-y-4 bg-white/95 backdrop-blur-sm rounded-lg p-4"
                   >
                     <FormField
                       control={loginForm.control}
@@ -155,7 +155,7 @@ export default function AuthPage() {
                 <Form {...registerForm}>
                   <form 
                     onSubmit={registerForm.handleSubmit(handleRegister)} 
-                    className="space-y-4 bg-white/90 backdrop-blur-sm rounded-lg p-4"
+                    className="space-y-4 bg-white/95 backdrop-blur-sm rounded-lg p-4"
                   >
                     <FormField
                       control={registerForm.control}
@@ -227,7 +227,7 @@ export default function AuthPage() {
                       )}
                     />
 
-                    <div className="text-sm text-gray-600 bg-white/80 backdrop-blur-sm p-3 rounded-lg space-y-2">
+                    <div className="text-sm text-gray-600 bg-white/95 backdrop-blur-sm p-3 rounded-lg space-y-2">
                       <p>
                         Recuerda que los pagos se realizan a traves de simpe movil por lo que el numero debera de estar conectado a una cuenta bancaria simpe.
                       </p>
