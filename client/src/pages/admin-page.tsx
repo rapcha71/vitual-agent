@@ -29,12 +29,6 @@ export default function AdminPage() {
     return null;
   }
 
-  console.log("Properties loaded:", properties.map(p => ({
-    id: p.propertyId,
-    imageCount: p.images?.length,
-    images: p.images
-  })));
-
   return (
     <div className="flex items-center justify-center min-h-screen bg-gray-100">
       <div className="w-full max-w-7xl p-4 space-y-4">
@@ -102,30 +96,35 @@ export default function AdminPage() {
                         {property.location.lat.toFixed(6)}, {property.location.lng.toFixed(6)}
                       </TableCell>
                       <TableCell>
-                        <Dialog>
-                          <DialogTrigger asChild>
-                            <Button variant="outline" size="sm">
-                              <Image className="h-4 w-4 mr-2" />
-                              Ver Imágenes ({property.images?.length || 0})
-                            </Button>
-                          </DialogTrigger>
-                          <DialogContent className="max-w-4xl">
-                            <DialogHeader>
-                              <DialogTitle>Imágenes de la Propiedad {property.propertyId}</DialogTitle>
-                            </DialogHeader>
-                            <div className="grid grid-cols-2 gap-4 p-4">
-                              {property.images && property.images.map((image, index) => (
-                                <div key={index} className="relative aspect-square">
-                                  <img
-                                    src={image}
-                                    alt={`Imagen ${index + 1} de la propiedad ${property.propertyId}`}
-                                    className="object-cover w-full h-full rounded-lg"
-                                  />
-                                </div>
-                              ))}
-                            </div>
-                          </DialogContent>
-                        </Dialog>
+                        {property.images && property.images.length > 0 ? (
+                          <Dialog>
+                            <DialogTrigger asChild>
+                              <Button variant="outline" size="sm">
+                                <Image className="h-4 w-4 mr-2" />
+                                Ver Imágenes ({property.images.length})
+                              </Button>
+                            </DialogTrigger>
+                            <DialogContent className="max-w-4xl">
+                              <DialogHeader>
+                                <DialogTitle>Imágenes de la Propiedad {property.propertyId}</DialogTitle>
+                              </DialogHeader>
+                              <div className="grid grid-cols-2 gap-4 p-4 max-h-[80vh] overflow-y-auto">
+                                {property.images.map((image, index) => (
+                                  <div key={index} className="relative aspect-video">
+                                    <img
+                                      src={image}
+                                      alt={`Imagen ${index + 1} de la propiedad ${property.propertyId}`}
+                                      className="object-cover w-full h-full rounded-lg"
+                                      loading="lazy"
+                                    />
+                                  </div>
+                                ))}
+                              </div>
+                            </DialogContent>
+                          </Dialog>
+                        ) : (
+                          <span className="text-muted-foreground">Sin imágenes</span>
+                        )}
                       </TableCell>
                     </TableRow>
                   ))}
