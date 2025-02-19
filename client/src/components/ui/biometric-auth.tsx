@@ -29,21 +29,26 @@ export function BiometricAuth({ mode, username }: BiometricAuthProps) {
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ username })
           });
+
+          if (!response.ok) {
+            throw new Error('Failed to check biometric status');
+          }
+
           const { enabled } = await response.json();
           setIsEnabled(enabled);
-
-          // If biometrics are enabled and supported, automatically trigger auth
-          if (enabled && supported) {
-            handleAuthentication();
-          }
         } catch (error) {
           console.error("Error checking biometric status:", error);
+          toast({
+            title: "Error",
+            description: "Failed to check biometric status",
+            variant: "destructive",
+          });
         }
       }
     };
 
     checkBiometricStatus();
-  }, [mode, username]);
+  }, [mode, username, toast]);
 
   const checkBiometricSupport = async () => {
     if (!window.PublicKeyCredential) {
@@ -70,20 +75,20 @@ export function BiometricAuth({ mode, username }: BiometricAuthProps) {
     }
 
     try {
-      const resp = await fetch('/api/webauthn/register', {
+      const optionsResponse = await fetch('/api/webauthn/register-options', {
         method: 'POST',
-        credentials: 'include'
+        credentials: 'include',
       });
 
-      if (!resp.ok) {
-        const error = await resp.json();
+      if (!optionsResponse.ok) {
+        const error = await optionsResponse.json();
         throw new Error(error.message || 'Failed to get registration options');
       }
 
-      const options = await resp.json();
+      const options = await optionsResponse.json();
       const attestation = await startRegistration(options);
 
-      const verificationResp = await fetch('/api/webauthn/register/verify', {
+      const verificationResponse = await fetch('/api/webauthn/register-verify', {
         method: 'POST',
         credentials: 'include',
         headers: {
@@ -92,15 +97,15 @@ export function BiometricAuth({ mode, username }: BiometricAuthProps) {
         body: JSON.stringify(attestation),
       });
 
-      if (!verificationResp.ok) {
-        const error = await verificationResp.json();
+      if (!verificationResponse.ok) {
+        const error = await verificationResponse.json();
         throw new Error(error.message || 'Failed to verify registration');
       }
 
       setIsEnabled(true);
       toast({
         title: "Success!",
-        description: "Biometric authentication has been set up. You can now use it for future logins.",
+        description: "Biometric authentication has been set up successfully.",
       });
     } catch (error: any) {
       console.error("Registration error:", error);
@@ -123,7 +128,7 @@ export function BiometricAuth({ mode, username }: BiometricAuthProps) {
     }
 
     try {
-      const resp = await fetch('/api/webauthn/authenticate', {
+      const optionsResponse = await fetch('/api/webauthn/authenticate-options', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -131,15 +136,15 @@ export function BiometricAuth({ mode, username }: BiometricAuthProps) {
         body: JSON.stringify({ username }),
       });
 
-      if (!resp.ok) {
-        const error = await resp.json();
+      if (!optionsResponse.ok) {
+        const error = await optionsResponse.json();
         throw new Error(error.message || 'Failed to get authentication options');
       }
 
-      const options = await resp.json();
+      const options = await optionsResponse.json();
       const assertion = await startAuthentication(options);
 
-      const verificationResp = await fetch('/api/webauthn/authenticate/verify', {
+      const verificationResponse = await fetch('/api/webauthn/authenticate-verify', {
         method: 'POST',
         credentials: 'include',
         headers: {
@@ -148,13 +153,13 @@ export function BiometricAuth({ mode, username }: BiometricAuthProps) {
         body: JSON.stringify(assertion),
       });
 
-      if (!verificationResp.ok) {
-        const error = await verificationResp.json();
+      if (!verificationResponse.ok) {
+        const error = await verificationResponse.json();
         throw new Error(error.message || 'Failed to verify authentication');
       }
 
-      const result = await verificationResp.json();
-      if (result.success) {
+      const result = await verificationResponse.json();
+      if (result.verified) {
         loginMutation.mutate({ username, password: '' });
       }
     } catch (error: any) {
@@ -171,11 +176,6 @@ export function BiometricAuth({ mode, username }: BiometricAuthProps) {
     return null;
   }
 
-  // Don't show register button on login page
-  if (mode === "register" && !user) {
-    return null;
-  }
-
   return (
     <Button
       type="button"
@@ -186,12 +186,12 @@ export function BiometricAuth({ mode, username }: BiometricAuthProps) {
     >
       <Fingerprint className="h-4 w-4 mr-2" />
       {mode === "register" 
-        ? "Set Up Biometric Login" 
-        : isEnabled
-          ? "Use Biometric Login"
-          : username 
-            ? "Biometric Login Not Set Up"
-            : "Enter Username First"}
+        ? (isEnabled ? "Biometric Login Enabled" : "Set Up Biometric Login")
+        : (isEnabled 
+            ? "Use Biometric Login" 
+            : username 
+              ? "Biometric Login Not Set Up"
+              : "Enter Username First")}
     </Button>
   );
 }

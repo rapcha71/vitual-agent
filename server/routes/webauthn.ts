@@ -22,9 +22,16 @@ router.post('/webauthn/register-options', async (req, res) => {
       userID: req.user.id.toString(),
       userName: req.user.username,
       attestationType: 'none',
+      authenticatorSelection: {
+        residentKey: 'preferred',
+        userVerification: 'preferred',
+        authenticatorAttachment: 'platform'
+      }
     });
 
     req.session.currentChallenge = options.challenge;
+    await req.session.save();
+
     res.json(options);
   } catch (error) {
     console.error('Error generating registration options:', error);
@@ -37,33 +44,38 @@ router.post('/webauthn/register-verify', async (req, res) => {
     return res.status(401).json({ message: 'Not authenticated' });
   }
 
-  const challenge = req.session.currentChallenge;
-  const credential = req.body;
-
   try {
+    const expectedChallenge = req.session.currentChallenge;
+    if (!expectedChallenge) {
+      throw new Error('No challenge found in session');
+    }
+
     const verification = await verifyRegistrationResponse({
-      credential,
-      expectedChallenge: challenge,
+      response: req.body,
+      expectedChallenge,
       expectedOrigin: origin,
       expectedRPID: rpID,
     });
 
-    if (verification.verified) {
-      const { credentialID, credentialPublicKey, counter } = verification.registrationInfo!;
-      
+    if (verification.verified && verification.registrationInfo) {
+      const { credentialPublicKey, credentialID, counter } = verification.registrationInfo;
+
       await storage.updateUserBiometricCredentials(req.user.id, {
         credentialID: Buffer.from(credentialID),
         publicKey: Buffer.from(credentialPublicKey),
         counter,
       });
 
+      delete req.session.currentChallenge;
+      await req.session.save();
+
       res.json({ verified: true });
     } else {
-      res.status(400).json({ message: 'Verification failed' });
+      throw new Error('Verification failed');
     }
   } catch (error) {
     console.error('Error verifying registration:', error);
-    res.status(500).json({ message: 'Failed to verify registration' });
+    res.status(400).json({ message: 'Failed to verify registration' });
   }
 });
 
@@ -89,7 +101,8 @@ router.post('/webauthn/authenticate-options', async (req, res) => {
 
     req.session.currentChallenge = options.challenge;
     req.session.authenticationUsername = username;
-    
+    await req.session.save();
+
     res.json(options);
   } catch (error) {
     console.error('Error generating authentication options:', error);
@@ -113,7 +126,7 @@ router.post('/webauthn/authenticate-verify', async (req, res) => {
     }
 
     const verification = await verifyAuthenticationResponse({
-      credential,
+      response: credential,
       expectedChallenge: challenge,
       expectedOrigin: origin,
       expectedRPID: rpID,
@@ -126,7 +139,7 @@ router.post('/webauthn/authenticate-verify', async (req, res) => {
 
     if (verification.verified) {
       await storage.updateUserBiometricCounter(user.id, verification.authenticationInfo.newCounter);
-      
+
       req.login(user, (err) => {
         if (err) {
           console.error('Session creation error:', err);
