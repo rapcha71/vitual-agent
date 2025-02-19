@@ -10,7 +10,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { insertPropertySchema } from "@shared/schema";
 import { Camera, MapPin, X, Upload } from "lucide-react";
 import { useLocation } from "wouter";
-import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from "@/components/ui/dialog";
 import imageCompression from "browser-image-compression";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { nanoid } from "nanoid";
@@ -35,6 +35,8 @@ export default function PropertyEntry() {
   const videoRef = useRef<HTMLVideoElement>(null);
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
+  const [ocrTestResult, setOcrTestResult] = useState<{ extractedText?: string; phoneNumbers?: string[] } | null>(null);
+  const [showOcrDialog, setShowOcrDialog] = useState(false);
 
   const form = useForm({
     resolver: zodResolver(insertPropertySchema),
@@ -394,6 +396,48 @@ export default function PropertyEntry() {
     }
   };
 
+  const testOCR = async () => {
+    const signImage = form.getValues("images.sign");
+    if (!signImage) {
+      toast({
+        title: "No Sign Image",
+        description: "Please capture a sign photo first",
+        variant: "destructive"
+      });
+      return;
+    }
+
+    try {
+      const response = await fetch('/api/test-ocr', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ image: signImage }),
+        credentials: 'include'
+      });
+
+      const result = await response.json();
+      if (result.success) {
+        setOcrTestResult(result);
+        setShowOcrDialog(true);
+      } else {
+        toast({
+          title: "OCR Test Failed",
+          description: result.message || "Failed to process image",
+          variant: "destructive"
+        });
+      }
+    } catch (error) {
+      console.error('Error testing OCR:', error);
+      toast({
+        title: "OCR Test Error",
+        description: "Failed to test OCR functionality",
+        variant: "destructive"
+      });
+    }
+  };
+
   return (
     <div className="min-h-screen bg-background p-4">
       <Card className="max-w-2xl mx-auto">
@@ -443,23 +487,35 @@ export default function PropertyEntry() {
               <div className="space-y-4">
                 <h3 className="font-medium">Property Photos</h3>
                 <div className="grid gap-4 md:grid-cols-2">
-                  <Button
-                    type="button"
-                    variant="outline"
-                    className="h-32 flex flex-col items-center justify-center relative"
-                    onClick={() => startCamera("sign")}
-                    disabled={isCompressing}
-                  >
-                    <Camera className="h-8 w-8 mb-2" />
-                    <span>Capture Sign Photo</span>
+                  <div className="space-y-2">
+                    <Button
+                      type="button"
+                      variant="outline"
+                      className="h-32 w-full flex flex-col items-center justify-center relative"
+                      onClick={() => startCamera("sign")}
+                      disabled={isCompressing}
+                    >
+                      <Camera className="h-8 w-8 mb-2" />
+                      <span>Capture Sign Photo</span>
+                      {form.watch("images.sign") && (
+                        <img
+                          src={form.watch("images.sign")}
+                          alt="Sign Preview"
+                          className="absolute inset-0 w-full h-full object-cover rounded-md opacity-50"
+                        />
+                      )}
+                    </Button>
                     {form.watch("images.sign") && (
-                      <img
-                        src={form.watch("images.sign")}
-                        alt="Sign Preview"
-                        className="absolute inset-0 w-full h-full object-cover rounded-md opacity-50"
-                      />
+                      <Button
+                        type="button"
+                        variant="secondary"
+                        className="w-full"
+                        onClick={testOCR}
+                      >
+                        Test OCR
+                      </Button>
                     )}
-                  </Button>
+                  </div>
                   <Button
                     type="button"
                     variant="outline"
@@ -576,6 +632,37 @@ export default function PropertyEntry() {
               className="hidden"
               onChange={handleFileUpload}
             />
+          </div>
+        </DialogContent>
+      </Dialog>
+
+      <Dialog open={showOcrDialog} onOpenChange={setShowOcrDialog}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>OCR Test Results</DialogTitle>
+            <DialogDescription>
+              Here are the results from processing your sign image:
+            </DialogDescription>
+          </DialogHeader>
+          <div className="space-y-4">
+            <div>
+              <h4 className="font-medium mb-2">Extracted Text:</h4>
+              <p className="text-sm text-muted-foreground whitespace-pre-wrap">
+                {ocrTestResult?.extractedText || "No text extracted"}
+              </p>
+            </div>
+            <div>
+              <h4 className="font-medium mb-2">Phone Numbers Found:</h4>
+              {ocrTestResult?.phoneNumbers?.length ? (
+                <ul className="list-disc list-inside">
+                  {ocrTestResult.phoneNumbers.map((phone, i) => (
+                    <li key={i} className="text-sm text-muted-foreground">{phone}</li>
+                  ))}
+                </ul>
+              ) : (
+                <p className="text-sm text-muted-foreground">No phone numbers found</p>
+              )}
+            </div>
           </div>
         </DialogContent>
       </Dialog>
