@@ -53,7 +53,7 @@ export default function HomePage() {
           </div>
         </header>
 
-        <main className="p-4 space-y-6 bg-cover bg-center bg-no-repeat" style={{backgroundImage: 'url("/assets/ciudad.jpeg")'}}>
+        <main className="p-4 space-y-6 bg-cover bg-center bg-no-repeat overflow-y-auto" style={{backgroundImage: 'url("/assets/ciudad.jpeg")'}}>
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
