@@ -4,8 +4,9 @@ import {
   useMutation,
 } from "@tanstack/react-query";
 import { insertUserSchema, User as SelectUser, InsertUser } from "@shared/schema";
-import { getQueryFn, apiRequest, queryClient } from "../lib/queryClient";
+import { apiRequest, queryClient } from "../lib/queryClient";
 import { useToast } from "@/hooks/use-toast";
+import { useLocation } from "wouter";
 
 type AuthContextType = {
   user: SelectUser | null;
@@ -20,23 +21,20 @@ type LoginData = Pick<InsertUser, "username" | "password">;
 
 function useLoginMutation() {
   const { toast } = useToast();
+  const [, setLocation] = useLocation();
 
   return useMutation({
     mutationFn: async (credentials: LoginData) => {
-      console.log("Iniciando proceso de login", credentials);
-      console.log("Attempting login for user:", credentials.username);
       const res = await apiRequest("POST", "/api/login", credentials);
       if (!res.ok) {
         const error = await res.json();
         throw new Error(error.message || "Usuario o contraseña inválidos");
       }
-      console.log("Login successful");
-      const userData = await res.json();
-      console.log("Login mutation succeeded, updating user data");
-      return userData;
+      return res.json();
     },
     onSuccess: (user: SelectUser) => {
       queryClient.setQueryData(["/api/user"], user);
+      setLocation("/");
     },
     onError: (error: Error) => {
       toast({
@@ -50,6 +48,7 @@ function useLoginMutation() {
 
 function useLogoutMutation() {
   const { toast } = useToast();
+  const [, setLocation] = useLocation();
 
   return useMutation({
     mutationFn: async () => {
@@ -62,8 +61,7 @@ function useLogoutMutation() {
     onSuccess: () => {
       queryClient.setQueryData(["/api/user"], null);
       queryClient.clear();
-      // Usar useLocation en lugar de window.location para navegación
-      window.location.href = "/auth";
+      setLocation("/auth");
     },
     onError: (error: Error) => {
       toast({
@@ -77,6 +75,7 @@ function useLogoutMutation() {
 
 function useRegisterMutation() {
   const { toast } = useToast();
+  const [, setLocation] = useLocation();
 
   return useMutation({
     mutationFn: async (credentials: InsertUser) => {
@@ -89,6 +88,7 @@ function useRegisterMutation() {
     },
     onSuccess: (user: SelectUser) => {
       queryClient.setQueryData(["/api/user"], user);
+      setLocation("/");
     },
     onError: (error: Error) => {
       toast({
@@ -112,16 +112,15 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     queryFn: async () => {
       try {
         const response = await fetch("/api/user", {
-          credentials: "include"
+          credentials: "include",
         });
         if (!response.ok) {
           if (response.status === 401) {
             return null;
           }
-          throw new Error("Error fetching user data");
+          throw new Error("Error al obtener datos del usuario");
         }
-        const data = await response.json();
-        return data as SelectUser;
+        return response.json();
       } catch (error) {
         console.error("Error fetching user:", error);
         return null;
@@ -130,7 +129,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     staleTime: 30000,
     retry: false,
     refetchOnWindowFocus: false,
-    refetchOnMount: false,
+    refetchOnMount: true,
   });
 
   const loginMutation = useLoginMutation();
