@@ -1,4 +1,4 @@
-import { useState, useRef } from "react";
+import { useState, useRef, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
@@ -34,12 +34,35 @@ export default function PropertyEntry() {
     }
   });
 
+  // Cleanup function for camera stream
+  const cleanup = () => {
+    if (stream) {
+      stream.getTracks().forEach(track => track.stop());
+      setStream(null);
+    }
+    if (videoRef.current) {
+      videoRef.current.srcObject = null;
+    }
+    setActiveCamera(null);
+    setIsCapturing(false);
+  };
+
+  // Cleanup on component unmount
+  useEffect(() => {
+    return () => cleanup();
+  }, []);
+
   // Handle camera access
   const startCamera = async (type: "sign" | "property") => {
     try {
+      // First cleanup any existing streams
+      cleanup();
+
+      setIsCapturing(true);
       const mediaStream = await navigator.mediaDevices.getUserMedia({ 
         video: { facingMode: "environment" } 
       });
+
       setStream(mediaStream);
       setActiveCamera(type);
 
@@ -53,6 +76,7 @@ export default function PropertyEntry() {
         description: "Unable to access device camera. Please check permissions.",
         variant: "destructive"
       });
+      cleanup();
     }
   };
 
@@ -65,6 +89,9 @@ export default function PropertyEntry() {
       const response = await fetch(imageDataUrl);
       const blob = await response.blob();
 
+      // Create a File object from the Blob
+      const file = new File([blob], "image.jpg", { type: "image/jpeg" });
+
       // Compression options
       const options = {
         maxSizeMB: 1,
@@ -76,7 +103,7 @@ export default function PropertyEntry() {
       };
 
       // Compress the image
-      const compressedFile = await imageCompression(blob, options);
+      const compressedFile = await imageCompression(file, options);
 
       // Convert compressed blob back to base64
       return new Promise((resolve) => {
@@ -99,26 +126,23 @@ export default function PropertyEntry() {
 
   // Handle photo capture
   const capturePhoto = async () => {
-    if (videoRef.current && canvasRef.current && activeCamera) {
+    if (!videoRef.current || !canvasRef.current || !activeCamera) return;
+
+    try {
       const video = videoRef.current;
       const canvas = canvasRef.current;
 
       canvas.width = video.videoWidth;
       canvas.height = video.videoHeight;
-      canvas.getContext('2d')?.drawImage(video, 0, 0);
+      const context = canvas.getContext('2d');
+      if (!context) return;
 
+      context.drawImage(video, 0, 0);
       const imageData = canvas.toDataURL('image/jpeg');
 
       // Compress the image before storing
       const compressedImage = await compressImage(imageData);
       form.setValue(`images.${activeCamera}`, compressedImage);
-
-      // Stop camera stream
-      if (stream) {
-        stream.getTracks().forEach(track => track.stop());
-        setStream(null);
-      }
-      setActiveCamera(null);
 
       // Show success message with compression info
       const originalSize = Math.round(imageData.length / 1024);
@@ -129,6 +153,15 @@ export default function PropertyEntry() {
         title: "Photo Captured",
         description: `Image compressed from ${originalSize}KB to ${compressedSize}KB (${savings}% reduction)`,
       });
+    } catch (error) {
+      console.error('Error capturing photo:', error);
+      toast({
+        title: "Capture Error",
+        description: "Failed to capture photo. Please try again.",
+        variant: "destructive"
+      });
+    } finally {
+      cleanup();
     }
   };
 
@@ -279,12 +312,8 @@ export default function PropertyEntry() {
         </CardContent>
       </Card>
 
-      <Dialog open={!!activeCamera} onOpenChange={() => {
-        if (stream) {
-          stream.getTracks().forEach(track => track.stop());
-          setStream(null);
-        }
-        setActiveCamera(null);
+      <Dialog open={!!activeCamera} onOpenChange={(open) => {
+        if (!open) cleanup();
       }}>
         <DialogContent className="sm:max-w-lg">
           <DialogHeader>
