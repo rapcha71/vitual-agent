@@ -4,6 +4,10 @@ import { useLocation } from "wouter";
 export default function PropertyConfirmation() {
   const [, setLocation] = useLocation();
 
+  const handleCloseApp = () => {
+    window.close();
+  };
+
   return (
     <div className="flex items-center justify-center min-h-screen bg-gray-100">
       <PhonePreview>
@@ -44,12 +48,21 @@ export default function PropertyConfirmation() {
               </div>
             </div>
 
-            <button
-              onClick={() => setLocation("/")}
-              className="mt-8 w-full bg-[#FF5733] text-white py-3 rounded-md font-semibold"
-            >
-              Volver al Inicio
-            </button>
+            <div className="w-full space-y-4">
+              <button
+                onClick={() => setLocation("/")}
+                className="w-full bg-[#FF5733] text-white py-3 rounded-md font-semibold"
+              >
+                Volver al Inicio
+              </button>
+
+              <button
+                onClick={handleCloseApp}
+                className="w-full bg-gray-600 text-white py-3 rounded-md font-semibold hover:bg-gray-700 transition-colors"
+              >
+                Cerrar Aplicación
+              </button>
+            </div>
           </div>
         </div>
       </PhonePreview>
