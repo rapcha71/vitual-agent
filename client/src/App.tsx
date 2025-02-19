@@ -28,7 +28,7 @@ function AdminRoute({ component: Component }: { component: () => JSX.Element }) 
   }
 
   if (!user?.isAdmin) {
-    return <Route path="*" component={DashboardPage} />;
+    return <DashboardPage />;
   }
 
   return <Component />;
@@ -54,9 +54,7 @@ function Router() {
       <ProtectedRoute path="/property/new" component={PropertyEntry} />
       <ProtectedRoute path="/property/confirmation" component={PropertyConfirmation} />
       <ProtectedRoute path="/properties" component={PropertiesPage} />
-      <Route path="/admin">
-        <AdminRoute component={AdminPage} />
-      </Route>
+      <Route path="/admin" component={() => <AdminRoute component={AdminPage} />} />
       <Route component={NotFound} />
     </Switch>
   );

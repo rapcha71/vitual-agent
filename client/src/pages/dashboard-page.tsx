@@ -3,7 +3,7 @@ import { useQuery } from "@tanstack/react-query";
 import { Property } from "@shared/schema";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { ChevronLeft, LogOut, Plus, Shield, Book, MapPin } from "lucide-react";
+import { ChevronLeft, ChevronRight, LogOut, Plus, Shield, Book } from "lucide-react";
 import { useLocation } from "wouter";
 
 export default function DashboardPage() {
@@ -25,13 +25,22 @@ export default function DashboardPage() {
     <div className="min-h-screen bg-gray-100">
       {/* Header */}
       <header className="bg-[#F05023] px-4 py-3 flex items-center justify-between">
-        <Button 
-          variant="ghost" 
-          className="text-white hover:text-white/80 p-0"
-          onClick={() => setLocation("/")}
-        >
-          <ChevronLeft className="h-5 w-5" />
-        </Button>
+        <div className="flex items-center gap-2">
+          <Button 
+            variant="ghost" 
+            className="text-white hover:text-white/80 p-0"
+            onClick={() => setLocation("/")}
+          >
+            <ChevronLeft className="h-5 w-5" />
+          </Button>
+          <Button 
+            variant="ghost" 
+            className="text-white hover:text-white/80 p-0"
+            onClick={() => setLocation("/properties")}
+          >
+            <ChevronRight className="h-5 w-5" />
+          </Button>
+        </div>
         <div className="flex items-center gap-4">
           <img 
             src="/assets/logo.png"
@@ -109,16 +118,6 @@ export default function DashboardPage() {
             </div>
           </CardContent>
         </Card>
-
-        <Button 
-          variant="default" 
-          size="lg" 
-          className="w-full"
-          onClick={() => setLocation("/properties")}
-        >
-          <MapPin className="h-5 w-5 mr-2" />
-          Ver Propiedades y Mapa
-        </Button>
       </main>
     </div>
   );
