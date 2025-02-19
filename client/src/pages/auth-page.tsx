@@ -75,16 +75,19 @@ export default function AuthPage() {
                       <Button type="submit" className="w-full" disabled={loginMutation.isPending}>
                         Login with Password
                       </Button>
-                      <div className="relative">
+
+                      {/* Biometric Authentication Section */}
+                      <div className="relative my-4">
                         <div className="absolute inset-0 flex items-center">
                           <span className="w-full border-t" />
                         </div>
                         <div className="relative flex justify-center text-xs uppercase">
                           <span className="bg-background px-2 text-muted-foreground">
-                            Or continue with
+                            Or use biometric login
                           </span>
                         </div>
                       </div>
+
                       <BiometricAuth 
                         mode="authenticate" 
                         username={loginForm.getValues("username")}
@@ -166,13 +169,15 @@ export default function AuthPage() {
                       <Button type="submit" className="w-full" disabled={registerMutation.isPending}>
                         Register
                       </Button>
-                      <div className="relative">
+
+                      {/* Biometric Setup Option */}
+                      <div className="relative my-4">
                         <div className="absolute inset-0 flex items-center">
                           <span className="w-full border-t" />
                         </div>
                         <div className="relative flex justify-center text-xs uppercase">
                           <span className="bg-background px-2 text-muted-foreground">
-                            Optional
+                            Optional: Set up biometric login
                           </span>
                         </div>
                       </div>
