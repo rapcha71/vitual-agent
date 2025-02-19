@@ -13,7 +13,7 @@ interface BiometricAuthProps {
 
 export function BiometricAuth({ mode, username }: BiometricAuthProps) {
   const { toast } = useToast();
-  const { loginMutation } = useAuth();
+  const { loginMutation, user } = useAuth();
 
   const checkBiometricSupport = async () => {
     if (!window.PublicKeyCredential) {
@@ -43,6 +43,15 @@ export function BiometricAuth({ mode, username }: BiometricAuthProps) {
   };
 
   const handleRegistration = async () => {
+    if (!user) {
+      toast({
+        title: "Login Required",
+        description: "Please log in first to set up biometric authentication.",
+        variant: "destructive",
+      });
+      return;
+    }
+
     try {
       // Get registration options from server
       const resp = await fetch('/api/webauthn/register', {
@@ -175,6 +184,11 @@ export function BiometricAuth({ mode, username }: BiometricAuthProps) {
       });
     }
   };
+
+  // Don't show register button on login page
+  if (mode === "register" && !user) {
+    return null;
+  }
 
   return (
     <Button
