@@ -20,25 +20,18 @@ export class GoogleSheetsStorage implements IStorage {
 
   private sheets: sheets_v4.Sheets;
   private spreadsheetId: string;
-  private users: Map<number, User>;
-  private currentUserId: number;
-  private currentPropertyId: number;
   public sessionStore: session.Store;
 
   constructor() {
     this.spreadsheetId = process.env.GOOGLE_SHEETS_ID!;
     const credentials = JSON.parse(process.env.GOOGLE_SHEETS_CREDENTIALS!);
 
-    // Initialize the Google Sheets API client
     const auth = new google.auth.GoogleAuth({
       credentials,
       scopes: ['https://www.googleapis.com/auth/spreadsheets']
     });
 
     this.sheets = google.sheets({ version: 'v4', auth });
-    this.users = new Map();
-    this.currentUserId = 1;
-    this.currentPropertyId = 1;
     this.sessionStore = new MemoryStore({
       checkPeriod: 86400000
     });
@@ -48,20 +41,49 @@ export class GoogleSheetsStorage implements IStorage {
 
   private async initializeSpreadsheet() {
     try {
-      // First check if the Properties sheet exists
       const response = await this.sheets.spreadsheets.get({
         spreadsheetId: this.spreadsheetId
       });
 
-      let propertiesSheetExists = false;
-      if (response.data.sheets) {
-        propertiesSheetExists = response.data.sheets.some(
-          sheet => sheet.properties?.title === 'Properties'
-        );
+      const sheets = response.data.sheets || [];
+      const sheetTitles = sheets.map(sheet => sheet.properties?.title);
+
+      // Initialize Users sheet if it doesn't exist
+      if (!sheetTitles.includes('Users')) {
+        await this.sheets.spreadsheets.batchUpdate({
+          spreadsheetId: this.spreadsheetId,
+          requestBody: {
+            requests: [{
+              addSheet: {
+                properties: {
+                  title: 'Users'
+                }
+              }
+            }]
+          }
+        });
+
+        // Add Users headers
+        await this.sheets.spreadsheets.values.update({
+          spreadsheetId: this.spreadsheetId,
+          range: 'Users!A1:G1',
+          valueInputOption: 'RAW',
+          requestBody: {
+            values: [[
+              'ID',
+              'Username',
+              'Password',
+              'Full Name',
+              'Mobile',
+              'Nickname',
+              'Created At'
+            ]]
+          }
+        });
       }
 
-      // If Properties sheet doesn't exist, create it
-      if (!propertiesSheetExists) {
+      // Initialize Properties sheet if it doesn't exist
+      if (!sheetTitles.includes('Properties')) {
         await this.sheets.spreadsheets.batchUpdate({
           spreadsheetId: this.spreadsheetId,
           requestBody: {
@@ -74,26 +96,26 @@ export class GoogleSheetsStorage implements IStorage {
             }]
           }
         });
-      }
 
-      // Initialize headers
-      await this.sheets.spreadsheets.values.update({
-        spreadsheetId: this.spreadsheetId,
-        range: 'Properties!A1:H1',
-        valueInputOption: 'RAW',
-        requestBody: {
-          values: [[
-            'Property ID',
-            'User ID',
-            'Property Type',
-            'Sign Phone Number',
-            'Location',
-            'Images',
-            'Created At',
-            'Username'
-          ]]
-        }
-      });
+        // Add Properties headers
+        await this.sheets.spreadsheets.values.update({
+          spreadsheetId: this.spreadsheetId,
+          range: 'Properties!A1:H1',
+          valueInputOption: 'RAW',
+          requestBody: {
+            values: [[
+              'Property ID',
+              'User ID',
+              'Property Type',
+              'Sign Phone Number',
+              'Location',
+              'Images',
+              'Created At',
+              'Username'
+            ]]
+          }
+        });
+      }
 
       console.log('Successfully initialized Google Sheets storage');
     } catch (error) {
@@ -103,42 +125,125 @@ export class GoogleSheetsStorage implements IStorage {
   }
 
   async getUser(id: number): Promise<User | undefined> {
-    return this.users.get(id);
+    try {
+      const response = await this.sheets.spreadsheets.values.get({
+        spreadsheetId: this.spreadsheetId,
+        range: 'Users!A2:G'
+      });
+
+      const values = response.data.values || [];
+      const userRow = values.find(row => parseInt(row[0]) === id);
+
+      if (!userRow) return undefined;
+
+      return {
+        id: parseInt(userRow[0]),
+        username: userRow[1],
+        password: userRow[2],
+        fullName: userRow[3] || null,
+        mobile: userRow[4] || null,
+        nickname: userRow[5] || null
+      };
+    } catch (error) {
+      console.error('Error getting user:', error);
+      throw error;
+    }
   }
 
   async getUserByUsername(username: string): Promise<User | undefined> {
-    return Array.from(this.users.values()).find(
-      (user) => user.username === username,
-    );
+    try {
+      const response = await this.sheets.spreadsheets.values.get({
+        spreadsheetId: this.spreadsheetId,
+        range: 'Users!A2:G'
+      });
+
+      const values = response.data.values || [];
+      const userRow = values.find(row => row[1] === username);
+
+      if (!userRow) return undefined;
+
+      return {
+        id: parseInt(userRow[0]),
+        username: userRow[1],
+        password: userRow[2],
+        fullName: userRow[3] || null,
+        mobile: userRow[4] || null,
+        nickname: userRow[5] || null
+      };
+    } catch (error) {
+      console.error('Error getting user by username:', error);
+      throw error;
+    }
   }
 
   async createUser(insertUser: InsertUser): Promise<User> {
-    const id = this.currentUserId++;
-    const user: User = {
-      ...insertUser,
-      id,
-      fullName: insertUser.fullName || null,
-      mobile: insertUser.mobile || null,
-      nickname: insertUser.nickname || null
-    };
-    this.users.set(id, user);
-    return user;
+    try {
+      // Get the last ID
+      const response = await this.sheets.spreadsheets.values.get({
+        spreadsheetId: this.spreadsheetId,
+        range: 'Users!A2:A'
+      });
+
+      const values = response.data.values || [];
+      const lastId = values.length > 0 ? Math.max(...values.map(row => parseInt(row[0]))) : 0;
+      const newId = lastId + 1;
+
+      const user: User = {
+        id: newId,
+        ...insertUser,
+        fullName: insertUser.fullName || null,
+        mobile: insertUser.mobile || null,
+        nickname: insertUser.nickname || null
+      };
+
+      // Append the new user
+      await this.sheets.spreadsheets.values.append({
+        spreadsheetId: this.spreadsheetId,
+        range: 'Users!A:G',
+        valueInputOption: 'RAW',
+        requestBody: {
+          values: [[
+            user.id.toString(),
+            user.username,
+            user.password,
+            user.fullName || '',
+            user.mobile || '',
+            user.nickname || '',
+            new Date().toISOString()
+          ]]
+        }
+      });
+
+      return user;
+    } catch (error) {
+      console.error('Error creating user:', error);
+      throw error;
+    }
   }
 
   async createProperty(insertProperty: InsertProperty & { userId: number }): Promise<Property> {
-    const id = this.currentPropertyId++;
-    const property: Property = {
-      ...insertProperty,
-      id,
-      signPhoneNumber: insertProperty.signPhoneNumber || null
-    };
-
-    // Get the username from the users map
-    const user = await this.getUser(property.userId);
-    const username = user?.username || '';
-
     try {
-      // Append the property data to the spreadsheet
+      // Get the last ID
+      const response = await this.sheets.spreadsheets.values.get({
+        spreadsheetId: this.spreadsheetId,
+        range: 'Properties!A2:A'
+      });
+
+      const values = response.data.values || [];
+      const lastId = values.length > 0 ? Math.max(...values.map(row => parseInt(row[0] || '0'))) : 0;
+      const newId = lastId + 1;
+
+      const property: Property = {
+        ...insertProperty,
+        id: newId,
+        signPhoneNumber: insertProperty.signPhoneNumber || null
+      };
+
+      // Get the username
+      const user = await this.getUser(property.userId);
+      const username = user?.username || '';
+
+      // Append the property data
       await this.sheets.spreadsheets.values.append({
         spreadsheetId: this.spreadsheetId,
         range: 'Properties!A:H',
@@ -166,7 +271,6 @@ export class GoogleSheetsStorage implements IStorage {
 
   async getPropertiesByUserId(userId: number): Promise<Property[]> {
     try {
-      // Get all properties from the spreadsheet
       const response = await this.sheets.spreadsheets.values.get({
         spreadsheetId: this.spreadsheetId,
         range: 'Properties!A2:H'
@@ -174,11 +278,10 @@ export class GoogleSheetsStorage implements IStorage {
 
       const values = response.data.values || [];
 
-      // Filter and transform the data
       return values
         .filter(row => row[1] === userId.toString())
         .map((row): Property => ({
-          id: this.currentPropertyId++,
+          id: parseInt(row[0]),
           propertyId: row[0],
           userId: parseInt(row[1]),
           propertyType: row[2],
