@@ -37,14 +37,15 @@ export function setupAuth(app: Express) {
 
   const sessionSettings: session.SessionOptions = {
     secret: process.env.SESSION_SECRET,
-    resave: false,
+    resave: true,
     saveUninitialized: false,
     store: storage.sessionStore,
     cookie: {
       maxAge: 30 * 24 * 60 * 60 * 1000, // 30 days
       httpOnly: true,
-      secure: process.env.NODE_ENV === 'production',
-      sameSite: 'lax'
+      secure: false, // Set to true in production with HTTPS
+      sameSite: 'lax',
+      path: '/'
     }
   };
 
@@ -127,8 +128,14 @@ export function setupAuth(app: Express) {
           console.error("Login error after registration:", err);
           return res.status(500).json({ message: "Error logging in after registration" });
         }
-        console.log("Auto-login successful after registration for user:", user.id);
-        res.status(201).json(user);
+        req.session.save((err) => {
+          if (err) {
+            console.error("Session save error:", err);
+            return res.status(500).json({ message: "Error saving session" });
+          }
+          console.log("Auto-login successful after registration for user:", user.id);
+          res.status(201).json(user);
+        });
       });
     } catch (error: any) {
       console.error("Registration error:", error);
@@ -151,8 +158,14 @@ export function setupAuth(app: Express) {
           console.error("Session creation error:", err);
           return res.status(500).json({ message: "Error creating session" });
         }
-        console.log("Login successful, user:", user.id);
-        res.json(user);
+        req.session.save((err) => {
+          if (err) {
+            console.error("Session save error:", err);
+            return res.status(500).json({ message: "Error saving session" });
+          }
+          console.log("Login successful, user:", user.id);
+          res.json(user);
+        });
       });
     })(req, res, next);
   });
