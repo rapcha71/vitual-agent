@@ -3,7 +3,7 @@ import { useQuery } from "@tanstack/react-query";
 import { Property } from "@shared/schema";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { ChevronLeft, ChevronRight, LogOut, Plus, Shield, Book, MapPin } from "lucide-react";
+import { ChevronLeft, ChevronRight, LogOut, Plus } from "lucide-react";
 import { useLocation } from "wouter";
 
 export default function DashboardPage() {
@@ -14,7 +14,6 @@ export default function DashboardPage() {
     queryKey: ['/api/properties'],
   });
 
-  // Count properties by type
   const propertyCounts = {
     house: properties.filter(p => p.propertyType === 'house').length,
     land: properties.filter(p => p.propertyType === 'land').length,
@@ -23,7 +22,6 @@ export default function DashboardPage() {
 
   return (
     <div className="min-h-screen bg-gray-100">
-      {/* Header */}
       <header className="bg-[#F05023] px-4 py-3 flex items-center justify-between">
         <div className="flex items-center gap-2">
           <Button 
@@ -58,16 +56,13 @@ export default function DashboardPage() {
         </Button>
       </header>
 
-      {/* Main Content */}
       <main className="p-4 space-y-4">
         <div className="flex justify-between items-center">
-          <h1 className="text-2xl font-bold">Mi Panel</h1>
-          <div className="flex gap-2">
-            <Button onClick={() => setLocation("/property/new")}>
-              <Plus className="h-4 w-4 mr-2" />
-              Agregar Propiedad
-            </Button>
-          </div>
+          <h1 className="text-2xl font-bold">Bienvenido, {user?.fullName}</h1>
+          <Button onClick={() => setLocation("/property/new")}>
+            <Plus className="h-4 w-4 mr-2" />
+            Agregar Propiedad
+          </Button>
         </div>
 
         <Card>
@@ -103,16 +98,6 @@ export default function DashboardPage() {
             </div>
           </CardContent>
         </Card>
-
-        <Button 
-          variant="default" 
-          size="lg" 
-          className="w-full mt-4"
-          onClick={() => setLocation("/properties")}
-        >
-          <MapPin className="h-5 w-5 mr-2" />
-          Ver Propiedades y Mapa
-        </Button>
       </main>
     </div>
   );

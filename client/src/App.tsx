@@ -15,24 +15,6 @@ import ProfilePage from "@/pages/profile-page";
 import { ProtectedRoute } from "./lib/protected-route";
 import { Loader2 } from "lucide-react";
 
-function AdminRoute({ component: Component }: { component: () => JSX.Element }) {
-  const { user, isLoading } = useAuth();
-
-  if (isLoading) {
-    return (
-      <div className="flex items-center justify-center min-h-screen">
-        <Loader2 className="h-8 w-8 animate-spin" />
-      </div>
-    );
-  }
-
-  if (!user?.isAdmin) {
-    return <DashboardPage />;
-  }
-
-  return <Component />;
-}
-
 function Router() {
   return (
     <Switch>
@@ -43,7 +25,7 @@ function Router() {
       <ProtectedRoute path="/property/new" component={PropertyEntry} />
       <ProtectedRoute path="/property/confirmation" component={PropertyConfirmation} />
       <ProtectedRoute path="/properties" component={PropertiesPage} />
-      <Route path="/admin" component={() => <AdminRoute component={AdminPage} />} />
+      <Route path="/admin" component={AdminPage} />
       <Route component={NotFound} />
     </Switch>
   );
