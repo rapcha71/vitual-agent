@@ -51,13 +51,12 @@ export default function PropertyEntry() {
   // Update the createPropertyMutation to handle the API request properly
   const createPropertyMutation = useMutation({
     mutationFn: async (formData: any) => {
-      console.log("Starting property submission...");
-
-      // Get marker color based on property type
-      const propertyData = {
-        ...formData,
-        markerColor: MarkerColors[formData.propertyType as keyof typeof MarkerColors]
-      };
+      console.log("Starting property submission with data:", {
+        propertyType: formData.propertyType,
+        hasSignImage: !!formData.images?.sign,
+        hasPropertyImage: !!formData.images?.property,
+        location: formData.location
+      });
 
       // Show loading toast
       toast({
@@ -71,20 +70,25 @@ export default function PropertyEntry() {
           headers: {
             'Content-Type': 'application/json',
           },
-          body: JSON.stringify(propertyData),
+          body: JSON.stringify(formData),
           credentials: 'include'
         });
 
         const data = await response.json();
 
         if (!response.ok) {
-          throw new Error(data.message || 'Failed to submit property');
+          console.error("Server response error:", data);
+          throw new Error(data.message || data.error || 'Failed to submit property');
         }
 
         return data;
       } catch (error: any) {
-        console.error("Submission error:", error);
-        throw new Error(error.message || 'Failed to submit property');
+        console.error("Submission error details:", {
+          message: error.message,
+          cause: error.cause,
+          stack: error.stack
+        });
+        throw error;
       }
     },
     onSuccess: (data) => {
@@ -93,14 +97,18 @@ export default function PropertyEntry() {
 
       toast({
         title: "Success!",
-        description: "Property has been successfully added",
+        description: data.message || "Property has been successfully added",
         duration: 5000,
       });
 
       setLocation("/");
     },
-    onError: (error: Error) => {
-      console.error("Property submission error:", error);
+    onError: (error: any) => {
+      console.error("Property submission error:", {
+        message: error.message,
+        details: error.details
+      });
+
       toast({
         title: "Error",
         description: error.message || "Failed to add property. Please try again.",

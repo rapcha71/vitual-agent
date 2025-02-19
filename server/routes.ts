@@ -58,7 +58,12 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
 
     try {
-      console.log("Received property submission request");
+      console.log("Received property submission request:", {
+        propertyType: req.body.propertyType,
+        hasSignImage: !!req.body.images?.sign,
+        hasPropertyImage: !!req.body.images?.property,
+        location: req.body.location
+      });
 
       // Validate the request body
       const propertyData = insertPropertySchema.parse(req.body);
@@ -78,11 +83,16 @@ export async function registerRoutes(app: Express): Promise<Server> {
         message: "Property created successfully" 
       });
     } catch (error: any) {
-      console.error("Error creating property:", error);
+      console.error("Error creating property:", {
+        error: error.message,
+        stack: error.stack,
+        body: req.body
+      });
       return res.status(400).json({ 
         success: false,
         message: error.message || "Failed to create property",
-        error: error.toString()
+        error: error.toString(),
+        details: error.errors || error.issues || []
       });
     }
   });
