@@ -7,7 +7,7 @@ import { useForm } from "react-hook-form";
 import { useToast } from "@/hooks/use-toast";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { insertPropertySchema } from "@shared/schema";
-import { Camera, MapPin, X, Upload } from "lucide-react";
+import { Camera, MapPin, X, Upload, ChevronLeft } from "lucide-react";
 import { useLocation } from "wouter";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from "@/components/ui/dialog";
 import imageCompression from "browser-image-compression";
@@ -16,7 +16,6 @@ import { nanoid } from "nanoid";
 
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-
 
 export default function PropertyEntry() {
   const [, setLocation] = useLocation();
@@ -430,7 +429,15 @@ export default function PropertyEntry() {
   return (
     <div className="flex items-center justify-center min-h-screen bg-gray-100">
       <PhonePreview>
-        <header className="bg-[#FF5733] px-4 py-3">
+        <header className="bg-[#FF5733] px-4 py-3 relative">
+          <Button 
+            variant="ghost" 
+            className="absolute left-2 top-1/2 -translate-y-1/2 text-white hover:text-white/80"
+            onClick={() => setLocation("/")}
+          >
+            <ChevronLeft className="h-5 w-5" />
+            Atrás
+          </Button>
           <div className="flex flex-col items-center">
             <img
               src="/attached_assets/Logo de Virtual agent logo largo_upscayl_2x_realesrgan-x4plus.png"

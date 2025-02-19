@@ -1,7 +1,7 @@
 import { Button } from "@/components/ui/button";
 import { useAuth } from "@/hooks/use-auth";
 import { Link } from "wouter";
-import { Building2, Plus, LogOut, Home, MapPin, Building } from "lucide-react";
+import { Building2, Plus, LogOut, Home, MapPin, Building, ChevronLeft } from "lucide-react";
 import { useQuery } from "@tanstack/react-query";
 import { Property } from "@shared/schema";
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
@@ -25,8 +25,16 @@ export default function HomePage() {
   return (
     <div className="min-h-screen bg-background">
       <header className="border-b">
-        <div className="container mx-auto px-4 py-4 flex items-center justify-between">
-          <div className="flex items-center space-x-2">
+        <div className="container mx-auto px-4 py-4 flex items-center justify-between relative">
+          <Button 
+            variant="ghost" 
+            className="absolute left-2 text-primary hover:text-primary/80"
+            onClick={() => window.history.back()}
+          >
+            <ChevronLeft className="h-5 w-5" />
+            Atrás
+          </Button>
+          <div className="flex items-center space-x-2 ml-16">
             <Building2 className="h-6 w-6 text-primary" />
             <span className="font-bold text-lg">Virtual Agent</span>
           </div>

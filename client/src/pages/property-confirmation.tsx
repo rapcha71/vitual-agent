@@ -8,10 +8,6 @@ export default function PropertyConfirmation() {
   // Get the latest property from the query parameters
   const propertyId = new URLSearchParams(window.location.search).get('id');
 
-  const handleCloseApp = () => {
-    window.close();
-  };
-
   return (
     <div className="flex items-center justify-center min-h-screen bg-gray-100">
       <PhonePreview>
@@ -63,7 +59,7 @@ export default function PropertyConfirmation() {
               </button>
 
               <button
-                onClick={handleCloseApp}
+                onClick={() => setLocation("/")}
                 className="w-full bg-gray-600 text-white py-3 rounded-md font-semibold hover:bg-gray-700 transition-colors"
               >
                 Cerrar Aplicación
