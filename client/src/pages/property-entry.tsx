@@ -507,7 +507,7 @@ export default function PropertyEntry() {
                 <div className="grid gap-4">
                   <button
                     type="button"
-                    className="h-32 flex flex-col items-center justify-center relative border-2 border-gray-300 rounded-lg hover:border-[#F05023] transition-colors"
+                    className="h-32 flex flex-col items-center justify-center relative border-2 border-gray-300 rounded-lg hover:border-[#F05023] transition-colors bg-white/95 backdrop-blur-sm"
                     onClick={() => startCamera("sign")}
                     disabled={isCompressing}
                   >
@@ -533,7 +533,7 @@ export default function PropertyEntry() {
 
                   <button
                     type="button"
-                    className="h-32 flex flex-col items-center justify-center relative border-2 border-gray-300 rounded-lg hover:border-[#F05023] transition-colors"
+                    className="h-32 flex flex-col items-center justify-center relative border-2 border-gray-300 rounded-lg hover:border-[#F05023] transition-colors bg-white/95 backdrop-blur-sm"
                     onClick={() => startCamera("property")}
                     disabled={isCompressing}
                   >
