@@ -6,6 +6,7 @@ import { Button } from "@/components/ui/button";
 import { ChevronLeft, LogOut } from "lucide-react";
 import { useLocation } from "wouter";
 import { Table, TableBody, TableCaption, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
+import { RegulationsDialog } from "@/components/ui/regulations-dialog";
 
 export default function AdminPage() {
   const { user, logoutMutation } = useAuth();
@@ -50,6 +51,10 @@ export default function AdminPage() {
           </Button>
         </header>
 
+        <div className="flex justify-end mb-4">
+          <RegulationsDialog />
+        </div>
+
         <Card>
           <CardHeader>
             <CardTitle>Panel de Administración - Propiedades Registradas</CardTitle>
@@ -82,7 +87,7 @@ export default function AdminPage() {
                     </TableCell>
                     <TableCell>{property.signPhoneNumber || '-'}</TableCell>
                     <TableCell>
-                      {`${property.location.lat.toFixed(6)}, ${property.location.lng.toFixed(6)}`}
+                      {property.location && `${property.location.lat.toFixed(6)}, ${property.location.lng.toFixed(6)}`}
                     </TableCell>
                   </TableRow>
                 ))}
