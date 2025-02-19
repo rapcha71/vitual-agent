@@ -28,6 +28,10 @@ async function comparePasswords(supplied: string, stored: string) {
   return timingSafeEqual(hashedBuf, suppliedBuf);
 }
 
+function generateRememberToken(): string {
+  return randomBytes(32).toString('hex');
+}
+
 export function setupAuth(app: Express) {
   if (!process.env.SESSION_SECRET) {
     throw new Error(
@@ -132,7 +136,7 @@ export function setupAuth(app: Express) {
   });
 
   app.post("/api/login", (req, res, next) => {
-    passport.authenticate("local", (err: any, user: any, info: any) => {
+    passport.authenticate("local", async (err: any, user: any, info: any) => {
       if (err) {
         console.error("Authentication error:", err);
         return res.status(500).json({ message: "Internal server error" });
@@ -140,6 +144,20 @@ export function setupAuth(app: Express) {
       if (!user) {
         return res.status(401).json({ message: info?.message || "Invalid credentials" });
       }
+
+      // Handle remember me functionality
+      if (req.body.rememberMe) {
+        const rememberToken = generateRememberToken();
+        await storage.updateUserRememberToken(user.id, rememberToken);
+        // Set remember me cookie - 30 days
+        res.cookie('remember_token', rememberToken, {
+          httpOnly: true,
+          maxAge: 30 * 24 * 60 * 60 * 1000,
+          secure: process.env.NODE_ENV === 'production',
+          sameSite: 'lax'
+        });
+      }
+
       req.login(user, (err) => {
         if (err) {
           console.error("Session creation error:", err);
@@ -154,6 +172,13 @@ export function setupAuth(app: Express) {
   app.post("/api/logout", (req, res, next) => {
     const userId = req.user?.id;
     console.log("Logout attempt for user:", userId);
+
+    // Clear remember token if exists
+    if (req.cookies.remember_token) {
+      res.clearCookie('remember_token');
+      storage.updateUserRememberToken(userId, null);
+    }
+
     req.logout((err) => {
       if (err) {
         console.error("Logout error:", err);

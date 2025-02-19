@@ -25,7 +25,7 @@ setupAuth(app);
 // Add WebAuthn routes
 app.use('/api', webauthnRouter);
 
-// Logging middleware - moved after auth setup
+// Logging middleware
 app.use((req, res, next) => {
   const start = Date.now();
   const path = req.path;
@@ -37,7 +37,8 @@ app.use((req, res, next) => {
     method: req.method,
     authenticated: req.isAuthenticated?.() || false,
     session: req.session,
-    cookies: req.cookies
+    cookies: req.cookies,
+    user: req.user || null
   });
 
   const originalResJson = res.json;
@@ -53,11 +54,6 @@ app.use((req, res, next) => {
       if (capturedJsonResponse) {
         logLine += ` :: ${JSON.stringify(capturedJsonResponse)}`;
       }
-
-      if (logLine.length > 80) {
-        logLine = logLine.slice(0, 79) + "…";
-      }
-
       log(logLine);
     }
   });
@@ -68,11 +64,11 @@ app.use((req, res, next) => {
 (async () => {
   const server = await registerRoutes(app);
 
+  // Error handling middleware
   app.use((err: any, _req: Request, res: Response, _next: NextFunction) => {
     console.error('Server Error:', err); 
     const status = err.status || err.statusCode || 500;
     const message = err.message || "Internal Server Error";
-
     res.status(status).json({ message });
   });
 

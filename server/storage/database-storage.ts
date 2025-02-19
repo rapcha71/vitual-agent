@@ -33,19 +33,33 @@ export class DatabaseStorage implements IStorage {
     return user;
   }
 
+  async getUserByRememberToken(token: string): Promise<User | undefined> {
+    console.log("Getting user by remember token");
+    const [user] = await db.select().from(users).where(eq(users.rememberToken, token));
+    console.log("Found user:", user ? "Yes" : "No");
+    return user;
+  }
+
   async createUser(insertUser: InsertUser): Promise<User> {
     console.log("Creating new user:", insertUser.username);
     const [user] = await db
       .insert(users)
       .values({
         ...insertUser,
-        biometricCredentialId: null,
-        biometricPublicKey: null,
-        biometricCounter: null
+        rememberToken: null
       })
       .returning();
     console.log("User created successfully:", user);
     return user;
+  }
+
+  async updateUserRememberToken(userId: number, token: string | null): Promise<void> {
+    console.log("Updating remember token for user:", userId);
+    await db
+      .update(users)
+      .set({ rememberToken: token })
+      .where(eq(users.id, userId));
+    console.log("Remember token updated successfully");
   }
 
   async updateUserBiometricCredentials(userId: number, credentials: {

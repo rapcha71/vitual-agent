@@ -7,6 +7,7 @@ export interface IStorage {
   sessionStore: session.Store;
   getUser(id: number): Promise<User | undefined>;
   getUserByUsername(username: string): Promise<User | undefined>;
+  getUserByRememberToken(token: string): Promise<User | undefined>;
   createUser(user: InsertUser): Promise<User>;
   createProperty(property: InsertProperty & { userId: number }): Promise<Property>;
   getPropertiesByUserId(userId: number): Promise<Property[]>;
@@ -16,6 +17,7 @@ export interface IStorage {
     counter: number;
   }): Promise<void>;
   updateUserBiometricCounter(userId: number, counter: number): Promise<void>;
+  updateUserRememberToken(userId: number, token: string | null): Promise<void>;
 }
 
 // Switch to DatabaseStorage for persistent storage
