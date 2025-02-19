@@ -48,7 +48,7 @@ export class MemStorage implements IStorage {
 
   async createProperty(insertProperty: InsertProperty & { userId: number }): Promise<Property> {
     const id = this.currentPropertyId++;
-    const markerColor = MarkerColors[insertProperty.propertyType as keyof typeof PropertyType];
+    const markerColor = MarkerColors[insertProperty.propertyType];
     const property: Property = {
       ...insertProperty,
       id,

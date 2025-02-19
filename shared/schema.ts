@@ -4,16 +4,16 @@ import { z } from "zod";
 
 // Define property types enum
 export const PropertyType = {
-  HOUSE: "house",
-  LAND: "land",
-  COMMERCIAL: "commercial"
+  house: "house",
+  land: "land",
+  commercial: "commercial"
 } as const;
 
 // Define marker colors
 export const MarkerColors = {
-  [PropertyType.HOUSE]: "blue",
-  [PropertyType.LAND]: "green",
-  [PropertyType.COMMERCIAL]: "yellow"
+  house: "blue",
+  land: "green",
+  commercial: "yellow"
 } as const;
 
 export const users = pgTable("users", {
@@ -63,7 +63,7 @@ export const insertPropertySchema = createInsertSchema(properties)
     images: true
   })
   .extend({
-    propertyType: z.enum([PropertyType.HOUSE, PropertyType.LAND, PropertyType.COMMERCIAL]),
+    propertyType: z.enum([PropertyType.house, PropertyType.land, PropertyType.commercial]),
     location: LocationSchema,
     kmlData: z.string().optional(),
     markerColor: z.string()
