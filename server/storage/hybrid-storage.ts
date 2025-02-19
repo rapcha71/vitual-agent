@@ -6,13 +6,28 @@ import session from "express-session";
 
 export class HybridStorage implements IStorage {
   private dbStorage: DatabaseStorage;
-  private sheetsStorage: GoogleSheetsStorage;
+  private sheetsStorage: GoogleSheetsStorage | null = null;
   public sessionStore: session.Store;
 
   constructor() {
     this.dbStorage = new DatabaseStorage();
-    this.sheetsStorage = new GoogleSheetsStorage();
-    this.sessionStore = this.dbStorage.sessionStore; // Use PostgreSQL session store
+    this.sessionStore = this.dbStorage.sessionStore;
+
+    // Inicializar Google Sheets de manera asíncrona
+    this.initGoogleSheets().catch(error => {
+      console.error("Error initializing Google Sheets storage:", error);
+      // Continuar sin Google Sheets si hay error
+    });
+  }
+
+  private async initGoogleSheets() {
+    try {
+      this.sheetsStorage = new GoogleSheetsStorage();
+      console.log("Google Sheets storage initialized successfully");
+    } catch (error) {
+      console.error("Failed to initialize Google Sheets storage:", error);
+      this.sheetsStorage = null;
+    }
   }
 
   async getUser(id: number): Promise<User | undefined> {
@@ -29,22 +44,26 @@ export class HybridStorage implements IStorage {
 
   async createUser(user: InsertUser): Promise<User> {
     const dbUser = await this.dbStorage.createUser(user);
-    try {
-      await this.sheetsStorage.createUser(user);
-    } catch (error) {
-      console.error("Error syncing user to Google Sheets:", error);
-      // Continue even if Google Sheets sync fails
+    if (this.sheetsStorage) {
+      try {
+        await this.sheetsStorage.createUser(user);
+      } catch (error) {
+        console.error("Error syncing user to Google Sheets:", error);
+        // Continuar incluso si falla la sincronización con Google Sheets
+      }
     }
     return dbUser;
   }
 
   async createProperty(property: InsertProperty & { userId: number }): Promise<Property> {
     const dbProperty = await this.dbStorage.createProperty(property);
-    try {
-      await this.sheetsStorage.createProperty(property);
-    } catch (error) {
-      console.error("Error syncing property to Google Sheets:", error);
-      // Continue even if Google Sheets sync fails
+    if (this.sheetsStorage) {
+      try {
+        await this.sheetsStorage.createProperty(property);
+      } catch (error) {
+        console.error("Error syncing property to Google Sheets:", error);
+        // Continuar incluso si falla la sincronización con Google Sheets
+      }
     }
     return dbProperty;
   }
@@ -59,19 +78,23 @@ export class HybridStorage implements IStorage {
 
   async updateUserRememberToken(userId: number, token: string | null): Promise<void> {
     await this.dbStorage.updateUserRememberToken(userId, token);
-    try {
-      await this.sheetsStorage.updateUserRememberToken(userId, token);
-    } catch (error) {
-      console.error("Error syncing remember token to Google Sheets:", error);
+    if (this.sheetsStorage) {
+      try {
+        await this.sheetsStorage.updateUserRememberToken(userId, token);
+      } catch (error) {
+        console.error("Error syncing remember token to Google Sheets:", error);
+      }
     }
   }
 
   async updateLastLogin(userId: number): Promise<void> {
     await this.dbStorage.updateLastLogin(userId);
-    try {
-      await this.sheetsStorage.updateLastLogin(userId);
-    } catch (error) {
-      console.error("Error syncing last login to Google Sheets:", error);
+    if (this.sheetsStorage) {
+      try {
+        await this.sheetsStorage.updateLastLogin(userId);
+      } catch (error) {
+        console.error("Error syncing last login to Google Sheets:", error);
+      }
     }
   }
 }

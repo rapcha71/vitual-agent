@@ -45,7 +45,8 @@ export function setupAuth(app: Express) {
       httpOnly: true,
       secure: process.env.NODE_ENV === 'production',
       sameSite: 'lax'
-    }
+    },
+    name: 'session' // nombre explícito para la cookie
   };
 
   app.set("trust proxy", 1);
@@ -138,6 +139,8 @@ export function setupAuth(app: Express) {
   });
 
   app.post("/api/login", (req, res, next) => {
+    console.log("Received login request for:", req.body.username);
+
     passport.authenticate("local", (err: any, user: any, info: any) => {
       if (err) {
         console.error("Authentication error:", err);
@@ -145,6 +148,7 @@ export function setupAuth(app: Express) {
       }
 
       if (!user) {
+        console.log("Login failed:", info?.message);
         return res.status(401).json({ message: info?.message || "Credenciales inválidas" });
       }
 
@@ -174,6 +178,7 @@ export function setupAuth(app: Express) {
           console.error("Session destruction error:", err);
           return next(err);
         }
+        res.clearCookie('session');
         console.log("Logout successful for user:", userId);
         res.sendStatus(200);
       });
@@ -182,6 +187,9 @@ export function setupAuth(app: Express) {
 
   app.get("/api/user", (req, res) => {
     console.log("User check - authenticated:", req.isAuthenticated());
+    console.log("Session:", req.session);
+    console.log("User:", req.user);
+
     if (!req.isAuthenticated()) {
       return res.status(401).json({ message: "No autenticado" });
     }

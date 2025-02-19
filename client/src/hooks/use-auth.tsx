@@ -22,9 +22,11 @@ type AuthContextType = {
 type LoginData = Pick<InsertUser, "username" | "password">;
 
 export const AuthContext = createContext<AuthContextType | null>(null);
+
 export function AuthProvider({ children }: { children: ReactNode }) {
   const { toast } = useToast();
   const [showingLoginAnimation, setShowingLoginAnimation] = useState(false);
+
   const {
     data: user,
     error,
@@ -32,6 +34,8 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   } = useQuery<SelectUser | undefined, Error>({
     queryKey: ["/api/user"],
     queryFn: getQueryFn({ on401: "returnNull" }),
+    retry: false, // No reintentar en caso de error 401
+    staleTime: 30000, // Datos válidos por 30 segundos
   });
 
   const loginMutation = useMutation({
@@ -41,7 +45,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       if (!res.ok) {
         const error = await res.json();
         console.error("Login API error:", error);
-        throw new Error(error.message || "Invalid username or password");
+        throw new Error(error.message || "Usuario o contraseña inválidos");
       }
       const data = await res.json();
       console.log("Login successful");
@@ -58,8 +62,8 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     onError: (error: Error) => {
       console.error("Login mutation error:", error);
       toast({
-        title: "Login Failed",
-        description: error.message || "Please check your username and password",
+        title: "Error de inicio de sesión",
+        description: error.message || "Por favor verifica tu usuario y contraseña",
         variant: "destructive",
       });
     },
@@ -72,7 +76,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       if (!res.ok) {
         const error = await res.json();
         console.error("Registration API error:", error);
-        throw new Error(error.message || "Registration failed");
+        throw new Error(error.message || "Error en el registro");
       }
       const data = await res.json();
       console.log("Registration successful");
@@ -89,8 +93,8 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     onError: (error: Error) => {
       console.error("Registration mutation error:", error);
       toast({
-        title: "Registration Failed",
-        description: error.message || "Please try a different username",
+        title: "Error de registro",
+        description: error.message || "Por favor intenta con un usuario diferente",
         variant: "destructive",
       });
     },
@@ -103,18 +107,19 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       if (!res.ok) {
         const error = await res.json();
         console.error("Logout API error:", error);
-        throw new Error(error.message || "Logout failed");
+        throw new Error(error.message || "Error al cerrar sesión");
       }
     },
     onSuccess: () => {
       console.log("Logout successful, clearing user data");
       queryClient.setQueryData(["/api/user"], null);
+      queryClient.clear(); // Limpiar toda la caché al cerrar sesión
     },
     onError: (error: Error) => {
       console.error("Logout mutation error:", error);
       toast({
-        title: "Logout Failed",
-        description: error.message || "Please try again",
+        title: "Error al cerrar sesión",
+        description: error.message || "Por favor intenta nuevamente",
         variant: "destructive",
       });
     },
