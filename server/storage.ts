@@ -13,5 +13,5 @@ export interface IStorage {
   getPropertiesByUserId(userId: number): Promise<Property[]>;
 }
 
-// Now that we have proper permissions, use GoogleSheetsStorage
-export const storage: IStorage = new GoogleSheetsStorage();
+// Switch to MemStorage to handle larger image sizes
+export const storage: IStorage = new MemStorage();
