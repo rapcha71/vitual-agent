@@ -3,6 +3,7 @@ import { registerRoutes } from "./routes";
 import { setupVite, serveStatic, log } from "./vite";
 import webauthnRouter from "./routes/webauthn";
 import cors from "cors";
+import { setupAuth } from "./auth";
 
 const app = express();
 
@@ -14,12 +15,17 @@ app.use(cors({
   credentials: true
 }));
 
+// Body parsing middleware
 app.use(express.json({ limit: '50mb' }));
 app.use(express.urlencoded({ extended: false, limit: '50mb' }));
+
+// Setup authentication - this needs to be before any route that uses auth
+setupAuth(app);
 
 // Add WebAuthn routes
 app.use('/api', webauthnRouter);
 
+// Logging middleware - moved after auth setup
 app.use((req, res, next) => {
   const start = Date.now();
   const path = req.path;
@@ -29,7 +35,7 @@ app.use((req, res, next) => {
   console.log('Request:', {
     path,
     method: req.method,
-    authenticated: req.isAuthenticated(),
+    authenticated: req.isAuthenticated?.() || false,
     session: req.session,
     cookies: req.cookies
   });
