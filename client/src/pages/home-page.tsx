@@ -6,6 +6,7 @@ import { useQuery } from "@tanstack/react-query";
 import { Property } from "@shared/schema";
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
 import { motion } from "framer-motion";
+import { PhonePreview } from "@/components/ui/phone-preview";
 
 export default function HomePage() {
   const { user, logoutMutation } = useAuth();
@@ -23,127 +24,125 @@ export default function HomePage() {
   };
 
   return (
-    <div className="min-h-screen bg-background">
-      <header className="border-b">
-        <div className="container mx-auto px-4 py-4 flex items-center justify-between relative">
-          <Button 
-            variant="ghost" 
-            className="absolute left-2 text-primary hover:text-primary/80"
-            onClick={() => window.history.back()}
-          >
-            <ChevronLeft className="h-5 w-5" />
-            Atrás
-          </Button>
-          <div className="flex items-center space-x-2 ml-16">
-            <Building2 className="h-6 w-6 text-primary" />
-            <span className="font-bold text-lg">Virtual Agent</span>
-          </div>
-          <div className="flex items-center space-x-4">
-            <span className="text-sm text-muted-foreground">
-              Welcome, {user?.fullName || user?.nickname || user?.username}
-            </span>
-            <Button variant="destructive" size="sm" onClick={() => logoutMutation.mutate()}>
-              <LogOut className="h-4 w-4 mr-2" />
-              Logout
+    <div className="flex items-center justify-center min-h-screen bg-gray-100">
+      <PhonePreview>
+        <header className="bg-[#FF5733] px-4 py-3">
+          <div className="flex items-center justify-between">
+            <Button 
+              variant="ghost" 
+              className="text-white hover:text-white/80 p-0"
+              onClick={() => window.history.back()}
+            >
+              <ChevronLeft className="h-5 w-5" />
+            </Button>
+            <div className="flex items-center">
+              <Building2 className="h-5 w-5 text-white mr-2" />
+              <span className="font-semibold text-white">Virtual Agent</span>
+            </div>
+            <Button 
+              variant="ghost" 
+              size="sm" 
+              className="text-white hover:text-white/80 p-0"
+              onClick={() => logoutMutation.mutate()}
+            >
+              <LogOut className="h-5 w-5" />
             </Button>
           </div>
-        </div>
-      </header>
+        </header>
 
-      <main className="container mx-auto px-4 py-8">
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.5 }}
-          className="space-y-8"
-        >
-          {/* Welcome Section */}
-          <div className="flex justify-between items-center">
-            <div>
-              <h1 className="text-3xl font-bold">
-                Welcome to Your Dashboard
+        <main className="p-4 space-y-6">
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.5 }}
+            className="space-y-4"
+          >
+            {/* Welcome Section */}
+            <div className="space-y-2">
+              <h1 className="text-xl font-bold">
+                Bienvenido, {user?.fullName || user?.nickname || user?.username}
               </h1>
-              <p className="text-muted-foreground mt-2">
-                Manage and track your properties in one place
+              <p className="text-sm text-muted-foreground">
+                Administra y rastrea tus propiedades en un solo lugar
               </p>
+              <Link href="/property/new">
+                <Button className="w-full">
+                  <Plus className="h-4 w-4 mr-2" />
+                  Agregar Propiedad
+                </Button>
+              </Link>
             </div>
-            <Link href="/property/new">
-              <Button>
-                <Plus className="h-4 w-4 mr-2" />
-                Add Property
-              </Button>
-            </Link>
-          </div>
 
-          {/* Property Statistics */}
-          <div className="grid gap-4 md:grid-cols-3">
-            <Card>
-              <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                <CardTitle className="text-sm font-medium">
-                  Houses
-                </CardTitle>
-                <Home className="h-4 w-4 text-muted-foreground" />
-              </CardHeader>
-              <CardContent>
-                <div className="text-2xl font-bold">{propertyCounts.house}</div>
-              </CardContent>
-            </Card>
-            <Card>
-              <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                <CardTitle className="text-sm font-medium">
-                  Land Plots
-                </CardTitle>
-                <MapPin className="h-4 w-4 text-muted-foreground" />
-              </CardHeader>
-              <CardContent>
-                <div className="text-2xl font-bold">{propertyCounts.land}</div>
-              </CardContent>
-            </Card>
-            <Card>
-              <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                <CardTitle className="text-sm font-medium">
-                  Commercial Properties
-                </CardTitle>
-                <Building className="h-4 w-4 text-muted-foreground" />
-              </CardHeader>
-              <CardContent>
-                <div className="text-2xl font-bold">{propertyCounts.commercial}</div>
-              </CardContent>
-            </Card>
-          </div>
+            {/* Property Statistics */}
+            <div className="space-y-3">
+              <Card>
+                <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+                  <CardTitle className="text-sm font-medium">
+                    Casas
+                  </CardTitle>
+                  <Home className="h-4 w-4 text-muted-foreground" />
+                </CardHeader>
+                <CardContent>
+                  <div className="text-2xl font-bold">{propertyCounts.house}</div>
+                </CardContent>
+              </Card>
+              <Card>
+                <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+                  <CardTitle className="text-sm font-medium">
+                    Terrenos
+                  </CardTitle>
+                  <MapPin className="h-4 w-4 text-muted-foreground" />
+                </CardHeader>
+                <CardContent>
+                  <div className="text-2xl font-bold">{propertyCounts.land}</div>
+                </CardContent>
+              </Card>
+              <Card>
+                <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+                  <CardTitle className="text-sm font-medium">
+                    Propiedades Comerciales
+                  </CardTitle>
+                  <Building className="h-4 w-4 text-muted-foreground" />
+                </CardHeader>
+                <CardContent>
+                  <div className="text-2xl font-bold">{propertyCounts.commercial}</div>
+                </CardContent>
+              </Card>
+            </div>
 
-          {/* Properties List */}
-          <div>
-            <h2 className="text-xl font-semibold mb-4">Your Properties</h2>
-            <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
-              {properties.map((property) => (
-                <Card key={property.id}>
-                  <CardHeader>
-                    <CardTitle className="text-lg">
-                      {property.propertyType.charAt(0).toUpperCase() + property.propertyType.slice(1)}
-                    </CardTitle>
-                  </CardHeader>
-                  <CardContent>
-                    <div className="space-y-2">
-                      <p className="text-sm text-muted-foreground">
-                        ID: {property.propertyId}
-                      </p>
-                      {property.signPhoneNumber && (
-                        <p className="text-sm text-muted-foreground">
-                          Contact: {property.signPhoneNumber}
+            {/* Properties List */}
+            <div className="space-y-3">
+              <h2 className="text-lg font-semibold">Tus Propiedades</h2>
+              <div className="space-y-3">
+                {properties.map((property) => (
+                  <Card key={property.id}>
+                    <CardHeader>
+                      <CardTitle className="text-base">
+                        {property.propertyType.charAt(0).toUpperCase() + property.propertyType.slice(1)}
+                      </CardTitle>
+                    </CardHeader>
+                    <CardContent>
+                      <div className="space-y-2 text-sm">
+                        <p className="text-muted-foreground">
+                          ID: {property.propertyId}
                         </p>
-                      )}
-                      <p className="text-sm text-muted-foreground">
-                        Location: {property.location.lat.toFixed(6)}, {property.location.lng.toFixed(6)}
-                      </p>
-                    </div>
-                  </CardContent>
-                </Card>
-              ))}
+                        {property.signPhoneNumber && (
+                          <p className="text-muted-foreground">
+                            Contacto: {property.signPhoneNumber}
+                          </p>
+                        )}
+                        <p className="text-muted-foreground">
+                          Ubicación: {property.location?.lat.toFixed(6)}, {property.location?.lng.toFixed(6)}
+                        </p>
+                      </div>
+                    </CardContent>
+                  </Card>
+                ))}
+              </div>
             </div>
-          </div>
-        </motion.div>
-      </main>
+          </motion.div>
+        </main>
+      </PhonePreview>
     </div>
   );
 }
