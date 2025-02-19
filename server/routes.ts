@@ -10,6 +10,32 @@ import { GoogleSheetsStorage } from "./storage/google-sheets";
 export async function registerRoutes(app: Express): Promise<Server> {
   setupAuth(app);
 
+  // Add OCR test endpoint
+  app.post("/api/test-ocr", async (req, res) => {
+    try {
+      if (!req.isAuthenticated()) {
+        return res.status(401).json({ message: "Unauthorized" });
+      }
+
+      const { image } = req.body;
+      if (!image) {
+        return res.status(400).json({ message: "No image provided" });
+      }
+
+      console.log("Testing OCR functionality...");
+      const result = await ocrService.testOCR(image);
+      console.log("OCR test result:", result);
+
+      res.json(result);
+    } catch (error: any) {
+      console.error("Error testing OCR:", error);
+      res.status(500).json({ 
+        success: false, 
+        message: error.message || "Failed to process image" 
+      });
+    }
+  });
+
   // Temporary route to get service account email
   app.get("/api/service-account-email", (req, res) => {
     try {
