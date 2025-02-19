@@ -21,7 +21,6 @@ import { useToast } from "@/hooks/use-toast";
 export default function AuthPage() {
   const { user, loginMutation, registerMutation } = useAuth();
   const { toast } = useToast();
-  const [isSubmitting, setIsSubmitting] = useState(false);
 
   const loginForm = useForm({
     resolver: zodResolver(insertUserSchema.pick({ username: true, password: true })),
@@ -43,10 +42,8 @@ export default function AuthPage() {
   });
 
   const handleLogin = async (data: any) => {
-    if (isSubmitting) return;
-
     try {
-      setIsSubmitting(true);
+      console.log("Iniciando proceso de login", data);
       await loginMutation.mutateAsync(data);
       toast({
         title: "Inicio de sesión exitoso",
@@ -59,16 +56,12 @@ export default function AuthPage() {
         description: error.message || "Por favor verifica tus credenciales",
         variant: "destructive",
       });
-    } finally {
-      setIsSubmitting(false);
     }
   };
 
   const handleRegister = async (data: any) => {
-    if (isSubmitting) return;
-
     try {
-      setIsSubmitting(true);
+      console.log("Iniciando proceso de registro", data);
       await registerMutation.mutateAsync(data);
       toast({
         title: "Registro exitoso",
@@ -81,13 +74,12 @@ export default function AuthPage() {
         description: error.message || "No se pudo completar el registro",
         variant: "destructive",
       });
-    } finally {
-      setIsSubmitting(false);
     }
   };
 
-  // Solo redirigir si el usuario está autenticado y no hay operaciones pendientes
-  if (user && !isSubmitting) {
+  // Redirigir si el usuario está autenticado
+  if (user) {
+    console.log("Usuario autenticado, redirigiendo a home");
     return <Redirect to="/" />;
   }
 
@@ -151,9 +143,9 @@ export default function AuthPage() {
                   <Button 
                     type="submit" 
                     className="w-full bg-[#FF5733] hover:bg-[#FF5733]/90"
-                    disabled={isSubmitting}
+                    disabled={loginMutation.isPending}
                   >
-                    {isSubmitting ? "Iniciando sesión..." : "Iniciar Sesión"}
+                    {loginMutation.isPending ? "Iniciando sesión..." : "Iniciar Sesión"}
                   </Button>
                 </form>
               </Form>
@@ -247,9 +239,9 @@ export default function AuthPage() {
                   <Button 
                     type="submit" 
                     className="w-full bg-[#FF5733] hover:bg-[#FF5733]/90"
-                    disabled={isSubmitting}
+                    disabled={registerMutation.isPending}
                   >
-                    {isSubmitting ? "Registrando..." : "Registrarse"}
+                    {registerMutation.isPending ? "Registrando..." : "Registrarse"}
                   </Button>
                 </form>
               </Form>
