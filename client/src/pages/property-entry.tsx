@@ -7,15 +7,14 @@ import { useForm } from "react-hook-form";
 import { useToast } from "@/hooks/use-toast";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { insertPropertySchema } from "@shared/schema";
-import { Camera, MapPin, X, Upload, ChevronLeft, LogOut } from "lucide-react"; // Added LogOut import
+import { Camera, MapPin, X, Upload, ChevronLeft, LogOut } from "lucide-react";
 import { useLocation } from "wouter";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from "@/components/ui/dialog";
 import imageCompression from "browser-image-compression";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { nanoid } from "nanoid";
-
 import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Card, CardContent } from "@/components/ui/card";
 
 export default function PropertyEntry() {
   const [, setLocation] = useLocation();
@@ -30,7 +29,10 @@ export default function PropertyEntry() {
   const videoRef = useRef<HTMLVideoElement>(null);
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
-  const [ocrTestResult, setOcrTestResult] = useState<{ extractedText?: string; phoneNumbers?: string[] } | null>(null);
+  const [ocrTestResult, setOcrTestResult] = useState<{
+    extractedText?: string;
+    phoneNumbers?: string[];
+  } | null>(null);
   const [showOcrDialog, setShowOcrDialog] = useState(false);
 
   const form = useForm({
@@ -45,84 +47,54 @@ export default function PropertyEntry() {
     }
   });
 
-  const createPropertyMutation = useMutation({
-    mutationFn: async (formData: any) => {
-      console.log("Starting property submission with data:", {
-        propertyType: formData.propertyType,
-        hasSignImage: !!formData.images?.sign,
-        hasPropertyImage: !!formData.images?.property,
-        location: formData.location
-      });
-
+  const testOCR = async () => {
+    const signImage = form.watch("images.sign");
+    if (!signImage) {
       toast({
-        title: "Uploading",
-        description: "Please wait while we save your property...",
+        title: "No Sign Image",
+        description: "Please capture a sign photo first",
+        variant: "destructive"
+      });
+      return;
+    }
+
+    try {
+      const response = await fetch('/api/test-ocr', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ image: signImage }),
+        credentials: 'include'
       });
 
-      try {
-        const response = await fetch('/api/properties', {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-          },
-          body: JSON.stringify(formData),
-          credentials: 'include'
-        });
-
-        const data = await response.json();
-
-        if (!response.ok) {
-          console.error("Server response error:", data);
-          // Check for duplicate property error
-          if (data.duplicateProperties) {
-            toast({
-              title: "Propiedad Duplicada",
-              description: data.message,
-              variant: "destructive",
-              duration: 10000,
-            });
-            return;
-          }
-          throw new Error(data.message || data.error || 'Failed to submit property');
+      const result = await response.json();
+      if (result.success) {
+        setOcrTestResult(result);
+        if (result.phoneNumbers?.[0]) {
+          form.setValue('signPhoneNumber', result.phoneNumbers[0]);
+          toast({
+            title: "Phone Number Detected",
+            description: `Found phone number: ${result.phoneNumbers[0]}`,
+          });
         }
-
-        return data;
-      } catch (error: any) {
-        console.error("Submission error details:", {
-          message: error.message,
-          cause: error.cause,
-          stack: error.stack
+        setShowOcrDialog(true);
+      } else {
+        toast({
+          title: "OCR Test Failed",
+          description: result.message || "Failed to process image",
+          variant: "destructive"
         });
-        throw error;
       }
-    },
-    onSuccess: (data) => {
-      console.log("Property submission successful:", data);
-      queryClient.invalidateQueries({ queryKey: ['/api/properties'] });
-
+    } catch (error) {
+      console.error('Error testing OCR:', error);
       toast({
-        title: "Success!",
-        description: data.message || "Property has been successfully added",
-        duration: 5000,
-      });
-
-      // Redirect to confirmation page with property ID
-      setLocation(`/confirmation?id=${data.property.propertyId}`);
-    },
-    onError: (error: any) => {
-      console.error("Property submission error:", {
-        message: error.message,
-        details: error.details
-      });
-
-      toast({
-        title: "Error",
-        description: error.message || "Failed to add property. Please try again.",
-        variant: "destructive",
-        duration: 5000,
+        title: "OCR Test Error",
+        description: "Failed to test OCR functionality",
+        variant: "destructive"
       });
     }
-  });
+  };
 
   const getDevices = async () => {
     try {
@@ -278,9 +250,7 @@ export default function PropertyEntry() {
         useWebWorker: true,
         initialQuality: 0.8,
         alwaysKeepResolution: false,
-        onProgress: (progress: number) => {
-          console.log('Compression progress:', progress);
-        }      };
+      };
 
       const compressedFile = await imageCompression(file, options);
 
@@ -349,6 +319,22 @@ export default function PropertyEntry() {
     }
   };
 
+  const createPropertyMutation = useMutation({
+    mutationFn: async (data: any) => {
+      await fetch('/api/properties', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(data),
+        credentials: 'include'
+      });
+      queryClient.invalidateQueries({ queryKey: ['properties'] });
+      setLocation('/');
+    }
+  });
+
+
   const onSubmit = async (data: any) => {
     try {
       console.log("Form submission started");
@@ -393,54 +379,12 @@ export default function PropertyEntry() {
     }
   };
 
-  const testOCR = async () => {
-    const signImage = form.getValues("images.sign");
-    if (!signImage) {
-      toast({
-        title: "No Sign Image",
-        description: "Please capture a sign photo first",
-        variant: "destructive"
-      });
-      return;
-    }
-
-    try {
-      const response = await fetch('/api/test-ocr', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ image: signImage }),
-        credentials: 'include'
-      });
-
-      const result = await response.json();
-      if (result.success) {
-        setOcrTestResult(result);
-        setShowOcrDialog(true);
-      } else {
-        toast({
-          title: "OCR Test Failed",
-          description: result.message || "Failed to process image",
-          variant: "destructive"
-        });
-      }
-    } catch (error) {
-      console.error('Error testing OCR:', error);
-      toast({
-        title: "OCR Test Error",
-        description: "Failed to test OCR functionality",
-        variant: "destructive"
-      });
-    }
-  };
-
   const logoutMutation = useMutation({
     mutationFn: async () => {
       await fetch('/api/auth/logout', { method: 'POST', credentials: 'include' });
       setLocation('/');
     }
-  })
+  });
 
   return (
     <div className="flex items-center justify-center min-h-screen bg-gray-100">

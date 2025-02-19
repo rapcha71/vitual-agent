@@ -47,12 +47,39 @@ export class OCRService {
 
   async extractPhoneNumbers(text: string): Promise<string[]> {
     console.log('Extracting phone numbers from text:', text);
-    // Match various phone number formats
-    const phoneRegex = /(?:(?:\+?1\s*(?:[.-]\s*)?)?(?:\(\s*([0-9]{3})\s*\)|([0-9]{3}))\s*(?:[.-]\s*)?([0-9]{3})\s*(?:[.-]\s*)?([0-9]{4}))/g;
-    const matches = text.match(phoneRegex) || [];
-    const phoneNumbers = matches.map(number => number.replace(/\D/g, ''));
-    console.log('Found phone numbers:', phoneNumbers);
-    return phoneNumbers;
+
+    // Expresión regular para números de teléfono de Costa Rica (8 dígitos)
+    // Acepta formatos:
+    // - 8888-8888
+    // - 88888888
+    // - 8888 8888
+    const phoneRegex = /(?:[\s-]*[2-8][0-9]{3}[\s-]*[0-9]{4})/g;
+
+    // Limpiar el texto: eliminar espacios extra y caracteres especiales
+    const cleanText = text.replace(/[^\d\s-]/g, '');
+    console.log('Cleaned text for phone extraction:', cleanText);
+
+    const matches = cleanText.match(phoneRegex) || [];
+
+    // Procesar y formatear los números encontrados
+    const phoneNumbers = matches.map(number => {
+      // Eliminar todos los caracteres no numéricos
+      const digits = number.replace(/\D/g, '');
+
+      // Verificar que sea un número válido de 8 dígitos
+      if (digits.length === 8) {
+        return digits;
+      }
+      return null;
+    })
+    .filter((number): number is string => 
+      number !== null && 
+      number.length === 8 && 
+      ['2', '3', '4', '5', '6', '7', '8'].includes(number[0])
+    );
+
+    console.log('Found valid phone numbers:', phoneNumbers);
+    return [...new Set(phoneNumbers)]; // Eliminar duplicados
   }
 
   // Test method to verify OCR functionality

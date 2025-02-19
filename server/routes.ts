@@ -72,7 +72,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
       const propertyId = nanoid();
 
       // Extract text from sign image if present
-      let extractedPhoneNumber = '';
+      let extractedPhoneNumber = null;
       if (propertyData.images.sign) {
         try {
           const extractedText = await ocrService.extractTextFromBase64Image(propertyData.images.sign);
@@ -142,7 +142,6 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
-
   // Add OCR test endpoint
   app.post("/api/test-ocr", async (req, res) => {
     try {
@@ -156,10 +155,19 @@ export async function registerRoutes(app: Express): Promise<Server> {
       }
 
       console.log("Testing OCR functionality...");
-      const result = await ocrService.testOCR(image);
-      console.log("OCR test result:", result);
+      const extractedText = await ocrService.extractTextFromBase64Image(image);
+      const phoneNumbers = await ocrService.extractPhoneNumbers(extractedText);
 
-      res.json(result);
+      console.log("OCR test result:", {
+        extractedText,
+        phoneNumbers
+      });
+
+      res.json({
+        success: true,
+        extractedText,
+        phoneNumbers
+      });
     } catch (error: any) {
       console.error("Error testing OCR:", error);
       res.status(500).json({
