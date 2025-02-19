@@ -13,7 +13,5 @@ export interface IStorage {
   getPropertiesByUserId(userId: number): Promise<Property[]>;
 }
 
-// Use GoogleSheetsStorage if credentials are available, otherwise fall back to MemStorage
-export const storage: IStorage = process.env.GOOGLE_SHEETS_CREDENTIALS
-  ? new GoogleSheetsStorage()
-  : new MemStorage();
+// For now, use MemStorage as the credentials need to be fixed
+export const storage: IStorage = new MemStorage();

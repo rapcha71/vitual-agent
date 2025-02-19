@@ -8,6 +8,34 @@ import { nanoid } from "nanoid";
 export async function registerRoutes(app: Express): Promise<Server> {
   setupAuth(app);
 
+  // Example of custom session data management
+  app.post("/api/session/custom", (req, res) => {
+    if (!req.isAuthenticated()) {
+      return res.status(401).send("Unauthorized");
+    }
+
+    // Set custom session data
+    req.session.customData = {
+      lastAccessed: new Date(),
+      customField: req.body.customField
+    };
+
+    res.json({ message: "Session updated with custom data" });
+  });
+
+  // Get session data
+  app.get("/api/session/info", (req, res) => {
+    if (!req.isAuthenticated()) {
+      return res.status(401).send("Unauthorized");
+    }
+
+    res.json({
+      sessionID: req.sessionID,
+      customData: req.session.customData || {},
+      user: req.user
+    });
+  });
+
   app.post("/api/properties", async (req, res) => {
     if (!req.isAuthenticated()) {
       return res.status(401).send("Unauthorized");
