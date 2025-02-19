@@ -1,8 +1,12 @@
 import { PhonePreview } from "@/components/ui/phone-preview";
 import { useLocation } from "wouter";
+import { useQuery } from "@tanstack/react-query";
 
 export default function PropertyConfirmation() {
   const [, setLocation] = useLocation();
+
+  // Get the latest property from the query parameters
+  const propertyId = new URLSearchParams(window.location.search).get('id');
 
   const handleCloseApp = () => {
     window.close();
@@ -30,13 +34,13 @@ export default function PropertyConfirmation() {
             <div className="bg-white shadow-lg rounded-lg p-6 text-center">
               <div className="mb-4">
                 <p className="text-xl font-semibold text-[#FF5733]">
-                  Felicidades has ingresado una nueva propiedad con exito!
+                  ¡Felicidades! Tu propiedad ha sido registrada con éxito
                 </p>
               </div>
 
               <div className="mt-8">
                 <p className="text-lg font-medium">El ID de tu propiedad es:</p>
-                <p className="text-3xl font-bold mt-2 text-[#FF5733]">193407</p>
+                <p className="text-3xl font-bold mt-2 text-[#FF5733]">{propertyId}</p>
               </div>
 
               <div className="mt-6">

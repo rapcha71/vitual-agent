@@ -97,7 +97,8 @@ export default function PropertyEntry() {
         duration: 5000,
       });
 
-      setLocation("/");
+      // Redirect to confirmation page with property ID
+      setLocation(`/confirmation?id=${data.property.propertyId}`);
     },
     onError: (error: any) => {
       console.error("Property submission error:", {
