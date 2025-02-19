@@ -18,6 +18,18 @@ export default function AdminWebPage() {
   const [map, setMap] = useState<google.maps.Map | null>(null);
   const [mapLoading, setMapLoading] = useState(true);
 
+  // Si el usuario no es administrador, redirigir al dashboard
+  useEffect(() => {
+    if (user && !user.isAdmin) {
+      setLocation("/dashboard");
+    }
+  }, [user, setLocation]);
+
+  // Si no hay usuario autenticado, no renderizar nada
+  if (!user) {
+    return null;
+  }
+
   // Optimized query with proper configuration
   const { data: properties = [], isLoading } = useQuery<PropertyWithUser[]>({
     queryKey: ['/api/admin/properties'],
@@ -79,11 +91,6 @@ export default function AdminWebPage() {
     }
   }, [properties]);
 
-  // Si el usuario no es administrador, redirigir al dashboard
-  if (!user?.isAdmin) {
-    setLocation("/dashboard");
-    return null;
-  }
 
   // Contar propiedades por tipo
   const propertyCounts = {
