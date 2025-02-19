@@ -26,7 +26,8 @@ export const users = pgTable("users", {
   isAdmin: boolean("is_admin").notNull().default(false),
   biometricCredentialId: text("biometric_credential_id"),
   biometricPublicKey: text("biometric_public_key"),
-  biometricCounter: integer("biometric_counter")
+  biometricCounter: integer("biometric_counter"),
+  biometricEnabled: boolean("biometric_enabled").notNull().default(false)
 });
 
 export const properties = pgTable("properties", {

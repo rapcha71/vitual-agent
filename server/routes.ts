@@ -6,7 +6,7 @@ import { insertPropertySchema } from "@shared/schema";
 import { nanoid } from "nanoid";
 import ocrService from "./services/ocr";
 import { GoogleSheetsStorage } from "./storage/google-sheets";
-import { 
+import {
   generateRegistrationOptions,
   verifyRegistrationResponse,
   generateAuthenticationOptions,
@@ -15,7 +15,7 @@ import {
   type GenerateAuthenticationOptionsOpts,
   type VerifyRegistrationResponseOpts,
   type VerifyAuthenticationResponseOpts,
-  type AuthenticatorTransport 
+  type AuthenticatorTransport
 } from "@simplewebauthn/server";
 
 export async function registerRoutes(app: Express): Promise<Server> {
@@ -112,7 +112,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
       }
 
       if (!user.biometricCredentialId || !user.biometricPublicKey) {
-        return res.status(400).json({ 
+        return res.status(400).json({
           message: "No biometric credentials found. Please set up biometric login first by logging in with your password and clicking 'Set Up Biometric Login'."
         });
       }
@@ -137,7 +137,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
       res.json(options);
     } catch (error) {
       console.error("Error generating authentication options:", error);
-      res.status(500).json({ 
+      res.status(500).json({
         message: "Failed to generate authentication options. Please try again or use password login."
       });
     }
@@ -197,11 +197,34 @@ export async function registerRoutes(app: Express): Promise<Server> {
       await req.session.save();
     } catch (error) {
       console.error("Error verifying authentication:", error);
-      res.status(400).json({ 
-        message: error instanceof Error ? error.message : "Failed to verify authentication" 
+      res.status(400).json({
+        message: error instanceof Error ? error.message : "Failed to verify authentication"
       });
     }
   });
+
+  // Add biometric status endpoint
+  app.post("/api/webauthn/status", async (req, res) => {
+    try {
+      const { username } = req.body;
+      if (!username) {
+        return res.status(400).json({ message: "Username is required" });
+      }
+
+      const user = await storage.getUserByUsername(username);
+      if (!user) {
+        return res.status(400).json({ message: "User not found" });
+      }
+
+      res.json({
+        enabled: user.biometricEnabled && !!user.biometricCredentialId && !!user.biometricPublicKey
+      });
+    } catch (error) {
+      console.error("Error checking biometric status:", error);
+      res.status(500).json({ message: "Failed to check biometric status" });
+    }
+  });
+
 
   // Add OCR test endpoint
   app.post("/api/test-ocr", async (req, res) => {
@@ -222,9 +245,9 @@ export async function registerRoutes(app: Express): Promise<Server> {
       res.json(result);
     } catch (error: any) {
       console.error("Error testing OCR:", error);
-      res.status(500).json({ 
-        success: false, 
-        message: error.message || "Failed to process image" 
+      res.status(500).json({
+        success: false,
+        message: error.message || "Failed to process image"
       });
     }
   });
@@ -314,10 +337,10 @@ export async function registerRoutes(app: Express): Promise<Server> {
       });
 
       console.log("Property created successfully:", property.propertyId);
-      return res.status(201).json({ 
+      return res.status(201).json({
         success: true,
         property,
-        message: "Property created successfully" 
+        message: "Property created successfully"
       });
     } catch (error: any) {
       console.error("Error creating property:", {
@@ -325,7 +348,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
         stack: error.stack,
         body: req.body
       });
-      return res.status(400).json({ 
+      return res.status(400).json({
         success: false,
         message: error.message || "Failed to create property",
         error: error.toString(),

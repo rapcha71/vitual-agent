@@ -59,6 +59,7 @@ export class DatabaseStorage implements IStorage {
         biometricCredentialId: credentials.credentialID.toString('base64'),
         biometricPublicKey: credentials.publicKey.toString('base64'),
         biometricCounter: credentials.counter,
+        biometricEnabled: true,
       })
       .where(eq(users.id, userId));
   }
