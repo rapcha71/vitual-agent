@@ -1,12 +1,13 @@
 import { Button } from "@/components/ui/button";
 import { useAuth } from "@/hooks/use-auth";
 import { Link } from "wouter";
-import { Building2, Plus, LogOut, Home, MapPin, Building, ChevronLeft } from "lucide-react";
+import { Building2, Plus, LogOut, Home, MapPin, Building, ChevronLeft, Book } from "lucide-react";
 import { useQuery } from "@tanstack/react-query";
 import { Property } from "@shared/schema";
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
 import { motion } from "framer-motion";
 import { PhonePreview } from "@/components/ui/phone-preview";
+import { RegulationsDialog } from "@/components/ui/regulations-dialog";
 
 export default function HomePage() {
   const { user, logoutMutation } = useAuth();
@@ -68,12 +69,15 @@ export default function HomePage() {
               <p className="text-sm text-muted-foreground">
                 Administra y rastrea tus propiedades en un solo lugar
               </p>
-              <Link href="/property/new">
-                <Button className="w-full">
-                  <Plus className="h-4 w-4 mr-2" />
-                  Agregar Propiedad
-                </Button>
-              </Link>
+              <div className="flex flex-col gap-2">
+                <Link href="/property/new">
+                  <Button className="w-full">
+                    <Plus className="h-4 w-4 mr-2" />
+                    Agregar Propiedad
+                  </Button>
+                </Link>
+                <RegulationsDialog />
+              </div>
             </div>
 
             {/* Property Statistics */}
@@ -137,7 +141,7 @@ export default function HomePage() {
                           </p>
                         )}
                         <p className="text-muted-foreground">
-                          Ubicación: {property.location?.lat.toFixed(6)}, {property.location?.lng.toFixed(6)}
+                          Ubicación: {property.location && `${property.location.lat.toFixed(6)}, ${property.location.lng.toFixed(6)}`}
                         </p>
                       </div>
                     </CardContent>
