@@ -13,5 +13,5 @@ export interface IStorage {
   getPropertiesByUserId(userId: number): Promise<Property[]>;
 }
 
-// For now, use MemStorage as the credentials need to be fixed
+// For now, use MemStorage while we fix Google Sheets permissions
 export const storage: IStorage = new MemStorage();
