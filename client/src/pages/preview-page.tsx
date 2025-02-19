@@ -8,7 +8,7 @@ export default function PreviewPage() {
         {/* Header */}
         <header className="sticky top-0 z-10 bg-primary px-4 py-3 shadow-sm">
           <img 
-            src="/Logo de Virtual agent logo largo_upscayl_2x_realesrgan-x4plus.png" 
+            src="/attached_assets/Logo de Virtual agent logo largo_upscayl_2x_realesrgan-x4plus.png" 
             alt="Virtual Agent Logo"
             className="w-36 mx-auto"
           />
