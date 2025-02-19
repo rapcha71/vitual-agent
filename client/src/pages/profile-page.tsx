@@ -23,7 +23,7 @@ export default function ProfilePage() {
             </Button>
             <div className="flex items-center">
               <img 
-                src="/attached_assets/Logo de Virtual agent logo upscayl.png"
+                src="attached_assets/Logo de Virtual agent logo upscayl.png"
                 alt="Virtual Agent"
                 className="h-10 w-auto"
               />
