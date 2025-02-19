@@ -5,6 +5,15 @@ import { IStorage } from "../storage";
 
 const MemoryStore = createMemoryStore(session);
 
+// Create a singleton instance to persist data across reloads
+let usersMap = new Map<number, User>();
+let propertiesMap = new Map<number, Property>();
+let currentUserId = 1;
+let currentPropertyId = 1;
+let memStore = new MemoryStore({
+  checkPeriod: 86400000 // 24 hours
+});
+
 export class MemStorage implements IStorage {
   private users: Map<number, User>;
   private properties: Map<number, Property>;
@@ -13,20 +22,19 @@ export class MemStorage implements IStorage {
   private currentPropertyId: number;
 
   constructor() {
-    this.users = new Map();
-    this.properties = new Map();
-    this.currentUserId = 1;
-    this.currentPropertyId = 1;
-    this.sessionStore = new MemoryStore({
-      checkPeriod: 86400000
-    });
+    // Use the singleton instance
+    this.users = usersMap;
+    this.properties = propertiesMap;
+    this.currentUserId = currentUserId;
+    this.currentPropertyId = currentPropertyId;
+    this.sessionStore = memStore;
   }
 
   async getUser(id: number): Promise<User | undefined> {
     console.log("Getting user by ID:", id);
     const user = this.users.get(id);
     console.log("Found user:", user ? "Yes" : "No");
-    return this.users.get(id);
+    return user;
   }
 
   async getUserByUsername(username: string): Promise<User | undefined> {
@@ -41,6 +49,8 @@ export class MemStorage implements IStorage {
   async createUser(insertUser: InsertUser): Promise<User> {
     console.log("Creating new user:", insertUser.username);
     const id = this.currentUserId++;
+    currentUserId = this.currentUserId; // Update singleton
+
     const user: User = {
       ...insertUser,
       id,
@@ -49,13 +59,17 @@ export class MemStorage implements IStorage {
       nickname: insertUser.nickname ?? null,
       isAdmin: insertUser.isAdmin ?? false
     };
+
     this.users.set(id, user);
+    usersMap = this.users; // Update singleton
     console.log("User created successfully:", user);
     return user;
   }
 
   async createProperty(insertProperty: InsertProperty & { userId: number }): Promise<Property> {
     const id = this.currentPropertyId++;
+    currentPropertyId = this.currentPropertyId; // Update singleton
+
     const markerColor = MarkerColors[insertProperty.propertyType as keyof typeof PropertyType];
     const property: Property = {
       ...insertProperty,
@@ -64,7 +78,9 @@ export class MemStorage implements IStorage {
       kmlData: insertProperty.kmlData ?? null,
       markerColor
     };
+
     this.properties.set(id, property);
+    propertiesMap = this.properties; // Update singleton
     return property;
   }
 
