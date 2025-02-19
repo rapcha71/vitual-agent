@@ -10,12 +10,14 @@ import { rpID, rpName, origin } from '../config';
 
 const router = Router();
 
-router.post('/webauthn/register-options', async (req, res) => {
-  if (!req.user) {
-    return res.status(401).json({ message: 'Not authenticated' });
+// Add WebAuthn registration endpoint
+router.post('/webauthn/register', async (req, res) => {
+  if (!req.isAuthenticated()) {
+    return res.status(401).json({ message: "Unauthorized" });
   }
 
   try {
+    console.log("Generating registration options for user:", req.user.username);
     const options = await generateRegistrationOptions({
       rpName,
       rpID,
@@ -29,25 +31,29 @@ router.post('/webauthn/register-options', async (req, res) => {
       }
     });
 
-    req.session.currentChallenge = options.challenge;
+    // Store challenge in session for verification
+    req.session.challenge = options.challenge;
     await req.session.save();
 
+    console.log("Registration options generated successfully");
     res.json(options);
   } catch (error) {
-    console.error('Error generating registration options:', error);
-    res.status(500).json({ message: 'Failed to generate registration options' });
+    console.error("Error generating registration options:", error);
+    res.status(500).json({ message: "Failed to generate registration options" });
   }
 });
 
-router.post('/webauthn/register-verify', async (req, res) => {
-  if (!req.user) {
-    return res.status(401).json({ message: 'Not authenticated' });
+// Add WebAuthn registration verification endpoint
+router.post('/webauthn/register/verify', async (req, res) => {
+  if (!req.isAuthenticated()) {
+    return res.status(401).json({ message: "Unauthorized" });
   }
 
   try {
-    const expectedChallenge = req.session.currentChallenge;
+    console.log("Verifying registration response");
+    const expectedChallenge = req.session.challenge;
     if (!expectedChallenge) {
-      throw new Error('No challenge found in session');
+      throw new Error("No challenge found in session");
     }
 
     const verification = await verifyRegistrationResponse({
@@ -58,24 +64,26 @@ router.post('/webauthn/register-verify', async (req, res) => {
     });
 
     if (verification.verified && verification.registrationInfo) {
-      const { credentialPublicKey, credentialID, counter } = verification.registrationInfo;
+      const { credentialID, credentialPublicKey, counter } = verification.registrationInfo;
 
+      // Store the credential in the database
       await storage.updateUserBiometricCredentials(req.user.id, {
         credentialID: Buffer.from(credentialID),
         publicKey: Buffer.from(credentialPublicKey),
         counter,
       });
 
-      delete req.session.currentChallenge;
+      delete req.session.challenge;
       await req.session.save();
 
+      console.log("Registration verified successfully");
       res.json({ verified: true });
     } else {
-      throw new Error('Verification failed');
+      throw new Error("Verification failed");
     }
   } catch (error) {
-    console.error('Error verifying registration:', error);
-    res.status(400).json({ message: 'Failed to verify registration' });
+    console.error("Error verifying registration:", error);
+    res.status(400).json({ message: "Failed to verify registration" });
   }
 });
 

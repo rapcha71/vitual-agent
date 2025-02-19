@@ -66,7 +66,7 @@ export class GoogleSheetsStorage implements IStorage {
         // Add Users headers
         await this.sheets.spreadsheets.values.update({
           spreadsheetId: this.spreadsheetId,
-          range: 'Users!A1:H1',
+          range: 'Users!A1:K1', // Extended range to include biometric fields
           valueInputOption: 'RAW',
           requestBody: {
             values: [[
@@ -77,11 +77,16 @@ export class GoogleSheetsStorage implements IStorage {
               'Mobile',
               'Nickname',
               'Is Admin',
-              'Created At'
+              'Created At',
+              'Biometric Credential ID',
+              'Biometric Public Key',
+              'Biometric Counter',
+              'Biometric Enabled'
             ]]
           }
         });
       }
+
 
       // Initialize Properties sheet if it doesn't exist
       if (!sheetTitles.includes('Properties')) {
@@ -131,7 +136,7 @@ export class GoogleSheetsStorage implements IStorage {
     try {
       const response = await this.sheets.spreadsheets.values.get({
         spreadsheetId: this.spreadsheetId,
-        range: 'Users!A2:H'
+        range: 'Users!A2:K' // Extended range to include biometric fields
       });
 
       const values = response.data.values || [];
@@ -158,7 +163,7 @@ export class GoogleSheetsStorage implements IStorage {
     try {
       const response = await this.sheets.spreadsheets.values.get({
         spreadsheetId: this.spreadsheetId,
-        range: 'Users!A2:H'
+        range: 'Users!A2:K' // Extended range to include biometric fields
       });
 
       const values = response.data.values || [];
@@ -205,7 +210,7 @@ export class GoogleSheetsStorage implements IStorage {
       // Append the new user
       await this.sheets.spreadsheets.values.append({
         spreadsheetId: this.spreadsheetId,
-        range: 'Users!A:H',
+        range: 'Users!A:K', // Extended range to include biometric fields
         valueInputOption: 'RAW',
         requestBody: {
           values: [[
@@ -216,7 +221,11 @@ export class GoogleSheetsStorage implements IStorage {
             user.mobile || '',
             user.nickname || '',
             user.isAdmin ? 'TRUE' : 'FALSE',
-            new Date().toISOString()
+            new Date().toISOString(),
+            '', // Biometric Credential ID
+            '', // Biometric Public Key
+            0,   // Biometric Counter
+            'FALSE' // Biometric Enabled
           ]]
         }
       });
@@ -305,6 +314,77 @@ export class GoogleSheetsStorage implements IStorage {
         }));
     } catch (error) {
       console.error('Error getting properties:', error);
+      throw error;
+    }
+  }
+
+  async updateUserBiometricCredentials(userId: number, credentials: {
+    credentialID: Buffer;
+    publicKey: Buffer;
+    counter: number;
+  }): Promise<void> {
+    try {
+      const user = await this.getUser(userId);
+      if (!user) throw new Error('User not found');
+
+      // Find the user's row
+      const response = await this.sheets.spreadsheets.values.get({
+        spreadsheetId: this.spreadsheetId,
+        range: 'Users!A2:A'
+      });
+
+      const values = response.data.values || [];
+      const rowIndex = values.findIndex(row => parseInt(row[0]) === userId) + 2; // Add 2 for header and 0-based index
+
+      if (rowIndex < 2) throw new Error('User row not found');
+
+      // Update the biometric fields
+      await this.sheets.spreadsheets.values.update({
+        spreadsheetId: this.spreadsheetId,
+        range: `Users!I${rowIndex}:L${rowIndex}`, // Updated range for biometric fields
+        valueInputOption: 'RAW',
+        requestBody: {
+          values: [[
+            credentials.credentialID.toString('base64'),
+            credentials.publicKey.toString('base64'),
+            credentials.counter,
+            'TRUE'
+          ]]
+        }
+      });
+    } catch (error) {
+      console.error('Error updating biometric credentials:', error);
+      throw error;
+    }
+  }
+
+  async updateUserBiometricCounter(userId: number, counter: number): Promise<void> {
+    try {
+      const user = await this.getUser(userId);
+      if (!user) throw new Error('User not found');
+
+      // Find the user's row
+      const response = await this.sheets.spreadsheets.values.get({
+        spreadsheetId: this.spreadsheetId,
+        range: 'Users!A2:A'
+      });
+
+      const values = response.data.values || [];
+      const rowIndex = values.findIndex(row => parseInt(row[0]) === userId) + 2;
+
+      if (rowIndex < 2) throw new Error('User row not found');
+
+      // Update just the counter field
+      await this.sheets.spreadsheets.values.update({
+        spreadsheetId: this.spreadsheetId,
+        range: `Users!K${rowIndex}`, // Updated range for counter field
+        valueInputOption: 'RAW',
+        requestBody: {
+          values: [[counter]]
+        }
+      });
+    } catch (error) {
+      console.error('Error updating biometric counter:', error);
       throw error;
     }
   }

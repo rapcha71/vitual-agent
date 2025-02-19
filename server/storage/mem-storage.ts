@@ -57,13 +57,50 @@ export class MemStorage implements IStorage {
       fullName: insertUser.fullName ?? null,
       mobile: insertUser.mobile ?? null,
       nickname: insertUser.nickname ?? null,
-      isAdmin: insertUser.isAdmin ?? false
+      isAdmin: insertUser.isAdmin ?? false,
+      biometricCredentialId: null,
+      biometricPublicKey: null,
+      biometricCounter: null,
+      biometricEnabled: false
     };
 
     this.users.set(id, user);
     usersMap = this.users; // Update singleton
     console.log("User created successfully:", user);
     return user;
+  }
+
+  async updateUserBiometricCredentials(userId: number, credentials: {
+    credentialID: Buffer;
+    publicKey: Buffer;
+    counter: number;
+  }): Promise<void> {
+    const user = await this.getUser(userId);
+    if (!user) throw new Error('User not found');
+
+    const updatedUser: User = {
+      ...user,
+      biometricCredentialId: credentials.credentialID.toString('base64'),
+      biometricPublicKey: credentials.publicKey.toString('base64'),
+      biometricCounter: credentials.counter,
+      biometricEnabled: true
+    };
+
+    this.users.set(userId, updatedUser);
+    usersMap = this.users; // Update singleton
+  }
+
+  async updateUserBiometricCounter(userId: number, counter: number): Promise<void> {
+    const user = await this.getUser(userId);
+    if (!user) throw new Error('User not found');
+
+    const updatedUser: User = {
+      ...user,
+      biometricCounter: counter
+    };
+
+    this.users.set(userId, updatedUser);
+    usersMap = this.users; // Update singleton
   }
 
   async createProperty(insertProperty: InsertProperty & { userId: number }): Promise<Property> {

@@ -5,11 +5,11 @@ import {
 
 export async function registerBiometric() {
   try {
-    const optionsResponse = await fetch('/api/webauthn/register-options', {
+    const optionsResponse = await fetch('/api/webauthn/register', {
       method: 'POST',
       credentials: 'include',
     });
-    
+
     if (!optionsResponse.ok) {
       throw new Error('Failed to get registration options');
     }
@@ -17,7 +17,7 @@ export async function registerBiometric() {
     const options = await optionsResponse.json();
     const registration = await startRegistration(options);
 
-    const verificationResponse = await fetch('/api/webauthn/register-verify', {
+    const verificationResponse = await fetch('/api/webauthn/register/verify', {
       method: 'POST',
       credentials: 'include',
       headers: {
