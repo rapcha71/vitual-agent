@@ -1,9 +1,7 @@
 import { IStorage } from "./storage";
 import session from "express-session";
-import { User, Property, InsertUser, InsertProperty, properties, users } from "@shared/schema";
-import { DatabaseStorage } from "./storage/database-storage";
-import { db } from "./db";
-import { eq } from "drizzle-orm";
+import { User, Property, InsertUser, InsertProperty } from "@shared/schema";
+import { HybridStorage } from "./storage/hybrid-storage";
 
 export interface IStorage {
   sessionStore: session.Store;
@@ -18,5 +16,5 @@ export interface IStorage {
   updateLastLogin(userId: number): Promise<void>;
 }
 
-// Switch to DatabaseStorage for persistent storage
-export const storage: IStorage = new DatabaseStorage();
+// Switch to HybridStorage for synchronized storage
+export const storage: IStorage = new HybridStorage();

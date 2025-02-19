@@ -1,0 +1,77 @@
+import { DatabaseStorage } from "./database-storage";
+import { GoogleSheetsStorage } from "./google-sheets";
+import { IStorage } from "../storage";
+import { User, Property, InsertUser, InsertProperty } from "@shared/schema";
+import session from "express-session";
+
+export class HybridStorage implements IStorage {
+  private dbStorage: DatabaseStorage;
+  private sheetsStorage: GoogleSheetsStorage;
+  public sessionStore: session.Store;
+
+  constructor() {
+    this.dbStorage = new DatabaseStorage();
+    this.sheetsStorage = new GoogleSheetsStorage();
+    this.sessionStore = this.dbStorage.sessionStore; // Use PostgreSQL session store
+  }
+
+  async getUser(id: number): Promise<User | undefined> {
+    return this.dbStorage.getUser(id);
+  }
+
+  async getUserByUsername(username: string): Promise<User | undefined> {
+    return this.dbStorage.getUserByUsername(username);
+  }
+
+  async getUserByRememberToken(token: string): Promise<User | undefined> {
+    return this.dbStorage.getUserByRememberToken(token);
+  }
+
+  async createUser(user: InsertUser): Promise<User> {
+    const dbUser = await this.dbStorage.createUser(user);
+    try {
+      await this.sheetsStorage.createUser(user);
+    } catch (error) {
+      console.error("Error syncing user to Google Sheets:", error);
+      // Continue even if Google Sheets sync fails
+    }
+    return dbUser;
+  }
+
+  async createProperty(property: InsertProperty & { userId: number }): Promise<Property> {
+    const dbProperty = await this.dbStorage.createProperty(property);
+    try {
+      await this.sheetsStorage.createProperty(property);
+    } catch (error) {
+      console.error("Error syncing property to Google Sheets:", error);
+      // Continue even if Google Sheets sync fails
+    }
+    return dbProperty;
+  }
+
+  async getPropertiesByUserId(userId: number): Promise<Property[]> {
+    return this.dbStorage.getPropertiesByUserId(userId);
+  }
+
+  async getAllPropertiesWithUsers(): Promise<(Property & { user: User })[]> {
+    return this.dbStorage.getAllPropertiesWithUsers();
+  }
+
+  async updateUserRememberToken(userId: number, token: string | null): Promise<void> {
+    await this.dbStorage.updateUserRememberToken(userId, token);
+    try {
+      await this.sheetsStorage.updateUserRememberToken(userId, token);
+    } catch (error) {
+      console.error("Error syncing remember token to Google Sheets:", error);
+    }
+  }
+
+  async updateLastLogin(userId: number): Promise<void> {
+    await this.dbStorage.updateLastLogin(userId);
+    try {
+      await this.sheetsStorage.updateLastLogin(userId);
+    } catch (error) {
+      console.error("Error syncing last login to Google Sheets:", error);
+    }
+  }
+}
