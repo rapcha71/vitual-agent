@@ -7,7 +7,7 @@ import { ChevronLeft, LogOut, Image, MapPin } from "lucide-react";
 import { useLocation } from "wouter";
 import { Table, TableBody, TableCaption, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { compressImageForThumbnail } from "@/lib/utils";
-import { useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 import {
   Dialog,
   DialogContent,
@@ -16,7 +16,6 @@ import {
   DialogTrigger,
 } from "@/components/ui/dialog";
 import { Loader2 } from "lucide-react";
-import { ResizablePanelGroup, ResizablePanel, ResizableHandle } from "@/components/ui/resizable";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Loader } from "@googlemaps/js-api-loader";
 
@@ -40,16 +39,20 @@ export default function AdminPage() {
     const initMap = async () => {
       try {
         const loader = new Loader({
-          apiKey: import.meta.env.VITE_GOOGLE_MAPS_API_KEY,
+          apiKey: import.meta.env.VITE_GOOGLE_MAPS_API_KEY || '',
           version: "weekly",
+          libraries: ["places"]
         });
 
         const google = await loader.load();
         const mapElement = document.getElementById("map");
-        if (!mapElement) return;
+        if (!mapElement) {
+          console.error('Map element not found');
+          return;
+        }
 
         const map = new google.maps.Map(mapElement, {
-          center: { lat: -34.397, lng: 150.644 },
+          center: { lat: 9.9281, lng: -84.0907 }, // Costa Rica
           zoom: 8,
         });
 
@@ -63,6 +66,7 @@ export default function AdminPage() {
               const kmlLayer = new google.maps.KmlLayer({
                 url: property.kmlData,
                 map: map,
+                preserveViewport: true
               });
             }
 
