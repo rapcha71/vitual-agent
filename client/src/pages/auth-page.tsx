@@ -43,6 +43,8 @@ export default function AuthPage() {
   });
 
   const handleLogin = async (data: any) => {
+    if (isSubmitting) return;
+
     try {
       setIsSubmitting(true);
       await loginMutation.mutateAsync(data);
@@ -51,6 +53,7 @@ export default function AuthPage() {
         description: "Bienvenido de vuelta",
       });
     } catch (error: any) {
+      console.error('Login error:', error);
       toast({
         title: "Error de inicio de sesión",
         description: error.message || "Por favor verifica tus credenciales",
@@ -62,6 +65,8 @@ export default function AuthPage() {
   };
 
   const handleRegister = async (data: any) => {
+    if (isSubmitting) return;
+
     try {
       setIsSubmitting(true);
       await registerMutation.mutateAsync(data);
@@ -70,6 +75,7 @@ export default function AuthPage() {
         description: "Tu cuenta ha sido creada correctamente",
       });
     } catch (error: any) {
+      console.error('Registration error:', error);
       toast({
         title: "Error de registro",
         description: error.message || "No se pudo completar el registro",
@@ -81,7 +87,7 @@ export default function AuthPage() {
   };
 
   // Solo redirigir si el usuario está autenticado y no hay operaciones pendientes
-  if (user && !isSubmitting && !loginMutation.isPending && !registerMutation.isPending) {
+  if (user && !isSubmitting) {
     return <Redirect to="/" />;
   }
 
@@ -145,9 +151,9 @@ export default function AuthPage() {
                   <Button 
                     type="submit" 
                     className="w-full bg-[#FF5733] hover:bg-[#FF5733]/90"
-                    disabled={isSubmitting || loginMutation.isPending}
+                    disabled={isSubmitting}
                   >
-                    {loginMutation.isPending ? "Iniciando sesión..." : "Iniciar Sesión"}
+                    {isSubmitting ? "Iniciando sesión..." : "Iniciar Sesión"}
                   </Button>
                 </form>
               </Form>
@@ -241,9 +247,9 @@ export default function AuthPage() {
                   <Button 
                     type="submit" 
                     className="w-full bg-[#FF5733] hover:bg-[#FF5733]/90"
-                    disabled={isSubmitting || registerMutation.isPending}
+                    disabled={isSubmitting}
                   >
-                    {registerMutation.isPending ? "Registrando..." : "Registrarse"}
+                    {isSubmitting ? "Registrando..." : "Registrarse"}
                   </Button>
                 </form>
               </Form>
