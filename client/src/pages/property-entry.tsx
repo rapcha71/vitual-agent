@@ -265,19 +265,38 @@ export default function PropertyEntry() {
 
       const response = await fetch(imageDataUrl);
       const blob = await response.blob();
-
       const file = new File([blob], "image.jpg", { type: "image/jpeg" });
 
+      // More aggressive compression options for Vision API
       const options = {
-        maxSizeMB: 5,
-        maxWidthOrHeight: 2560,
+        maxSizeMB: 1, // Reduce max size to 1MB
+        maxWidthOrHeight: 1920, // Reduced from 2560 to 1920
         useWebWorker: true,
+        initialQuality: 0.8, // Start with 80% quality
+        alwaysKeepResolution: false, // Allow resolution reduction if needed
         onProgress: (progress: number) => {
+          // Log compression progress for debugging
           console.log('Compression progress:', progress);
         }
       };
 
       const compressedFile = await imageCompression(file, options);
+
+      // If still over 1MB, compress again with more aggressive settings
+      if (compressedFile.size > 1024 * 1024) {
+        const secondPassOptions = {
+          ...options,
+          maxSizeMB: 0.8,
+          maxWidthOrHeight: 1600,
+          initialQuality: 0.7
+        };
+        const furtherCompressedFile = await imageCompression(compressedFile, secondPassOptions);
+        return new Promise((resolve) => {
+          const reader = new FileReader();
+          reader.onloadend = () => resolve(reader.result as string);
+          reader.readAsDataURL(furtherCompressedFile);
+        });
+      }
 
       return new Promise((resolve) => {
         const reader = new FileReader();
@@ -331,7 +350,7 @@ export default function PropertyEntry() {
 
   const onSubmit = async (data: any) => {
     try {
-      console.log("Form submission started"); 
+      console.log("Form submission started");
 
       // Validate required fields
       if (!data.propertyType) {
@@ -364,7 +383,7 @@ export default function PropertyEntry() {
       // Submit the form
       await createPropertyMutation.mutateAsync(data);
 
-      console.log("Form submission completed successfully"); 
+      console.log("Form submission completed successfully");
     } catch (error) {
       console.error('Error submitting property:', error);
       toast({
@@ -491,8 +510,8 @@ export default function PropertyEntry() {
         </CardContent>
       </Card>
 
-      <Dialog 
-        open={isCapturing} 
+      <Dialog
+        open={isCapturing}
         onOpenChange={(open) => {
           if (!open) cleanup();
         }}
