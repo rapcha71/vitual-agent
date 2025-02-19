@@ -176,7 +176,9 @@ export function setupAuth(app: Express) {
     // Clear remember token if exists
     if (req.cookies.remember_token) {
       res.clearCookie('remember_token');
-      storage.updateUserRememberToken(userId, null);
+      if (userId) {
+        storage.updateUserRememberToken(userId, null);
+      }
     }
 
     req.logout((err) => {

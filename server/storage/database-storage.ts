@@ -46,7 +46,8 @@ export class DatabaseStorage implements IStorage {
       .insert(users)
       .values({
         ...insertUser,
-        rememberToken: null
+        rememberToken: null,
+        lastLoginAt: new Date().toISOString()
       })
       .returning();
     console.log("User created successfully:", user);
@@ -62,27 +63,13 @@ export class DatabaseStorage implements IStorage {
     console.log("Remember token updated successfully");
   }
 
-  async updateUserBiometricCredentials(userId: number, credentials: {
-    credentialID: Buffer;
-    publicKey: Buffer;
-    counter: number;
-  }): Promise<void> {
+  async updateLastLogin(userId: number): Promise<void> {
+    console.log("Updating last login for user:", userId);
     await db
       .update(users)
-      .set({
-        biometricCredentialId: credentials.credentialID.toString('base64'),
-        biometricPublicKey: credentials.publicKey.toString('base64'),
-        biometricCounter: credentials.counter,
-        biometricEnabled: true,
-      })
+      .set({ lastLoginAt: new Date().toISOString() })
       .where(eq(users.id, userId));
-  }
-
-  async updateUserBiometricCounter(userId: number, counter: number): Promise<void> {
-    await db
-      .update(users)
-      .set({ biometricCounter: counter })
-      .where(eq(users.id, userId));
+    console.log("Last login updated successfully");
   }
 
   async createProperty(insertProperty: InsertProperty & { userId: number }): Promise<Property> {

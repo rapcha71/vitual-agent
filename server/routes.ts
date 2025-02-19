@@ -5,295 +5,9 @@ import { storage } from "./storage";
 import { insertPropertySchema } from "@shared/schema";
 import { nanoid } from "nanoid";
 import ocrService from "./services/ocr";
-import { GoogleSheetsStorage } from "./storage/google-sheets";
-import {
-  generateRegistrationOptions,
-  verifyRegistrationResponse,
-  generateAuthenticationOptions,
-  verifyAuthenticationResponse,
-  type GenerateRegistrationOptionsOpts,
-  type GenerateAuthenticationOptionsOpts,
-  type VerifyRegistrationResponseOpts,
-  type VerifyAuthenticationResponseOpts,
-  type AuthenticatorTransport
-} from "@simplewebauthn/server";
 
 export async function registerRoutes(app: Express): Promise<Server> {
   setupAuth(app);
-
-  // Add WebAuthn registration endpoint
-  app.post("/api/webauthn/register", async (req, res) => {
-    if (!req.isAuthenticated()) {
-      return res.status(401).json({ message: "Unauthorized" });
-    }
-
-    try {
-      console.log("Generating registration options for user:", req.user.username);
-      const options = await generateRegistrationOptions({
-        rpName: "Virtual Agent",
-        rpID: process.env.NODE_ENV === 'production' ? req.hostname : 'localhost',
-        userID: Buffer.from(req.user.id.toString()),
-        userName: req.user.username,
-        attestationType: 'none',
-        authenticatorSelection: {
-          residentKey: 'preferred',
-          userVerification: 'preferred',
-          authenticatorAttachment: 'platform'
-        }
-      });
-
-      // Store challenge in session for verification
-      req.session.challenge = options.challenge;
-      await req.session.save();
-
-      console.log("Registration options generated successfully");
-      res.json(options);
-    } catch (error) {
-      console.error("Error generating registration options:", error);
-      res.status(500).json({ message: "Failed to generate registration options" });
-    }
-  });
-
-  // Add WebAuthn registration verification endpoint
-  app.post("/api/webauthn/register/verify", async (req, res) => {
-    if (!req.isAuthenticated()) {
-      return res.status(401).json({ message: "Unauthorized" });
-    }
-
-    try {
-      console.log("Verifying registration response");
-      const expectedChallenge = req.session.challenge;
-      if (!expectedChallenge) {
-        throw new Error("No challenge found in session");
-      }
-
-      const origin = process.env.NODE_ENV === 'production'
-        ? `https://${req.hostname}`
-        : 'http://localhost:5000';
-
-      const verification = await verifyRegistrationResponse({
-        response: req.body,
-        expectedChallenge,
-        expectedOrigin: origin,
-        expectedRPID: process.env.NODE_ENV === 'production' ? req.hostname : 'localhost',
-      });
-
-      if (verification.verified && verification.registrationInfo) {
-        const { credentialID, credentialPublicKey, counter } = verification.registrationInfo;
-
-        // Store the credential in the database
-        await storage.updateUserBiometricCredentials(req.user.id, {
-          credentialID: Buffer.from(credentialID),
-          publicKey: Buffer.from(credentialPublicKey),
-          counter,
-        });
-
-        delete req.session.challenge;
-        await req.session.save();
-
-        console.log("Registration verified successfully");
-        res.json({ success: true });
-      } else {
-        throw new Error("Verification failed");
-      }
-    } catch (error) {
-      console.error("Error verifying registration:", error);
-      res.status(400).json({ message: "Failed to verify registration" });
-    }
-  });
-
-  // Add WebAuthn authentication endpoint
-  app.post("/api/webauthn/authenticate", async (req, res) => {
-    try {
-      console.log("Generating authentication options for username:", req.body.username);
-      const user = await storage.getUserByUsername(req.body.username);
-      if (!user) {
-        return res.status(400).json({ message: "User not found" });
-      }
-
-      if (!user.biometricCredentialId || !user.biometricPublicKey) {
-        return res.status(400).json({
-          message: "No biometric credentials found. Please set up biometric login first by logging in with your password and clicking 'Set Up Biometric Login'."
-        });
-      }
-
-      const credentialId = Buffer.from(user.biometricCredentialId, 'base64');
-
-      const options = await generateAuthenticationOptions({
-        rpID: process.env.NODE_ENV === 'production' ? req.hostname : 'localhost',
-        allowCredentials: [{
-          id: credentialId,
-          type: 'public-key',
-          transports: ['internal', 'platform'] as AuthenticatorTransport[],
-        }],
-        userVerification: 'preferred',
-      });
-
-      req.session.challenge = options.challenge;
-      req.session.username = user.username;
-      await req.session.save();
-
-      console.log("Authentication options generated successfully");
-      res.json(options);
-    } catch (error) {
-      console.error("Error generating authentication options:", error);
-      res.status(500).json({
-        message: "Failed to generate authentication options. Please try again or use password login."
-      });
-    }
-  });
-
-  // Add WebAuthn authentication verification endpoint
-  app.post("/api/webauthn/authenticate/verify", async (req, res) => {
-    try {
-      console.log("Verifying authentication response");
-      const username = req.session.username;
-      const expectedChallenge = req.session.challenge;
-
-      if (!username || !expectedChallenge) {
-        throw new Error("No authentication in progress");
-      }
-
-      const user = await storage.getUserByUsername(username);
-      if (!user || !user.biometricPublicKey || !user.biometricCredentialId) {
-        throw new Error("User not found or no biometric data");
-      }
-
-      const origin = process.env.NODE_ENV === 'production'
-        ? `https://${req.hostname}`
-        : 'http://localhost:5000';
-
-      const verification = await verifyAuthenticationResponse({
-        response: req.body,
-        expectedChallenge,
-        expectedOrigin: origin,
-        expectedRPID: process.env.NODE_ENV === 'production' ? req.hostname : 'localhost',
-        authenticator: {
-          credentialID: Buffer.from(user.biometricCredentialId, 'base64'),
-          credentialPublicKey: Buffer.from(user.biometricPublicKey, 'base64'),
-          counter: user.biometricCounter || 0,
-        },
-      });
-
-      if (verification.verified) {
-        // Update the counter
-        await storage.updateUserBiometricCounter(user.id, verification.authenticationInfo.newCounter);
-
-        // Log the user in
-        req.login(user, (err) => {
-          if (err) {
-            console.error("Error logging in after biometric auth:", err);
-            return res.status(500).json({ message: "Error logging in" });
-          }
-          console.log("Authentication successful, user logged in");
-          res.json({ success: true });
-        });
-      } else {
-        throw new Error("Verification failed");
-      }
-
-      delete req.session.challenge;
-      delete req.session.username;
-      await req.session.save();
-    } catch (error) {
-      console.error("Error verifying authentication:", error);
-      res.status(400).json({
-        message: error instanceof Error ? error.message : "Failed to verify authentication"
-      });
-    }
-  });
-
-  // Add biometric status endpoint
-  app.post("/api/webauthn/status", async (req, res) => {
-    try {
-      const { username } = req.body;
-      if (!username) {
-        return res.status(400).json({ message: "Username is required" });
-      }
-
-      const user = await storage.getUserByUsername(username);
-      if (!user) {
-        return res.status(400).json({ message: "User not found" });
-      }
-
-      res.json({
-        enabled: user.biometricEnabled && !!user.biometricCredentialId && !!user.biometricPublicKey
-      });
-    } catch (error) {
-      console.error("Error checking biometric status:", error);
-      res.status(500).json({ message: "Failed to check biometric status" });
-    }
-  });
-
-
-  // Add OCR test endpoint
-  app.post("/api/test-ocr", async (req, res) => {
-    try {
-      if (!req.isAuthenticated()) {
-        return res.status(401).json({ message: "Unauthorized" });
-      }
-
-      const { image } = req.body;
-      if (!image) {
-        return res.status(400).json({ message: "No image provided" });
-      }
-
-      console.log("Testing OCR functionality...");
-      const result = await ocrService.testOCR(image);
-      console.log("OCR test result:", result);
-
-      res.json(result);
-    } catch (error: any) {
-      console.error("Error testing OCR:", error);
-      res.status(500).json({
-        success: false,
-        message: error.message || "Failed to process image"
-      });
-    }
-  });
-
-  // Temporary route to get service account email
-  app.get("/api/service-account-email", (req, res) => {
-    try {
-      const credentials = JSON.parse(process.env.GOOGLE_SHEETS_CREDENTIALS!);
-      const email = credentials.client_email;
-      if (!email) {
-        return res.status(400).json({ error: "No client_email found in credentials" });
-      }
-      res.json({ email });
-    } catch (error) {
-      console.error("Error parsing credentials:", error);
-      res.status(500).json({ error: "Error reading credentials" });
-    }
-  });
-
-  // Example of custom session data management
-  app.post("/api/session/custom", (req, res) => {
-    if (!req.isAuthenticated()) {
-      return res.status(401).send("Unauthorized");
-    }
-
-    // Set custom session data
-    req.session.customData = {
-      lastAccessed: new Date(),
-      customField: req.body.customField
-    };
-
-    res.json({ message: "Session updated with custom data" });
-  });
-
-  // Get session data
-  app.get("/api/session/info", (req, res) => {
-    if (!req.isAuthenticated()) {
-      return res.status(401).send("Unauthorized");
-    }
-
-    res.json({
-      sessionID: req.sessionID,
-      customData: req.session.customData || {},
-      user: req.user
-    });
-  });
 
   app.post("/api/properties", async (req, res) => {
     if (!req.isAuthenticated()) {
@@ -370,6 +84,76 @@ export async function registerRoutes(app: Express): Promise<Server> {
       res.status(500).json({ message: error.message || "Failed to fetch properties" });
     }
   });
+
+  // Add OCR test endpoint
+  app.post("/api/test-ocr", async (req, res) => {
+    try {
+      if (!req.isAuthenticated()) {
+        return res.status(401).json({ message: "Unauthorized" });
+      }
+
+      const { image } = req.body;
+      if (!image) {
+        return res.status(400).json({ message: "No image provided" });
+      }
+
+      console.log("Testing OCR functionality...");
+      const result = await ocrService.testOCR(image);
+      console.log("OCR test result:", result);
+
+      res.json(result);
+    } catch (error: any) {
+      console.error("Error testing OCR:", error);
+      res.status(500).json({
+        success: false,
+        message: error.message || "Failed to process image"
+      });
+    }
+  });
+
+  // Temporary route to get service account email
+  app.get("/api/service-account-email", (req, res) => {
+    try {
+      const credentials = JSON.parse(process.env.GOOGLE_SHEETS_CREDENTIALS!);
+      const email = credentials.client_email;
+      if (!email) {
+        return res.status(400).json({ error: "No client_email found in credentials" });
+      }
+      res.json({ email });
+    } catch (error) {
+      console.error("Error parsing credentials:", error);
+      res.status(500).json({ error: "Error reading credentials" });
+    }
+  });
+
+  // Example of custom session data management
+  app.post("/api/session/custom", (req, res) => {
+    if (!req.isAuthenticated()) {
+      return res.status(401).send("Unauthorized");
+    }
+
+    // Set custom session data
+    req.session.customData = {
+      lastAccessed: new Date(),
+      customField: req.body.customField
+    };
+
+    res.json({ message: "Session updated with custom data" });
+  });
+
+  // Get session data
+  app.get("/api/session/info", (req, res) => {
+    if (!req.isAuthenticated()) {
+      return res.status(401).send("Unauthorized");
+    }
+
+    res.json({
+      sessionID: req.sessionID,
+      customData: req.session.customData || {},
+      user: req.user
+    });
+  });
+
 
   const httpServer = createServer(app);
   return httpServer;

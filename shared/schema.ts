@@ -25,6 +25,7 @@ export const users = pgTable("users", {
   nickname: text("nickname"),
   isAdmin: boolean("is_admin").notNull().default(false),
   rememberToken: text("remember_token"),
+  lastLoginAt: text("last_login_at"),
 });
 
 export const properties = pgTable("properties", {
