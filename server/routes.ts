@@ -100,8 +100,14 @@ export async function registerRoutes(app: Express): Promise<Server> {
     try {
       console.log("Generating authentication options for username:", req.body.username);
       const user = await storage.getUserByUsername(req.body.username);
-      if (!user || !user.biometricCredentialId) {
-        return res.status(400).json({ message: "No biometric credentials found" });
+      if (!user) {
+        return res.status(400).json({ message: "User not found" });
+      }
+
+      if (!user.biometricCredentialId || !user.biometricPublicKey) {
+        return res.status(400).json({ 
+          message: "No biometric credentials found. Please set up biometric login first by logging in with your password and clicking 'Set Up Biometric Login'."
+        });
       }
 
       const credentialId = Buffer.from(user.biometricCredentialId, 'base64');
@@ -124,7 +130,9 @@ export async function registerRoutes(app: Express): Promise<Server> {
       res.json(options);
     } catch (error) {
       console.error("Error generating authentication options:", error);
-      res.status(500).json({ message: "Failed to generate authentication options" });
+      res.status(500).json({ 
+        message: "Failed to generate authentication options. Please try again or use password login."
+      });
     }
   });
 

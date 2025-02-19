@@ -51,7 +51,8 @@ export function BiometricAuth({ mode, username }: BiometricAuthProps) {
       });
 
       if (!resp.ok) {
-        throw new Error('Failed to get registration options');
+        const error = await resp.json();
+        throw new Error(error.message || 'Failed to get registration options');
       }
 
       const options = await resp.json();
@@ -70,18 +71,19 @@ export function BiometricAuth({ mode, username }: BiometricAuthProps) {
       });
 
       if (!verificationResp.ok) {
-        throw new Error('Failed to verify registration');
+        const error = await verificationResp.json();
+        throw new Error(error.message || 'Failed to verify registration');
       }
 
       toast({
         title: "Success",
-        description: "Biometric authentication has been set up successfully!",
+        description: "Biometric authentication has been set up successfully! You can now use it to log in.",
       });
     } catch (error: any) {
       console.error("Registration error:", error);
       toast({
         title: "Registration Failed",
-        description: error.message || "Failed to register biometric credentials",
+        description: error.message || "Failed to register biometric credentials. Please try again.",
         variant: "destructive",
       });
     }
@@ -108,7 +110,16 @@ export function BiometricAuth({ mode, username }: BiometricAuthProps) {
       });
 
       if (!resp.ok) {
-        throw new Error('Failed to get authentication options');
+        const error = await resp.json();
+        if (error.message.includes("No biometric credentials")) {
+          toast({
+            title: "Biometric Login Not Set Up",
+            description: "Please register your biometric credentials first by logging in with your password and setting up biometric login.",
+            variant: "destructive",
+          });
+          return;
+        }
+        throw new Error(error.message || 'Failed to get authentication options');
       }
 
       const options = await resp.json();
@@ -127,7 +138,8 @@ export function BiometricAuth({ mode, username }: BiometricAuthProps) {
       });
 
       if (!verificationResp.ok) {
-        throw new Error('Failed to verify authentication');
+        const error = await verificationResp.json();
+        throw new Error(error.message || 'Failed to verify authentication');
       }
 
       const result = await verificationResp.json();
@@ -139,7 +151,7 @@ export function BiometricAuth({ mode, username }: BiometricAuthProps) {
       console.error("Authentication error:", error);
       toast({
         title: "Authentication Failed",
-        description: error.message || "Failed to authenticate with biometrics",
+        description: error.message || "Failed to authenticate with biometrics. Please try again or use password login.",
         variant: "destructive",
       });
     }
