@@ -15,12 +15,22 @@ export function BiometricAuth({ mode, username }: BiometricAuthProps) {
   const { loginMutation, user } = useAuth();
   const [biometricSupported, setBiometricSupported] = useState(false);
   const [isEnabled, setIsEnabled] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
 
   useEffect(() => {
     // Check if biometric auth is supported and enabled
     const checkBiometricStatus = async () => {
       const supported = await checkBiometricSupport();
       setBiometricSupported(supported);
+
+      if (!supported) {
+        toast({
+          title: "Not Supported",
+          description: "Biometric authentication is not supported on this device.",
+          variant: "destructive",
+        });
+        return;
+      }
 
       if (mode === "authenticate" && username) {
         try {
@@ -75,6 +85,7 @@ export function BiometricAuth({ mode, username }: BiometricAuthProps) {
     }
 
     try {
+      setIsLoading(true);
       const optionsResponse = await fetch('/api/webauthn/register-options', {
         method: 'POST',
         credentials: 'include',
@@ -114,6 +125,8 @@ export function BiometricAuth({ mode, username }: BiometricAuthProps) {
         description: error.message || "Failed to register biometric credentials.",
         variant: "destructive",
       });
+    } finally {
+      setIsLoading(false);
     }
   };
 
@@ -128,6 +141,7 @@ export function BiometricAuth({ mode, username }: BiometricAuthProps) {
     }
 
     try {
+      setIsLoading(true);
       const optionsResponse = await fetch('/api/webauthn/authenticate-options', {
         method: 'POST',
         headers: {
@@ -169,10 +183,26 @@ export function BiometricAuth({ mode, username }: BiometricAuthProps) {
         description: error.message || "Failed to authenticate with biometrics.",
         variant: "destructive",
       });
+    } finally {
+      setIsLoading(false);
     }
   };
 
-  if (!biometricSupported) {
+  if (!biometricSupported && mode === "register") {
+    return (
+      <Button
+        type="button"
+        variant="outline"
+        className="w-full"
+        disabled={true}
+      >
+        <Fingerprint className="h-4 w-4 mr-2" />
+        Biometric Login Not Supported
+      </Button>
+    );
+  }
+
+  if (!biometricSupported && mode === "authenticate") {
     return null;
   }
 
@@ -182,16 +212,18 @@ export function BiometricAuth({ mode, username }: BiometricAuthProps) {
       variant="outline"
       className="w-full"
       onClick={mode === "register" ? handleRegistration : handleAuthentication}
-      disabled={mode === "authenticate" && !username}
+      disabled={mode === "authenticate" && !username || isLoading}
     >
       <Fingerprint className="h-4 w-4 mr-2" />
-      {mode === "register" 
-        ? (isEnabled ? "Biometric Login Enabled" : "Set Up Biometric Login")
-        : (isEnabled 
-            ? "Use Biometric Login" 
-            : username 
-              ? "Biometric Login Not Set Up"
-              : "Enter Username First")}
+      {isLoading ? "Processing..." : (
+        mode === "register" 
+          ? (isEnabled ? "Biometric Login Enabled" : "Set Up Biometric Login")
+          : (isEnabled 
+              ? "Use Biometric Login" 
+              : username 
+                ? "Biometric Login Not Set Up"
+                : "Enter Username First")
+      )}
     </Button>
   );
 }
