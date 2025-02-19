@@ -98,8 +98,8 @@ export default function AuthPage() {
           </div>
         </header>
 
-        <div className="flex-1 overflow-y-auto bg-cover bg-center bg-no-repeat" style={{backgroundImage: 'url("/assets/ciudad.jpeg")'}}>
-          <div className="p-4">
+        <div className="flex-1 h-full bg-cover bg-center bg-no-repeat overflow-y-auto" style={{backgroundImage: 'url("/assets/ciudad.jpeg")'}}>
+          <div className="min-h-full p-4">
             <Tabs defaultValue="login" className="w-full">
               <TabsList className="grid w-full grid-cols-2 mb-4 bg-white/80 backdrop-blur-sm">
                 <TabsTrigger value="login">Iniciar Sesión</TabsTrigger>
