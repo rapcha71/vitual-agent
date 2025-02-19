@@ -7,7 +7,7 @@ import { useForm } from "react-hook-form";
 import { useToast } from "@/hooks/use-toast";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { insertPropertySchema } from "@shared/schema";
-import { Camera, MapPin, X, Upload, ChevronLeft } from "lucide-react";
+import { Camera, MapPin, X, Upload, ChevronLeft, LogOut } from "lucide-react"; // Added LogOut import
 import { useLocation } from "wouter";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from "@/components/ui/dialog";
 import imageCompression from "browser-image-compression";
@@ -270,8 +270,7 @@ export default function PropertyEntry() {
         alwaysKeepResolution: false,
         onProgress: (progress: number) => {
           console.log('Compression progress:', progress);
-        }
-      };
+        }      };
 
       const compressedFile = await imageCompression(file, options);
 
@@ -426,27 +425,40 @@ export default function PropertyEntry() {
     }
   };
 
+  const logoutMutation = useMutation({
+    mutationFn: async () => {
+      await fetch('/api/auth/logout', { method: 'POST', credentials: 'include' });
+      setLocation('/');
+    }
+  })
+
   return (
     <div className="flex items-center justify-center min-h-screen bg-gray-100">
       <PhonePreview>
-        <header className="bg-[#FF5733] px-4 py-3 relative">
-          <Button 
-            variant="ghost" 
-            className="absolute left-2 top-1/2 -translate-y-1/2 text-white hover:text-white/80"
-            onClick={() => setLocation("/")}
-          >
-            <ChevronLeft className="h-5 w-5" />
-            Atrás
-          </Button>
-          <div className="flex flex-col items-center">
-            <img
-              src="/attached_assets/Logo de Virtual agent logo largo_upscayl_2x_realesrgan-x4plus.png"
-              alt="Virtual Agent"
-              className="h-10 w-auto"
-            />
-            <div className="text-white text-xs mt-1">
-              TU LLAVE DE INGRESO A LOS BIENES RAICES
+        <header className="bg-[#FF5733] px-4 py-3">
+          <div className="flex items-center justify-between">
+            <Button 
+              variant="ghost" 
+              className="text-white hover:text-white/80 p-0"
+              onClick={() => setLocation("/")}
+            >
+              <ChevronLeft className="h-5 w-5" />
+            </Button>
+            <div className="flex items-center">
+              <img 
+                src="/attached_assets/Logo de Virtual agent logo upscayl.png"
+                alt="Virtual Agent"
+                className="h-10 w-auto"
+              />
             </div>
+            <Button 
+              variant="ghost" 
+              size="sm" 
+              className="text-white hover:text-white/80 p-0"
+              onClick={() => logoutMutation.mutate()}
+            >
+              <LogOut className="h-5 w-5" />
+            </Button>
           </div>
         </header>
 

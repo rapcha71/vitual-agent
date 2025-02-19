@@ -36,8 +36,11 @@ export default function HomePage() {
               <ChevronLeft className="h-5 w-5" />
             </Button>
             <div className="flex items-center">
-              <Building2 className="h-5 w-5 text-white mr-2" />
-              <span className="font-semibold text-white">Virtual Agent</span>
+              <img 
+                src="/attached_assets/Logo de Virtual agent logo upscayl.png"
+                alt="Virtual Agent"
+                className="h-10 w-auto"
+              />
             </div>
             <Button 
               variant="ghost" 
