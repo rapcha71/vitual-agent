@@ -6,6 +6,8 @@ import { Button } from "@/components/ui/button";
 import { ChevronLeft, LogOut, Image } from "lucide-react";
 import { useLocation } from "wouter";
 import { Table, TableBody, TableCaption, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
+import { compressImageForThumbnail } from "@/lib/utils";
+import { useEffect, useState } from "react";
 import {
   Dialog,
   DialogContent,
@@ -14,14 +16,42 @@ import {
   DialogTrigger,
 } from "@/components/ui/dialog";
 
+type PropertyWithThumbnails = PropertyWithUser & {
+  thumbnails?: string[];
+};
+
 export default function AdminPage() {
   const { user, logoutMutation } = useAuth();
   const [, setLocation] = useLocation();
+  const [propertiesWithThumbnails, setPropertiesWithThumbnails] = useState<PropertyWithThumbnails[]>([]);
 
   const { data: properties = [], isLoading } = useQuery<PropertyWithUser[]>({
     queryKey: ['/api/admin/properties'],
     enabled: user?.isAdmin === true
   });
+
+  useEffect(() => {
+    const generateThumbnails = async () => {
+      const withThumbnails = await Promise.all(
+        properties.map(async (property) => {
+          if (!property.images || property.images.length === 0) {
+            return { ...property, thumbnails: [] };
+          }
+
+          const thumbnails = await Promise.all(
+            property.images.map(img => compressImageForThumbnail(img))
+          );
+
+          return { ...property, thumbnails };
+        })
+      );
+      setPropertiesWithThumbnails(withThumbnails);
+    };
+
+    if (properties.length > 0) {
+      generateThumbnails();
+    }
+  }, [properties]);
 
   // Si el usuario no es administrador, redirigir a la página principal
   if (!user?.isAdmin) {
@@ -80,7 +110,7 @@ export default function AdminPage() {
                   </TableRow>
                 </TableHeader>
                 <TableBody>
-                  {properties.map((property) => (
+                  {propertiesWithThumbnails.map((property) => (
                     <TableRow key={property.id}>
                       <TableCell>{property.propertyId}</TableCell>
                       <TableCell>{property.user.fullName || property.user.username}</TableCell>
@@ -109,14 +139,21 @@ export default function AdminPage() {
                                 <DialogTitle>Imágenes de la Propiedad {property.propertyId}</DialogTitle>
                               </DialogHeader>
                               <div className="grid grid-cols-2 gap-4 p-4 max-h-[80vh] overflow-y-auto">
-                                {property.images.map((image, index) => (
-                                  <div key={index} className="relative aspect-video">
+                                {/* Vista previa con thumbnails */}
+                                {property.thumbnails?.map((thumbnail, index) => (
+                                  <div key={index} className="relative aspect-video group">
                                     <img
-                                      src={image}
-                                      alt={`Imagen ${index + 1} de la propiedad ${property.propertyId}`}
-                                      className="object-cover w-full h-full rounded-lg"
-                                      loading="lazy"
+                                      src={thumbnail}
+                                      alt={`Vista previa ${index + 1} de la propiedad ${property.propertyId}`}
+                                      className="object-cover w-full h-full rounded-lg cursor-pointer"
+                                      onClick={() => {
+                                        // Abrir imagen original en nueva pestaña
+                                        window.open(property.images[index], '_blank');
+                                      }}
                                     />
+                                    <div className="absolute inset-0 bg-black/50 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
+                                      <span className="text-white text-sm">Click para ver tamaño completo</span>
+                                    </div>
                                   </div>
                                 ))}
                               </div>
