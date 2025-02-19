@@ -24,7 +24,12 @@ export async function registerRoutes(app: Express): Promise<Server> {
       const properties = await storage.getAllPropertiesWithUsers();
       console.log("Admin properties fetch:", {
         count: properties.length,
-        sampleImages: properties[0]?.images || []
+        sampleImages: properties[0]?.images || [],
+        firstProperty: properties[0] ? {
+          id: properties[0].propertyId,
+          imageCount: properties[0].images?.length,
+          hasImages: !!properties[0].images
+        } : null
       });
       res.json(properties);
     } catch (error: any) {

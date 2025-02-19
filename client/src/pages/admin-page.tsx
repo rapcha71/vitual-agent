@@ -29,6 +29,12 @@ export default function AdminPage() {
     return null;
   }
 
+  console.log("Properties loaded:", properties.map(p => ({
+    id: p.propertyId,
+    imageCount: p.images?.length,
+    images: p.images
+  })));
+
   return (
     <div className="flex items-center justify-center min-h-screen bg-gray-100">
       <div className="w-full max-w-7xl p-4 space-y-4">
@@ -98,8 +104,9 @@ export default function AdminPage() {
                       <TableCell>
                         <Dialog>
                           <DialogTrigger asChild>
-                            <Button variant="outline" size="icon">
-                              <Image className="h-4 w-4" />
+                            <Button variant="outline" size="sm">
+                              <Image className="h-4 w-4 mr-2" />
+                              Ver Imágenes ({property.images?.length || 0})
                             </Button>
                           </DialogTrigger>
                           <DialogContent className="max-w-4xl">
@@ -107,7 +114,7 @@ export default function AdminPage() {
                               <DialogTitle>Imágenes de la Propiedad {property.propertyId}</DialogTitle>
                             </DialogHeader>
                             <div className="grid grid-cols-2 gap-4 p-4">
-                              {property.images.map((image, index) => (
+                              {property.images && property.images.map((image, index) => (
                                 <div key={index} className="relative aspect-square">
                                   <img
                                     src={image}
