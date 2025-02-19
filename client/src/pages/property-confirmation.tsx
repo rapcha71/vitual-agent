@@ -1,9 +1,13 @@
 import { PhonePreview } from "@/components/ui/phone-preview";
 import { useLocation } from "wouter";
 import { useQuery } from "@tanstack/react-query";
+import { Button } from "@/components/ui/button";
+import { ChevronLeft, LogOut, Building2 } from "lucide-react";
+import { useAuth } from "@/hooks/use-auth";
 
 export default function PropertyConfirmation() {
   const [, setLocation] = useLocation();
+  const { logoutMutation } = useAuth();
 
   // Get the latest property from the query parameters
   const propertyId = new URLSearchParams(window.location.search).get('id');
@@ -11,17 +15,27 @@ export default function PropertyConfirmation() {
   return (
     <div className="flex items-center justify-center min-h-screen bg-gray-100">
       <PhonePreview>
-        {/* Header with logo */}
         <header className="bg-[#FF5733] px-4 py-3">
-          <div className="flex flex-col items-center">
-            <img 
-              src="/attached_assets/Logo de Virtual agent logo largo_upscayl_2x_realesrgan-x4plus.png"
-              alt="Virtual Agent"
-              className="h-10 w-auto"
-            />
-            <div className="text-white text-xs mt-1">
-              TU LLAVE DE INGRESO A LOS BIENES RAICES
+          <div className="flex items-center justify-between">
+            <Button 
+              variant="ghost" 
+              className="text-white hover:text-white/80 p-0"
+              onClick={() => setLocation("/")}
+            >
+              <ChevronLeft className="h-5 w-5" />
+            </Button>
+            <div className="flex items-center">
+              <Building2 className="h-5 w-5 text-white mr-2" />
+              <span className="font-semibold text-white">Virtual Agent</span>
             </div>
+            <Button 
+              variant="ghost" 
+              size="sm" 
+              className="text-white hover:text-white/80 p-0"
+              onClick={() => logoutMutation.mutate()}
+            >
+              <LogOut className="h-5 w-5" />
+            </Button>
           </div>
         </header>
 
@@ -56,13 +70,6 @@ export default function PropertyConfirmation() {
                 className="w-full bg-[#FF5733] text-white py-3 rounded-md font-semibold"
               >
                 Volver al Inicio
-              </button>
-
-              <button
-                onClick={() => setLocation("/")}
-                className="w-full bg-gray-600 text-white py-3 rounded-md font-semibold hover:bg-gray-700 transition-colors"
-              >
-                Cerrar Aplicación
               </button>
             </div>
           </div>
