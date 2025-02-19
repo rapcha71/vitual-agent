@@ -63,10 +63,10 @@ export class GoogleSheetsStorage implements IStorage {
           }
         });
 
-        // Add Users headers
+        // Add Users headers - UPDATED to include rememberToken and lastLoginAt
         await this.sheets.spreadsheets.values.update({
           spreadsheetId: this.spreadsheetId,
-          range: 'Users!A1:K1', // Extended range to include biometric fields
+          range: 'Users!A1:M1', 
           valueInputOption: 'RAW',
           requestBody: {
             values: [[
@@ -81,7 +81,9 @@ export class GoogleSheetsStorage implements IStorage {
               'Biometric Credential ID',
               'Biometric Public Key',
               'Biometric Counter',
-              'Biometric Enabled'
+              'Biometric Enabled',
+              'Remember Token',
+              'Last Login At'
             ]]
           }
         });
@@ -136,7 +138,7 @@ export class GoogleSheetsStorage implements IStorage {
     try {
       const response = await this.sheets.spreadsheets.values.get({
         spreadsheetId: this.spreadsheetId,
-        range: 'Users!A2:K' // Extended range to include biometric fields
+        range: 'Users!A2:M' 
       });
 
       const values = response.data.values || [];
@@ -151,7 +153,9 @@ export class GoogleSheetsStorage implements IStorage {
         fullName: userRow[3] || null,
         mobile: userRow[4] || null,
         nickname: userRow[5] || null,
-        isAdmin: userRow[6] === 'TRUE'
+        isAdmin: userRow[6] === 'TRUE',
+        rememberToken: userRow[12] || null, // Added rememberToken
+        lastLoginAt: userRow[13] || null    // Added lastLoginAt
       };
     } catch (error) {
       console.error('Error getting user:', error);
@@ -163,7 +167,7 @@ export class GoogleSheetsStorage implements IStorage {
     try {
       const response = await this.sheets.spreadsheets.values.get({
         spreadsheetId: this.spreadsheetId,
-        range: 'Users!A2:K' // Extended range to include biometric fields
+        range: 'Users!A2:M' 
       });
 
       const values = response.data.values || [];
@@ -178,7 +182,9 @@ export class GoogleSheetsStorage implements IStorage {
         fullName: userRow[3] || null,
         mobile: userRow[4] || null,
         nickname: userRow[5] || null,
-        isAdmin: userRow[6] === 'TRUE'
+        isAdmin: userRow[6] === 'TRUE',
+        rememberToken: userRow[12] || null, // Added rememberToken
+        lastLoginAt: userRow[13] || null    // Added lastLoginAt
       };
     } catch (error) {
       console.error('Error getting user by username:', error);
@@ -204,13 +210,15 @@ export class GoogleSheetsStorage implements IStorage {
         fullName: insertUser.fullName || null,
         mobile: insertUser.mobile || null,
         nickname: insertUser.nickname || null,
-        isAdmin: insertUser.isAdmin || false
+        isAdmin: insertUser.isAdmin || false,
+        rememberToken: null, // Added rememberToken
+        lastLoginAt: null     // Added lastLoginAt
       };
 
       // Append the new user
       await this.sheets.spreadsheets.values.append({
         spreadsheetId: this.spreadsheetId,
-        range: 'Users!A:K', // Extended range to include biometric fields
+        range: 'Users!A:M', 
         valueInputOption: 'RAW',
         requestBody: {
           values: [[
@@ -225,7 +233,9 @@ export class GoogleSheetsStorage implements IStorage {
             '', // Biometric Credential ID
             '', // Biometric Public Key
             0,   // Biometric Counter
-            'FALSE' // Biometric Enabled
+            'FALSE', // Biometric Enabled
+            '', // Remember Token
+            ''  // Last Login At
           ]]
         }
       });
@@ -334,14 +344,14 @@ export class GoogleSheetsStorage implements IStorage {
       });
 
       const values = response.data.values || [];
-      const rowIndex = values.findIndex(row => parseInt(row[0]) === userId) + 2; // Add 2 for header and 0-based index
+      const rowIndex = values.findIndex(row => parseInt(row[0]) === userId) + 2; 
 
       if (rowIndex < 2) throw new Error('User row not found');
 
       // Update the biometric fields
       await this.sheets.spreadsheets.values.update({
         spreadsheetId: this.spreadsheetId,
-        range: `Users!I${rowIndex}:L${rowIndex}`, // Updated range for biometric fields
+        range: `Users!I${rowIndex}:L${rowIndex}`, 
         valueInputOption: 'RAW',
         requestBody: {
           values: [[
@@ -377,7 +387,7 @@ export class GoogleSheetsStorage implements IStorage {
       // Update just the counter field
       await this.sheets.spreadsheets.values.update({
         spreadsheetId: this.spreadsheetId,
-        range: `Users!K${rowIndex}`, // Updated range for counter field
+        range: `Users!K${rowIndex}`, 
         valueInputOption: 'RAW',
         requestBody: {
           values: [[counter]]
@@ -385,6 +395,87 @@ export class GoogleSheetsStorage implements IStorage {
       });
     } catch (error) {
       console.error('Error updating biometric counter:', error);
+      throw error;
+    }
+  }
+
+  async getUserByRememberToken(token: string): Promise<User | undefined> {
+    try {
+      const response = await this.sheets.spreadsheets.values.get({
+        spreadsheetId: this.spreadsheetId,
+        range: 'Users!A2:M'
+      });
+
+      const values = response.data.values || [];
+      const userRow = values.find(row => row[12] === token); 
+
+      if (!userRow) return undefined;
+
+      return {
+        id: parseInt(userRow[0]),
+        username: userRow[1],
+        password: userRow[2],
+        fullName: userRow[3] || null,
+        mobile: userRow[4] || null,
+        nickname: userRow[5] || null,
+        isAdmin: userRow[6] === 'TRUE',
+        rememberToken: userRow[12] || null,
+        lastLoginAt: userRow[13] || null
+      };
+    } catch (error) {
+      console.error('Error getting user by remember token:', error);
+      throw error;
+    }
+  }
+
+  async updateUserRememberToken(userId: number, token: string | null): Promise<void> {
+    try {
+      const response = await this.sheets.spreadsheets.values.get({
+        spreadsheetId: this.spreadsheetId,
+        range: 'Users!A2:A'
+      });
+
+      const values = response.data.values || [];
+      const rowIndex = values.findIndex(row => parseInt(row[0]) === userId) + 2;
+
+      if (rowIndex < 2) throw new Error('User row not found');
+
+      await this.sheets.spreadsheets.values.update({
+        spreadsheetId: this.spreadsheetId,
+        range: `Users!L${rowIndex}`, 
+        valueInputOption: 'RAW',
+        requestBody: {
+          values: [[token || '']]
+        }
+      });
+    } catch (error) {
+      console.error('Error updating remember token:', error);
+      throw error;
+    }
+  }
+
+  async updateLastLogin(userId: number): Promise<void> {
+    try {
+      const response = await this.sheets.spreadsheets.values.get({
+        spreadsheetId: this.spreadsheetId,
+        range: 'Users!A2:A'
+      });
+
+      const values = response.data.values || [];
+      const rowIndex = values.findIndex(row => parseInt(row[0]) === userId) + 2;
+
+      if (rowIndex < 2) throw new Error('User row not found');
+
+      await this.sheets.spreadsheets.values.update({
+        spreadsheetId: this.spreadsheetId,
+        range: `Users!M${rowIndex}`, 
+        valueInputOption: 'RAW',
+        requestBody: {
+          values: [[new Date().toISOString()]]
+        }
+      });
+    } catch (error) {
+      console.error('Error updating last login:', error);
       throw error;
     }
   }

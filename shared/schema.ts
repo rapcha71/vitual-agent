@@ -54,6 +54,8 @@ export const insertUserSchema = createInsertSchema(users).pick({
   mobile: true,
   nickname: true,
   isAdmin: true
+}).extend({
+  rememberMe: z.boolean().optional()
 });
 
 export const insertPropertySchema = createInsertSchema(properties)

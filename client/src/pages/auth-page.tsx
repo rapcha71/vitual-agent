@@ -2,6 +2,7 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
+import { Checkbox } from "@/components/ui/checkbox";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
@@ -9,14 +10,15 @@ import { useAuth } from "@/hooks/use-auth";
 import { insertUserSchema } from "@shared/schema";
 import { Redirect } from "wouter";
 import { Building2 } from "lucide-react";
-import { BiometricAuth } from "@/components/ui/biometric-auth";
 
 export default function AuthPage() {
   const { user, loginMutation, registerMutation } = useAuth();
 
   const loginForm = useForm({
-    resolver: zodResolver(insertUserSchema.pick({ username: true, password: true })),
-    defaultValues: { username: "", password: "" },
+    resolver: zodResolver(insertUserSchema.pick({ username: true, password: true }).extend({
+      rememberMe: insertUserSchema.shape.rememberMe
+    })),
+    defaultValues: { username: "", password: "", rememberMe: false },
   });
 
   const registerForm = useForm({
@@ -72,26 +74,24 @@ export default function AuthPage() {
                           </FormItem>
                         )}
                       />
-                      <Button type="submit" className="w-full" disabled={loginMutation.isPending}>
-                        Login with Password
-                      </Button>
-
-                      {/* Biometric Authentication Section */}
-                      <div className="relative my-4">
-                        <div className="absolute inset-0 flex items-center">
-                          <span className="w-full border-t" />
-                        </div>
-                        <div className="relative flex justify-center text-xs uppercase">
-                          <span className="bg-background px-2 text-muted-foreground">
-                            Or use biometric login
-                          </span>
-                        </div>
-                      </div>
-
-                      <BiometricAuth 
-                        mode="authenticate" 
-                        username={loginForm.getValues("username")}
+                      <FormField
+                        control={loginForm.control}
+                        name="rememberMe"
+                        render={({ field }) => (
+                          <FormItem className="flex flex-row items-center space-x-2 space-y-0">
+                            <FormControl>
+                              <Checkbox
+                                checked={field.value}
+                                onCheckedChange={field.onChange}
+                              />
+                            </FormControl>
+                            <FormLabel className="text-sm font-normal">Remember me</FormLabel>
+                          </FormItem>
+                        )}
                       />
+                      <Button type="submit" className="w-full" disabled={loginMutation.isPending}>
+                        Login
+                      </Button>
                     </div>
                   </form>
                 </Form>
@@ -169,19 +169,6 @@ export default function AuthPage() {
                       <Button type="submit" className="w-full" disabled={registerMutation.isPending}>
                         Register
                       </Button>
-
-                      {/* Biometric Setup Option */}
-                      <div className="relative my-4">
-                        <div className="absolute inset-0 flex items-center">
-                          <span className="w-full border-t" />
-                        </div>
-                        <div className="relative flex justify-center text-xs uppercase">
-                          <span className="bg-background px-2 text-muted-foreground">
-                            Optional: Set up biometric login
-                          </span>
-                        </div>
-                      </div>
-                      <BiometricAuth mode="register" />
                     </div>
                   </form>
                 </Form>

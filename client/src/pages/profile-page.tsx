@@ -1,6 +1,5 @@
 import { useAuth } from "@/hooks/use-auth";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { BiometricAuth } from "@/components/ui/biometric-auth";
 import { Button } from "@/components/ui/button";
 import { User } from "lucide-react";
 
@@ -28,15 +27,9 @@ export default function ProfilePage() {
               <span>{user?.mobile || 'Not set'}</span>
               <span className="text-muted-foreground">Nickname:</span>
               <span>{user?.nickname || 'Not set'}</span>
+              <span className="text-muted-foreground">Last Login:</span>
+              <span>{user?.lastLoginAt ? new Date(user.lastLoginAt).toLocaleString() : 'Never'}</span>
             </div>
-          </div>
-
-          <div className="space-y-2">
-            <h3 className="text-lg font-semibold">Biometric Authentication</h3>
-            <p className="text-sm text-muted-foreground mb-4">
-              Set up biometric login to securely access your account using your device's biometric sensors.
-            </p>
-            <BiometricAuth mode="register" />
           </div>
 
           <div className="pt-4 border-t">
