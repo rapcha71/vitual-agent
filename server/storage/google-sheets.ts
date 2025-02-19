@@ -1,7 +1,7 @@
 import { google } from "googleapis";
 import { sheets_v4 } from "@googleapis/sheets";
 import { IStorage } from "../storage";
-import { User, Property, InsertUser, InsertProperty } from "@shared/schema";
+import { User, Property, InsertUser, InsertProperty, PropertyType, MarkerColors } from "@shared/schema";
 import session from "express-session";
 import createMemoryStore from "memorystore";
 
@@ -66,7 +66,7 @@ export class GoogleSheetsStorage implements IStorage {
         // Add Users headers
         await this.sheets.spreadsheets.values.update({
           spreadsheetId: this.spreadsheetId,
-          range: 'Users!A1:G1',
+          range: 'Users!A1:H1',
           valueInputOption: 'RAW',
           requestBody: {
             values: [[
@@ -76,6 +76,7 @@ export class GoogleSheetsStorage implements IStorage {
               'Full Name',
               'Mobile',
               'Nickname',
+              'Is Admin',
               'Created At'
             ]]
           }
@@ -100,7 +101,7 @@ export class GoogleSheetsStorage implements IStorage {
         // Add Properties headers
         await this.sheets.spreadsheets.values.update({
           spreadsheetId: this.spreadsheetId,
-          range: 'Properties!A1:H1',
+          range: 'Properties!A1:K1',
           valueInputOption: 'RAW',
           requestBody: {
             values: [[
@@ -110,6 +111,8 @@ export class GoogleSheetsStorage implements IStorage {
               'Sign Phone Number',
               'Location',
               'Images',
+              'KML Data',
+              'Marker Color',
               'Created At',
               'Username'
             ]]
@@ -128,7 +131,7 @@ export class GoogleSheetsStorage implements IStorage {
     try {
       const response = await this.sheets.spreadsheets.values.get({
         spreadsheetId: this.spreadsheetId,
-        range: 'Users!A2:G'
+        range: 'Users!A2:H'
       });
 
       const values = response.data.values || [];
@@ -142,7 +145,8 @@ export class GoogleSheetsStorage implements IStorage {
         password: userRow[2],
         fullName: userRow[3] || null,
         mobile: userRow[4] || null,
-        nickname: userRow[5] || null
+        nickname: userRow[5] || null,
+        isAdmin: userRow[6] === 'TRUE'
       };
     } catch (error) {
       console.error('Error getting user:', error);
@@ -154,7 +158,7 @@ export class GoogleSheetsStorage implements IStorage {
     try {
       const response = await this.sheets.spreadsheets.values.get({
         spreadsheetId: this.spreadsheetId,
-        range: 'Users!A2:G'
+        range: 'Users!A2:H'
       });
 
       const values = response.data.values || [];
@@ -168,7 +172,8 @@ export class GoogleSheetsStorage implements IStorage {
         password: userRow[2],
         fullName: userRow[3] || null,
         mobile: userRow[4] || null,
-        nickname: userRow[5] || null
+        nickname: userRow[5] || null,
+        isAdmin: userRow[6] === 'TRUE'
       };
     } catch (error) {
       console.error('Error getting user by username:', error);
@@ -193,13 +198,14 @@ export class GoogleSheetsStorage implements IStorage {
         ...insertUser,
         fullName: insertUser.fullName || null,
         mobile: insertUser.mobile || null,
-        nickname: insertUser.nickname || null
+        nickname: insertUser.nickname || null,
+        isAdmin: insertUser.isAdmin || false
       };
 
       // Append the new user
       await this.sheets.spreadsheets.values.append({
         spreadsheetId: this.spreadsheetId,
-        range: 'Users!A:G',
+        range: 'Users!A:H',
         valueInputOption: 'RAW',
         requestBody: {
           values: [[
@@ -209,6 +215,7 @@ export class GoogleSheetsStorage implements IStorage {
             user.fullName || '',
             user.mobile || '',
             user.nickname || '',
+            user.isAdmin ? 'TRUE' : 'FALSE',
             new Date().toISOString()
           ]]
         }
@@ -223,7 +230,6 @@ export class GoogleSheetsStorage implements IStorage {
 
   async createProperty(insertProperty: InsertProperty & { userId: number }): Promise<Property> {
     try {
-      // Get the last ID
       const response = await this.sheets.spreadsheets.values.get({
         spreadsheetId: this.spreadsheetId,
         range: 'Properties!A2:A'
@@ -233,10 +239,14 @@ export class GoogleSheetsStorage implements IStorage {
       const lastId = values.length > 0 ? Math.max(...values.map(row => parseInt(row[0] || '0'))) : 0;
       const newId = lastId + 1;
 
+      const markerColor = MarkerColors[insertProperty.propertyType as keyof typeof PropertyType];
+
       const property: Property = {
         ...insertProperty,
         id: newId,
-        signPhoneNumber: insertProperty.signPhoneNumber || null
+        signPhoneNumber: insertProperty.signPhoneNumber || null,
+        kmlData: insertProperty.kmlData || null,
+        markerColor
       };
 
       // Get the username
@@ -246,7 +256,7 @@ export class GoogleSheetsStorage implements IStorage {
       // Append the property data
       await this.sheets.spreadsheets.values.append({
         spreadsheetId: this.spreadsheetId,
-        range: 'Properties!A:H',
+        range: 'Properties!A:K',
         valueInputOption: 'RAW',
         requestBody: {
           values: [[
@@ -256,6 +266,8 @@ export class GoogleSheetsStorage implements IStorage {
             property.signPhoneNumber || '',
             JSON.stringify(property.location),
             JSON.stringify(property.images),
+            property.kmlData || '',
+            property.markerColor,
             new Date().toISOString(),
             username
           ]]
@@ -273,7 +285,7 @@ export class GoogleSheetsStorage implements IStorage {
     try {
       const response = await this.sheets.spreadsheets.values.get({
         spreadsheetId: this.spreadsheetId,
-        range: 'Properties!A2:H'
+        range: 'Properties!A2:K'
       });
 
       const values = response.data.values || [];
@@ -287,7 +299,9 @@ export class GoogleSheetsStorage implements IStorage {
           propertyType: row[2],
           signPhoneNumber: row[3] || null,
           location: JSON.parse(row[4]),
-          images: JSON.parse(row[5])
+          images: JSON.parse(row[5]),
+          kmlData: row[6] || null,
+          markerColor: row[7]
         }));
     } catch (error) {
       console.error('Error getting properties:', error);

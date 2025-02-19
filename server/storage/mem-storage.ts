@@ -1,6 +1,6 @@
 import session from "express-session";
 import createMemoryStore from "memorystore";
-import { User, Property, InsertUser, InsertProperty } from "@shared/schema";
+import { User, Property, InsertUser, InsertProperty, PropertyType, MarkerColors } from "@shared/schema";
 import { IStorage } from "../storage";
 
 const MemoryStore = createMemoryStore(session);
@@ -39,7 +39,8 @@ export class MemStorage implements IStorage {
       id,
       fullName: insertUser.fullName ?? null,
       mobile: insertUser.mobile ?? null,
-      nickname: insertUser.nickname ?? null
+      nickname: insertUser.nickname ?? null,
+      isAdmin: insertUser.isAdmin ?? false
     };
     this.users.set(id, user);
     return user;
@@ -47,10 +48,13 @@ export class MemStorage implements IStorage {
 
   async createProperty(insertProperty: InsertProperty & { userId: number }): Promise<Property> {
     const id = this.currentPropertyId++;
+    const markerColor = MarkerColors[insertProperty.propertyType as keyof typeof PropertyType];
     const property: Property = {
       ...insertProperty,
       id,
-      signPhoneNumber: insertProperty.signPhoneNumber ?? null
+      signPhoneNumber: insertProperty.signPhoneNumber ?? null,
+      kmlData: insertProperty.kmlData ?? null,
+      markerColor
     };
     this.properties.set(id, property);
     return property;
