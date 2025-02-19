@@ -8,12 +8,14 @@ import AuthPage from "@/pages/auth-page";
 import HomePage from "@/pages/home-page";
 import PropertyEntry from "@/pages/property-entry";
 import ProfilePage from "@/pages/profile-page";
+import PreviewPage from "@/pages/preview-page";
 import { ProtectedRoute } from "./lib/protected-route";
 
 function Router() {
   return (
     <Switch>
       <Route path="/auth" component={AuthPage} />
+      <Route path="/preview" component={PreviewPage} />
       <ProtectedRoute path="/" component={HomePage} />
       <ProtectedRoute path="/property/new" component={PropertyEntry} />
       <ProtectedRoute path="/profile" component={ProfilePage} />
