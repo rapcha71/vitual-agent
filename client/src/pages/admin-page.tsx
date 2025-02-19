@@ -128,6 +128,13 @@ export default function AdminPage() {
     return null;
   }
 
+  // Contar propiedades por tipo
+  const propertyCounts = {
+    house: properties.filter(p => p.propertyType === 'house').length,
+    land: properties.filter(p => p.propertyType === 'land').length,
+    commercial: properties.filter(p => p.propertyType === 'commercial').length,
+  };
+
   return (
     <div className="min-h-screen bg-gray-100">
       {/* Header */}
@@ -162,6 +169,34 @@ export default function AdminPage() {
           <CardHeader>
             <CardTitle>Panel de Administración</CardTitle>
           </CardHeader>
+          <CardContent>
+            <div className="grid grid-cols-3 gap-4">
+              <Card>
+                <CardHeader className="pb-2">
+                  <CardTitle className="text-lg">Casas</CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <p className="text-3xl font-bold">{propertyCounts.house}</p>
+                </CardContent>
+              </Card>
+              <Card>
+                <CardHeader className="pb-2">
+                  <CardTitle className="text-lg">Terrenos</CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <p className="text-3xl font-bold">{propertyCounts.land}</p>
+                </CardContent>
+              </Card>
+              <Card>
+                <CardHeader className="pb-2">
+                  <CardTitle className="text-lg">Propiedades Comerciales</CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <p className="text-3xl font-bold">{propertyCounts.commercial}</p>
+                </CardContent>
+              </Card>
+            </div>
+          </CardContent>
         </Card>
 
         <Tabs defaultValue="map" className="w-full">
