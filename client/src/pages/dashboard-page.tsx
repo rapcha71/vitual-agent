@@ -3,7 +3,7 @@ import { useQuery } from "@tanstack/react-query";
 import { Property } from "@shared/schema";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { ChevronLeft, ChevronRight, LogOut, Plus, Shield, Book } from "lucide-react";
+import { ChevronLeft, ChevronRight, LogOut, Plus, Shield, Book, MapPin } from "lucide-react";
 import { useLocation } from "wouter";
 
 export default function DashboardPage() {
@@ -47,17 +47,6 @@ export default function DashboardPage() {
             alt="Virtual Agent"
             className="h-10 w-auto"
           />
-          {user?.isAdmin && (
-            <Button
-              variant="secondary"
-              size="sm"
-              onClick={() => setLocation("/admin")}
-              className="flex items-center gap-2 bg-white text-[#F05023] hover:bg-white/90"
-            >
-              <Shield className="h-4 w-4" />
-              Panel de Administración
-            </Button>
-          )}
         </div>
         <Button 
           variant="ghost" 
@@ -77,10 +66,6 @@ export default function DashboardPage() {
             <Button onClick={() => setLocation("/property/new")}>
               <Plus className="h-4 w-4 mr-2" />
               Agregar Propiedad
-            </Button>
-            <Button variant="outline" onClick={() => window.open('/reglamento.pdf', '_blank')}>
-              <Book className="h-4 w-4 mr-2" />
-              Ver Reglamento
             </Button>
           </div>
         </div>
@@ -118,6 +103,16 @@ export default function DashboardPage() {
             </div>
           </CardContent>
         </Card>
+
+        <Button 
+          variant="default" 
+          size="lg" 
+          className="w-full mt-4"
+          onClick={() => setLocation("/properties")}
+        >
+          <MapPin className="h-5 w-5 mr-2" />
+          Ver Propiedades y Mapa
+        </Button>
       </main>
     </div>
   );

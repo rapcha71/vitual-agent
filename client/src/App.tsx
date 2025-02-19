@@ -15,7 +15,6 @@ import ProfilePage from "@/pages/profile-page";
 import { ProtectedRoute } from "./lib/protected-route";
 import { Loader2 } from "lucide-react";
 
-// Componente para proteger rutas de administrador
 function AdminRoute({ component: Component }: { component: () => JSX.Element }) {
   const { user, isLoading } = useAuth();
 
@@ -35,16 +34,6 @@ function AdminRoute({ component: Component }: { component: () => JSX.Element }) 
 }
 
 function Router() {
-  const { isLoading } = useAuth();
-
-  if (isLoading) {
-    return (
-      <div className="flex items-center justify-center min-h-screen">
-        <Loader2 className="h-8 w-8 animate-spin" />
-      </div>
-    );
-  }
-
   return (
     <Switch>
       <Route path="/auth" component={AuthPage} />
