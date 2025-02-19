@@ -9,6 +9,7 @@ import { useAuth } from "@/hooks/use-auth";
 import { insertUserSchema } from "@shared/schema";
 import { Redirect } from "wouter";
 import { Building2 } from "lucide-react";
+import { BiometricAuth } from "@/components/ui/biometric-auth";
 
 export default function AuthPage() {
   const { user, loginMutation, registerMutation } = useAuth();
@@ -74,6 +75,17 @@ export default function AuthPage() {
                       <Button type="submit" className="w-full" disabled={loginMutation.isPending}>
                         Login
                       </Button>
+                      <div className="relative">
+                        <div className="absolute inset-0 flex items-center">
+                          <span className="w-full border-t" />
+                        </div>
+                        <div className="relative flex justify-center text-xs uppercase">
+                          <span className="bg-background px-2 text-muted-foreground">
+                            Or continue with
+                          </span>
+                        </div>
+                      </div>
+                      <BiometricAuth mode="authenticate" />
                     </div>
                   </form>
                 </Form>
@@ -151,6 +163,17 @@ export default function AuthPage() {
                       <Button type="submit" className="w-full" disabled={registerMutation.isPending}>
                         Register
                       </Button>
+                      <div className="relative">
+                        <div className="absolute inset-0 flex items-center">
+                          <span className="w-full border-t" />
+                        </div>
+                        <div className="relative flex justify-center text-xs uppercase">
+                          <span className="bg-background px-2 text-muted-foreground">
+                            Optional
+                          </span>
+                        </div>
+                      </div>
+                      <BiometricAuth mode="register" />
                     </div>
                   </form>
                 </Form>

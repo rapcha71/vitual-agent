@@ -23,7 +23,10 @@ export const users = pgTable("users", {
   fullName: text("full_name"),
   mobile: text("mobile"),
   nickname: text("nickname"),
-  isAdmin: boolean("is_admin").notNull().default(false)
+  isAdmin: boolean("is_admin").notNull().default(false),
+  biometricCredentialId: text("biometric_credential_id"),
+  biometricPublicKey: text("biometric_public_key"),
+  biometricCounter: integer("biometric_counter")
 });
 
 export const properties = pgTable("properties", {
@@ -34,8 +37,8 @@ export const properties = pgTable("properties", {
   location: jsonb("location").notNull(),
   propertyId: text("property_id").notNull().unique(),
   images: jsonb("images").notNull(),
-  kmlData: text("kml_data"),  // Store generated KML data
-  markerColor: text("marker_color").notNull()  // Store marker color based on property type
+  kmlData: text("kml_data"),
+  markerColor: text("marker_color").notNull()
 });
 
 // Enhanced location type

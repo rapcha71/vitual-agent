@@ -10,6 +10,12 @@ export interface IStorage {
   createUser(user: InsertUser): Promise<User>;
   createProperty(property: InsertProperty & { userId: number }): Promise<Property>;
   getPropertiesByUserId(userId: number): Promise<Property[]>;
+  updateUserBiometricCredentials(userId: number, credentials: {
+    credentialID: Buffer;
+    publicKey: Buffer;
+    counter: number;
+  }): Promise<void>;
+  updateUserBiometricCounter(userId: number, counter: number): Promise<void>;
 }
 
 // Switch to DatabaseStorage for persistent storage
