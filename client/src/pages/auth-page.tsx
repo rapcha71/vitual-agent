@@ -77,7 +77,6 @@ export default function AuthPage() {
     }
   };
 
-  // Redirigir si el usuario está autenticado
   if (user) {
     console.log("Usuario autenticado, redirigiendo a home");
     return <Redirect to="/" />;
@@ -101,7 +100,7 @@ export default function AuthPage() {
 
         <div className="p-4 bg-cover bg-center bg-no-repeat" style={{backgroundImage: 'url("/assets/ciudad.jpeg")'}}>
           <Tabs defaultValue="login" className="w-full">
-            <TabsList className="grid w-full grid-cols-2 mb-4">
+            <TabsList className="grid w-full grid-cols-2 mb-4 bg-white/80 backdrop-blur-sm">
               <TabsTrigger value="login">Iniciar Sesión</TabsTrigger>
               <TabsTrigger value="register">Registrarse</TabsTrigger>
             </TabsList>
@@ -110,7 +109,7 @@ export default function AuthPage() {
               <Form {...loginForm}>
                 <form 
                   onSubmit={loginForm.handleSubmit(handleLogin)} 
-                  className="space-y-4"
+                  className="space-y-4 bg-white/90 backdrop-blur-sm rounded-lg p-4"
                 >
                   <FormField
                     control={loginForm.control}
@@ -155,7 +154,7 @@ export default function AuthPage() {
               <Form {...registerForm}>
                 <form 
                   onSubmit={registerForm.handleSubmit(handleRegister)} 
-                  className="space-y-4"
+                  className="space-y-4 bg-white/90 backdrop-blur-sm rounded-lg p-4"
                 >
                   <FormField
                     control={registerForm.control}
@@ -227,7 +226,7 @@ export default function AuthPage() {
                     )}
                   />
 
-                  <div className="text-sm text-gray-600 space-y-2">
+                  <div className="text-sm text-gray-600 bg-white/80 p-3 rounded-lg space-y-2">
                     <p>
                       Recuerda que los pagos se realizan a traves de simpe movil por lo que el numero debera de estar conectado a una cuenta bancaria simpe.
                     </p>

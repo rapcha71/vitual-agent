@@ -61,7 +61,7 @@ export default function HomePage() {
             className="space-y-4"
           >
             {/* Welcome Section */}
-            <div className="space-y-2">
+            <div className="space-y-2 bg-white/90 backdrop-blur-sm p-4 rounded-lg">
               <h1 className="text-xl font-bold">
                 Bienvenido, {user?.fullName || user?.nickname || user?.username}
               </h1>
@@ -78,7 +78,7 @@ export default function HomePage() {
 
             {/* Property Statistics */}
             <div className="space-y-3">
-              <Card>
+              <Card className="bg-white/90 backdrop-blur-sm">
                 <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
                   <CardTitle className="text-sm font-medium">
                     Casas
@@ -89,7 +89,7 @@ export default function HomePage() {
                   <div className="text-2xl font-bold">{propertyCounts.house}</div>
                 </CardContent>
               </Card>
-              <Card>
+              <Card className="bg-white/90 backdrop-blur-sm">
                 <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
                   <CardTitle className="text-sm font-medium">
                     Terrenos
@@ -100,7 +100,7 @@ export default function HomePage() {
                   <div className="text-2xl font-bold">{propertyCounts.land}</div>
                 </CardContent>
               </Card>
-              <Card>
+              <Card className="bg-white/90 backdrop-blur-sm">
                 <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
                   <CardTitle className="text-sm font-medium">
                     Propiedades Comerciales
@@ -115,10 +115,12 @@ export default function HomePage() {
 
             {/* Properties List */}
             <div className="space-y-3">
-              <h2 className="text-lg font-semibold">Tus Propiedades</h2>
+              <h2 className="text-lg font-semibold bg-white/90 backdrop-blur-sm p-2 rounded-lg">
+                Tus Propiedades
+              </h2>
               <div className="space-y-3">
                 {properties.map((property) => (
-                  <Card key={property.id}>
+                  <Card key={property.id} className="bg-white/90 backdrop-blur-sm">
                     <CardHeader>
                       <CardTitle className="text-base">
                         {property.propertyType.charAt(0).toUpperCase() + property.propertyType.slice(1)}
