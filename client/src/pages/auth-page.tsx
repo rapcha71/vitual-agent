@@ -1,44 +1,48 @@
 import { useState } from "react";
 import { PhonePreview } from "@/components/ui/phone-preview";
-import { useForm } from "react-hook-form";
+import { Button } from "@/components/ui/button";
+import {
+  Form,
+  FormControl,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage,
+} from "@/components/ui/form";
+import { Input } from "@/components/ui/input";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { zodResolver } from "@hookform/resolvers/zod";
+import { useForm } from "react-hook-form";
+import { useAuth } from "@/hooks/use-auth";
 import { insertUserSchema } from "@shared/schema";
 import { Redirect } from "wouter";
-import { useAuth } from "@/hooks/use-auth";
+
 
 export default function AuthPage() {
   const { user, loginMutation, registerMutation } = useAuth();
-  const [isLogin, setIsLogin] = useState(true);
 
-  const form = useForm({
-    resolver: zodResolver(
-      isLogin 
-        ? insertUserSchema.pick({ username: true, password: true })
-        : insertUserSchema
-    ),
+  const loginForm = useForm({
+    resolver: zodResolver(insertUserSchema.pick({ username: true, password: true })),
+    defaultValues: {
+      username: "",
+      password: "",
+    },
+  });
+
+  const registerForm = useForm({
+    resolver: zodResolver(insertUserSchema),
     defaultValues: {
       username: "",
       password: "",
       fullName: "",
       mobile: "",
-      nickname: ""
+      nickname: "",
     },
   });
 
   if (user) {
     return <Redirect to="/" />;
   }
-
-  const handleSubmit = (data: any) => {
-    if (isLogin) {
-      loginMutation.mutate({
-        username: data.username,
-        password: data.password
-      });
-    } else {
-      registerMutation.mutate(data);
-    }
-  };
 
   return (
     <div className="flex items-center justify-center min-h-screen bg-gray-100">
@@ -56,108 +60,154 @@ export default function AuthPage() {
           </div>
         </header>
 
-        <div className="p-4 bg-white">
-          <div className="mb-6 flex justify-center space-x-4">
-            <button
-              onClick={() => setIsLogin(true)}
-              className={`px-4 py-2 rounded-md transition-colors ${
-                isLogin ? 'bg-[#FF5733] text-white' : 'bg-gray-100 text-gray-600'
-              }`}
-            >
-              Iniciar Sesión
-            </button>
-            <button
-              onClick={() => setIsLogin(false)}
-              className={`px-4 py-2 rounded-md transition-colors ${
-                !isLogin ? 'bg-[#FF5733] text-white' : 'bg-gray-100 text-gray-600'
-              }`}
-            >
-              Registrarse
-            </button>
-          </div>
+        <div className="p-4">
+          <Tabs defaultValue="login" className="w-full">
+            <TabsList className="grid w-full grid-cols-2 mb-4">
+              <TabsTrigger value="login">Iniciar Sesión</TabsTrigger>
+              <TabsTrigger value="register">Registrarse</TabsTrigger>
+            </TabsList>
 
-          <div className="space-y-6">
-            {!isLogin && (
-              <>
-                <div>
-                  <label className="text-black text-lg block">Nombre:</label>
-                  <div className="h-[2px] bg-gray-300 mt-2"></div>
-                  <input
-                    {...form.register("fullName")}
-                    className="w-full bg-transparent border-none focus:outline-none"
-                    placeholder="Ingrese su nombre completo"
+            <TabsContent value="login">
+              <Form {...loginForm}>
+                <form 
+                  onSubmit={loginForm.handleSubmit((data) => loginMutation.mutate(data))} 
+                  className="space-y-4"
+                >
+                  <FormField
+                    control={loginForm.control}
+                    name="username"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>Correo</FormLabel>
+                        <FormControl>
+                          <Input placeholder="Ingrese su correo electrónico" {...field} />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
                   />
-                </div>
 
-                <div>
-                  <label className="text-black text-lg block">Telefono:</label>
-                  <div className="h-[2px] bg-gray-300 mt-2"></div>
-                  <input
-                    {...form.register("mobile")}
-                    className="w-full bg-transparent border-none focus:outline-none"
-                    placeholder="Ingrese su número de teléfono"
+                  <FormField
+                    control={loginForm.control}
+                    name="password"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>Contraseña</FormLabel>
+                        <FormControl>
+                          <Input type="password" placeholder="Ingrese su contraseña" {...field} />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
                   />
-                </div>
-              </>
-            )}
 
-            <div>
-              <label className="text-black text-lg block">Correo:</label>
-              <div className="h-[2px] bg-gray-300 mt-2"></div>
-              <input
-                {...form.register("username")}
-                className="w-full bg-transparent border-none focus:outline-none"
-                placeholder="Ingrese su correo electrónico"
-              />
-            </div>
+                  <Button 
+                    type="submit" 
+                    className="w-full bg-[#FF5733] hover:bg-[#FF5733]/90"
+                    disabled={loginMutation.isPending}
+                  >
+                    {loginMutation.isPending ? "Iniciando sesión..." : "Iniciar Sesión"}
+                  </Button>
+                </form>
+              </Form>
+            </TabsContent>
 
-            {!isLogin && (
-              <div>
-                <label className="text-black text-lg block">Alias:</label>
-                <div className="h-[2px] bg-gray-300 mt-2"></div>
-                <input
-                  {...form.register("nickname")}
-                  className="w-full bg-transparent border-none focus:outline-none"
-                  placeholder="Ingrese su alias"
-                />
-              </div>
-            )}
+            <TabsContent value="register">
+              <Form {...registerForm}>
+                <form 
+                  onSubmit={registerForm.handleSubmit((data) => registerMutation.mutate(data))} 
+                  className="space-y-4"
+                >
+                  <FormField
+                    control={registerForm.control}
+                    name="fullName"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>Nombre Completo</FormLabel>
+                        <FormControl>
+                          <Input placeholder="Ingrese su nombre completo" {...field} />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
 
-            <div>
-              <label className="text-black text-lg block">Contraseña:</label>
-              <div className="h-[2px] bg-gray-300 mt-2"></div>
-              <input
-                {...form.register("password")}
-                type="password"
-                className="w-full bg-transparent border-none focus:outline-none"
-                placeholder="Ingrese su contraseña"
-              />
-            </div>
+                  <FormField
+                    control={registerForm.control}
+                    name="username"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>Correo</FormLabel>
+                        <FormControl>
+                          <Input placeholder="Ingrese su correo electrónico" {...field} />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
 
-            {!isLogin && (
-              <>
-                <div className="mt-4">
-                  <p className="text-sm text-gray-600">
-                    Recuerda que los pagos se realizan a traves de simpe movil por lo que el numero debera de estar conectado a una cuenta bancaria simpe.
-                  </p>
-                </div>
+                  <FormField
+                    control={registerForm.control}
+                    name="mobile"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>Teléfono</FormLabel>
+                        <FormControl>
+                          <Input placeholder="Ingrese su número de teléfono" {...field} />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
 
-                <div className="mt-2">
-                  <p className="text-sm text-gray-600">
-                    Crea un alias de como quieres que te conozcan dentro de la comunidad.
-                  </p>
-                </div>
-              </>
-            )}
+                  <FormField
+                    control={registerForm.control}
+                    name="nickname"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>Alias</FormLabel>
+                        <FormControl>
+                          <Input placeholder="Ingrese su alias" {...field} />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
 
-            <button
-              onClick={form.handleSubmit(handleSubmit)}
-              disabled={loginMutation.isPending || registerMutation.isPending}
-              className="w-full bg-[#FF5733] text-white py-3 rounded-md mt-4 font-semibold"
-            >
-              {isLogin ? 'Iniciar Sesión' : 'Registrarse'}
-            </button>
-          </div>
+                  <FormField
+                    control={registerForm.control}
+                    name="password"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>Contraseña</FormLabel>
+                        <FormControl>
+                          <Input type="password" placeholder="Ingrese su contraseña" {...field} />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+
+                  <div className="text-sm text-gray-600 space-y-2">
+                    <p>
+                      Recuerda que los pagos se realizan a traves de simpe movil por lo que el numero debera de estar conectado a una cuenta bancaria simpe.
+                    </p>
+                    <p>
+                      Crea un alias de como quieres que te conozcan dentro de la comunidad.
+                    </p>
+                  </div>
+
+                  <Button 
+                    type="submit" 
+                    className="w-full bg-[#FF5733] hover:bg-[#FF5733]/90"
+                    disabled={registerMutation.isPending}
+                  >
+                    {registerMutation.isPending ? "Registrando..." : "Registrarse"}
+                  </Button>
+                </form>
+              </Form>
+            </TabsContent>
+          </Tabs>
         </div>
       </PhonePreview>
     </div>
