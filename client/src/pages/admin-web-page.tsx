@@ -9,14 +9,17 @@ import { Table, TableBody, TableCaption, TableCell, TableHead, TableHeader, Tabl
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Loader2 } from "lucide-react";
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 import { Loader } from "@googlemaps/js-api-loader";
 
 export default function AdminWebPage() {
   const { user, logoutMutation } = useAuth();
   const [, setLocation] = useLocation();
-  const [map, setMap] = useState<google.maps.Map | null>(null);
   const [mapLoading, setMapLoading] = useState(true);
+  const mapRef = useRef<google.maps.Map | null>(null);
+  const markersRef = useRef<google.maps.Marker[]>([]);
+  const mapContainerRef = useRef<HTMLDivElement>(null);
+  const [activeTab, setActiveTab] = useState("table");
 
   // Si el usuario no es administrador, redirigir al dashboard
   useEffect(() => {
@@ -40,31 +43,17 @@ export default function AdminWebPage() {
   });
 
   useEffect(() => {
+    let isMounted = true;
+
     const initMap = async () => {
+      if (!mapContainerRef.current || activeTab !== "map") return;
+
       try {
         if (!import.meta.env.VITE_GOOGLE_MAPS_API_KEY) {
           console.error('Google Maps API key is missing');
           setMapLoading(false);
           return;
         }
-
-        // Wait for the map element to be available
-        const waitForElement = (id: string, timeout = 5000): Promise<HTMLElement> => {
-          return new Promise((resolve, reject) => {
-            const startTime = Date.now();
-            const checkElement = () => {
-              const element = document.getElementById(id);
-              if (element) {
-                resolve(element);
-              } else if (Date.now() - startTime > timeout) {
-                reject(new Error(`Element ${id} not found after ${timeout}ms`));
-              } else {
-                setTimeout(checkElement, 100);
-              }
-            };
-            checkElement();
-          });
-        };
 
         const loader = new Loader({
           apiKey: import.meta.env.VITE_GOOGLE_MAPS_API_KEY,
@@ -73,21 +62,26 @@ export default function AdminWebPage() {
         });
 
         await loader.load();
-        const mapElement = await waitForElement("desktop-map");
 
-        const map = new google.maps.Map(mapElement, {
+        if (!isMounted || !mapContainerRef.current) return;
+
+        // Initialize map
+        const map = new google.maps.Map(mapContainerRef.current, {
           center: { lat: 9.9281, lng: -84.0907 }, // Costa Rica
           zoom: 8,
         });
 
-        setMap(map);
-        setMapLoading(false);
+        mapRef.current = map;
+
+        // Clear existing markers
+        markersRef.current.forEach(marker => marker.setMap(null));
+        markersRef.current = [];
 
         // Add markers if there are properties
-        if (properties.length > 0) {
+        if (properties.length > 0 && isMounted) {
           properties.forEach(property => {
             try {
-              new google.maps.Marker({
+              const marker = new google.maps.Marker({
                 map,
                 position: { 
                   lat: property.location.lat, 
@@ -102,11 +96,14 @@ export default function AdminWebPage() {
                   scale: 8
                 }
               });
+              markersRef.current.push(marker);
             } catch (error) {
               console.error('Error creating marker for property:', property.propertyId, error);
             }
           });
         }
+
+        setMapLoading(false);
       } catch (error) {
         console.error('Error loading Google Maps:', error);
         setMapLoading(false);
@@ -114,17 +111,21 @@ export default function AdminWebPage() {
     };
 
     // Only initialize map when on "map" tab and there are properties
-    if (properties.length > 0) {
+    if (activeTab === "map" && properties.length > 0) {
       initMap();
     }
 
     return () => {
-      // Cleanup map instance when component unmounts
-      if (map) {
-        setMap(null);
+      isMounted = false;
+      // Cleanup markers
+      markersRef.current.forEach(marker => marker.setMap(null));
+      markersRef.current = [];
+      // Clear map reference
+      if (mapRef.current) {
+        mapRef.current = null;
       }
     };
-  }, [properties]);
+  }, [properties, activeTab]);
 
   // Contar propiedades por tipo
   const propertyCounts = {
@@ -189,7 +190,7 @@ export default function AdminWebPage() {
 
         <Card>
           <CardContent className="p-6">
-            <Tabs defaultValue="table" className="w-full">
+            <Tabs defaultValue="table" className="w-full" onValueChange={setActiveTab}>
               <TabsList className="w-full justify-start mb-6">
                 <TabsTrigger value="table" className="flex items-center gap-2">
                   <Image className="h-4 w-4" />
@@ -291,10 +292,10 @@ export default function AdminWebPage() {
 
               <TabsContent value="map" className="mt-0">
                 <div 
-                  id="desktop-map" 
+                  ref={mapContainerRef}
                   className="w-full h-[600px] rounded-lg relative bg-gray-100"
                 >
-                  {mapLoading && (
+                  {mapLoading && activeTab === "map" && (
                     <div className="absolute inset-0 flex items-center justify-center bg-gray-100/80">
                       <div className="text-center">
                         <Loader2 className="h-8 w-8 animate-spin text-primary mx-auto mb-2" />
