@@ -90,8 +90,8 @@ export function BiometricAuth({ mode, username }: BiometricAuthProps) {
   const handleAuthentication = async () => {
     if (!username) {
       toast({
-        title: "Error",
-        description: "Please enter your username first",
+        title: "Username Required",
+        description: "Please enter your username before using biometric login",
         variant: "destructive",
       });
       return;
@@ -170,6 +170,7 @@ export function BiometricAuth({ mode, username }: BiometricAuthProps) {
       variant="outline"
       className="w-full"
       onClick={handleClick}
+      disabled={mode === "authenticate" && !username}
     >
       <Fingerprint className="h-4 w-4 mr-2" />
       {mode === "register" ? "Set Up Biometric Login" : "Use Biometric Login"}

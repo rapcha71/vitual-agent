@@ -85,7 +85,10 @@ export default function AuthPage() {
                           </span>
                         </div>
                       </div>
-                      <BiometricAuth mode="authenticate" />
+                      <BiometricAuth 
+                        mode="authenticate" 
+                        username={loginForm.getValues("username")}
+                      />
                     </div>
                   </form>
                 </Form>
