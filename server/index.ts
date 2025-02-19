@@ -2,8 +2,18 @@ import express, { type Request, Response, NextFunction } from "express";
 import { registerRoutes } from "./routes";
 import { setupVite, serveStatic, log } from "./vite";
 import webauthnRouter from "./routes/webauthn";
+import cors from "cors";
 
 const app = express();
+
+// Configure CORS for development
+app.use(cors({
+  origin: process.env.NODE_ENV === 'production' 
+    ? `https://${process.env.REPL_SLUG}.${process.env.REPL_OWNER}.repl.co`
+    : 'http://localhost:5000',
+  credentials: true
+}));
+
 app.use(express.json({ limit: '50mb' }));
 app.use(express.urlencoded({ extended: false, limit: '50mb' }));
 
@@ -14,6 +24,15 @@ app.use((req, res, next) => {
   const start = Date.now();
   const path = req.path;
   let capturedJsonResponse: Record<string, any> | undefined = undefined;
+
+  // Debug logging for authentication
+  console.log('Request:', {
+    path,
+    method: req.method,
+    authenticated: req.isAuthenticated(),
+    session: req.session,
+    cookies: req.cookies
+  });
 
   const originalResJson = res.json;
   res.json = function (bodyJson, ...args) {
