@@ -1,22 +1,21 @@
-import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
-import { Input } from "@/components/ui/input";
-import { Checkbox } from "@/components/ui/checkbox";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { zodResolver } from "@hookform/resolvers/zod";
+import { useState } from "react";
+import { PhonePreview } from "@/components/ui/phone-preview";
 import { useForm } from "react-hook-form";
-import { useAuth } from "@/hooks/use-auth";
+import { zodResolver } from "@hookform/resolvers/zod";
 import { insertUserSchema } from "@shared/schema";
 import { Redirect } from "wouter";
-import { Building2 } from "lucide-react";
-import { PhonePreview } from "@/components/ui/phone-preview";
+import { useAuth } from "@/hooks/use-auth";
 
 export default function AuthPage() {
   const { user, loginMutation, registerMutation } = useAuth();
+  const [isLogin, setIsLogin] = useState(true);
 
   const form = useForm({
-    resolver: zodResolver(insertUserSchema),
+    resolver: zodResolver(
+      isLogin 
+        ? insertUserSchema.pick({ username: true, password: true })
+        : insertUserSchema
+    ),
     defaultValues: {
       username: "",
       password: "",
@@ -29,6 +28,17 @@ export default function AuthPage() {
   if (user) {
     return <Redirect to="/" />;
   }
+
+  const handleSubmit = (data: any) => {
+    if (isLogin) {
+      loginMutation.mutate({
+        username: data.username,
+        password: data.password
+      });
+    } else {
+      registerMutation.mutate(data);
+    }
+  };
 
   return (
     <PhonePreview>
@@ -46,26 +56,49 @@ export default function AuthPage() {
       </header>
 
       <div className="p-4 bg-white">
-        <div className="space-y-6">
-          <div>
-            <label className="text-black text-lg block">Nombre:</label>
-            <div className="h-[2px] bg-gray-300 mt-2"></div>
-            <input
-              {...form.register("fullName")}
-              className="w-full bg-transparent border-none focus:outline-none"
-              placeholder="Ingrese su nombre completo"
-            />
-          </div>
+        <div className="mb-6 flex justify-center space-x-4">
+          <button
+            onClick={() => setIsLogin(true)}
+            className={`px-4 py-2 rounded-md transition-colors ${
+              isLogin ? 'bg-[#FF5733] text-white' : 'bg-gray-100 text-gray-600'
+            }`}
+          >
+            Iniciar Sesión
+          </button>
+          <button
+            onClick={() => setIsLogin(false)}
+            className={`px-4 py-2 rounded-md transition-colors ${
+              !isLogin ? 'bg-[#FF5733] text-white' : 'bg-gray-100 text-gray-600'
+            }`}
+          >
+            Registrarse
+          </button>
+        </div>
 
-          <div>
-            <label className="text-black text-lg block">Telefono:</label>
-            <div className="h-[2px] bg-gray-300 mt-2"></div>
-            <input
-              {...form.register("mobile")}
-              className="w-full bg-transparent border-none focus:outline-none"
-              placeholder="Ingrese su número de teléfono"
-            />
-          </div>
+        <div className="space-y-6">
+          {!isLogin && (
+            <>
+              <div>
+                <label className="text-black text-lg block">Nombre:</label>
+                <div className="h-[2px] bg-gray-300 mt-2"></div>
+                <input
+                  {...form.register("fullName")}
+                  className="w-full bg-transparent border-none focus:outline-none"
+                  placeholder="Ingrese su nombre completo"
+                />
+              </div>
+
+              <div>
+                <label className="text-black text-lg block">Telefono:</label>
+                <div className="h-[2px] bg-gray-300 mt-2"></div>
+                <input
+                  {...form.register("mobile")}
+                  className="w-full bg-transparent border-none focus:outline-none"
+                  placeholder="Ingrese su número de teléfono"
+                />
+              </div>
+            </>
+          )}
 
           <div>
             <label className="text-black text-lg block">Correo:</label>
@@ -77,15 +110,17 @@ export default function AuthPage() {
             />
           </div>
 
-          <div>
-            <label className="text-black text-lg block">Alias:</label>
-            <div className="h-[2px] bg-gray-300 mt-2"></div>
-            <input
-              {...form.register("nickname")}
-              className="w-full bg-transparent border-none focus:outline-none"
-              placeholder="Ingrese su alias"
-            />
-          </div>
+          {!isLogin && (
+            <div>
+              <label className="text-black text-lg block">Alias:</label>
+              <div className="h-[2px] bg-gray-300 mt-2"></div>
+              <input
+                {...form.register("nickname")}
+                className="w-full bg-transparent border-none focus:outline-none"
+                placeholder="Ingrese su alias"
+              />
+            </div>
+          )}
 
           <div>
             <label className="text-black text-lg block">Contraseña:</label>
@@ -98,24 +133,28 @@ export default function AuthPage() {
             />
           </div>
 
-          <div className="mt-4">
-            <p className="text-sm text-gray-600">
-              Recuerda que los pagos se realizan a traves de simpe movil por lo que el numero debera de estar conectado a una cuenta bancaria simpe.
-            </p>
-          </div>
+          {!isLogin && (
+            <>
+              <div className="mt-4">
+                <p className="text-sm text-gray-600">
+                  Recuerda que los pagos se realizan a traves de simpe movil por lo que el numero debera de estar conectado a una cuenta bancaria simpe.
+                </p>
+              </div>
 
-          <div className="mt-2">
-            <p className="text-sm text-gray-600">
-              Crea un alias de como quieres que te conozcan dentro de la comunidad.
-            </p>
-          </div>
+              <div className="mt-2">
+                <p className="text-sm text-gray-600">
+                  Crea un alias de como quieres que te conozcan dentro de la comunidad.
+                </p>
+              </div>
+            </>
+          )}
 
           <button
-            onClick={form.handleSubmit((data) => registerMutation.mutate(data))}
-            disabled={registerMutation.isPending}
+            onClick={form.handleSubmit(handleSubmit)}
+            disabled={loginMutation.isPending || registerMutation.isPending}
             className="w-full bg-[#FF5733] text-white py-3 rounded-md mt-4 font-semibold"
           >
-            Registrarse
+            {isLogin ? 'Iniciar Sesión' : 'Registrarse'}
           </button>
         </div>
       </div>
