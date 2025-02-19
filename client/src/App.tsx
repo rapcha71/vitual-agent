@@ -7,7 +7,7 @@ import NotFound from "@/pages/not-found";
 import AuthPage from "@/pages/auth-page";
 import HomePage from "@/pages/home-page";
 import DashboardPage from "@/pages/dashboard-page";
-import AdminPage from "@/pages/admin-page";
+import AdminWebPage from "@/pages/admin-web-page";
 import PropertyEntry from "@/pages/property-entry";
 import PropertyConfirmation from "@/pages/property-confirmation";
 import PropertiesPage from "@/pages/properties-page";
@@ -25,7 +25,7 @@ function Router() {
       <ProtectedRoute path="/property/new" component={PropertyEntry} />
       <ProtectedRoute path="/property/confirmation" component={PropertyConfirmation} />
       <ProtectedRoute path="/properties" component={PropertiesPage} />
-      <Route path="/admin" component={AdminPage} />
+      <ProtectedRoute path="/admin/web" component={AdminWebPage} />
       <Route component={NotFound} />
     </Switch>
   );
