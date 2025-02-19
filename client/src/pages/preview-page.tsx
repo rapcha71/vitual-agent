@@ -1,52 +1,59 @@
 import { PhonePreview } from "@/components/ui/phone-preview"
-import { Home, Search, User } from "lucide-react"
 
 export default function PreviewPage() {
   return (
-    <div className="flex items-center justify-center min-h-screen bg-gray-100 p-4">
+    <div className="flex items-center justify-center min-h-screen bg-gray-100">
       <PhonePreview>
-        <div className="flex flex-col">
-          {/* Header with logo */}
-          <header className="bg-primary px-4 py-3">
-            <div className="flex flex-col items-center">
-              <img 
-                src="/attached_assets/Logo de Virtual agent logo largo_upscayl_2x_realesrgan-x4plus.png"
-                alt="Virtual Agent"
-                className="h-10 w-auto"
-              />
-              <div className="text-white text-xs mt-1">
-                TU LLAVE DE INGRESO A LOS BIENES RAICES
-              </div>
+        {/* Header with logo */}
+        <header className="bg-[#FF5733] px-4 py-3">
+          <div className="flex flex-col items-center">
+            <img 
+              src="/attached_assets/Logo de Virtual agent logo largo_upscayl_2x_realesrgan-x4plus.png"
+              alt="Virtual Agent"
+              className="h-10 w-auto"
+            />
+            <div className="text-white text-xs mt-1">
+              TU LLAVE DE INGRESO A LOS BIENES RAICES
             </div>
-          </header>
+          </div>
+        </header>
 
-          {/* Form Fields Area - matching image 2.jpg */}
-          <div className="p-4 bg-white flex-1">
-            <div className="space-y-4">
-              <div>
-                <label className="text-black text-lg">Nombre:</label>
-                <div className="border-b-2 border-gray-300 mt-1"></div>
-              </div>
-              <div>
-                <label className="text-black text-lg">Telefono:</label>
-                <div className="border-b-2 border-gray-300 mt-1"></div>
-              </div>
-              <div>
-                <label className="text-black text-lg">Correo:</label>
-                <div className="border-b-2 border-gray-300 mt-1"></div>
-              </div>
-              <div>
-                <label className="text-black text-lg">Alias:</label>
-                <div className="border-b-2 border-gray-300 mt-1"></div>
-              </div>
-              <p className="text-sm text-gray-600 mt-2">
+        {/* Form Fields Area - matching image 2.jpg */}
+        <div className="p-4 bg-white">
+          <div className="space-y-6">
+            <div>
+              <label className="text-black text-lg block">Nombre:</label>
+              <div className="h-[2px] bg-gray-300 mt-2"></div>
+            </div>
+
+            <div>
+              <label className="text-black text-lg block">Telefono:</label>
+              <div className="h-[2px] bg-gray-300 mt-2"></div>
+            </div>
+
+            <div>
+              <label className="text-black text-lg block">Correo:</label>
+              <div className="h-[2px] bg-gray-300 mt-2"></div>
+            </div>
+
+            <div>
+              <label className="text-black text-lg block">Alias:</label>
+              <div className="h-[2px] bg-gray-300 mt-2"></div>
+            </div>
+
+            <div className="mt-4">
+              <p className="text-sm text-gray-600">
                 Recuerda que los pagos se realizan a traves de simpe movil por lo que el numero debera de estar conectado a una cuenta bancaria simpe.
               </p>
             </div>
-          </div>
 
-          {/* Navigation Footer */}
-          <footer className="bg-white border-t border-gray-200 px-2 py-3">
+            <div className="mt-2 text-sm text-gray-600">
+              <p>Crea un alias de como quieres que te conozcan dentro de la comunidad.</p>
+            </div>
+          </div>
+        </div>
+        {/* Navigation Footer - from original code */}
+        <footer className="bg-white border-t border-gray-200 px-2 py-3">
             <nav className="flex justify-around items-center">
               <button className="flex flex-col items-center space-y-1">
                 <Home className="h-5 w-5" />
@@ -62,7 +69,6 @@ export default function PreviewPage() {
               </button>
             </nav>
           </footer>
-        </div>
       </PhonePreview>
     </div>
   )
