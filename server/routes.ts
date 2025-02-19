@@ -22,6 +22,10 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
     try {
       const properties = await storage.getAllPropertiesWithUsers();
+      console.log("Admin properties fetch:", {
+        count: properties.length,
+        sampleImages: properties[0]?.images || []
+      });
       res.json(properties);
     } catch (error: any) {
       console.error("Error fetching admin properties:", error);

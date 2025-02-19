@@ -3,10 +3,9 @@ import { useQuery } from "@tanstack/react-query";
 import { PropertyWithUser } from "@shared/schema";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { ChevronLeft, LogOut, Book, Image } from "lucide-react";
+import { ChevronLeft, LogOut, Image } from "lucide-react";
 import { useLocation } from "wouter";
 import { Table, TableBody, TableCaption, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
-import { RegulationsDialog } from "@/components/ui/regulations-dialog";
 import {
   Dialog,
   DialogContent,
@@ -42,7 +41,6 @@ export default function AdminPage() {
             <ChevronLeft className="h-5 w-5" />
           </Button>
           <div className="flex items-center gap-4">
-            <RegulationsDialog />
             <img 
               src="/assets/logo.png"
               alt="Virtual Agent"
@@ -64,51 +62,53 @@ export default function AdminPage() {
             <CardTitle>Panel de Administración - Propiedades Registradas</CardTitle>
           </CardHeader>
           <CardContent>
-            <Table>
-              <TableCaption>Listado de todas las propiedades registradas</TableCaption>
-              <TableHeader>
-                <TableRow>
-                  <TableHead>ID Propiedad</TableHead>
-                  <TableHead>Usuario</TableHead>
-                  <TableHead>Apodo</TableHead>
-                  <TableHead>Teléfono Usuario</TableHead>
-                  <TableHead>Tipo</TableHead>
-                  <TableHead>Teléfono Rótulo</TableHead>
-                  <TableHead>Ubicación</TableHead>
-                  <TableHead>Imágenes</TableHead>
-                </TableRow>
-              </TableHeader>
-              <TableBody>
-                {properties.map((property) => (
-                  <TableRow key={property.id}>
-                    <TableCell>{property.propertyId}</TableCell>
-                    <TableCell>{property.user.fullName || property.user.username}</TableCell>
-                    <TableCell>{property.user.nickname || '-'}</TableCell>
-                    <TableCell>{property.user.mobile || '-'}</TableCell>
-                    <TableCell>
-                      {property.propertyType === 'house' ? 'Casa' : 
-                       property.propertyType === 'land' ? 'Terreno' : 
-                       'Local Comercial'}
-                    </TableCell>
-                    <TableCell>{property.signPhoneNumber || '-'}</TableCell>
-                    <TableCell>
-                      {`${property.location.lat.toFixed(6)}, ${property.location.lng.toFixed(6)}`}
-                    </TableCell>
-                    <TableCell>
-                      {property.images && property.images.length > 0 ? (
+            {isLoading ? (
+              <div className="text-center py-4">Cargando propiedades...</div>
+            ) : (
+              <Table>
+                <TableCaption>Listado de todas las propiedades registradas</TableCaption>
+                <TableHeader>
+                  <TableRow>
+                    <TableHead>ID Propiedad</TableHead>
+                    <TableHead>Usuario</TableHead>
+                    <TableHead>Apodo</TableHead>
+                    <TableHead>Teléfono Usuario</TableHead>
+                    <TableHead>Tipo</TableHead>
+                    <TableHead>Teléfono Rótulo</TableHead>
+                    <TableHead>Ubicación</TableHead>
+                    <TableHead>Imágenes</TableHead>
+                  </TableRow>
+                </TableHeader>
+                <TableBody>
+                  {properties.map((property) => (
+                    <TableRow key={property.id}>
+                      <TableCell>{property.propertyId}</TableCell>
+                      <TableCell>{property.user.fullName || property.user.username}</TableCell>
+                      <TableCell>{property.user.nickname || '-'}</TableCell>
+                      <TableCell>{property.user.mobile || '-'}</TableCell>
+                      <TableCell>
+                        {property.propertyType === 'house' ? 'Casa' : 
+                         property.propertyType === 'land' ? 'Terreno' : 
+                         'Local Comercial'}
+                      </TableCell>
+                      <TableCell>{property.signPhoneNumber || '-'}</TableCell>
+                      <TableCell>
+                        {property.location.lat.toFixed(6)}, {property.location.lng.toFixed(6)}
+                      </TableCell>
+                      <TableCell>
                         <Dialog>
                           <DialogTrigger asChild>
                             <Button variant="outline" size="sm">
                               <Image className="h-4 w-4 mr-2" />
-                              Ver Imágenes ({property.images.length})
+                              Ver Imágenes ({Array.isArray(property.images) ? property.images.length : 0})
                             </Button>
                           </DialogTrigger>
                           <DialogContent className="max-w-4xl">
                             <DialogHeader>
                               <DialogTitle>Imágenes de la Propiedad {property.propertyId}</DialogTitle>
                             </DialogHeader>
-                            <div className="grid grid-cols-2 md:grid-cols-3 gap-4 p-4">
-                              {property.images.map((image: string, index: number) => (
+                            <div className="grid grid-cols-2 gap-4 p-4">
+                              {Array.isArray(property.images) && property.images.map((image, index) => (
                                 <div key={index} className="relative aspect-square">
                                   <img
                                     src={image}
@@ -120,14 +120,12 @@ export default function AdminPage() {
                             </div>
                           </DialogContent>
                         </Dialog>
-                      ) : (
-                        <span className="text-muted-foreground">Sin imágenes</span>
-                      )}
-                    </TableCell>
-                  </TableRow>
-                ))}
-              </TableBody>
-            </Table>
+                      </TableCell>
+                    </TableRow>
+                  ))}
+                </TableBody>
+              </Table>
+            )}
           </CardContent>
         </Card>
       </div>
