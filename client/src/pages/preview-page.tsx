@@ -7,12 +7,7 @@ export default function PreviewPage() {
       <div className="flex flex-col h-full">
         {/* Header */}
         <header className="sticky top-0 z-10 bg-primary px-4 py-3 shadow-sm">
-          <img 
-            src="/attached_assets/Logo de Virtual agent logo largo_upscayl_2x_realesrgan-x4plus.png" 
-            alt="Virtual Agent Logo"
-            className="w-36 mx-auto"
-          />
-          <p className="text-white text-center text-xs mt-1">TU LLAVE DE INGRESO A LOS BIENES RAICES</p>
+          <h1 className="text-white text-lg font-semibold text-center">Virtual Agent</h1>
         </header>
 
         {/* Main content */}
