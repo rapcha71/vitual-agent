@@ -36,18 +36,15 @@ export function setupAuth(app: Express) {
   }
 
   const sessionSettings: session.SessionOptions = {
-    secret: process.env.SESSION_SECRET!,
+    secret: process.env.SESSION_SECRET,
     resave: false,
     saveUninitialized: false,
     store: storage.sessionStore,
-    name: 'connect.sid',
-    rolling: true,
     cookie: {
-      secure: process.env.NODE_ENV === "production",
-      httpOnly: true,
       maxAge: 30 * 24 * 60 * 60 * 1000, // 30 days
-      sameSite: 'lax',
-      path: '/'
+      httpOnly: true,
+      secure: process.env.NODE_ENV === 'production',
+      sameSite: 'lax'
     }
   };
 
@@ -109,6 +106,7 @@ export function setupAuth(app: Express) {
 
   app.post("/api/register", async (req, res) => {
     try {
+      console.log("Registration attempt with data:", { ...req.body, password: '[REDACTED]' });
       const userData = insertUserSchema.parse(req.body);
 
       const existingUser = await storage.getUserByUsername(userData.username);
@@ -122,14 +120,18 @@ export function setupAuth(app: Express) {
         password: hashedPassword,
       });
 
+      console.log("User created successfully:", user.id);
+
       req.login(user, (err) => {
         if (err) {
           console.error("Login error after registration:", err);
           return res.status(500).json({ message: "Error logging in after registration" });
         }
+        console.log("Auto-login successful after registration for user:", user.id);
         res.status(201).json(user);
       });
     } catch (error: any) {
+      console.error("Registration error:", error);
       res.status(400).json({ message: error.message || "Registration failed" });
     }
   });
@@ -164,8 +166,14 @@ export function setupAuth(app: Express) {
         console.error("Logout error:", err);
         return next(err);
       }
-      console.log("Logout successful for user:", userId);
-      res.sendStatus(200);
+      req.session.destroy((err) => {
+        if (err) {
+          console.error("Session destruction error:", err);
+          return next(err);
+        }
+        console.log("Logout and session cleanup successful for user:", userId);
+        res.sendStatus(200);
+      });
     });
   });
 
