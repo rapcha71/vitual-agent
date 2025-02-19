@@ -1,7 +1,7 @@
 import { Button } from "@/components/ui/button";
 import { useAuth } from "@/hooks/use-auth";
 import { Link, useLocation } from "wouter";
-import { Building2, Plus, LogOut, Home, MapPin, Building, ChevronLeft, Book } from "lucide-react";
+import { Building2, Plus, LogOut, Home, MapPin, Building, ChevronLeft, Book, User, Shield } from "lucide-react";
 import { useQuery } from "@tanstack/react-query";
 import { Property } from "@shared/schema";
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
@@ -17,7 +17,6 @@ export default function HomePage() {
   const { data: properties = [], isLoading, error } = useQuery({
     queryKey: ['/api/properties'],
     staleTime: 60000, // Cache for 1 minute
-    cacheTime: 300000, // Keep in cache for 5 minutes
     retry: 1, // Only retry once on failure
     refetchOnWindowFocus: false, // Prevent unnecessary refetches
   });
@@ -135,8 +134,38 @@ export default function HomePage() {
                     Agregar Propiedad
                   </Button>
                 </Link>
+                {user?.isAdmin && (
+                  <Link href="/admin">
+                    <Button variant="outline" className="w-full">
+                      <Shield className="h-4 w-4 mr-2" />
+                      Panel de Administración
+                    </Button>
+                  </Link>
+                )}
                 <RegulationsDialog />
               </div>
+            </div>
+
+            {/* Navigation Menu */}
+            <div className="grid grid-cols-3 gap-3">
+              <Link href="/properties">
+                <Button variant="outline" className="w-full">
+                  <Home className="h-4 w-4 mr-2" />
+                  Propiedades
+                </Button>
+              </Link>
+              <Link href="/profile">
+                <Button variant="outline" className="w-full">
+                  <User className="h-4 w-4 mr-2" />
+                  Perfil
+                </Button>
+              </Link>
+              <Link href="/dashboard">
+                <Button variant="outline" className="w-full">
+                  <Building className="h-4 w-4 mr-2" />
+                  Dashboard
+                </Button>
+              </Link>
             </div>
 
             {/* Property Statistics */}
