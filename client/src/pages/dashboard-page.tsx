@@ -95,6 +95,7 @@ export default function DashboardPage() {
         const mapElement = document.getElementById("map");
         if (!mapElement) {
           console.error('Map element not found');
+          setMapLoading(false);
           return;
         }
 
@@ -103,7 +104,6 @@ export default function DashboardPage() {
           zoom: 8,
         });
 
-        // Add markers for properties
         if (properties.length > 0) {
           properties.forEach(property => {
             new google.maps.Marker({
@@ -151,7 +151,7 @@ export default function DashboardPage() {
               variant="secondary"
               size="sm"
               onClick={() => setLocation("/admin")}
-              className="flex items-center gap-2"
+              className="flex items-center gap-2 bg-white text-[#F05023] hover:bg-white/90"
             >
               <Shield className="h-4 w-4" />
               Panel de Administración
@@ -218,128 +218,121 @@ export default function DashboardPage() {
           </CardContent>
         </Card>
 
-        <Tabs defaultValue="properties" className="w-full">
-          <TabsList className="w-full justify-start">
-            <TabsTrigger value="properties" className="flex items-center gap-2">
-              <Image className="h-4 w-4" />
-              Propiedades
-            </TabsTrigger>
-            <TabsTrigger value="map" className="flex items-center gap-2">
-              <MapPin className="h-4 w-4" />
-              Mapa
-            </TabsTrigger>
-          </TabsList>
-
-          <TabsContent value="properties">
-            <Card>
-              <CardContent>
-                {isLoading ? (
-                  <div className="text-center py-4">
-                    <Loader2 className="h-8 w-8 animate-spin mx-auto text-primary" />
-                    <p className="mt-2">Cargando propiedades...</p>
-                  </div>
-                ) : propertiesWithThumbnails.length === 0 ? (
-                  <div className="text-center py-8">
-                    <p className="text-muted-foreground">No tienes propiedades registradas</p>
-                    <Button 
-                      className="mt-4"
-                      onClick={() => setLocation("/property/new")}
-                    >
-                      <Plus className="h-4 w-4 mr-2" />
-                      Agregar Primera Propiedad
-                    </Button>
-                  </div>
-                ) : (
-                  <Table>
-                    <TableCaption>Listado de mis propiedades registradas</TableCaption>
-                    <TableHeader>
-                      <TableRow>
-                        <TableHead>ID Propiedad</TableHead>
-                        <TableHead>Tipo</TableHead>
-                        <TableHead>Teléfono Rótulo</TableHead>
-                        <TableHead>Ubicación</TableHead>
-                        <TableHead>Imágenes</TableHead>
-                      </TableRow>
-                    </TableHeader>
-                    <TableBody>
-                      {propertiesWithThumbnails.map((property) => (
-                        <TableRow key={property.id}>
-                          <TableCell>{property.propertyId}</TableCell>
-                          <TableCell>
-                            {property.propertyType === 'house' ? 'Casa' : 
-                             property.propertyType === 'land' ? 'Terreno' : 
-                             'Local Comercial'}
-                          </TableCell>
-                          <TableCell>{property.signPhoneNumber || '-'}</TableCell>
-                          <TableCell>
-                            {property.location.lat.toFixed(6)}, {property.location.lng.toFixed(6)}
-                          </TableCell>
-                          <TableCell>
-                            {property.thumbnails && property.thumbnails.length > 0 ? (
-                              <Dialog>
-                                <DialogTrigger asChild>
-                                  <Button variant="outline" size="sm">
-                                    <Image className="h-4 w-4 mr-2" />
-                                    Ver Imágenes ({property.thumbnails.length})
-                                  </Button>
-                                </DialogTrigger>
-                                <DialogContent className="max-w-4xl">
-                                  <DialogHeader>
-                                    <DialogTitle>Imágenes de la Propiedad {property.propertyId}</DialogTitle>
-                                  </DialogHeader>
-                                  <div className="grid grid-cols-2 gap-4 p-4 max-h-[80vh] overflow-y-auto">
-                                    {property.thumbnails?.map((thumbnail, index) => (
-                                      <div key={index} className="relative aspect-video group">
-                                        <img
-                                          src={thumbnail}
-                                          alt={`Vista previa ${index + 1} de la propiedad ${property.propertyId}`}
-                                          className="object-cover w-full h-full rounded-lg cursor-pointer"
-                                          onClick={() => {
-                                            const originalImage = Array.isArray(property.images) ? property.images[index] : null;
-                                            if (originalImage) {
-                                              window.open(originalImage, '_blank');
-                                            }
-                                          }}
-                                        />
-                                        <div className="absolute inset-0 bg-black/50 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
-                                          <span className="text-white text-sm">Click para ver tamaño completo</span>
-                                        </div>
-                                      </div>
-                                    ))}
-                                  </div>
-                                </DialogContent>
-                              </Dialog>
-                            ) : (
-                              <span className="text-muted-foreground">Sin imágenes</span>
-                            )}
-                          </TableCell>
-                        </TableRow>
-                      ))}
-                    </TableBody>
-                  </Table>
-                )}
-              </CardContent>
-            </Card>
-          </TabsContent>
-
-          <TabsContent value="map">
-            <Card>
-              <CardContent>
-                <div 
-                  id="map" 
-                  className="w-full h-[600px] rounded-lg relative bg-gray-100"
-                  style={{ minHeight: '600px' }}
-                >
-                  {mapLoading && (
-                    <div className="absolute inset-0 flex items-center justify-center bg-gray-100/80">
-                      <Loader2 className="h-8 w-8 animate-spin text-primary" />
-                    </div>
-                  )}
+        <div className="grid grid-cols-1 gap-4">
+          {/* Lista de Propiedades */}
+          <Card>
+            <CardContent className="p-6">
+              {isLoading ? (
+                <div className="text-center py-4">
+                  <Loader2 className="h-8 w-8 animate-spin mx-auto text-primary" />
+                  <p className="mt-2">Cargando propiedades...</p>
                 </div>
-              </CardContent>
-            </Card>
-          </TabsContent>
-        </Tabs>
+              ) : propertiesWithThumbnails.length === 0 ? (
+                <div className="text-center py-8">
+                  <p className="text-muted-foreground">No tienes propiedades registradas</p>
+                  <Button 
+                    className="mt-4"
+                    onClick={() => setLocation("/property/new")}
+                  >
+                    <Plus className="h-4 w-4 mr-2" />
+                    Agregar Primera Propiedad
+                  </Button>
+                </div>
+              ) : (
+                <Table>
+                  <TableCaption>Listado de mis propiedades registradas</TableCaption>
+                  <TableHeader>
+                    <TableRow>
+                      <TableHead>ID Propiedad</TableHead>
+                      <TableHead>Tipo</TableHead>
+                      <TableHead>Teléfono Rótulo</TableHead>
+                      <TableHead>Ubicación</TableHead>
+                      <TableHead>Imágenes</TableHead>
+                    </TableRow>
+                  </TableHeader>
+                  <TableBody>
+                    {propertiesWithThumbnails.map((property) => (
+                      <TableRow key={property.id}>
+                        <TableCell>{property.propertyId}</TableCell>
+                        <TableCell>
+                          {property.propertyType === 'house' ? 'Casa' : 
+                           property.propertyType === 'land' ? 'Terreno' : 
+                           'Local Comercial'}
+                        </TableCell>
+                        <TableCell>{property.signPhoneNumber || '-'}</TableCell>
+                        <TableCell>
+                          {property.location.lat.toFixed(6)}, {property.location.lng.toFixed(6)}
+                        </TableCell>
+                        <TableCell>
+                          {property.thumbnails && property.thumbnails.length > 0 ? (
+                            <Dialog>
+                              <DialogTrigger asChild>
+                                <Button variant="outline" size="sm">
+                                  <Image className="h-4 w-4 mr-2" />
+                                  Ver Imágenes ({property.thumbnails.length})
+                                </Button>
+                              </DialogTrigger>
+                              <DialogContent className="max-w-4xl">
+                                <DialogHeader>
+                                  <DialogTitle>Imágenes de la Propiedad {property.propertyId}</DialogTitle>
+                                </DialogHeader>
+                                <div className="grid grid-cols-2 gap-4 p-4 max-h-[80vh] overflow-y-auto">
+                                  {property.thumbnails?.map((thumbnail, index) => (
+                                    <div key={index} className="relative aspect-video group">
+                                      <img
+                                        src={thumbnail}
+                                        alt={`Vista previa ${index + 1} de la propiedad ${property.propertyId}`}
+                                        className="object-cover w-full h-full rounded-lg cursor-pointer"
+                                        onClick={() => {
+                                          const originalImage = Array.isArray(property.images) ? property.images[index] : null;
+                                          if (originalImage) {
+                                            window.open(originalImage, '_blank');
+                                          }
+                                        }}
+                                      />
+                                      <div className="absolute inset-0 bg-black/50 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
+                                        <span className="text-white text-sm">Click para ver tamaño completo</span>
+                                      </div>
+                                    </div>
+                                  ))}
+                                </div>
+                              </DialogContent>
+                            </Dialog>
+                          ) : (
+                            <span className="text-muted-foreground">Sin imágenes</span>
+                          )}
+                        </TableCell>
+                      </TableRow>
+                    ))}
+                  </TableBody>
+                </Table>
+              )}
+            </CardContent>
+          </Card>
+
+          {/* Mapa */}
+          <Card>
+            <CardHeader>
+              <CardTitle className="flex items-center gap-2">
+                <MapPin className="h-5 w-5" />
+                Ubicación de Propiedades
+              </CardTitle>
+            </CardHeader>
+            <CardContent>
+              <div 
+                id="map" 
+                className="w-full h-[400px] rounded-lg relative bg-gray-100"
+                style={{ minHeight: '400px' }}
+              >
+                {mapLoading && (
+                  <div className="absolute inset-0 flex items-center justify-center bg-gray-100/80">
+                    <Loader2 className="h-8 w-8 animate-spin text-primary" />
+                  </div>
+                )}
+              </div>
+            </CardContent>
+          </Card>
+        </div>
       </main>
     </div>
   );
