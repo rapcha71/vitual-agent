@@ -73,6 +73,16 @@ export default function PropertyEntry() {
 
         if (!response.ok) {
           console.error("Server response error:", data);
+          // Check for duplicate property error
+          if (data.duplicateProperties) {
+            toast({
+              title: "Propiedad Duplicada",
+              description: data.message,
+              variant: "destructive",
+              duration: 10000,
+            });
+            return;
+          }
           throw new Error(data.message || data.error || 'Failed to submit property');
         }
 

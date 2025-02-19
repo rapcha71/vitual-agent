@@ -5,6 +5,7 @@ import { storage } from "./storage";
 import { insertPropertySchema } from "@shared/schema";
 import { nanoid } from "nanoid";
 import ocrService from "./services/ocr";
+import { isWithinRadius } from "./lib/geo-utils";
 
 export async function registerRoutes(app: Express): Promise<Server> {
   setupAuth(app);
@@ -83,6 +84,32 @@ export async function registerRoutes(app: Express): Promise<Server> {
         } catch (error) {
           console.error('Error processing sign image:', error);
           // Continue without OCR if it fails
+        }
+      }
+
+      // Check for duplicate properties
+      if (extractedPhoneNumber) {
+        const existingProperties = await storage.getPropertiesByUserId(req.user.id);
+        const duplicates = existingProperties.filter(existingProperty => {
+          const phoneMatch = existingProperty.signPhoneNumber === extractedPhoneNumber;
+          const locationMatch = isWithinRadius(
+            existingProperty.location,
+            propertyData.location,
+            15 // 15 meters radius
+          );
+          return phoneMatch && locationMatch;
+        });
+
+        if (duplicates.length > 0) {
+          return res.status(400).json({
+            success: false,
+            message: "Se ha detectado una propiedad similar en un radio de 15 metros con el mismo número de teléfono. Por favor, verifique que no sea una propiedad duplicada.",
+            duplicateProperties: duplicates.map(d => ({
+              propertyId: d.propertyId,
+              location: d.location,
+              signPhoneNumber: d.signPhoneNumber
+            }))
+          });
         }
       }
 
@@ -184,7 +211,6 @@ export async function registerRoutes(app: Express): Promise<Server> {
       user: req.user
     });
   });
-
 
   const httpServer = createServer(app);
   return httpServer;
