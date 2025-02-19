@@ -3,7 +3,7 @@ import { useQuery } from "@tanstack/react-query";
 import { Property } from "@shared/schema";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { ChevronLeft, LogOut, Image, MapPin, Plus } from "lucide-react";
+import { ChevronLeft, LogOut, Image, MapPin, Plus, Shield } from "lucide-react";
 import { useLocation } from "wouter";
 import { Table, TableBody, TableCaption, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { compressImageForThumbnail } from "@/lib/utils";
@@ -39,12 +39,15 @@ export default function DashboardPage() {
 
       const withThumbnails = await Promise.all(
         properties.map(async (property) => {
-          if (!property.images) {
+          // Asegurarse de que property.images es un array
+          const images = Array.isArray(property.images) ? property.images : [];
+
+          if (images.length === 0) {
             return { ...property, thumbnails: [] };
           }
 
           const thumbnails = await Promise.all(
-            Object.values(property.images).map(async (img) => {
+            images.map(async (img) => {
               try {
                 return await compressImageForThumbnail(img);
               } catch (error) {
@@ -89,12 +92,15 @@ export default function DashboardPage() {
             alt="Virtual Agent"
             className="h-10 w-auto"
           />
+          {/* Botón de panel de administración visible solo para administradores */}
           {user?.isAdmin && (
             <Button
               variant="secondary"
               size="sm"
               onClick={() => setLocation("/admin")}
+              className="flex items-center gap-2"
             >
+              <Shield className="h-4 w-4" />
               Panel de Administración
             </Button>
           )}
@@ -173,6 +179,17 @@ export default function DashboardPage() {
                     <Loader2 className="h-8 w-8 animate-spin mx-auto text-primary" />
                     <p className="mt-2">Cargando propiedades...</p>
                   </div>
+                ) : propertiesWithThumbnails.length === 0 ? (
+                  <div className="text-center py-8">
+                    <p className="text-muted-foreground">No tienes propiedades registradas</p>
+                    <Button 
+                      className="mt-4"
+                      onClick={() => setLocation("/property/new")}
+                    >
+                      <Plus className="h-4 w-4 mr-2" />
+                      Agregar Primera Propiedad
+                    </Button>
+                  </div>
                 ) : (
                   <Table>
                     <TableCaption>Listado de mis propiedades registradas</TableCaption>
@@ -219,7 +236,11 @@ export default function DashboardPage() {
                                           alt={`Vista previa ${index + 1} de la propiedad ${property.propertyId}`}
                                           className="object-cover w-full h-full rounded-lg cursor-pointer"
                                           onClick={() => {
-                                            window.open(property.images[index], '_blank');
+                                            // Usar el array original de imágenes para abrir la imagen completa
+                                            const originalImage = Array.isArray(property.images) ? property.images[index] : null;
+                                            if (originalImage) {
+                                              window.open(originalImage, '_blank');
+                                            }
                                           }}
                                         />
                                         <div className="absolute inset-0 bg-black/50 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
