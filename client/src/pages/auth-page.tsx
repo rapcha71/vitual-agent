@@ -17,10 +17,12 @@ import { useAuth } from "@/hooks/use-auth";
 import { insertUserSchema } from "@shared/schema";
 import { Redirect } from "wouter";
 import { useToast } from "@/hooks/use-toast";
+import { Loader2 } from "lucide-react";
 
 export default function AuthPage() {
   const { user, loginMutation, registerMutation } = useAuth();
   const { toast } = useToast();
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   const loginForm = useForm({
     resolver: zodResolver(insertUserSchema.pick({ username: true, password: true })),
@@ -43,6 +45,7 @@ export default function AuthPage() {
 
   const handleLogin = async (data: any) => {
     try {
+      setIsSubmitting(true);
       console.log("Iniciando proceso de login", data);
       await loginMutation.mutateAsync(data);
       toast({
@@ -56,11 +59,14 @@ export default function AuthPage() {
         description: error.message || "Por favor verifica tus credenciales",
         variant: "destructive",
       });
+    } finally {
+      setIsSubmitting(false);
     }
   };
 
   const handleRegister = async (data: any) => {
     try {
+      setIsSubmitting(true);
       console.log("Iniciando proceso de registro", data);
       await registerMutation.mutateAsync(data);
       toast({
@@ -74,13 +80,18 @@ export default function AuthPage() {
         description: error.message || "No se pudo completar el registro",
         variant: "destructive",
       });
+    } finally {
+      setIsSubmitting(false);
     }
   };
 
+  // Si el usuario ya está autenticado, redirigir al dashboard
   if (user) {
     console.log("Usuario autenticado, redirigiendo a home");
     return <Redirect to="/" />;
   }
+
+  const isLoading = isSubmitting || loginMutation.isPending || registerMutation.isPending;
 
   return (
     <div className="flex items-center justify-center min-h-screen bg-gray-100">
@@ -119,7 +130,11 @@ export default function AuthPage() {
                         <FormItem>
                           <FormLabel>Correo</FormLabel>
                           <FormControl>
-                            <Input placeholder="Ingrese su correo electrónico" {...field} />
+                            <Input 
+                              placeholder="Ingrese su correo electrónico" 
+                              {...field} 
+                              disabled={isLoading}
+                            />
                           </FormControl>
                           <FormMessage />
                         </FormItem>
@@ -133,7 +148,12 @@ export default function AuthPage() {
                         <FormItem>
                           <FormLabel>Contraseña</FormLabel>
                           <FormControl>
-                            <Input type="password" placeholder="Ingrese su contraseña" {...field} />
+                            <Input 
+                              type="password" 
+                              placeholder="Ingrese su contraseña" 
+                              {...field} 
+                              disabled={isLoading}
+                            />
                           </FormControl>
                           <FormMessage />
                         </FormItem>
@@ -143,9 +163,16 @@ export default function AuthPage() {
                     <Button 
                       type="submit" 
                       className="w-full bg-[#F05023] hover:bg-[#F05023]/90"
-                      disabled={loginMutation.isPending}
+                      disabled={isLoading}
                     >
-                      {loginMutation.isPending ? "Iniciando sesión..." : "Iniciar Sesión"}
+                      {isLoading ? (
+                        <>
+                          <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                          Iniciando sesión...
+                        </>
+                      ) : (
+                        "Iniciar Sesión"
+                      )}
                     </Button>
                   </form>
                 </Form>
@@ -164,7 +191,11 @@ export default function AuthPage() {
                         <FormItem>
                           <FormLabel>Nombre Completo</FormLabel>
                           <FormControl>
-                            <Input placeholder="Ingrese su nombre completo" {...field} />
+                            <Input 
+                              placeholder="Ingrese su nombre completo" 
+                              {...field} 
+                              disabled={isLoading}
+                            />
                           </FormControl>
                           <FormMessage />
                         </FormItem>
@@ -178,7 +209,11 @@ export default function AuthPage() {
                         <FormItem>
                           <FormLabel>Correo</FormLabel>
                           <FormControl>
-                            <Input placeholder="Ingrese su correo electrónico" {...field} />
+                            <Input 
+                              placeholder="Ingrese su correo electrónico" 
+                              {...field} 
+                              disabled={isLoading}
+                            />
                           </FormControl>
                           <FormMessage />
                         </FormItem>
@@ -192,7 +227,11 @@ export default function AuthPage() {
                         <FormItem>
                           <FormLabel>Teléfono</FormLabel>
                           <FormControl>
-                            <Input placeholder="Ingrese su número de teléfono" {...field} />
+                            <Input 
+                              placeholder="Ingrese su número de teléfono" 
+                              {...field} 
+                              disabled={isLoading}
+                            />
                           </FormControl>
                           <FormMessage />
                         </FormItem>
@@ -206,7 +245,11 @@ export default function AuthPage() {
                         <FormItem>
                           <FormLabel>Alias</FormLabel>
                           <FormControl>
-                            <Input placeholder="Ingrese su alias" {...field} />
+                            <Input 
+                              placeholder="Ingrese su alias" 
+                              {...field} 
+                              disabled={isLoading}
+                            />
                           </FormControl>
                           <FormMessage />
                         </FormItem>
@@ -220,7 +263,12 @@ export default function AuthPage() {
                         <FormItem>
                           <FormLabel>Contraseña</FormLabel>
                           <FormControl>
-                            <Input type="password" placeholder="Ingrese su contraseña" {...field} />
+                            <Input 
+                              type="password" 
+                              placeholder="Ingrese su contraseña" 
+                              {...field} 
+                              disabled={isLoading}
+                            />
                           </FormControl>
                           <FormMessage />
                         </FormItem>
@@ -239,9 +287,16 @@ export default function AuthPage() {
                     <Button 
                       type="submit" 
                       className="w-full bg-[#F05023] hover:bg-[#F05023]/90"
-                      disabled={registerMutation.isPending}
+                      disabled={isLoading}
                     >
-                      {registerMutation.isPending ? "Registrando..." : "Registrarse"}
+                      {isLoading ? (
+                        <>
+                          <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                          Registrando...
+                        </>
+                      ) : (
+                        "Registrarse"
+                      )}
                     </Button>
                   </form>
                 </Form>

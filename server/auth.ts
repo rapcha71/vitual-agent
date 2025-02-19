@@ -37,15 +37,14 @@ export function setupAuth(app: Express) {
 
   const sessionSettings: session.SessionOptions = {
     secret: process.env.SESSION_SECRET,
-    resave: true,
+    resave: false,
     saveUninitialized: false,
     store: storage.sessionStore,
     cookie: {
-      maxAge: 30 * 24 * 60 * 60 * 1000, // 30 days
+      maxAge: 24 * 60 * 60 * 1000, // 24 hours
       httpOnly: true,
-      secure: false, // Set to true in production with HTTPS
-      sameSite: 'lax',
-      path: '/'
+      secure: process.env.NODE_ENV === 'production',
+      sameSite: 'lax'
     }
   };
 
@@ -62,18 +61,15 @@ export function setupAuth(app: Express) {
 
         if (!user) {
           console.log("User not found:", username);
-          return done(null, false, { message: "Invalid username or password" });
+          return done(null, false, { message: "Usuario o contraseña inválidos" });
         }
 
         const passwordValid = await comparePasswords(password, user.password);
         console.log("Password validation result:", passwordValid);
 
         if (!passwordValid) {
-          return done(null, false, { message: "Invalid username or password" });
+          return done(null, false, { message: "Usuario o contraseña inválidos" });
         }
-
-        // Update last login time
-        await storage.updateLastLogin(user.id);
 
         console.log("Login successful for:", username);
         return done(null, user);
@@ -108,64 +104,57 @@ export function setupAuth(app: Express) {
   app.post("/api/register", async (req, res) => {
     try {
       console.log("Registration attempt with data:", { ...req.body, password: '[REDACTED]' });
+
+      // Validate input data
       const userData = insertUserSchema.parse(req.body);
 
+      // Check if username exists
       const existingUser = await storage.getUserByUsername(userData.username);
       if (existingUser) {
-        return res.status(400).json({ message: "Username already exists" });
+        return res.status(400).json({ message: "El correo ya está registrado" });
       }
 
+      // Hash password and create user
       const hashedPassword = await hashPassword(userData.password);
       const user = await storage.createUser({
         ...userData,
         password: hashedPassword,
       });
 
-      console.log("User created successfully:", user.id);
-
+      // Auto-login after registration
       req.login(user, (err) => {
         if (err) {
           console.error("Login error after registration:", err);
-          return res.status(500).json({ message: "Error logging in after registration" });
+          return res.status(500).json({ message: "Error al iniciar sesión después del registro" });
         }
-        req.session.save((err) => {
-          if (err) {
-            console.error("Session save error:", err);
-            return res.status(500).json({ message: "Error saving session" });
-          }
-          console.log("Auto-login successful after registration for user:", user.id);
-          res.status(201).json(user);
-        });
+
+        console.log("Registration and auto-login successful for user:", user.id);
+        res.status(201).json(user);
       });
     } catch (error: any) {
       console.error("Registration error:", error);
-      res.status(400).json({ message: error.message || "Registration failed" });
+      res.status(400).json({ message: error.message || "Error en el registro" });
     }
   });
 
   app.post("/api/login", (req, res, next) => {
-    passport.authenticate("local", async (err: any, user: any, info: any) => {
+    passport.authenticate("local", (err: any, user: any, info: any) => {
       if (err) {
         console.error("Authentication error:", err);
-        return res.status(500).json({ message: "Internal server error" });
+        return res.status(500).json({ message: "Error interno del servidor" });
       }
+
       if (!user) {
-        return res.status(401).json({ message: info?.message || "Invalid credentials" });
+        return res.status(401).json({ message: info?.message || "Credenciales inválidas" });
       }
 
       req.login(user, (err) => {
         if (err) {
           console.error("Session creation error:", err);
-          return res.status(500).json({ message: "Error creating session" });
+          return res.status(500).json({ message: "Error al crear la sesión" });
         }
-        req.session.save((err) => {
-          if (err) {
-            console.error("Session save error:", err);
-            return res.status(500).json({ message: "Error saving session" });
-          }
-          console.log("Login successful, user:", user.id);
-          res.json(user);
-        });
+        console.log("Login successful for user:", user.id);
+        res.json(user);
       });
     })(req, res, next);
   });
@@ -179,12 +168,13 @@ export function setupAuth(app: Express) {
         console.error("Logout error:", err);
         return next(err);
       }
+
       req.session.destroy((err) => {
         if (err) {
           console.error("Session destruction error:", err);
           return next(err);
         }
-        console.log("Logout and session cleanup successful for user:", userId);
+        console.log("Logout successful for user:", userId);
         res.sendStatus(200);
       });
     });
@@ -193,7 +183,7 @@ export function setupAuth(app: Express) {
   app.get("/api/user", (req, res) => {
     console.log("User check - authenticated:", req.isAuthenticated());
     if (!req.isAuthenticated()) {
-      return res.status(401).json({ message: "Not authenticated" });
+      return res.status(401).json({ message: "No autenticado" });
     }
     res.json(req.user);
   });
