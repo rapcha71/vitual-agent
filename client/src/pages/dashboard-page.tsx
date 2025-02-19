@@ -17,6 +17,7 @@ import {
 } from "@/components/ui/dialog";
 import { Loader2 } from "lucide-react";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Loader } from "@googlemaps/js-api-loader";
 
 type PropertyWithThumbnails = Property & {
   thumbnails?: string[];
@@ -39,7 +40,6 @@ export default function DashboardPage() {
 
       const withThumbnails = await Promise.all(
         properties.map(async (property) => {
-          // Asegurarse de que property.images es un array
           const images = Array.isArray(property.images) ? property.images : [];
 
           if (images.length === 0) {
@@ -74,6 +74,55 @@ export default function DashboardPage() {
     land: properties.filter(p => p.propertyType === 'land').length,
     commercial: properties.filter(p => p.propertyType === 'commercial').length,
   };
+
+  useEffect(() => {
+    const initMap = async () => {
+      try {
+        if (!import.meta.env.VITE_GOOGLE_MAPS_API_KEY) {
+          console.error('Google Maps API key is missing');
+          return;
+        }
+
+        const loader = new Loader({
+          apiKey: import.meta.env.VITE_GOOGLE_MAPS_API_KEY,
+          version: "weekly",
+          libraries: ["places"]
+        });
+
+        const google = await loader.load();
+        const mapElement = document.getElementById("map");
+        if (!mapElement) {
+          console.error('Map element not found');
+          return;
+        }
+
+        const map = new google.maps.Map(mapElement, {
+          center: { lat: 9.9281, lng: -84.0907 }, // Costa Rica
+          zoom: 8,
+        });
+
+        // Add markers for properties
+        if (properties.length > 0) {
+          properties.forEach(property => {
+            new google.maps.Marker({
+              position: { 
+                lat: property.location.lat, 
+                lng: property.location.lng 
+              },
+              map,
+              title: property.propertyId,
+            });
+          });
+        }
+      } catch (error) {
+        console.error('Error loading Google Maps:', error);
+      }
+    };
+
+    if (properties.length > 0) {
+      initMap();
+    }
+  }, [properties]);
 
   return (
     <div className="min-h-screen bg-gray-100">
@@ -236,7 +285,6 @@ export default function DashboardPage() {
                                           alt={`Vista previa ${index + 1} de la propiedad ${property.propertyId}`}
                                           className="object-cover w-full h-full rounded-lg cursor-pointer"
                                           onClick={() => {
-                                            // Usar el array original de imágenes para abrir la imagen completa
                                             const originalImage = Array.isArray(property.images) ? property.images[index] : null;
                                             if (originalImage) {
                                               window.open(originalImage, '_blank');
@@ -271,13 +319,7 @@ export default function DashboardPage() {
                   id="map" 
                   className="w-full h-[600px] rounded-lg relative bg-gray-100"
                   style={{ minHeight: '600px' }}
-                >
-                  <div className="absolute inset-0 flex items-center justify-center bg-gray-100/80">
-                    <p className="text-muted-foreground">
-                      El mapa estará disponible pronto...
-                    </p>
-                  </div>
-                </div>
+                />
               </CardContent>
             </Card>
           </TabsContent>
