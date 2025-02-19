@@ -7,7 +7,17 @@ export default function PreviewPage() {
       <div className="flex flex-col h-full">
         {/* Header */}
         <header className="sticky top-0 z-10 bg-primary px-4 py-3 shadow-sm">
-          <h1 className="text-white text-lg font-semibold text-center">Virtual Agent</h1>
+          <div className="flex flex-col items-center">
+            <div className="text-white uppercase text-2xl font-bold tracking-wider">
+              VIRTUAL
+            </div>
+            <div className="text-white uppercase text-2xl font-bold tracking-wider flex items-center gap-2">
+              AGENT <span className="text-black">▢</span>
+            </div>
+            <div className="text-white text-xs mt-1">
+              TU LLAVE DE INGRESO A LOS BIENES RAICES
+            </div>
+          </div>
         </header>
 
         {/* Main content */}
