@@ -53,6 +53,12 @@ export default function PropertyEntry() {
     mutationFn: async (formData: any) => {
       console.log("Submitting property data:", formData); // Debug log
 
+      // Show loading toast
+      toast({
+        title: "Uploading",
+        description: "Please wait while we save your property...",
+      });
+
       // Get marker color based on property type
       const propertyData = {
         ...formData,
@@ -78,7 +84,7 @@ export default function PropertyEntry() {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['/api/properties'] });
       toast({
-        title: "Success",
+        title: "Success!",
         description: "Property has been successfully added"
       });
       setLocation("/");
@@ -127,6 +133,7 @@ export default function PropertyEntry() {
     try {
       cleanup();
       setIsCapturing(true);
+      setActiveCamera(type);
 
       const constraints = {
         video: {
@@ -137,7 +144,6 @@ export default function PropertyEntry() {
 
       const mediaStream = await navigator.mediaDevices.getUserMedia(constraints);
       setStream(mediaStream);
-      setActiveCamera(type);
 
       if (videoRef.current) {
         videoRef.current.srcObject = mediaStream;
@@ -219,6 +225,9 @@ export default function PropertyEntry() {
         title: "Photo Captured",
         description: `Image compressed from ${originalSize}KB to ${compressedSize}KB (${savings}% reduction)`,
       });
+
+      // Close the dialog after successful capture
+      cleanup();
     } catch (error) {
       console.error('Error capturing photo:', error);
       toast({
@@ -226,8 +235,6 @@ export default function PropertyEntry() {
         description: "Failed to capture photo. Please try again or use file upload.",
         variant: "destructive"
       });
-    } finally {
-      cleanup();
     }
   };
 
@@ -331,12 +338,6 @@ export default function PropertyEntry() {
         });
         return;
       }
-
-      // Show loading toast
-      toast({
-        title: "Submitting",
-        description: "Please wait while we upload your property...",
-      });
 
       // Submit the form
       await createPropertyMutation.mutateAsync(data);
@@ -468,9 +469,12 @@ export default function PropertyEntry() {
         </CardContent>
       </Card>
 
-      <Dialog open={!!activeCamera} onOpenChange={(open) => {
-        if (!open) cleanup();
-      }}>
+      <Dialog 
+        open={isCapturing} 
+        onOpenChange={(open) => {
+          if (!open) cleanup();
+        }}
+      >
         <DialogContent className="sm:max-w-lg">
           <DialogHeader>
             <DialogTitle>
