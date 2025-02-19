@@ -100,9 +100,11 @@ export function setupAuth(app: Express) {
       }
 
       const hashedPassword = await hashPassword(userData.password);
+      // Forzar is_admin a false para nuevos registros
       const user = await storage.createUser({
         ...userData,
         password: hashedPassword,
+        isAdmin: false, // Asegurar que nuevos usuarios nunca sean administradores
       });
 
       req.login(user, (err) => {

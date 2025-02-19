@@ -23,12 +23,17 @@ function useLoginMutation() {
 
   return useMutation({
     mutationFn: async (credentials: LoginData) => {
+      console.log("Iniciando proceso de login", credentials);
+      console.log("Attempting login for user:", credentials.username);
       const res = await apiRequest("POST", "/api/login", credentials);
       if (!res.ok) {
         const error = await res.json();
         throw new Error(error.message || "Usuario o contraseña inválidos");
       }
-      return res.json();
+      console.log("Login successful");
+      const userData = await res.json();
+      console.log("Login mutation succeeded, updating user data");
+      return userData;
     },
     onSuccess: (user: SelectUser) => {
       queryClient.setQueryData(["/api/user"], user);
@@ -57,7 +62,8 @@ function useLogoutMutation() {
     onSuccess: () => {
       queryClient.setQueryData(["/api/user"], null);
       queryClient.clear();
-      window.location.href = "/auth"; // Forzar redirección después del logout
+      // Usar useLocation en lugar de window.location para navegación
+      window.location.href = "/auth";
     },
     onError: (error: Error) => {
       toast({
@@ -105,9 +111,17 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     queryKey: ["/api/user"],
     queryFn: async () => {
       try {
-        const res = await getQueryFn({ on401: "returnNull" })();
-        if (!res) return null;
-        return res as SelectUser;
+        const response = await fetch("/api/user", {
+          credentials: "include"
+        });
+        if (!response.ok) {
+          if (response.status === 401) {
+            return null;
+          }
+          throw new Error("Error fetching user data");
+        }
+        const data = await response.json();
+        return data as SelectUser;
       } catch (error) {
         console.error("Error fetching user:", error);
         return null;
