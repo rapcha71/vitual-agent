@@ -90,4 +90,17 @@ export class DatabaseStorage implements IStorage {
   async getPropertiesByUserId(userId: number): Promise<Property[]> {
     return db.select().from(properties).where(eq(properties.userId, userId));
   }
+
+  async getAllPropertiesWithUsers(): Promise<(Property & { user: User })[]> {
+    const result = await db.select({
+      property: properties,
+      user: users
+    }).from(properties)
+      .leftJoin(users, eq(properties.userId, users.id));
+
+    return result.map(({ property, user }) => ({
+      ...property,
+      user
+    }));
+  }
 }

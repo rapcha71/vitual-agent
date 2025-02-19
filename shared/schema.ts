@@ -1,6 +1,7 @@
 import { pgTable, text, serial, integer, boolean, jsonb } from "drizzle-orm/pg-core";
 import { createInsertSchema } from "drizzle-zod";
 import { z } from "zod";
+import { relations } from "drizzle-orm";
 
 // Define property types enum
 export const PropertyType = {
@@ -30,15 +31,28 @@ export const users = pgTable("users", {
 
 export const properties = pgTable("properties", {
   id: serial("id").primaryKey(),
-  userId: integer("user_id").notNull(),
+  userId: integer("user_id").notNull().references(() => users.id),
   propertyType: text("property_type").notNull(),
   signPhoneNumber: text("sign_phone_number"),
   location: jsonb("location").notNull(),
   propertyId: text("property_id").notNull().unique(),
   images: jsonb("images").notNull(),
   kmlData: text("kml_data"),
-  markerColor: text("marker_color").notNull()
+  markerColor: text("marker_color").notNull(),
+  createdAt: text("created_at").notNull().default(new Date().toISOString()),
 });
+
+// Define relations
+export const usersRelations = relations(users, ({ many }) => ({
+  properties: many(properties)
+}));
+
+export const propertiesRelations = relations(properties, ({ one }) => ({
+  user: one(users, {
+    fields: [properties.userId],
+    references: [users.id],
+  })
+}));
 
 // Enhanced location type
 const LocationSchema = z.object({
@@ -78,3 +92,8 @@ export type User = typeof users.$inferSelect;
 export type Property = typeof properties.$inferSelect;
 export type InsertProperty = z.infer<typeof insertPropertySchema>;
 export type Location = z.infer<typeof LocationSchema>;
+
+// Admin types
+export type PropertyWithUser = Property & {
+  user: User;
+};

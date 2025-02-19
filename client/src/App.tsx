@@ -9,6 +9,7 @@ import HomePage from "@/pages/home-page";
 import PropertyEntry from "@/pages/property-entry";
 import PropertyConfirmation from "@/pages/property-confirmation";
 import ProfilePage from "@/pages/profile-page";
+import AdminPage from "@/pages/admin-page";
 import { ProtectedRoute } from "./lib/protected-route";
 
 function Router() {
@@ -19,6 +20,7 @@ function Router() {
       <ProtectedRoute path="/profile" component={ProfilePage} />
       <ProtectedRoute path="/property/new" component={PropertyEntry} />
       <ProtectedRoute path="/confirmation" component={PropertyConfirmation} />
+      <ProtectedRoute path="/admin" component={AdminPage} />
       <Route component={NotFound} />
     </Switch>
   );

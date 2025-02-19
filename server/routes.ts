@@ -9,6 +9,26 @@ import ocrService from "./services/ocr";
 export async function registerRoutes(app: Express): Promise<Server> {
   setupAuth(app);
 
+  // Admin route to get all properties with user information
+  app.get("/api/admin/properties", async (req, res) => {
+    if (!req.isAuthenticated()) {
+      return res.status(401).json({ message: "Unauthorized" });
+    }
+
+    // Check if user is admin
+    if (!req.user.isAdmin) {
+      return res.status(403).json({ message: "Forbidden: Admin access required" });
+    }
+
+    try {
+      const properties = await storage.getAllPropertiesWithUsers();
+      res.json(properties);
+    } catch (error: any) {
+      console.error("Error fetching admin properties:", error);
+      res.status(500).json({ message: error.message || "Failed to fetch properties" });
+    }
+  });
+
   app.post("/api/properties", async (req, res) => {
     if (!req.isAuthenticated()) {
       return res.status(401).json({ message: "Unauthorized" });
