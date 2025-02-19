@@ -1,4 +1,4 @@
-import { createContext, ReactNode, useContext, useState } from "react";
+import { createContext, ReactNode, useContext } from "react";
 import {
   useQuery,
   useMutation,
@@ -18,7 +18,6 @@ type AuthContextType = {
 
 type LoginData = Pick<InsertUser, "username" | "password">;
 
-// Separar las mutaciones en hooks individuales para mejor manejo de estado
 function useLoginMutation() {
   const { toast } = useToast();
 
@@ -58,6 +57,7 @@ function useLogoutMutation() {
     onSuccess: () => {
       queryClient.setQueryData(["/api/user"], null);
       queryClient.clear();
+      window.location.href = "/auth"; // Forzar redirección después del logout
     },
     onError: (error: Error) => {
       toast({
@@ -106,13 +106,14 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     queryFn: async () => {
       try {
         const res = await getQueryFn({ on401: "returnNull" })();
-        return res || null;
+        if (!res) return null;
+        return res as SelectUser;
       } catch (error) {
         console.error("Error fetching user:", error);
         return null;
       }
     },
-    staleTime: 30000, // Cache data for 30 seconds
+    staleTime: 30000,
     retry: false,
     refetchOnWindowFocus: false,
     refetchOnMount: false,
