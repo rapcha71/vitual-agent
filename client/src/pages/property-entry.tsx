@@ -7,14 +7,13 @@ import { useForm } from "react-hook-form";
 import { useToast } from "@/hooks/use-toast";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { insertPropertySchema } from "@shared/schema";
-import { Camera, MapPin, X, Upload, ChevronLeft, LogOut } from "lucide-react";
+import { Camera, MapPin, Upload, ChevronLeft, LogOut } from "lucide-react";
 import { useLocation } from "wouter";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from "@/components/ui/dialog";
 import imageCompression from "browser-image-compression";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { nanoid } from "nanoid";
 import { Button } from "@/components/ui/button";
-import { Card, CardContent } from "@/components/ui/card";
 
 export default function PropertyEntry() {
   const [, setLocation] = useLocation();
@@ -26,9 +25,9 @@ export default function PropertyEntry() {
   const [isCompressing, setIsCompressing] = useState(false);
   const [devices, setDevices] = useState<MediaDeviceInfo[]>([]);
   const [selectedDevice, setSelectedDevice] = useState<string>("");
-  const videoRef = useRef<HTMLVideoElement>(null);
-  const canvasRef = useRef<HTMLCanvasElement>(null);
-  const fileInputRef = useRef<HTMLInputElement>(null);
+  const videoRef = useRef<HTMLVideoElement | null>(null);
+  const canvasRef = useRef<HTMLCanvasElement | null>(null);
+  const fileInputRef = useRef<HTMLInputElement | null>(null);
   const [ocrTestResult, setOcrTestResult] = useState<{
     extractedText?: string;
     phoneNumbers?: string[];
@@ -46,6 +45,60 @@ export default function PropertyEntry() {
       markerColor: ""
     }
   });
+
+  // Cleanup function with proper null checks
+  const cleanup = () => {
+    if (stream) {
+      stream.getTracks().forEach(track => {
+        try {
+          track.stop();
+        } catch (error) {
+          console.error('Error stopping track:', error);
+        }
+      });
+      setStream(null);
+    }
+
+    if (videoRef.current && videoRef.current.srcObject) {
+      try {
+        const mediaStream = videoRef.current.srcObject as MediaStream;
+        mediaStream.getTracks().forEach(track => track.stop());
+        videoRef.current.srcObject = null;
+      } catch (error) {
+        console.error('Error cleaning up video:', error);
+      }
+    }
+
+    setActiveCamera(null);
+    setIsCapturing(false);
+  };
+
+  // Effect for device enumeration
+  useEffect(() => {
+    let mounted = true;
+
+    const getDevices = async () => {
+      try {
+        const devices = await navigator.mediaDevices.enumerateDevices();
+        const videoDevices = devices.filter(device => device.kind === 'videoinput');
+        if (mounted) {
+          setDevices(videoDevices);
+          if (videoDevices.length > 0) {
+            setSelectedDevice(videoDevices[0].deviceId);
+          }
+        }
+      } catch (error) {
+        console.error('Error getting devices:', error);
+      }
+    };
+
+    getDevices();
+
+    return () => {
+      mounted = false;
+      cleanup();
+    };
+  }, []);
 
   const testOCR = async () => {
     const signImage = form.watch("images.sign");
@@ -94,36 +147,6 @@ export default function PropertyEntry() {
         variant: "destructive"
       });
     }
-  };
-
-  const getDevices = async () => {
-    try {
-      const devices = await navigator.mediaDevices.enumerateDevices();
-      const videoDevices = devices.filter(device => device.kind === 'videoinput');
-      setDevices(videoDevices);
-      if (videoDevices.length > 0) {
-        setSelectedDevice(videoDevices[0].deviceId);
-      }
-    } catch (error) {
-      console.error('Error getting devices:', error);
-    }
-  };
-
-  useEffect(() => {
-    getDevices();
-    return () => cleanup();
-  }, []);
-
-  const cleanup = () => {
-    if (stream) {
-      stream.getTracks().forEach(track => track.stop());
-      setStream(null);
-    }
-    if (videoRef.current) {
-      videoRef.current.srcObject = null;
-    }
-    setActiveCamera(null);
-    setIsCapturing(false);
   };
 
   const startCamera = async (type: "sign" | "property") => {
@@ -530,106 +553,110 @@ export default function PropertyEntry() {
         </div>
       </PhonePreview>
 
-      <Dialog
-        open={isCapturing}
-        onOpenChange={(open) => {
-          if (!open) cleanup();
-        }}
-      >
-        <DialogContent className="sm:max-w-lg">
-          <DialogHeader>
-            <DialogTitle>
-              {isCompressing ?
-                "Compressing Image..." :
-                `Capture ${activeCamera === "sign" ? "Sign" : "Property"} Photo`
-              }
-            </DialogTitle>
-          </DialogHeader>
-          <div className="flex flex-col gap-4">
-            {devices.length > 1 && (
-              <Select value={selectedDevice} onValueChange={setSelectedDevice}>
-                <SelectTrigger>
-                  <SelectValue placeholder="Select camera" />
-                </SelectTrigger>
-                <SelectContent>
-                  {devices.map((device) => (
-                    <SelectItem key={device.deviceId} value={device.deviceId}>
-                      {device.label || `Camera ${device.deviceId}`}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-            )}
+      {isCapturing && (
+        <Dialog
+          open={isCapturing}
+          onOpenChange={(open) => {
+            if (!open) cleanup();
+          }}
+        >
+          <DialogContent className="sm:max-w-lg">
+            <DialogHeader>
+              <DialogTitle>
+                {isCompressing
+                  ? "Compressing Image..."
+                  : `Capture ${activeCamera === "sign" ? "Sign" : "Property"} Photo`}
+              </DialogTitle>
+            </DialogHeader>
+            <div className="flex flex-col gap-4">
+              {devices.length > 1 && (
+                <Select value={selectedDevice} onValueChange={setSelectedDevice}>
+                  <SelectTrigger>
+                    <SelectValue placeholder="Select camera" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {devices.map((device) => (
+                      <SelectItem key={device.deviceId} value={device.deviceId}>
+                        {device.label || `Camera ${device.deviceId}`}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              )}
 
-            <div className="relative aspect-video bg-black rounded-lg overflow-hidden">
-              <video
-                ref={videoRef}
-                autoPlay
-                playsInline
-                className="w-full h-full object-cover"
+              <div className="relative aspect-video bg-black rounded-lg overflow-hidden">
+                <video
+                  ref={videoRef}
+                  autoPlay
+                  playsInline
+                  className="w-full h-full object-cover"
+                />
+                <canvas ref={canvasRef} className="hidden" />
+                <div className="absolute top-2 right-2 flex gap-2">
+                  <Button
+                    variant="secondary"
+                    size="icon"
+                    onClick={capturePhoto}
+                    disabled={isCompressing}
+                  >
+                    <Camera className="h-4 w-4" />
+                  </Button>
+                  <Button
+                    variant="secondary"
+                    size="icon"
+                    onClick={() => fileInputRef.current?.click()}
+                    disabled={isCompressing}
+                  >
+                    <Upload className="h-4 w-4" />
+                  </Button>
+                </div>
+              </div>
+
+              <input
+                ref={fileInputRef}
+                type="file"
+                accept="image/*"
+                className="hidden"
+                onChange={handleFileUpload}
               />
-              <canvas ref={canvasRef} className="hidden" />
-              <div className="absolute top-2 right-2 flex gap-2">
-                <Button
-                  variant="secondary"
-                  size="icon"
-                  onClick={capturePhoto}
-                  disabled={isCompressing}
-                >
-                  <Camera className="h-4 w-4" />
-                </Button>
-                <Button
-                  variant="secondary"
-                  size="icon"
-                  onClick={() => fileInputRef.current?.click()}
-                  disabled={isCompressing}
-                >
-                  <Upload className="h-4 w-4" />
-                </Button>
+            </div>
+          </DialogContent>
+        </Dialog>
+      )}
+
+      {/* OCR Dialog */}
+      {showOcrDialog && (
+        <Dialog open={showOcrDialog} onOpenChange={setShowOcrDialog}>
+          <DialogContent className="sm:max-w-md">
+            <DialogHeader>
+              <DialogTitle>Resultados del OCR</DialogTitle>
+              <DialogDescription>
+                Aquí están los resultados del procesamiento de la imagen del rótulo:
+              </DialogDescription>
+            </DialogHeader>
+            <div className="space-y-4">
+              <div>
+                <h4 className="font-medium mb-2">Texto Extraído:</h4>
+                <p className="text-sm text-muted-foreground whitespace-pre-wrap">
+                  {ocrTestResult?.extractedText || "No se extrajo texto"}
+                </p>
+              </div>
+              <div>
+                <h4 className="font-medium mb-2">Números de Teléfono Encontrados:</h4>
+                {ocrTestResult?.phoneNumbers?.length ? (
+                  <ul className="list-disc list-inside">
+                    {ocrTestResult.phoneNumbers.map((phone, i) => (
+                      <li key={i} className="text-sm text-muted-foreground">{phone}</li>
+                    ))}
+                  </ul>
+                ) : (
+                  <p className="text-sm text-muted-foreground">No se encontraron números de teléfono</p>
+                )}
               </div>
             </div>
-
-            <input
-              ref={fileInputRef}
-              type="file"
-              accept="image/*"
-              className="hidden"
-              onChange={handleFileUpload}
-            />
-          </div>
-        </DialogContent>
-      </Dialog>
-
-      <Dialog open={showOcrDialog} onOpenChange={setShowOcrDialog}>
-        <DialogContent className="sm:max-w-md">
-          <DialogHeader>
-            <DialogTitle>Resultados del OCR</DialogTitle>
-            <DialogDescription>
-              Aquí están los resultados del procesamiento de la imagen del rótulo:
-            </DialogDescription>
-          </DialogHeader>
-          <div className="space-y-4">
-            <div>
-              <h4 className="font-medium mb-2">Texto Extraído:</h4>
-              <p className="text-sm text-muted-foreground whitespace-pre-wrap">
-                {ocrTestResult?.extractedText || "No se extrajo texto"}
-              </p>
-            </div>
-            <div>
-              <h4 className="font-medium mb-2">Números de Teléfono Encontrados:</h4>
-              {ocrTestResult?.phoneNumbers?.length ? (
-                <ul className="list-disc list-inside">
-                  {ocrTestResult.phoneNumbers.map((phone, i) => (
-                    <li key={i} className="text-sm text-muted-foreground">{phone}</li>
-                  ))}
-                </ul>
-              ) : (
-                <p className="text-sm text-muted-foreground">No se encontraron números de teléfono</p>
-              )}
-            </div>
-          </div>
-        </DialogContent>
-      </Dialog>
+          </DialogContent>
+        </Dialog>
+      )}
     </div>
   );
 }
