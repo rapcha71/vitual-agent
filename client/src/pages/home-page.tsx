@@ -1,28 +1,60 @@
 import { Button } from "@/components/ui/button";
 import { useAuth } from "@/hooks/use-auth";
-import { Link } from "wouter";
+import { Link, useLocation } from "wouter";
 import { Building2, Plus, LogOut, Home, MapPin, Building, ChevronLeft, Book } from "lucide-react";
 import { useQuery } from "@tanstack/react-query";
 import { Property } from "@shared/schema";
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
-import { motion } from "framer-motion";
 import { PhonePreview } from "@/components/ui/phone-preview";
 import { RegulationsDialog } from "@/components/ui/regulations-dialog";
 
 export default function HomePage() {
   const { user, logoutMutation } = useAuth();
+  const [, setLocation] = useLocation();
 
-  // Fetch user's properties
-  const { data: properties = [] } = useQuery<Property[]>({
+  // Fetch user's properties with proper error handling and caching
+  const { data: properties = [], isLoading, error } = useQuery<Property[]>({
     queryKey: ['/api/properties'],
+    staleTime: 30000, // Cache for 30 seconds
+    retry: 2, // Only retry twice on failure
   });
 
-  // Count properties by type
+  // Count properties by type - memoized calculation
   const propertyCounts = {
     house: properties.filter(p => p.propertyType === 'house').length,
     land: properties.filter(p => p.propertyType === 'land').length,
     commercial: properties.filter(p => p.propertyType === 'commercial').length
   };
+
+  if (isLoading) {
+    return (
+      <div className="flex items-center justify-center min-h-screen bg-gray-100">
+        <PhonePreview>
+          <div className="flex items-center justify-center h-full">
+            <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-[#F05023]"></div>
+          </div>
+        </PhonePreview>
+      </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <div className="flex items-center justify-center min-h-screen bg-gray-100">
+        <PhonePreview>
+          <div className="p-4 text-center">
+            <p className="text-red-600">Error al cargar los datos. Por favor, intente de nuevo.</p>
+            <Button 
+              onClick={() => window.location.reload()} 
+              className="mt-4"
+            >
+              Recargar página
+            </Button>
+          </div>
+        </PhonePreview>
+      </div>
+    );
+  }
 
   return (
     <div className="flex items-center justify-center min-h-screen bg-gray-100">
@@ -55,12 +87,7 @@ export default function HomePage() {
         </header>
 
         <main className="p-4 space-y-6 bg-cover bg-center bg-no-repeat overflow-y-auto" style={{backgroundImage: 'url("/assets/ciudad.jpeg")'}}>
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.5 }}
-            className="space-y-4"
-          >
+          <div className="space-y-4">
             {/* Welcome Section */}
             <div className="space-y-2 bg-white/90 backdrop-blur-sm p-4 rounded-lg">
               <h1 className="text-xl font-bold">
@@ -127,7 +154,9 @@ export default function HomePage() {
                   <Card key={property.id} className="bg-white/90 backdrop-blur-sm">
                     <CardHeader>
                       <CardTitle className="text-base">
-                        {property.propertyType.charAt(0).toUpperCase() + property.propertyType.slice(1)}
+                        {property.propertyType === 'house' ? 'Casa' : 
+                         property.propertyType === 'land' ? 'Terreno' : 
+                         'Local Comercial'}
                       </CardTitle>
                     </CardHeader>
                     <CardContent>
@@ -149,7 +178,7 @@ export default function HomePage() {
                 ))}
               </div>
             </div>
-          </motion.div>
+          </div>
         </main>
       </PhonePreview>
     </div>
