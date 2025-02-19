@@ -5,8 +5,6 @@ import { startRegistration, startAuthentication } from "@simplewebauthn/browser"
 import { useAuth } from "@/hooks/use-auth";
 
 interface BiometricAuthProps {
-  onRegister?: () => Promise<void>;
-  onAuthenticate?: () => Promise<void>;
   mode: "register" | "authenticate";
   username?: string;
 }
@@ -46,7 +44,7 @@ export function BiometricAuth({ mode, username }: BiometricAuthProps) {
     if (!user) {
       toast({
         title: "Login Required",
-        description: "Please log in first to set up biometric authentication.",
+        description: "Please log in first with your username and password to set up biometric authentication.",
         variant: "destructive",
       });
       return;
@@ -85,8 +83,8 @@ export function BiometricAuth({ mode, username }: BiometricAuthProps) {
       }
 
       toast({
-        title: "Success",
-        description: "Biometric authentication has been set up successfully! You can now use it to log in.",
+        title: "Success!",
+        description: "Biometric authentication has been set up successfully! You can now use it for future logins.",
       });
     } catch (error: any) {
       console.error("Registration error:", error);
@@ -102,7 +100,7 @@ export function BiometricAuth({ mode, username }: BiometricAuthProps) {
     if (!username) {
       toast({
         title: "Username Required",
-        description: "Please enter your username before using biometric login",
+        description: "Please enter your username before using biometric login.",
         variant: "destructive",
       });
       return;
@@ -122,8 +120,8 @@ export function BiometricAuth({ mode, username }: BiometricAuthProps) {
         const error = await resp.json();
         if (error.message.includes("No biometric credentials")) {
           toast({
-            title: "Biometric Login Not Set Up",
-            description: "Please register your biometric credentials first by logging in with your password and setting up biometric login.",
+            title: "Setup Required",
+            description: "You need to set up biometric login first. Please log in with your password and click 'Set Up Biometric Login'.",
             variant: "destructive",
           });
           return;
@@ -178,7 +176,7 @@ export function BiometricAuth({ mode, username }: BiometricAuthProps) {
       }
     } catch (error: any) {
       toast({
-        title: "Authentication Error",
+        title: "Error",
         description: error.message || "Failed to perform biometric authentication",
         variant: "destructive",
       });
@@ -199,7 +197,11 @@ export function BiometricAuth({ mode, username }: BiometricAuthProps) {
       disabled={mode === "authenticate" && !username}
     >
       <Fingerprint className="h-4 w-4 mr-2" />
-      {mode === "register" ? "Set Up Biometric Login" : "Use Biometric Login"}
+      {mode === "register" 
+        ? "Set Up Biometric Login" 
+        : username 
+          ? "Use Biometric Login" 
+          : "Enter Username First"}
     </Button>
   );
 }

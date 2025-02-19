@@ -73,7 +73,7 @@ export default function AuthPage() {
                         )}
                       />
                       <Button type="submit" className="w-full" disabled={loginMutation.isPending}>
-                        Login
+                        Login with Password
                       </Button>
                       <div className="relative">
                         <div className="absolute inset-0 flex items-center">
