@@ -11,8 +11,17 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
   // Temporary route to get service account email
   app.get("/api/service-account-email", (req, res) => {
-    const email = GoogleSheetsStorage.getServiceAccountEmail();
-    res.json({ email });
+    try {
+      const credentials = JSON.parse(process.env.GOOGLE_SHEETS_CREDENTIALS!);
+      const email = credentials.client_email;
+      if (!email) {
+        return res.status(400).json({ error: "No client_email found in credentials" });
+      }
+      res.json({ email });
+    } catch (error) {
+      console.error("Error parsing credentials:", error);
+      res.status(500).json({ error: "Error reading credentials" });
+    }
   });
 
   // Example of custom session data management

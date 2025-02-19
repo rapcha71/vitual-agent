@@ -48,7 +48,35 @@ export class GoogleSheetsStorage implements IStorage {
 
   private async initializeSpreadsheet() {
     try {
-      // Initialize headers if they don't exist
+      // First check if the Properties sheet exists
+      const response = await this.sheets.spreadsheets.get({
+        spreadsheetId: this.spreadsheetId
+      });
+
+      let propertiesSheetExists = false;
+      if (response.data.sheets) {
+        propertiesSheetExists = response.data.sheets.some(
+          sheet => sheet.properties?.title === 'Properties'
+        );
+      }
+
+      // If Properties sheet doesn't exist, create it
+      if (!propertiesSheetExists) {
+        await this.sheets.spreadsheets.batchUpdate({
+          spreadsheetId: this.spreadsheetId,
+          requestBody: {
+            requests: [{
+              addSheet: {
+                properties: {
+                  title: 'Properties'
+                }
+              }
+            }]
+          }
+        });
+      }
+
+      // Initialize headers
       await this.sheets.spreadsheets.values.update({
         spreadsheetId: this.spreadsheetId,
         range: 'Properties!A1:H1',
@@ -66,6 +94,8 @@ export class GoogleSheetsStorage implements IStorage {
           ]]
         }
       });
+
+      console.log('Successfully initialized Google Sheets storage');
     } catch (error) {
       console.error('Error initializing spreadsheet:', error);
       throw error;
@@ -107,18 +137,6 @@ export class GoogleSheetsStorage implements IStorage {
     const user = await this.getUser(property.userId);
     const username = user?.username || '';
 
-    // Prepare the row data
-    const rowData = [
-      property.propertyId,
-      property.userId.toString(),
-      property.propertyType,
-      property.signPhoneNumber || '',
-      JSON.stringify(property.location),
-      JSON.stringify(property.images),
-      new Date().toISOString(),
-      username
-    ];
-
     try {
       // Append the property data to the spreadsheet
       await this.sheets.spreadsheets.values.append({
@@ -126,7 +144,16 @@ export class GoogleSheetsStorage implements IStorage {
         range: 'Properties!A:H',
         valueInputOption: 'RAW',
         requestBody: {
-          values: [rowData]
+          values: [[
+            property.propertyId,
+            property.userId.toString(),
+            property.propertyType,
+            property.signPhoneNumber || '',
+            JSON.stringify(property.location),
+            JSON.stringify(property.images),
+            new Date().toISOString(),
+            username
+          ]]
         }
       });
 
