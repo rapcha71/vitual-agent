@@ -1,47 +1,57 @@
 import { PhonePreview } from "@/components/ui/phone-preview"
+import { Home, Search, User } from "lucide-react"
 
 export default function PreviewPage() {
   return (
     <PhonePreview>
-      <div className="flex flex-col min-h-full">
+      <div className="flex flex-col h-full">
         {/* Header */}
-        <header className="p-4 bg-primary">
+        <header className="sticky top-0 z-10 bg-primary px-4 py-3 shadow-sm">
           <img 
             src="/Logo de Virtual agent logo largo_upscayl_2x_realesrgan-x4plus.png" 
             alt="Virtual Agent Logo"
-            className="w-full max-w-[200px] mx-auto"
+            className="w-36 mx-auto"
           />
-          <p className="text-white text-center text-sm mt-1">TU LLAVE DE INGRESO A LOS BIENES RAICES</p>
+          <p className="text-white text-center text-xs mt-1">TU LLAVE DE INGRESO A LOS BIENES RAICES</p>
         </header>
 
         {/* Main content */}
-        <main className="flex-1 p-4">
-          {/* Property Actions */}
-          <button className="btn-primary w-full mb-4">
+        <main className="flex-1 px-3 py-4">
+          {/* Action Button */}
+          <button className="btn-primary w-full text-sm py-3 mb-4 shadow-sm">
             Nueva Propiedad
           </button>
 
-          {/* Property List or Details */}
-          <div className="space-y-4">
-            <div className="card">
-              <h3 className="text-lg font-semibold mb-2">Property Details</h3>
-              <p className="text-sm text-gray-600">Location: Example Street</p>
-              <p className="text-sm text-gray-600">Price: $250,000</p>
-              <div className="mt-2">
-                <button className="btn-primary w-full">View Details</button>
+          {/* Property Cards */}
+          <div className="space-y-3">
+            <div className="card bg-white">
+              <h3 className="text-base font-semibold mb-2">Property Details</h3>
+              <div className="space-y-1">
+                <p className="text-sm text-gray-600">Location: Example Street</p>
+                <p className="text-sm text-gray-600">Price: $250,000</p>
               </div>
+              <button className="btn-primary w-full mt-3 text-sm py-2">
+                View Details
+              </button>
             </div>
-
-            {/* Add more property cards here */}
           </div>
         </main>
 
         {/* Navigation Footer */}
-        <footer className="mt-auto p-4 bg-white border-t">
-          <nav className="flex justify-around">
-            <button className="nav-link">Home</button>
-            <button className="nav-link">Search</button>
-            <button className="nav-link">Profile</button>
+        <footer className="sticky bottom-0 bg-white border-t border-gray-200 px-2 py-3">
+          <nav className="flex justify-around items-center">
+            <button className="flex flex-col items-center space-y-1">
+              <Home className="h-5 w-5" />
+              <span className="text-xs">Home</span>
+            </button>
+            <button className="flex flex-col items-center space-y-1">
+              <Search className="h-5 w-5" />
+              <span className="text-xs">Search</span>
+            </button>
+            <button className="flex flex-col items-center space-y-1">
+              <User className="h-5 w-5" />
+              <span className="text-xs">Profile</span>
+            </button>
           </nav>
         </footer>
       </div>
