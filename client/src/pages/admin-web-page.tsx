@@ -48,18 +48,32 @@ export default function AdminWebPage() {
           return;
         }
 
+        // Wait for the map element to be available
+        const waitForElement = (id: string, timeout = 5000): Promise<HTMLElement> => {
+          return new Promise((resolve, reject) => {
+            const startTime = Date.now();
+            const checkElement = () => {
+              const element = document.getElementById(id);
+              if (element) {
+                resolve(element);
+              } else if (Date.now() - startTime > timeout) {
+                reject(new Error(`Element ${id} not found after ${timeout}ms`));
+              } else {
+                setTimeout(checkElement, 100);
+              }
+            };
+            checkElement();
+          });
+        };
+
         const loader = new Loader({
           apiKey: import.meta.env.VITE_GOOGLE_MAPS_API_KEY,
           version: "weekly",
           libraries: ["places"]
         });
 
-        const google = await loader.load();
-        const mapElement = document.getElementById("desktop-map");
-        if (!mapElement) {
-          console.error('Map element not found');
-          return;
-        }
+        await loader.load();
+        const mapElement = await waitForElement("desktop-map");
 
         const map = new google.maps.Map(mapElement, {
           center: { lat: 9.9281, lng: -84.0907 }, // Costa Rica
@@ -70,34 +84,47 @@ export default function AdminWebPage() {
         setMapLoading(false);
 
         // Add markers if there are properties
-        properties.forEach(property => {
-          new google.maps.Marker({
-            map,
-            position: { 
-              lat: property.location.lat, 
-              lng: property.location.lng 
-            },
-            title: `${property.propertyId} - ${property.user.fullName || property.user.username}`,
-            icon: {
-              path: google.maps.SymbolPath.CIRCLE,
-              fillColor: property.markerColor,
-              fillOpacity: 0.9,
-              strokeWeight: 1,
-              scale: 8
+        if (properties.length > 0) {
+          properties.forEach(property => {
+            try {
+              new google.maps.Marker({
+                map,
+                position: { 
+                  lat: property.location.lat, 
+                  lng: property.location.lng 
+                },
+                title: `${property.propertyId} - ${property.user.fullName || property.user.username}`,
+                icon: {
+                  path: google.maps.SymbolPath.CIRCLE,
+                  fillColor: property.markerColor || '#F05023',
+                  fillOpacity: 0.9,
+                  strokeWeight: 1,
+                  scale: 8
+                }
+              });
+            } catch (error) {
+              console.error('Error creating marker for property:', property.propertyId, error);
             }
           });
-        });
+        }
       } catch (error) {
         console.error('Error loading Google Maps:', error);
         setMapLoading(false);
       }
     };
 
+    // Only initialize map when on "map" tab and there are properties
     if (properties.length > 0) {
       initMap();
     }
-  }, [properties]);
 
+    return () => {
+      // Cleanup map instance when component unmounts
+      if (map) {
+        setMap(null);
+      }
+    };
+  }, [properties]);
 
   // Contar propiedades por tipo
   const propertyCounts = {
@@ -269,7 +296,10 @@ export default function AdminWebPage() {
                 >
                   {mapLoading && (
                     <div className="absolute inset-0 flex items-center justify-center bg-gray-100/80">
-                      <Loader2 className="h-8 w-8 animate-spin text-primary" />
+                      <div className="text-center">
+                        <Loader2 className="h-8 w-8 animate-spin text-primary mx-auto mb-2" />
+                        <p className="text-sm text-muted-foreground">Cargando mapa...</p>
+                      </div>
                     </div>
                   )}
                 </div>

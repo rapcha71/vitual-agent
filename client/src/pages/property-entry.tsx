@@ -104,14 +104,19 @@ export default function PropertyEntry() {
     const signImage = form.watch("images.sign");
     if (!signImage) {
       toast({
-        title: "No Sign Image",
-        description: "Please capture a sign photo first",
+        title: "Error",
+        description: "Por favor, capture una foto del rótulo primero",
         variant: "destructive"
       });
       return;
     }
 
     try {
+      toast({
+        title: "Procesando imagen",
+        description: "Analizando el texto del rótulo...",
+      });
+
       const response = await fetch('/api/test-ocr', {
         method: 'POST',
         headers: {
@@ -122,28 +127,37 @@ export default function PropertyEntry() {
       });
 
       const result = await response.json();
+
       if (result.success) {
         setOcrTestResult(result);
-        if (result.phoneNumbers?.[0]) {
-          form.setValue('signPhoneNumber', result.phoneNumbers[0]);
+
+        if (result.phoneNumbers?.length > 0) {
+          const phoneNumber = result.phoneNumbers[0];
+          form.setValue('signPhoneNumber', phoneNumber);
           toast({
-            title: "Phone Number Detected",
-            description: `Found phone number: ${result.phoneNumbers[0]}`,
+            title: "Número detectado",
+            description: `Se encontró el número: ${phoneNumber}`,
+          });
+        } else {
+          toast({
+            title: "Aviso",
+            description: "No se detectaron números de teléfono en la imagen",
+            variant: "destructive"
           });
         }
         setShowOcrDialog(true);
       } else {
         toast({
-          title: "OCR Test Failed",
-          description: result.message || "Failed to process image",
+          title: "Error",
+          description: result.message || "Error al procesar la imagen",
           variant: "destructive"
         });
       }
     } catch (error) {
       console.error('Error testing OCR:', error);
       toast({
-        title: "OCR Test Error",
-        description: "Failed to test OCR functionality",
+        title: "Error",
+        description: "Error al procesar la imagen con OCR",
         variant: "destructive"
       });
     }
@@ -414,23 +428,23 @@ export default function PropertyEntry() {
       <PhonePreview>
         <header className="bg-[#F05023] px-4 py-3">
           <div className="flex items-center justify-between">
-            <Button 
-              variant="ghost" 
+            <Button
+              variant="ghost"
               className="text-white hover:text-white/80 p-0"
               onClick={() => setLocation("/")}
             >
               <ChevronLeft className="h-5 w-5" />
             </Button>
             <div className="flex items-center">
-              <img 
+              <img
                 src="/assets/logo.png"
                 alt="Virtual Agent"
                 className="h-10 w-auto"
               />
             </div>
-            <Button 
-              variant="ghost" 
-              size="sm" 
+            <Button
+              variant="ghost"
+              size="sm"
               className="text-white hover:text-white/80 p-0"
               onClick={() => logoutMutation.mutate()}
             >
@@ -439,7 +453,7 @@ export default function PropertyEntry() {
           </div>
         </header>
 
-        <div className="p-4 bg-cover bg-center bg-no-repeat overflow-y-auto" style={{backgroundImage: 'url("/assets/ciudad.jpeg")'}} >
+        <div className="p-4 bg-cover bg-center bg-no-repeat overflow-y-auto" style={{ backgroundImage: 'url("/assets/ciudad.jpeg")' }}>
           <Form {...form}>
             <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
               <FormField
@@ -624,34 +638,41 @@ export default function PropertyEntry() {
         </Dialog>
       )}
 
-      {/* OCR Dialog */}
       {showOcrDialog && (
         <Dialog open={showOcrDialog} onOpenChange={setShowOcrDialog}>
           <DialogContent className="sm:max-w-md">
             <DialogHeader>
               <DialogTitle>Resultados del OCR</DialogTitle>
               <DialogDescription>
-                Aquí están los resultados del procesamiento de la imagen del rótulo:
+                Resultado del análisis de la imagen del rótulo:
               </DialogDescription>
             </DialogHeader>
             <div className="space-y-4">
               <div>
-                <h4 className="font-medium mb-2">Texto Extraído:</h4>
-                <p className="text-sm text-muted-foreground whitespace-pre-wrap">
-                  {ocrTestResult?.extractedText || "No se extrajo texto"}
-                </p>
+                <h4 className="text-sm font-medium mb-2">Texto Extraído:</h4>
+                <div className="p-3 bg-muted rounded-md">
+                  <p className="text-sm whitespace-pre-wrap">
+                    {ocrTestResult?.extractedText || "No se extrajo texto"}
+                  </p>
+                </div>
               </div>
               <div>
-                <h4 className="font-medium mb-2">Números de Teléfono Encontrados:</h4>
-                {ocrTestResult?.phoneNumbers?.length ? (
-                  <ul className="list-disc list-inside">
-                    {ocrTestResult.phoneNumbers.map((phone, i) => (
-                      <li key={i} className="text-sm text-muted-foreground">{phone}</li>
-                    ))}
-                  </ul>
-                ) : (
-                  <p className="text-sm text-muted-foreground">No se encontraron números de teléfono</p>
-                )}
+                <h4 className="text-sm font-medium mb-2">Números de Teléfono Detectados:</h4>
+                <div className="p-3 bg-muted rounded-md">
+                  {ocrTestResult?.phoneNumbers?.length ? (
+                    <ul className="space-y-1">
+                      {ocrTestResult.phoneNumbers.map((phone, i) => (
+                        <li key={i} className="text-sm">
+                          <span className="font-medium text-primary">{phone}</span>
+                        </li>
+                      ))}
+                    </ul>
+                  ) : (
+                    <p className="text-sm text-muted-foreground">
+                      No se detectaron números de teléfono
+                    </p>
+                  )}
+                </div>
               </div>
             </div>
           </DialogContent>
