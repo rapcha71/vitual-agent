@@ -4,9 +4,16 @@ import { setupAuth } from "./auth";
 import { storage } from "./storage";
 import { insertPropertySchema } from "@shared/schema";
 import { nanoid } from "nanoid";
+import { GoogleSheetsStorage } from "./storage/google-sheets";
 
 export async function registerRoutes(app: Express): Promise<Server> {
   setupAuth(app);
+
+  // Temporary route to get service account email
+  app.get("/api/service-account-email", (req, res) => {
+    const email = GoogleSheetsStorage.getServiceAccountEmail();
+    res.json({ email });
+  });
 
   // Example of custom session data management
   app.post("/api/session/custom", (req, res) => {

@@ -8,6 +8,16 @@ import createMemoryStore from "memorystore";
 const MemoryStore = createMemoryStore(session);
 
 export class GoogleSheetsStorage implements IStorage {
+  static getServiceAccountEmail(): string {
+    try {
+      const credentials = JSON.parse(process.env.GOOGLE_SHEETS_CREDENTIALS!);
+      return credentials.client_email || "No client_email found in credentials";
+    } catch (error) {
+      console.error("Error parsing credentials:", error);
+      return "Error reading credentials";
+    }
+  }
+
   private sheets: sheets_v4.Sheets;
   private spreadsheetId: string;
   private users: Map<number, User>;
