@@ -86,11 +86,41 @@ export function RegulationsDialog() {
               </p>
             </div>
 
-            <p className="text-base mt-6">
-              En Virtual Agent creemos en el valor de la transparencia y el trabajo colaborativo. Con tu 
-              aporte, no solo ayudas a crear una base de datos robusta y confiable, sino que también 
-              tienes la oportunidad de transformar cada registro en una ganancia real. ¡Anímate a ser 
-              parte de esta emocionante aventura y a disfrutar de cada etapa del proceso!
+            <div className="space-y-4">
+              <h3 className="text-lg font-semibold">6. Forma de Pago</h3>
+              <ul className="list-disc list-inside space-y-2 ml-4">
+                <li>
+                  La bonificación de 250 colones por el ingreso de propiedades se realizará mediante 
+                  transferencia a través de Simpe Móvil, al número de teléfono que hayas registrado. 
+                  Estos pagos se efectuarán todos los viernes, abonando el monto acumulado correspondiente 
+                  al número de ingresos realizados durante esa semana.
+                </li>
+                <li>
+                  Los 2,000 colones se abonarán durante la semana en que se firme el acuerdo de 
+                  correduría con el propietario de la propiedad.
+                </li>
+                <li>
+                  La bonificación de 100,000 colones por la venta exitosa se pagará una semana después 
+                  de haber recibido la comisión de correduría correspondiente a la transacción.
+                </li>
+              </ul>
+            </div>
+
+            <div className="space-y-4">
+              <h3 className="text-lg font-semibold">7. Validación de Rótulos</h3>
+              <p>
+                Solo se considerarán válidos los rótulos que pertenezcan al propietario de la propiedad.
+              </p>
+              <p className="text-sm text-muted-foreground">
+                Nota: No se aceptarán rótulos de otras agencias de bienes raíces. Si la foto enviada 
+                como comprobante demuestra que el rótulo pertenece a otro agente inmobiliario y no al 
+                propietario, el registro de dicha propiedad será anulado y no generará ningún pago.
+              </p>
+            </div>
+
+            <p className="text-base mt-6 border-t pt-4">
+              Con este reglamento, buscamos garantizar transparencia, seguridad y eficacia en cada 
+              transacción. ¡Anímate a participar y transforma cada registro en una oportunidad de ganancia!
             </p>
           </div>
         </ScrollArea>
