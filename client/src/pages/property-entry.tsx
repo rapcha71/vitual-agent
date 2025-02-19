@@ -51,13 +51,7 @@ export default function PropertyEntry() {
   // Update the createPropertyMutation to handle the API request properly
   const createPropertyMutation = useMutation({
     mutationFn: async (formData: any) => {
-      console.log("Submitting property data:", formData); // Debug log
-
-      // Show loading toast
-      toast({
-        title: "Uploading",
-        description: "Please wait while we save your property...",
-      });
+      console.log("Starting property submission...");
 
       // Get marker color based on property type
       const propertyData = {
@@ -65,36 +59,53 @@ export default function PropertyEntry() {
         markerColor: MarkerColors[formData.propertyType as keyof typeof MarkerColors]
       };
 
-      const response = await fetch('/api/properties', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(propertyData),
-        credentials: 'include'
+      // Show loading toast
+      toast({
+        title: "Uploading",
+        description: "Please wait while we save your property...",
       });
 
-      if (!response.ok) {
-        const error = await response.json();
+      try {
+        const response = await fetch('/api/properties', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify(propertyData),
+          credentials: 'include'
+        });
+
+        const data = await response.json();
+
+        if (!response.ok) {
+          throw new Error(data.message || 'Failed to submit property');
+        }
+
+        return data;
+      } catch (error: any) {
+        console.error("Submission error:", error);
         throw new Error(error.message || 'Failed to submit property');
       }
-
-      return response.json();
     },
-    onSuccess: () => {
+    onSuccess: (data) => {
+      console.log("Property submission successful:", data);
       queryClient.invalidateQueries({ queryKey: ['/api/properties'] });
+
       toast({
         title: "Success!",
-        description: "Property has been successfully added"
+        description: "Property has been successfully added",
+        duration: 5000,
       });
+
       setLocation("/");
     },
     onError: (error: Error) => {
-      console.error("Property submission error:", error); // Debug log
+      console.error("Property submission error:", error);
       toast({
         title: "Error",
-        description: error.message || "Failed to add property",
-        variant: "destructive"
+        description: error.message || "Failed to add property. Please try again.",
+        variant: "destructive",
+        duration: 5000,
       });
     }
   });
@@ -309,7 +320,7 @@ export default function PropertyEntry() {
 
   const onSubmit = async (data: any) => {
     try {
-      console.log("Form submission started"); // Debug log
+      console.log("Form submission started"); 
 
       // Validate required fields
       if (!data.propertyType) {
@@ -342,7 +353,7 @@ export default function PropertyEntry() {
       // Submit the form
       await createPropertyMutation.mutateAsync(data);
 
-      console.log("Form submission completed successfully"); // Debug log
+      console.log("Form submission completed successfully"); 
     } catch (error) {
       console.error('Error submitting property:', error);
       toast({

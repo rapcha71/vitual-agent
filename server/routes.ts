@@ -54,13 +54,17 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
   app.post("/api/properties", async (req, res) => {
     if (!req.isAuthenticated()) {
-      return res.status(401).send("Unauthorized");
+      return res.status(401).json({ message: "Unauthorized" });
     }
 
     try {
+      console.log("Received property submission request");
+
+      // Validate the request body
       const propertyData = insertPropertySchema.parse(req.body);
       const propertyId = nanoid();
 
+      // Create the property
       const property = await storage.createProperty({
         ...propertyData,
         userId: req.user.id,
@@ -68,20 +72,33 @@ export async function registerRoutes(app: Express): Promise<Server> {
       });
 
       console.log("Property created successfully:", property.propertyId);
-      res.status(201).json(property);
-    } catch (error) {
+      return res.status(201).json({ 
+        success: true,
+        property,
+        message: "Property created successfully" 
+      });
+    } catch (error: any) {
       console.error("Error creating property:", error);
-      res.status(400).json({ message: error.message || "Failed to create property" });
+      return res.status(400).json({ 
+        success: false,
+        message: error.message || "Failed to create property",
+        error: error.toString()
+      });
     }
   });
 
   app.get("/api/properties", async (req, res) => {
     if (!req.isAuthenticated()) {
-      return res.status(401).send("Unauthorized");
+      return res.status(401).json({ message: "Unauthorized" });
     }
 
-    const properties = await storage.getPropertiesByUserId(req.user.id);
-    res.json(properties);
+    try {
+      const properties = await storage.getPropertiesByUserId(req.user.id);
+      res.json(properties);
+    } catch (error: any) {
+      console.error("Error fetching properties:", error);
+      res.status(500).json({ message: error.message || "Failed to fetch properties" });
+    }
   });
 
   const httpServer = createServer(app);
