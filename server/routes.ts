@@ -57,16 +57,22 @@ export async function registerRoutes(app: Express): Promise<Server> {
       return res.status(401).send("Unauthorized");
     }
 
-    const propertyData = insertPropertySchema.parse(req.body);
-    const propertyId = nanoid();
+    try {
+      const propertyData = insertPropertySchema.parse(req.body);
+      const propertyId = nanoid();
 
-    const property = await storage.createProperty({
-      ...propertyData,
-      userId: req.user.id,
-      propertyId
-    });
+      const property = await storage.createProperty({
+        ...propertyData,
+        userId: req.user.id,
+        propertyId
+      });
 
-    res.status(201).json(property);
+      console.log("Property created successfully:", property.propertyId);
+      res.status(201).json(property);
+    } catch (error) {
+      console.error("Error creating property:", error);
+      res.status(400).json({ message: error.message || "Failed to create property" });
+    }
   });
 
   app.get("/api/properties", async (req, res) => {
