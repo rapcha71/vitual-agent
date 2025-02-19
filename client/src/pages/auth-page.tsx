@@ -98,154 +98,156 @@ export default function AuthPage() {
           </div>
         </header>
 
-        <div className="p-4 bg-cover bg-center bg-no-repeat" style={{backgroundImage: 'url("/assets/ciudad.jpeg")'}}>
-          <Tabs defaultValue="login" className="w-full">
-            <TabsList className="grid w-full grid-cols-2 mb-4 bg-white/80 backdrop-blur-sm">
-              <TabsTrigger value="login">Iniciar Sesión</TabsTrigger>
-              <TabsTrigger value="register">Registrarse</TabsTrigger>
-            </TabsList>
+        <div className="flex-1 overflow-y-auto bg-cover bg-center bg-no-repeat" style={{backgroundImage: 'url("/assets/ciudad.jpeg")'}}>
+          <div className="p-4">
+            <Tabs defaultValue="login" className="w-full">
+              <TabsList className="grid w-full grid-cols-2 mb-4 bg-white/80 backdrop-blur-sm">
+                <TabsTrigger value="login">Iniciar Sesión</TabsTrigger>
+                <TabsTrigger value="register">Registrarse</TabsTrigger>
+              </TabsList>
 
-            <TabsContent value="login">
-              <Form {...loginForm}>
-                <form 
-                  onSubmit={loginForm.handleSubmit(handleLogin)} 
-                  className="space-y-4 bg-white/90 backdrop-blur-sm rounded-lg p-4"
-                >
-                  <FormField
-                    control={loginForm.control}
-                    name="username"
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormLabel>Correo</FormLabel>
-                        <FormControl>
-                          <Input placeholder="Ingrese su correo electrónico" {...field} />
-                        </FormControl>
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
-
-                  <FormField
-                    control={loginForm.control}
-                    name="password"
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormLabel>Contraseña</FormLabel>
-                        <FormControl>
-                          <Input type="password" placeholder="Ingrese su contraseña" {...field} />
-                        </FormControl>
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
-
-                  <Button 
-                    type="submit" 
-                    className="w-full bg-[#F05023] hover:bg-[#F05023]/90"
-                    disabled={loginMutation.isPending}
+              <TabsContent value="login">
+                <Form {...loginForm}>
+                  <form 
+                    onSubmit={loginForm.handleSubmit(handleLogin)} 
+                    className="space-y-4 bg-white/90 backdrop-blur-sm rounded-lg p-4"
                   >
-                    {loginMutation.isPending ? "Iniciando sesión..." : "Iniciar Sesión"}
-                  </Button>
-                </form>
-              </Form>
-            </TabsContent>
+                    <FormField
+                      control={loginForm.control}
+                      name="username"
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormLabel>Correo</FormLabel>
+                          <FormControl>
+                            <Input placeholder="Ingrese su correo electrónico" {...field} />
+                          </FormControl>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
 
-            <TabsContent value="register">
-              <Form {...registerForm}>
-                <form 
-                  onSubmit={registerForm.handleSubmit(handleRegister)} 
-                  className="space-y-4 bg-white/90 backdrop-blur-sm rounded-lg p-4"
-                >
-                  <FormField
-                    control={registerForm.control}
-                    name="fullName"
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormLabel>Nombre Completo</FormLabel>
-                        <FormControl>
-                          <Input placeholder="Ingrese su nombre completo" {...field} />
-                        </FormControl>
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
+                    <FormField
+                      control={loginForm.control}
+                      name="password"
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormLabel>Contraseña</FormLabel>
+                          <FormControl>
+                            <Input type="password" placeholder="Ingrese su contraseña" {...field} />
+                          </FormControl>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
 
-                  <FormField
-                    control={registerForm.control}
-                    name="username"
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormLabel>Correo</FormLabel>
-                        <FormControl>
-                          <Input placeholder="Ingrese su correo electrónico" {...field} />
-                        </FormControl>
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
+                    <Button 
+                      type="submit" 
+                      className="w-full bg-[#F05023] hover:bg-[#F05023]/90"
+                      disabled={loginMutation.isPending}
+                    >
+                      {loginMutation.isPending ? "Iniciando sesión..." : "Iniciar Sesión"}
+                    </Button>
+                  </form>
+                </Form>
+              </TabsContent>
 
-                  <FormField
-                    control={registerForm.control}
-                    name="mobile"
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormLabel>Teléfono</FormLabel>
-                        <FormControl>
-                          <Input placeholder="Ingrese su número de teléfono" {...field} />
-                        </FormControl>
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
-
-                  <FormField
-                    control={registerForm.control}
-                    name="nickname"
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormLabel>Alias</FormLabel>
-                        <FormControl>
-                          <Input placeholder="Ingrese su alias" {...field} />
-                        </FormControl>
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
-
-                  <FormField
-                    control={registerForm.control}
-                    name="password"
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormLabel>Contraseña</FormLabel>
-                        <FormControl>
-                          <Input type="password" placeholder="Ingrese su contraseña" {...field} />
-                        </FormControl>
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
-
-                  <div className="text-sm text-gray-600 bg-white/80 p-3 rounded-lg space-y-2">
-                    <p>
-                      Recuerda que los pagos se realizan a traves de simpe movil por lo que el numero debera de estar conectado a una cuenta bancaria simpe.
-                    </p>
-                    <p>
-                      Crea un alias de como quieres que te conozcan dentro de la comunidad.
-                    </p>
-                  </div>
-
-                  <Button 
-                    type="submit" 
-                    className="w-full bg-[#F05023] hover:bg-[#F05023]/90"
-                    disabled={registerMutation.isPending}
+              <TabsContent value="register">
+                <Form {...registerForm}>
+                  <form 
+                    onSubmit={registerForm.handleSubmit(handleRegister)} 
+                    className="space-y-4 bg-white/90 backdrop-blur-sm rounded-lg p-4"
                   >
-                    {registerMutation.isPending ? "Registrando..." : "Registrarse"}
-                  </Button>
-                </form>
-              </Form>
-            </TabsContent>
-          </Tabs>
+                    <FormField
+                      control={registerForm.control}
+                      name="fullName"
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormLabel>Nombre Completo</FormLabel>
+                          <FormControl>
+                            <Input placeholder="Ingrese su nombre completo" {...field} />
+                          </FormControl>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
+
+                    <FormField
+                      control={registerForm.control}
+                      name="username"
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormLabel>Correo</FormLabel>
+                          <FormControl>
+                            <Input placeholder="Ingrese su correo electrónico" {...field} />
+                          </FormControl>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
+
+                    <FormField
+                      control={registerForm.control}
+                      name="mobile"
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormLabel>Teléfono</FormLabel>
+                          <FormControl>
+                            <Input placeholder="Ingrese su número de teléfono" {...field} />
+                          </FormControl>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
+
+                    <FormField
+                      control={registerForm.control}
+                      name="nickname"
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormLabel>Alias</FormLabel>
+                          <FormControl>
+                            <Input placeholder="Ingrese su alias" {...field} />
+                          </FormControl>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
+
+                    <FormField
+                      control={registerForm.control}
+                      name="password"
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormLabel>Contraseña</FormLabel>
+                          <FormControl>
+                            <Input type="password" placeholder="Ingrese su contraseña" {...field} />
+                          </FormControl>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
+
+                    <div className="text-sm text-gray-600 bg-white/80 backdrop-blur-sm p-3 rounded-lg space-y-2">
+                      <p>
+                        Recuerda que los pagos se realizan a traves de simpe movil por lo que el numero debera de estar conectado a una cuenta bancaria simpe.
+                      </p>
+                      <p>
+                        Crea un alias de como quieres que te conozcan dentro de la comunidad.
+                      </p>
+                    </div>
+
+                    <Button 
+                      type="submit" 
+                      className="w-full bg-[#F05023] hover:bg-[#F05023]/90"
+                      disabled={registerMutation.isPending}
+                    >
+                      {registerMutation.isPending ? "Registrando..." : "Registrarse"}
+                    </Button>
+                  </form>
+                </Form>
+              </TabsContent>
+            </Tabs>
+          </div>
         </div>
       </PhonePreview>
     </div>
