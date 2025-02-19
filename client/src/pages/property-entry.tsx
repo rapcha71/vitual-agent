@@ -13,15 +13,14 @@ import { useLocation } from "wouter";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import imageCompression from "browser-image-compression";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { apiRequest } from "@/lib/queryClient";
 import { nanoid } from "nanoid";
 
-// Assume MarkerColors is defined elsewhere, e.g., in a constants file
+// Define marker colors based on property type
 const MarkerColors = {
-  house: 'red',
+  house: 'blue',
   land: 'green',
-  'commercial': 'blue'
-};
+  commercial: 'yellow'
+} as const;
 
 export default function PropertyEntry() {
   const [, setLocation] = useLocation();
@@ -44,17 +43,20 @@ export default function PropertyEntry() {
       signPhoneNumber: "",
       location: { lat: 0, lng: 0 },
       propertyId: nanoid(),
-      images: { sign: "", property: "" }
+      images: { sign: "", property: "" },
+      markerColor: ""
     }
   });
 
   // Update the createPropertyMutation to handle the API request properly
   const createPropertyMutation = useMutation({
     mutationFn: async (formData: any) => {
+      console.log("Submitting property data:", formData); // Debug log
+
       // Get marker color based on property type
       const propertyData = {
         ...formData,
-        markerColor: MarkerColors[formData.propertyType]
+        markerColor: MarkerColors[formData.propertyType as keyof typeof MarkerColors]
       };
 
       const response = await fetch('/api/properties', {
@@ -82,6 +84,7 @@ export default function PropertyEntry() {
       setLocation("/");
     },
     onError: (error: Error) => {
+      console.error("Property submission error:", error); // Debug log
       toast({
         title: "Error",
         description: error.message || "Failed to add property",
@@ -299,6 +302,18 @@ export default function PropertyEntry() {
 
   const onSubmit = async (data: any) => {
     try {
+      console.log("Form submission started"); // Debug log
+
+      // Validate required fields
+      if (!data.propertyType) {
+        toast({
+          title: "Error",
+          description: "Please select a property type",
+          variant: "destructive"
+        });
+        return;
+      }
+
       if (!data.images.sign || !data.images.property) {
         toast({
           title: "Error",
@@ -317,9 +332,23 @@ export default function PropertyEntry() {
         return;
       }
 
+      // Show loading toast
+      toast({
+        title: "Submitting",
+        description: "Please wait while we upload your property...",
+      });
+
+      // Submit the form
       await createPropertyMutation.mutateAsync(data);
+
+      console.log("Form submission completed successfully"); // Debug log
     } catch (error) {
       console.error('Error submitting property:', error);
+      toast({
+        title: "Error",
+        description: "Failed to submit property. Please try again.",
+        variant: "destructive"
+      });
     }
   };
 
