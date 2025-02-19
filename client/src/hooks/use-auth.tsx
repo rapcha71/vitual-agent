@@ -1,4 +1,4 @@
-import { createContext, ReactNode, useContext } from "react";
+import { createContext, ReactNode, useContext, useState } from "react";
 import {
   useQuery,
   useMutation,
@@ -7,6 +7,7 @@ import {
 import { insertUserSchema, User as SelectUser, InsertUser } from "@shared/schema";
 import { getQueryFn, apiRequest, queryClient } from "../lib/queryClient";
 import { useToast } from "@/hooks/use-toast";
+import { LoginSuccessAnimation } from "@/components/ui/login-success-animation";
 
 type AuthContextType = {
   user: SelectUser | null;
@@ -15,6 +16,7 @@ type AuthContextType = {
   loginMutation: UseMutationResult<SelectUser, Error, LoginData>;
   logoutMutation: UseMutationResult<void, Error, void>;
   registerMutation: UseMutationResult<SelectUser, Error, InsertUser>;
+  showingLoginAnimation: boolean;
 };
 
 type LoginData = Pick<InsertUser, "username" | "password">;
@@ -22,6 +24,7 @@ type LoginData = Pick<InsertUser, "username" | "password">;
 export const AuthContext = createContext<AuthContextType | null>(null);
 export function AuthProvider({ children }: { children: ReactNode }) {
   const { toast } = useToast();
+  const [showingLoginAnimation, setShowingLoginAnimation] = useState(false);
   const {
     data: user,
     error,
@@ -38,6 +41,12 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     },
     onSuccess: (user: SelectUser) => {
       queryClient.setQueryData(["/api/user"], user);
+      // Show login animation
+      setShowingLoginAnimation(true);
+      // Hide animation after 2 seconds
+      setTimeout(() => {
+        setShowingLoginAnimation(false);
+      }, 2000);
     },
     onError: (error: Error) => {
       toast({
@@ -55,6 +64,11 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     },
     onSuccess: (user: SelectUser) => {
       queryClient.setQueryData(["/api/user"], user);
+      // Show login animation for new registrations too
+      setShowingLoginAnimation(true);
+      setTimeout(() => {
+        setShowingLoginAnimation(false);
+      }, 2000);
     },
     onError: (error: Error) => {
       toast({
@@ -90,8 +104,10 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         loginMutation,
         logoutMutation,
         registerMutation,
+        showingLoginAnimation,
       }}
     >
+      {showingLoginAnimation && <LoginSuccessAnimation />}
       {children}
     </AuthContext.Provider>
   );
