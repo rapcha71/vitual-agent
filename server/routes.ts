@@ -13,12 +13,6 @@ import type {
   VerifyAuthenticationResponseOpts,
   AuthenticatorTransport 
 } from "@simplewebauthn/server";
-import {
-  generateRegistrationOptions,
-  verifyRegistrationResponse,
-  generateAuthenticationOptions,
-  verifyAuthenticationResponse,
-} from "@simplewebauthn/server";
 
 export async function registerRoutes(app: Express): Promise<Server> {
   setupAuth(app);
@@ -33,11 +27,16 @@ export async function registerRoutes(app: Express): Promise<Server> {
       console.log("Generating registration options for user:", req.user.username);
       const options = await generateRegistrationOptions({
         rpName: "Virtual Agent",
-        rpID: req.hostname,
-        userID: req.user.id.toString(),
+        rpID: process.env.NODE_ENV === 'production' ? req.hostname : 'localhost',
+        userID: Buffer.from(req.user.id.toString()),
         userName: req.user.username,
-        attestationType: "none",
-      } as GenerateRegistrationOptionsOpts);
+        attestationType: 'none',
+        authenticatorSelection: {
+          residentKey: 'preferred',
+          userVerification: 'preferred',
+          authenticatorAttachment: 'platform'
+        }
+      });
 
       // Store challenge in session for verification
       req.session.challenge = options.challenge;
@@ -64,12 +63,16 @@ export async function registerRoutes(app: Express): Promise<Server> {
         throw new Error("No challenge found in session");
       }
 
+      const origin = process.env.NODE_ENV === 'production'
+        ? `https://${req.hostname}`
+        : 'http://localhost:5000';
+
       const verification = await verifyRegistrationResponse({
         response: req.body,
         expectedChallenge,
-        expectedOrigin: `https://${req.hostname}`,
-        expectedRPID: req.hostname,
-      } as VerifyRegistrationResponseOpts);
+        expectedOrigin: origin,
+        expectedRPID: process.env.NODE_ENV === 'production' ? req.hostname : 'localhost',
+      });
 
       if (verification.verified && verification.registrationInfo) {
         const { credentialID, credentialPublicKey, counter } = verification.registrationInfo;
@@ -113,14 +116,14 @@ export async function registerRoutes(app: Express): Promise<Server> {
       const credentialId = Buffer.from(user.biometricCredentialId, 'base64');
 
       const options = await generateAuthenticationOptions({
-        rpID: req.hostname,
+        rpID: process.env.NODE_ENV === 'production' ? req.hostname : 'localhost',
         allowCredentials: [{
           id: credentialId,
-          transports: ["internal"] as AuthenticatorTransport[],
-          type: "public-key",
+          type: 'public-key',
+          transports: ['internal', 'platform'] as AuthenticatorTransport[],
         }],
-        userVerification: "preferred",
-      } as GenerateAuthenticationOptionsOpts);
+        userVerification: 'preferred',
+      });
 
       req.session.challenge = options.challenge;
       req.session.username = user.username;
@@ -152,18 +155,21 @@ export async function registerRoutes(app: Express): Promise<Server> {
         throw new Error("User not found or no biometric data");
       }
 
+      const origin = process.env.NODE_ENV === 'production'
+        ? `https://${req.hostname}`
+        : 'http://localhost:5000';
+
       const verification = await verifyAuthenticationResponse({
         response: req.body,
         expectedChallenge,
-        expectedOrigin: `https://${req.hostname}`,
-        expectedRPID: req.hostname,
-        requireUserVerification: true,
+        expectedOrigin: origin,
+        expectedRPID: process.env.NODE_ENV === 'production' ? req.hostname : 'localhost',
         authenticator: {
           credentialID: Buffer.from(user.biometricCredentialId, 'base64'),
           credentialPublicKey: Buffer.from(user.biometricPublicKey, 'base64'),
           counter: user.biometricCounter || 0,
         },
-      } as VerifyAuthenticationResponseOpts);
+      });
 
       if (verification.verified) {
         // Update the counter
