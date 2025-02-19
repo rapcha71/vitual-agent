@@ -1,9 +1,9 @@
 import { useAuth } from "@/hooks/use-auth";
 import { useQuery } from "@tanstack/react-query";
-import { PropertyWithUser } from "@shared/schema";
+import { Property } from "@shared/schema";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { ChevronLeft, LogOut, Image, MapPin } from "lucide-react";
+import { ChevronLeft, LogOut, Image, MapPin, Plus } from "lucide-react";
 import { useLocation } from "wouter";
 import { Table, TableBody, TableCaption, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { compressImageForThumbnail } from "@/lib/utils";
@@ -19,34 +19,26 @@ import { Loader2 } from "lucide-react";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Loader } from "@googlemaps/js-api-loader";
 
-type PropertyWithThumbnails = PropertyWithUser & {
+type PropertyWithThumbnails = Property & {
   thumbnails?: string[];
 };
 
-export default function AdminPage() {
+export default function DashboardPage() {
   const { user, logoutMutation } = useAuth();
   const [, setLocation] = useLocation();
   const [propertiesWithThumbnails, setPropertiesWithThumbnails] = useState<PropertyWithThumbnails[]>([]);
   const [map, setMap] = useState<google.maps.Map | null>(null);
   const [mapLoading, setMapLoading] = useState(true);
 
-  // Obtener todas las propiedades con información de usuarios
-  const { data: properties = [], isLoading } = useQuery<PropertyWithUser[]>({
-    queryKey: ['/api/admin/properties'],
-    enabled: user?.isAdmin === true
+  const { data: properties = [], isLoading } = useQuery<Property[]>({
+    queryKey: ['/api/properties'],
   });
 
   useEffect(() => {
     const initMap = async () => {
       try {
-        if (!import.meta.env.VITE_GOOGLE_MAPS_API_KEY) {
-          console.error('Google Maps API key is missing');
-          setMapLoading(false);
-          return;
-        }
-
         const loader = new Loader({
-          apiKey: import.meta.env.VITE_GOOGLE_MAPS_API_KEY,
+          apiKey: import.meta.env.VITE_GOOGLE_MAPS_API_KEY || '',
           version: "weekly",
           libraries: ["places"]
         });
@@ -66,7 +58,7 @@ export default function AdminPage() {
         setMap(map);
         setMapLoading(false);
 
-        // Add KML and markers if there are properties
+        // Add KML if there are properties
         if (properties.length > 0) {
           properties.forEach(property => {
             if (property.kmlData) {
@@ -84,7 +76,7 @@ export default function AdminPage() {
                 lng: property.location.lng 
               },
               map,
-              title: `${property.propertyId} - ${property.user.fullName || property.user.username}`,
+              title: property.propertyId,
               icon: {
                 path: google.maps.SymbolPath.CIRCLE,
                 fillColor: property.markerColor,
@@ -117,14 +109,14 @@ export default function AdminPage() {
       const withThumbnails = await Promise.all(
         properties.map(async (property) => {
           console.log("Processing property:", property.propertyId);
-          if (!property.images || property.images.length === 0) {
+          if (!property.images) {
             console.log("No images for property:", property.propertyId);
             return { ...property, thumbnails: [] };
           }
 
           console.log("Generating thumbnails for property:", property.propertyId);
           const thumbnails = await Promise.all(
-            property.images.map(async (img) => {
+            Object.values(property.images).map(async (img) => {
               try {
                 return await compressImageForThumbnail(img);
               } catch (error) {
@@ -146,13 +138,7 @@ export default function AdminPage() {
     }
   }, [properties]);
 
-  // Si el usuario no es administrador, redirigir al dashboard
-  if (!user?.isAdmin) {
-    setLocation("/dashboard");
-    return null;
-  }
-
-  // Contar propiedades por tipo
+  // Count properties by type
   const propertyCounts = {
     house: properties.filter(p => p.propertyType === 'house').length,
     land: properties.filter(p => p.propertyType === 'land').length,
@@ -166,7 +152,7 @@ export default function AdminPage() {
         <Button 
           variant="ghost" 
           className="text-white hover:text-white/80 p-0"
-          onClick={() => setLocation("/dashboard")}
+          onClick={() => setLocation("/")}
         >
           <ChevronLeft className="h-5 w-5" />
         </Button>
@@ -176,6 +162,15 @@ export default function AdminPage() {
             alt="Virtual Agent"
             className="h-10 w-auto"
           />
+          {user?.isAdmin && (
+            <Button
+              variant="secondary"
+              size="sm"
+              onClick={() => setLocation("/admin")}
+            >
+              Panel de Administración
+            </Button>
+          )}
         </div>
         <Button 
           variant="ghost" 
@@ -189,11 +184,17 @@ export default function AdminPage() {
 
       {/* Main Content */}
       <main className="p-4 space-y-4">
-        <h1 className="text-2xl font-bold">Panel de Administración</h1>
+        <div className="flex justify-between items-center">
+          <h1 className="text-2xl font-bold">Mi Panel</h1>
+          <Button onClick={() => setLocation("/property/new")}>
+            <Plus className="h-4 w-4 mr-2" />
+            Agregar Propiedad
+          </Button>
+        </div>
 
         <Card>
           <CardHeader>
-            <CardTitle>Resumen de Propiedades</CardTitle>
+            <CardTitle>Mis Propiedades</CardTitle>
           </CardHeader>
           <CardContent>
             <div className="grid grid-cols-3 gap-4">
@@ -225,35 +226,17 @@ export default function AdminPage() {
           </CardContent>
         </Card>
 
-        <Tabs defaultValue="map" className="w-full">
+        <Tabs defaultValue="properties" className="w-full">
           <TabsList className="w-full justify-start">
-            <TabsTrigger value="map" className="flex items-center gap-2">
-              <MapPin className="h-4 w-4" />
-              Mapa
-            </TabsTrigger>
             <TabsTrigger value="properties" className="flex items-center gap-2">
               <Image className="h-4 w-4" />
               Propiedades
             </TabsTrigger>
+            <TabsTrigger value="map" className="flex items-center gap-2">
+              <MapPin className="h-4 w-4" />
+              Mapa
+            </TabsTrigger>
           </TabsList>
-
-          <TabsContent value="map">
-            <Card>
-              <CardContent>
-                <div 
-                  id="map" 
-                  className="w-full h-[600px] rounded-lg relative bg-gray-100"
-                  style={{ minHeight: '600px' }}
-                >
-                  {mapLoading && (
-                    <div className="absolute inset-0 flex items-center justify-center bg-gray-100/80">
-                      <Loader2 className="h-8 w-8 animate-spin text-primary" />
-                    </div>
-                  )}
-                </div>
-              </CardContent>
-            </Card>
-          </TabsContent>
 
           <TabsContent value="properties">
             <Card>
@@ -265,13 +248,10 @@ export default function AdminPage() {
                   </div>
                 ) : (
                   <Table>
-                    <TableCaption>Listado de todas las propiedades registradas</TableCaption>
+                    <TableCaption>Listado de mis propiedades registradas</TableCaption>
                     <TableHeader>
                       <TableRow>
                         <TableHead>ID Propiedad</TableHead>
-                        <TableHead>Usuario</TableHead>
-                        <TableHead>Apodo</TableHead>
-                        <TableHead>Teléfono Usuario</TableHead>
                         <TableHead>Tipo</TableHead>
                         <TableHead>Teléfono Rótulo</TableHead>
                         <TableHead>Ubicación</TableHead>
@@ -282,9 +262,6 @@ export default function AdminPage() {
                       {propertiesWithThumbnails.map((property) => (
                         <TableRow key={property.id}>
                           <TableCell>{property.propertyId}</TableCell>
-                          <TableCell>{property.user.fullName || property.user.username}</TableCell>
-                          <TableCell>{property.user.nickname || '-'}</TableCell>
-                          <TableCell>{property.user.mobile || '-'}</TableCell>
                           <TableCell>
                             {property.propertyType === 'house' ? 'Casa' : 
                              property.propertyType === 'land' ? 'Terreno' : 
@@ -335,6 +312,24 @@ export default function AdminPage() {
                     </TableBody>
                   </Table>
                 )}
+              </CardContent>
+            </Card>
+          </TabsContent>
+
+          <TabsContent value="map">
+            <Card>
+              <CardContent>
+                <div 
+                  id="map" 
+                  className="w-full h-[600px] rounded-lg relative bg-gray-100"
+                  style={{ minHeight: '600px' }}
+                >
+                  {mapLoading && (
+                    <div className="absolute inset-0 flex items-center justify-center bg-gray-100/80">
+                      <Loader2 className="h-8 w-8 animate-spin text-primary" />
+                    </div>
+                  )}
+                </div>
               </CardContent>
             </Card>
           </TabsContent>
