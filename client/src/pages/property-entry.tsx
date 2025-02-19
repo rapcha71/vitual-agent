@@ -177,8 +177,8 @@ export default function PropertyEntry() {
     try {
       setIsCompressing(true);
       const compressedFile = await imageCompression(file, {
-        maxSizeMB: 1,
-        maxWidthOrHeight: 1920,
+        maxSizeMB: 5,
+        maxWidthOrHeight: 2560,
         useWebWorker: true
       });
 
@@ -194,6 +194,7 @@ export default function PropertyEntry() {
         toast({
           title: "Image Uploaded",
           description: `Image compressed from ${originalSize}KB to ${compressedSize}KB (${savings}% reduction)`,
+          duration: 3000,
         });
         cleanup();
       };
@@ -203,7 +204,8 @@ export default function PropertyEntry() {
       toast({
         title: "Upload Error",
         description: "Failed to process image. Please try again.",
-        variant: "destructive"
+        variant: "destructive",
+        duration: 5000
       });
     } finally {
       setIsCompressing(false);
@@ -259,8 +261,8 @@ export default function PropertyEntry() {
       const file = new File([blob], "image.jpg", { type: "image/jpeg" });
 
       const options = {
-        maxSizeMB: 1,
-        maxWidthOrHeight: 1920,
+        maxSizeMB: 5,
+        maxWidthOrHeight: 2560,
         useWebWorker: true,
         onProgress: (progress: number) => {
           console.log('Compression progress:', progress);
@@ -279,7 +281,8 @@ export default function PropertyEntry() {
       toast({
         title: "Compression Error",
         description: "Failed to compress image. Using original size.",
-        variant: "destructive"
+        variant: "destructive",
+        duration: 5000
       });
       return imageDataUrl;
     } finally {
