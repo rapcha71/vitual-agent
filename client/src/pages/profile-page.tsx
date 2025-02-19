@@ -1,13 +1,26 @@
 import { useAuth } from "@/hooks/use-auth";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { User } from "lucide-react";
+import { User, ChevronLeft } from "lucide-react";
+import { useLocation } from "wouter";
 
 export default function ProfilePage() {
   const { user, logoutMutation } = useAuth();
+  const [, setLocation] = useLocation();
 
   return (
     <div className="container mx-auto p-4 max-w-2xl">
+      <div className="mb-4">
+        <Button 
+          variant="ghost" 
+          className="text-primary hover:text-primary/80"
+          onClick={() => setLocation("/")}
+        >
+          <ChevronLeft className="h-5 w-5 mr-2" />
+          Atrás
+        </Button>
+      </div>
+
       <Card>
         <CardHeader>
           <CardTitle className="flex items-center gap-2">
@@ -35,10 +48,13 @@ export default function ProfilePage() {
           <div className="pt-4 border-t">
             <Button
               variant="destructive"
-              onClick={() => logoutMutation.mutate()}
+              onClick={() => {
+                logoutMutation.mutate();
+                setLocation("/auth");
+              }}
               disabled={logoutMutation.isPending}
             >
-              Logout
+              {logoutMutation.isPending ? "Cerrando sesión..." : "Cerrar Sesión"}
             </Button>
           </div>
         </CardContent>
