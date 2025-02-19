@@ -17,7 +17,6 @@ import {
 } from "@/components/ui/dialog";
 import { Loader2 } from "lucide-react";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Loader } from "@googlemaps/js-api-loader";
 
 type PropertyWithThumbnails = Property & {
   thumbnails?: string[];
@@ -27,94 +26,23 @@ export default function DashboardPage() {
   const { user, logoutMutation } = useAuth();
   const [, setLocation] = useLocation();
   const [propertiesWithThumbnails, setPropertiesWithThumbnails] = useState<PropertyWithThumbnails[]>([]);
-  const [map, setMap] = useState<google.maps.Map | null>(null);
-  const [mapLoading, setMapLoading] = useState(true);
 
   const { data: properties = [], isLoading } = useQuery<Property[]>({
     queryKey: ['/api/properties'],
   });
 
   useEffect(() => {
-    const initMap = async () => {
-      try {
-        const loader = new Loader({
-          apiKey: import.meta.env.VITE_GOOGLE_MAPS_API_KEY || '',
-          version: "weekly",
-          libraries: ["places"]
-        });
-
-        const google = await loader.load();
-        const mapElement = document.getElementById("map");
-        if (!mapElement) {
-          console.error('Map element not found');
-          return;
-        }
-
-        const map = new google.maps.Map(mapElement, {
-          center: { lat: 9.9281, lng: -84.0907 }, // Costa Rica
-          zoom: 8,
-        });
-
-        setMap(map);
-        setMapLoading(false);
-
-        // Add KML if there are properties
-        if (properties.length > 0) {
-          properties.forEach(property => {
-            if (property.kmlData) {
-              const kmlLayer = new google.maps.KmlLayer({
-                url: property.kmlData,
-                map: map,
-                preserveViewport: true
-              });
-            }
-
-            // Add marker with corresponding color
-            new google.maps.Marker({
-              position: { 
-                lat: property.location.lat, 
-                lng: property.location.lng 
-              },
-              map,
-              title: property.propertyId,
-              icon: {
-                path: google.maps.SymbolPath.CIRCLE,
-                fillColor: property.markerColor,
-                fillOpacity: 0.8,
-                strokeWeight: 1,
-                scale: 8
-              }
-            });
-          });
-        }
-      } catch (error) {
-        console.error('Error loading Google Maps:', error);
-        setMapLoading(false);
-      }
-    };
-
-    if (properties.length > 0) {
-      initMap();
-    }
-  }, [properties]);
-
-  useEffect(() => {
-    console.log("Properties data:", properties);
     const generateThumbnails = async () => {
       if (!properties || properties.length === 0) {
-        console.log("No properties available");
         return;
       }
 
       const withThumbnails = await Promise.all(
         properties.map(async (property) => {
-          console.log("Processing property:", property.propertyId);
           if (!property.images) {
-            console.log("No images for property:", property.propertyId);
             return { ...property, thumbnails: [] };
           }
 
-          console.log("Generating thumbnails for property:", property.propertyId);
           const thumbnails = await Promise.all(
             Object.values(property.images).map(async (img) => {
               try {
@@ -129,7 +57,6 @@ export default function DashboardPage() {
           return { ...property, thumbnails };
         })
       );
-      console.log("Generated thumbnails:", withThumbnails);
       setPropertiesWithThumbnails(withThumbnails);
     };
 
@@ -324,11 +251,11 @@ export default function DashboardPage() {
                   className="w-full h-[600px] rounded-lg relative bg-gray-100"
                   style={{ minHeight: '600px' }}
                 >
-                  {mapLoading && (
-                    <div className="absolute inset-0 flex items-center justify-center bg-gray-100/80">
-                      <Loader2 className="h-8 w-8 animate-spin text-primary" />
-                    </div>
-                  )}
+                  <div className="absolute inset-0 flex items-center justify-center bg-gray-100/80">
+                    <p className="text-muted-foreground">
+                      El mapa estará disponible pronto...
+                    </p>
+                  </div>
                 </div>
               </CardContent>
             </Card>
