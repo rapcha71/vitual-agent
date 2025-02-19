@@ -100,20 +100,37 @@ export default function AdminPage() {
   }, [properties]);
 
   useEffect(() => {
+    console.log("Properties data:", properties);
     const generateThumbnails = async () => {
+      if (!properties || properties.length === 0) {
+        console.log("No properties available");
+        return;
+      }
+
       const withThumbnails = await Promise.all(
         properties.map(async (property) => {
+          console.log("Processing property:", property.propertyId);
           if (!property.images || property.images.length === 0) {
+            console.log("No images for property:", property.propertyId);
             return { ...property, thumbnails: [] };
           }
 
+          console.log("Generating thumbnails for property:", property.propertyId);
           const thumbnails = await Promise.all(
-            property.images.map(img => compressImageForThumbnail(img))
+            property.images.map(async (img) => {
+              try {
+                return await compressImageForThumbnail(img);
+              } catch (error) {
+                console.error("Error compressing image:", error);
+                return img;
+              }
+            })
           );
 
           return { ...property, thumbnails };
         })
       );
+      console.log("Generated thumbnails:", withThumbnails);
       setPropertiesWithThumbnails(withThumbnails);
     };
 
@@ -164,8 +181,8 @@ export default function AdminPage() {
       </header>
 
       {/* Main Content */}
-      <main className="p-4">
-        <Card className="mb-4">
+      <main className="p-4 space-y-4">
+        <Card>
           <CardHeader>
             <CardTitle>Panel de Administración</CardTitle>
           </CardHeader>
@@ -200,23 +217,27 @@ export default function AdminPage() {
         </Card>
 
         <Tabs defaultValue="map" className="w-full">
-          <TabsList>
-            <TabsTrigger value="map">
-              <MapPin className="h-4 w-4 mr-2" />
+          <TabsList className="w-full justify-start">
+            <TabsTrigger value="map" className="flex items-center gap-2">
+              <MapPin className="h-4 w-4" />
               Mapa
             </TabsTrigger>
-            <TabsTrigger value="properties">
-              <Image className="h-4 w-4 mr-2" />
+            <TabsTrigger value="properties" className="flex items-center gap-2">
+              <Image className="h-4 w-4" />
               Propiedades
             </TabsTrigger>
           </TabsList>
 
-          <TabsContent value="map" className="mt-4">
+          <TabsContent value="map">
             <Card>
-              <CardContent className="p-4">
-                <div id="map" className="w-full h-[600px] rounded-lg">
+              <CardContent>
+                <div 
+                  id="map" 
+                  className="w-full h-[600px] rounded-lg relative bg-gray-100"
+                  style={{ minHeight: '600px' }}
+                >
                   {mapLoading && (
-                    <div className="w-full h-full flex items-center justify-center bg-gray-100">
+                    <div className="absolute inset-0 flex items-center justify-center bg-gray-100/80">
                       <Loader2 className="h-8 w-8 animate-spin text-primary" />
                     </div>
                   )}
@@ -225,9 +246,9 @@ export default function AdminPage() {
             </Card>
           </TabsContent>
 
-          <TabsContent value="properties" className="mt-4">
+          <TabsContent value="properties">
             <Card>
-              <CardContent className="p-4">
+              <CardContent>
                 {isLoading ? (
                   <div className="text-center py-4">
                     <Loader2 className="h-8 w-8 animate-spin mx-auto text-primary" />
