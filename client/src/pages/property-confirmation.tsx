@@ -31,7 +31,7 @@ export default function PropertyConfirmation() {
 
         <div className="p-4 bg-white flex-1">
           <div className="flex flex-col items-center justify-center space-y-6 mt-8">
-            <div className="bg-white shadow-lg rounded-lg p-6 text-center">
+            <div className="bg-white shadow-lg rounded-lg p-6 text-center w-full max-w-sm">
               <div className="mb-4">
                 <p className="text-xl font-semibold text-[#FF5733]">
                   ¡Felicidades! Tu propiedad ha sido registrada con éxito
@@ -40,7 +40,9 @@ export default function PropertyConfirmation() {
 
               <div className="mt-8">
                 <p className="text-lg font-medium">El ID de tu propiedad es:</p>
-                <p className="text-3xl font-bold mt-2 text-[#FF5733]">{propertyId}</p>
+                <p className="text-2xl font-bold mt-2 text-[#FF5733] break-all">
+                  {propertyId}
+                </p>
               </div>
 
               <div className="mt-6">

@@ -40,7 +40,7 @@ export default function PropertyEntry() {
       propertyType: "",
       signPhoneNumber: "",
       location: { lat: 0, lng: 0 },
-      propertyId: nanoid(),
+      propertyId: nanoid(8),
       images: { sign: "", property: "" },
       markerColor: ""
     }
