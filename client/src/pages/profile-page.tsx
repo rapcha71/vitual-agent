@@ -10,12 +10,7 @@ export default function ProfilePage() {
   const [, setLocation] = useLocation();
 
   return (
-    <div className="flex items-center justify-center min-h-screen bg-cover bg-center bg-no-repeat" 
-         style={{
-           backgroundImage: 'url("/assets/ciudad.jpeg")',
-           backgroundColor: 'rgba(0, 0, 0, 0.5)',
-           backgroundBlend: 'overlay'
-         }}>
+    <div className="flex items-center justify-center min-h-screen bg-gray-100">
       <PhonePreview>
         <header className="bg-[#F05023] px-4 py-3">
           <div className="flex items-center justify-between">
@@ -44,7 +39,7 @@ export default function ProfilePage() {
           </div>
         </header>
 
-        <div className="p-4">
+        <div className="p-4 bg-cover bg-center bg-no-repeat" style={{backgroundImage: 'url("/assets/ciudad.jpeg")'}}>
           <Card>
             <CardHeader>
               <CardTitle className="flex items-center gap-2">

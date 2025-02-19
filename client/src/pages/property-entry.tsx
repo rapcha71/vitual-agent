@@ -433,12 +433,7 @@ export default function PropertyEntry() {
   })
 
   return (
-    <div className="flex items-center justify-center min-h-screen bg-cover bg-center bg-no-repeat" 
-         style={{
-           backgroundImage: 'url("/assets/ciudad.jpeg")',
-           backgroundColor: 'rgba(0, 0, 0, 0.5)',
-           backgroundBlend: 'overlay'
-         }}>
+    <div className="flex items-center justify-center min-h-screen bg-gray-100">
       <PhonePreview>
         <header className="bg-[#F05023] px-4 py-3">
           <div className="flex items-center justify-between">
@@ -467,7 +462,7 @@ export default function PropertyEntry() {
           </div>
         </header>
 
-        <div className="p-4 bg-white overflow-y-auto">
+        <div className="p-4 bg-cover bg-center bg-no-repeat overflow-y-auto" style={{backgroundImage: 'url("/assets/ciudad.jpeg")'}} >
           <Form {...form}>
             <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
               <FormField

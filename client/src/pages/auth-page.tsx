@@ -84,12 +84,7 @@ export default function AuthPage() {
   }
 
   return (
-    <div className="flex items-center justify-center min-h-screen bg-cover bg-center bg-no-repeat" 
-         style={{
-           backgroundImage: 'url("/assets/ciudad.jpeg")',
-           backgroundColor: 'rgba(0, 0, 0, 0.5)',
-           backgroundBlend: 'overlay'
-         }}>
+    <div className="flex items-center justify-center min-h-screen bg-gray-100">
       <PhonePreview>
         <header className="bg-[#F05023] px-4 py-3">
           <div className="flex flex-col items-center">
@@ -104,7 +99,7 @@ export default function AuthPage() {
           </div>
         </header>
 
-        <div className="p-4">
+        <div className="p-4 bg-cover bg-center bg-no-repeat" style={{backgroundImage: 'url("/assets/ciudad.jpeg")'}}>
           <Tabs defaultValue="login" className="w-full">
             <TabsList className="grid w-full grid-cols-2 mb-4">
               <TabsTrigger value="login">Iniciar Sesión</TabsTrigger>

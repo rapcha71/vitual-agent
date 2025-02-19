@@ -24,12 +24,7 @@ export default function HomePage() {
   };
 
   return (
-    <div className="flex items-center justify-center min-h-screen bg-cover bg-center bg-no-repeat" 
-         style={{
-           backgroundImage: 'url("/assets/ciudad.jpeg")',
-           backgroundColor: 'rgba(0, 0, 0, 0.5)',
-           backgroundBlend: 'overlay'
-         }}>
+    <div className="flex items-center justify-center min-h-screen bg-gray-100">
       <PhonePreview>
         <header className="bg-[#F05023] px-4 py-3">
           <div className="flex items-center justify-between">
@@ -58,7 +53,7 @@ export default function HomePage() {
           </div>
         </header>
 
-        <main className="p-4 space-y-6">
+        <main className="p-4 space-y-6 bg-cover bg-center bg-no-repeat" style={{backgroundImage: 'url("/assets/ciudad.jpeg")'}}>
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
