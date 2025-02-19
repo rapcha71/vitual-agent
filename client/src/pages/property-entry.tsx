@@ -8,7 +8,7 @@ import { useForm } from "react-hook-form";
 import { useToast } from "@/hooks/use-toast";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { insertPropertySchema } from "@shared/schema";
-import { Camera, MapPin, X } from "lucide-react";
+import { Camera, MapPin, X, Upload } from "lucide-react";
 import { useLocation } from "wouter";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import imageCompression from "browser-image-compression";
@@ -24,8 +24,11 @@ export default function PropertyEntry() {
   const [activeCamera, setActiveCamera] = useState<"sign" | "property" | null>(null);
   const [stream, setStream] = useState<MediaStream | null>(null);
   const [isCompressing, setIsCompressing] = useState(false);
+  const [devices, setDevices] = useState<MediaDeviceInfo[]>([]);
+  const [selectedDevice, setSelectedDevice] = useState<string>("");
   const videoRef = useRef<HTMLVideoElement>(null);
   const canvasRef = useRef<HTMLCanvasElement>(null);
+  const fileInputRef = useRef<HTMLInputElement>(null);
 
   const form = useForm({
     resolver: zodResolver(insertPropertySchema),
@@ -61,6 +64,25 @@ export default function PropertyEntry() {
     }
   });
 
+  // Get available cameras
+  const getDevices = async () => {
+    try {
+      const devices = await navigator.mediaDevices.enumerateDevices();
+      const videoDevices = devices.filter(device => device.kind === 'videoinput');
+      setDevices(videoDevices);
+      if (videoDevices.length > 0) {
+        setSelectedDevice(videoDevices[0].deviceId);
+      }
+    } catch (error) {
+      console.error('Error getting devices:', error);
+    }
+  };
+
+  useEffect(() => {
+    getDevices();
+    return () => cleanup();
+  }, []);
+
   // Cleanup function for camera stream
   const cleanup = () => {
     if (stream) {
@@ -74,22 +96,20 @@ export default function PropertyEntry() {
     setIsCapturing(false);
   };
 
-  // Cleanup on component unmount
-  useEffect(() => {
-    return () => cleanup();
-  }, []);
-
   // Handle camera access
   const startCamera = async (type: "sign" | "property") => {
     try {
-      // First cleanup any existing streams
       cleanup();
-
       setIsCapturing(true);
-      const mediaStream = await navigator.mediaDevices.getUserMedia({ 
-        video: { facingMode: "environment" } 
-      });
 
+      const constraints = {
+        video: {
+          deviceId: selectedDevice ? { exact: selectedDevice } : undefined,
+          facingMode: "environment"
+        }
+      };
+
+      const mediaStream = await navigator.mediaDevices.getUserMedia(constraints);
       setStream(mediaStream);
       setActiveCamera(type);
 
@@ -100,9 +120,91 @@ export default function PropertyEntry() {
       console.error("Error accessing camera:", error);
       toast({
         title: "Camera Error",
-        description: "Unable to access device camera. Please check permissions.",
+        description: "Unable to access device camera. Try uploading an image instead.",
         variant: "destructive"
       });
+      cleanup();
+    }
+  };
+
+  // Handle file upload
+  const handleFileUpload = async (event: React.ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0];
+    if (!file || !activeCamera) return;
+
+    try {
+      setIsCompressing(true);
+      const compressedFile = await imageCompression(file, {
+        maxSizeMB: 1,
+        maxWidthOrHeight: 1920,
+        useWebWorker: true
+      });
+
+      const reader = new FileReader();
+      reader.onloadend = async () => {
+        const base64data = reader.result as string;
+        form.setValue(`images.${activeCamera}`, base64data);
+
+        const originalSize = Math.round(file.size / 1024);
+        const compressedSize = Math.round(compressedFile.size / 1024);
+        const savings = Math.round(((originalSize - compressedSize) / originalSize) * 100);
+
+        toast({
+          title: "Image Uploaded",
+          description: `Image compressed from ${originalSize}KB to ${compressedSize}KB (${savings}% reduction)`,
+        });
+        cleanup();
+      };
+      reader.readAsDataURL(compressedFile);
+    } catch (error) {
+      console.error('Error processing file:', error);
+      toast({
+        title: "Upload Error",
+        description: "Failed to process image. Please try again.",
+        variant: "destructive"
+      });
+    } finally {
+      setIsCompressing(false);
+    }
+  };
+
+  // Handle photo capture
+  const capturePhoto = async () => {
+    if (!videoRef.current || !canvasRef.current || !activeCamera) return;
+
+    try {
+      const video = videoRef.current;
+      const canvas = canvasRef.current;
+
+      canvas.width = video.videoWidth;
+      canvas.height = video.videoHeight;
+      const context = canvas.getContext('2d');
+      if (!context) return;
+
+      context.drawImage(video, 0, 0);
+      const imageData = canvas.toDataURL('image/jpeg');
+
+      // Compress the image before storing
+      const compressedImage = await compressImage(imageData);
+      form.setValue(`images.${activeCamera}`, compressedImage);
+
+      // Show success message with compression info
+      const originalSize = Math.round(imageData.length / 1024);
+      const compressedSize = Math.round(compressedImage.length / 1024);
+      const savings = Math.round(((originalSize - compressedSize) / originalSize) * 100);
+
+      toast({
+        title: "Photo Captured",
+        description: `Image compressed from ${originalSize}KB to ${compressedSize}KB (${savings}% reduction)`,
+      });
+    } catch (error) {
+      console.error('Error capturing photo:', error);
+      toast({
+        title: "Capture Error",
+        description: "Failed to capture photo. Please try again or use file upload.",
+        variant: "destructive"
+      });
+    } finally {
       cleanup();
     }
   };
@@ -148,47 +250,6 @@ export default function PropertyEntry() {
       return imageDataUrl;
     } finally {
       setIsCompressing(false);
-    }
-  };
-
-  // Handle photo capture
-  const capturePhoto = async () => {
-    if (!videoRef.current || !canvasRef.current || !activeCamera) return;
-
-    try {
-      const video = videoRef.current;
-      const canvas = canvasRef.current;
-
-      canvas.width = video.videoWidth;
-      canvas.height = video.videoHeight;
-      const context = canvas.getContext('2d');
-      if (!context) return;
-
-      context.drawImage(video, 0, 0);
-      const imageData = canvas.toDataURL('image/jpeg');
-
-      // Compress the image before storing
-      const compressedImage = await compressImage(imageData);
-      form.setValue(`images.${activeCamera}`, compressedImage);
-
-      // Show success message with compression info
-      const originalSize = Math.round(imageData.length / 1024);
-      const compressedSize = Math.round(compressedImage.length / 1024);
-      const savings = Math.round(((originalSize - compressedSize) / originalSize) * 100);
-
-      toast({
-        title: "Photo Captured",
-        description: `Image compressed from ${originalSize}KB to ${compressedSize}KB (${savings}% reduction)`,
-      });
-    } catch (error) {
-      console.error('Error capturing photo:', error);
-      toast({
-        title: "Capture Error",
-        description: "Failed to capture photo. Please try again.",
-        variant: "destructive"
-      });
-    } finally {
-      cleanup();
     }
   };
 
@@ -259,6 +320,20 @@ export default function PropertyEntry() {
                         <SelectItem value="commercial">Commercial Premise</SelectItem>
                       </SelectContent>
                     </Select>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+
+              <FormField
+                control={form.control}
+                name="signPhoneNumber"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Sign Phone Number (Optional)</FormLabel>
+                    <FormControl>
+                      <Input {...field} />
+                    </FormControl>
                     <FormMessage />
                   </FormItem>
                 )}
@@ -346,23 +421,57 @@ export default function PropertyEntry() {
               }
             </DialogTitle>
           </DialogHeader>
-          <div className="relative aspect-video bg-black rounded-lg overflow-hidden">
-            <video
-              ref={videoRef}
-              autoPlay
-              playsInline
-              className="w-full h-full object-cover"
+          <div className="flex flex-col gap-4">
+            {devices.length > 1 && (
+              <Select value={selectedDevice} onValueChange={setSelectedDevice}>
+                <SelectTrigger>
+                  <SelectValue placeholder="Select camera" />
+                </SelectTrigger>
+                <SelectContent>
+                  {devices.map((device) => (
+                    <SelectItem key={device.deviceId} value={device.deviceId}>
+                      {device.label || `Camera ${device.deviceId}`}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            )}
+
+            <div className="relative aspect-video bg-black rounded-lg overflow-hidden">
+              <video
+                ref={videoRef}
+                autoPlay
+                playsInline
+                className="w-full h-full object-cover"
+              />
+              <canvas ref={canvasRef} className="hidden" />
+              <div className="absolute top-2 right-2 flex gap-2">
+                <Button
+                  variant="secondary"
+                  size="icon"
+                  onClick={capturePhoto}
+                  disabled={isCompressing}
+                >
+                  <Camera className="h-4 w-4" />
+                </Button>
+                <Button
+                  variant="secondary"
+                  size="icon"
+                  onClick={() => fileInputRef.current?.click()}
+                  disabled={isCompressing}
+                >
+                  <Upload className="h-4 w-4" />
+                </Button>
+              </div>
+            </div>
+
+            <input
+              ref={fileInputRef}
+              type="file"
+              accept="image/*"
+              className="hidden"
+              onChange={handleFileUpload}
             />
-            <canvas ref={canvasRef} className="hidden" />
-            <Button
-              variant="secondary"
-              size="icon"
-              className="absolute top-2 right-2"
-              onClick={capturePhoto}
-              disabled={isCompressing}
-            >
-              <Camera className="h-4 w-4" />
-            </Button>
           </div>
         </DialogContent>
       </Dialog>
