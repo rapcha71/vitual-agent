@@ -10,6 +10,7 @@ import DashboardPage from "@/pages/dashboard-page";
 import AdminPage from "@/pages/admin-page";
 import PropertyEntry from "@/pages/property-entry";
 import PropertyConfirmation from "@/pages/property-confirmation";
+import PropertiesPage from "@/pages/properties-page";
 import ProfilePage from "@/pages/profile-page";
 import { ProtectedRoute } from "./lib/protected-route";
 import { Loader2 } from "lucide-react";
@@ -52,6 +53,7 @@ function Router() {
       <ProtectedRoute path="/profile" component={ProfilePage} />
       <ProtectedRoute path="/property/new" component={PropertyEntry} />
       <ProtectedRoute path="/property/confirmation" component={PropertyConfirmation} />
+      <ProtectedRoute path="/properties" component={PropertiesPage} />
       <Route path="/admin">
         <AdminRoute component={AdminPage} />
       </Route>
