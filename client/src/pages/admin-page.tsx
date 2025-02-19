@@ -98,9 +98,8 @@ export default function AdminPage() {
                       <TableCell>
                         <Dialog>
                           <DialogTrigger asChild>
-                            <Button variant="outline" size="sm">
-                              <Image className="h-4 w-4 mr-2" />
-                              Ver Imágenes ({Array.isArray(property.images) ? property.images.length : 0})
+                            <Button variant="outline" size="icon">
+                              <Image className="h-4 w-4" />
                             </Button>
                           </DialogTrigger>
                           <DialogContent className="max-w-4xl">
@@ -108,7 +107,7 @@ export default function AdminPage() {
                               <DialogTitle>Imágenes de la Propiedad {property.propertyId}</DialogTitle>
                             </DialogHeader>
                             <div className="grid grid-cols-2 gap-4 p-4">
-                              {Array.isArray(property.images) && property.images.map((image, index) => (
+                              {property.images.map((image, index) => (
                                 <div key={index} className="relative aspect-square">
                                   <img
                                     src={image}

@@ -33,6 +33,21 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  // Regular users route to get their own properties
+  app.get("/api/properties", async (req, res) => {
+    if (!req.isAuthenticated()) {
+      return res.status(401).json({ message: "Unauthorized" });
+    }
+
+    try {
+      const properties = await storage.getPropertiesByUserId(req.user.id);
+      res.json(properties);
+    } catch (error: any) {
+      console.error("Error fetching properties:", error);
+      res.status(500).json({ message: error.message || "Failed to fetch properties" });
+    }
+  });
+
   app.post("/api/properties", async (req, res) => {
     if (!req.isAuthenticated()) {
       return res.status(401).json({ message: "Unauthorized" });
@@ -95,19 +110,6 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
-  app.get("/api/properties", async (req, res) => {
-    if (!req.isAuthenticated()) {
-      return res.status(401).json({ message: "Unauthorized" });
-    }
-
-    try {
-      const properties = await storage.getPropertiesByUserId(req.user.id);
-      res.json(properties);
-    } catch (error: any) {
-      console.error("Error fetching properties:", error);
-      res.status(500).json({ message: error.message || "Failed to fetch properties" });
-    }
-  });
 
   // Add OCR test endpoint
   app.post("/api/test-ocr", async (req, res) => {
