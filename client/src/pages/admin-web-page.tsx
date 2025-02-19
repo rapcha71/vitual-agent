@@ -71,13 +71,20 @@ export default function AdminWebPage() {
 
         // Add markers if there are properties
         properties.forEach(property => {
-          new google.maps.marker.AdvancedMarkerElement({
+          new google.maps.Marker({
             map,
             position: { 
               lat: property.location.lat, 
               lng: property.location.lng 
             },
-            title: `${property.propertyId} - ${property.user.fullName || property.user.username}`
+            title: `${property.propertyId} - ${property.user.fullName || property.user.username}`,
+            icon: {
+              path: google.maps.SymbolPath.CIRCLE,
+              fillColor: property.markerColor,
+              fillOpacity: 0.9,
+              strokeWeight: 1,
+              scale: 8
+            }
           });
         });
       } catch (error) {
@@ -184,7 +191,7 @@ export default function AdminWebPage() {
                           <TableHead>Apodo</TableHead>
                           <TableHead>Teléfono Usuario</TableHead>
                           <TableHead>Tipo</TableHead>
-                          <TableHead>Teléfono Rótulo</TableHead>
+                          <TableHead>Teléfono Rótulo (OCR)</TableHead>
                           <TableHead>Ubicación</TableHead>
                           <TableHead>Imágenes</TableHead>
                         </TableRow>
@@ -201,7 +208,13 @@ export default function AdminWebPage() {
                                property.propertyType === 'land' ? 'Terreno' : 
                                'Local Comercial'}
                             </TableCell>
-                            <TableCell>{property.signPhoneNumber || '-'}</TableCell>
+                            <TableCell>
+                              {property.signPhoneNumber ? (
+                                <span className="font-medium text-primary">
+                                  {property.signPhoneNumber}
+                                </span>
+                              ) : '-'}
+                            </TableCell>
                             <TableCell>
                               {property.location.lat.toFixed(6)}, {property.location.lng.toFixed(6)}
                             </TableCell>
