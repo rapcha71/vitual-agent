@@ -46,6 +46,15 @@ export class MemStorage implements IStorage {
     return user;
   }
 
+  async getUserByRememberToken(token: string): Promise<User | undefined> {
+    console.log("Getting user by remember token:", token);
+    const user = Array.from(this.users.values()).find(
+      (user) => user.rememberToken === token,
+    );
+    console.log("Found user by remember token:", user ? "Yes" : "No");
+    return user;
+  }
+
   async createUser(insertUser: InsertUser): Promise<User> {
     console.log("Creating new user:", insertUser.username);
     const id = this.currentUserId++;
@@ -58,10 +67,8 @@ export class MemStorage implements IStorage {
       mobile: insertUser.mobile ?? null,
       nickname: insertUser.nickname ?? null,
       isAdmin: insertUser.isAdmin ?? false,
-      biometricCredentialId: null,
-      biometricPublicKey: null,
-      biometricCounter: null,
-      biometricEnabled: false
+      rememberToken: null,
+      lastLoginAt: null
     };
 
     this.users.set(id, user);
@@ -70,37 +77,32 @@ export class MemStorage implements IStorage {
     return user;
   }
 
-  async updateUserBiometricCredentials(userId: number, credentials: {
-    credentialID: Buffer;
-    publicKey: Buffer;
-    counter: number;
-  }): Promise<void> {
+  async updateUserRememberToken(userId: number, token: string | null): Promise<void> {
     const user = await this.getUser(userId);
     if (!user) throw new Error('User not found');
 
     const updatedUser: User = {
       ...user,
-      biometricCredentialId: credentials.credentialID.toString('base64'),
-      biometricPublicKey: credentials.publicKey.toString('base64'),
-      biometricCounter: credentials.counter,
-      biometricEnabled: true
+      rememberToken: token
     };
 
     this.users.set(userId, updatedUser);
     usersMap = this.users; // Update singleton
+    console.log("Updated remember token for user:", userId);
   }
 
-  async updateUserBiometricCounter(userId: number, counter: number): Promise<void> {
+  async updateLastLogin(userId: number): Promise<void> {
     const user = await this.getUser(userId);
     if (!user) throw new Error('User not found');
 
     const updatedUser: User = {
       ...user,
-      biometricCounter: counter
+      lastLoginAt: new Date().toISOString()
     };
 
     this.users.set(userId, updatedUser);
     usersMap = this.users; // Update singleton
+    console.log("Updated last login for user:", userId);
   }
 
   async createProperty(insertProperty: InsertProperty & { userId: number }): Promise<Property> {
