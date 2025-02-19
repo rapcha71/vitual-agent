@@ -1,8 +1,7 @@
 import { IStorage } from "./storage";
 import session from "express-session";
 import { User, Property, InsertUser, InsertProperty } from "@shared/schema";
-import { GoogleSheetsStorage } from "./storage/google-sheets";
-import { MemStorage } from "./storage/mem-storage";
+import { DatabaseStorage } from "./storage/database-storage";
 
 export interface IStorage {
   sessionStore: session.Store;
@@ -13,5 +12,5 @@ export interface IStorage {
   getPropertiesByUserId(userId: number): Promise<Property[]>;
 }
 
-// Switch to MemStorage to handle larger image sizes
-export const storage: IStorage = new MemStorage();
+// Switch to DatabaseStorage for persistent storage
+export const storage: IStorage = new DatabaseStorage();
