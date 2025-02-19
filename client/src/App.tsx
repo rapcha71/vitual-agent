@@ -5,20 +5,16 @@ import { Toaster } from "@/components/ui/toaster";
 import { AuthProvider } from "./hooks/use-auth";
 import NotFound from "@/pages/not-found";
 import AuthPage from "@/pages/auth-page";
-import HomePage from "@/pages/home-page";
 import PropertyEntry from "@/pages/property-entry";
-import ProfilePage from "@/pages/profile-page";
-import PreviewPage from "@/pages/preview-page";
+import PropertyConfirmation from "@/pages/property-confirmation";
 import { ProtectedRoute } from "./lib/protected-route";
 
 function Router() {
   return (
     <Switch>
       <Route path="/auth" component={AuthPage} />
-      <Route path="/preview" component={PreviewPage} />
-      <ProtectedRoute path="/" component={HomePage} />
-      <ProtectedRoute path="/property/new" component={PropertyEntry} />
-      <ProtectedRoute path="/profile" component={ProfilePage} />
+      <ProtectedRoute path="/" component={PropertyEntry} />
+      <ProtectedRoute path="/confirmation" component={PropertyConfirmation} />
       <Route component={NotFound} />
     </Switch>
   );

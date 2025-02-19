@@ -1,6 +1,5 @@
 import { useState, useRef, useEffect } from "react";
-import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { PhonePreview } from "@/components/ui/phone-preview";
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
@@ -15,12 +14,9 @@ import imageCompression from "browser-image-compression";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { nanoid } from "nanoid";
 
-// Define marker colors based on property type
-const MarkerColors = {
-  house: 'blue',
-  land: 'green',
-  commercial: 'yellow'
-} as const;
+import { Button } from "@/components/ui/button";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+
 
 export default function PropertyEntry() {
   const [, setLocation] = useLocation();
@@ -50,7 +46,6 @@ export default function PropertyEntry() {
     }
   });
 
-  // Update the createPropertyMutation to handle the API request properly
   const createPropertyMutation = useMutation({
     mutationFn: async (formData: any) => {
       console.log("Starting property submission with data:", {
@@ -60,7 +55,6 @@ export default function PropertyEntry() {
         location: formData.location
       });
 
-      // Show loading toast
       toast({
         title: "Uploading",
         description: "Please wait while we save your property...",
@@ -249,7 +243,6 @@ export default function PropertyEntry() {
         description: `Image compressed from ${originalSize}KB to ${compressedSize}KB (${savings}% reduction)`,
       });
 
-      // Close the dialog after successful capture
       cleanup();
     } catch (error) {
       console.error('Error capturing photo:', error);
@@ -269,22 +262,19 @@ export default function PropertyEntry() {
       const blob = await response.blob();
       const file = new File([blob], "image.jpg", { type: "image/jpeg" });
 
-      // More aggressive compression options for Vision API
       const options = {
-        maxSizeMB: 1, // Reduce max size to 1MB
-        maxWidthOrHeight: 1920, // Reduced from 2560 to 1920
+        maxSizeMB: 1, 
+        maxWidthOrHeight: 1920, 
         useWebWorker: true,
-        initialQuality: 0.8, // Start with 80% quality
-        alwaysKeepResolution: false, // Allow resolution reduction if needed
+        initialQuality: 0.8, 
+        alwaysKeepResolution: false, 
         onProgress: (progress: number) => {
-          // Log compression progress for debugging
           console.log('Compression progress:', progress);
         }
       };
 
       const compressedFile = await imageCompression(file, options);
 
-      // If still over 1MB, compress again with more aggressive settings
       if (compressedFile.size > 1024 * 1024) {
         const secondPassOptions = {
           ...options,
@@ -354,7 +344,6 @@ export default function PropertyEntry() {
     try {
       console.log("Form submission started");
 
-      // Validate required fields
       if (!data.propertyType) {
         toast({
           title: "Error",
@@ -382,7 +371,6 @@ export default function PropertyEntry() {
         return;
       }
 
-      // Submit the form
       await createPropertyMutation.mutateAsync(data);
 
       console.log("Form submission completed successfully");
@@ -439,12 +427,22 @@ export default function PropertyEntry() {
   };
 
   return (
-    <div className="min-h-screen bg-background p-4">
-      <Card className="max-w-2xl mx-auto">
-        <CardHeader>
-          <CardTitle>Add New Property</CardTitle>
-        </CardHeader>
-        <CardContent>
+    <div className="flex items-center justify-center min-h-screen bg-gray-100">
+      <PhonePreview>
+        <header className="bg-[#FF5733] px-4 py-3">
+          <div className="flex flex-col items-center">
+            <img 
+              src="/attached_assets/Logo de Virtual agent logo largo_upscayl_2x_realesrgan-x4plus.png"
+              alt="Virtual Agent"
+              className="h-10 w-auto"
+            />
+            <div className="text-white text-xs mt-1">
+              TU LLAVE DE INGRESO A LOS BIENES RAICES
+            </div>
+          </div>
+        </header>
+
+        <div className="p-4 bg-white overflow-y-auto">
           <Form {...form}>
             <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
               <FormField
@@ -452,17 +450,17 @@ export default function PropertyEntry() {
                 name="propertyType"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Property Type</FormLabel>
+                    <FormLabel className="text-lg">Tipo de Propiedad</FormLabel>
                     <Select onValueChange={field.onChange} defaultValue={field.value}>
                       <FormControl>
                         <SelectTrigger>
-                          <SelectValue placeholder="Select property type" />
+                          <SelectValue placeholder="Seleccione tipo de propiedad" />
                         </SelectTrigger>
                       </FormControl>
                       <SelectContent>
-                        <SelectItem value="house">House</SelectItem>
-                        <SelectItem value="land">Land</SelectItem>
-                        <SelectItem value="commercial">Commercial Premise</SelectItem>
+                        <SelectItem value="house">Casa</SelectItem>
+                        <SelectItem value="land">Terreno</SelectItem>
+                        <SelectItem value="commercial">Local Comercial</SelectItem>
                       </SelectContent>
                     </Select>
                     <FormMessage />
@@ -475,7 +473,7 @@ export default function PropertyEntry() {
                 name="signPhoneNumber"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Sign Phone Number (Optional)</FormLabel>
+                    <FormLabel className="text-lg">Número de Teléfono del Rótulo (Opcional)</FormLabel>
                     <FormControl>
                       <Input {...field} />
                     </FormControl>
@@ -485,86 +483,69 @@ export default function PropertyEntry() {
               />
 
               <div className="space-y-4">
-                <h3 className="font-medium">Property Photos</h3>
-                <div className="grid gap-4 md:grid-cols-2">
-                  <div className="space-y-2">
-                    <Button
-                      type="button"
-                      variant="outline"
-                      className="h-32 w-full flex flex-col items-center justify-center relative"
-                      onClick={() => startCamera("sign")}
-                      disabled={isCompressing}
-                    >
-                      <Camera className="h-8 w-8 mb-2" />
-                      <span>Capture Sign Photo</span>
-                      {form.watch("images.sign") && (
-                        <img
-                          src={form.watch("images.sign")}
-                          alt="Sign Preview"
-                          className="absolute inset-0 w-full h-full object-cover rounded-md opacity-50"
-                        />
-                      )}
-                    </Button>
-                    {form.watch("images.sign") && (
-                      <Button
-                        type="button"
-                        variant="secondary"
-                        className="w-full"
-                        onClick={testOCR}
-                      >
-                        Test OCR
-                      </Button>
-                    )}
-                  </div>
-                  <Button
+                <h3 className="text-lg font-medium">Fotos de la Propiedad</h3>
+                <div className="grid gap-4">
+                  <button
                     type="button"
-                    variant="outline"
-                    className="h-32 flex flex-col items-center justify-center relative"
+                    className="h-32 flex flex-col items-center justify-center relative border-2 border-gray-300 rounded-lg hover:border-[#FF5733] transition-colors"
+                    onClick={() => startCamera("sign")}
+                    disabled={isCompressing}
+                  >
+                    <Camera className="h-8 w-8 mb-2" />
+                    <span>Foto del Rótulo</span>
+                    {form.watch("images.sign") && (
+                      <img
+                        src={form.watch("images.sign")}
+                        alt="Sign Preview"
+                        className="absolute inset-0 w-full h-full object-cover rounded-lg opacity-50"
+                      />
+                    )}
+                  </button>
+
+                  <button
+                    type="button"
+                    className="h-32 flex flex-col items-center justify-center relative border-2 border-gray-300 rounded-lg hover:border-[#FF5733] transition-colors"
                     onClick={() => startCamera("property")}
                     disabled={isCompressing}
                   >
                     <Camera className="h-8 w-8 mb-2" />
-                    <span>Capture Property Photo</span>
+                    <span>Foto de la Propiedad</span>
                     {form.watch("images.property") && (
                       <img
                         src={form.watch("images.property")}
                         alt="Property Preview"
-                        className="absolute inset-0 w-full h-full object-cover rounded-md opacity-50"
+                        className="absolute inset-0 w-full h-full object-cover rounded-lg opacity-50"
                       />
                     )}
-                  </Button>
+                  </button>
                 </div>
               </div>
 
-              <div className="space-y-4">
-                <h3 className="font-medium">Location</h3>
-                <Button
-                  type="button"
-                  variant="outline"
-                  className="w-full h-32 flex flex-col items-center justify-center"
-                  onClick={captureLocation}
-                >
-                  <MapPin className="h-8 w-8 mb-2" />
-                  <span>Capture Location</span>
-                  {form.watch("location.lat") !== 0 && (
-                    <span className="text-sm text-muted-foreground mt-2">
-                      Location captured: {form.watch("location.lat").toFixed(6)}, {form.watch("location.lng").toFixed(6)}
-                    </span>
-                  )}
-                </Button>
-              </div>
+              <button
+                type="button"
+                className="w-full h-32 flex flex-col items-center justify-center border-2 border-gray-300 rounded-lg hover:border-[#FF5733] transition-colors"
+                onClick={captureLocation}
+              >
+                <MapPin className="h-8 w-8 mb-2" />
+                <span>Capturar Ubicación</span>
+                {form.watch("location.lat") !== 0 && (
+                  <span className="text-sm text-gray-600 mt-2">
+                    Ubicación: {form.watch("location.lat").toFixed(6)}, {form.watch("location.lng").toFixed(6)}
+                  </span>
+                )}
+              </button>
 
-              <Button
+              <button
                 type="submit"
-                className="w-full"
+                className="w-full bg-[#FF5733] text-white py-3 rounded-md font-semibold disabled:opacity-50"
                 disabled={isCompressing || createPropertyMutation.isPending}
               >
-                {createPropertyMutation.isPending ? "Submitting..." : "Submit Property"}
-              </Button>
+                {createPropertyMutation.isPending ? "Enviando..." : "Enviar Propiedad"}
+              </button>
             </form>
           </Form>
-        </CardContent>
-      </Card>
+        </div>
+      </PhonePreview>
 
       <Dialog
         open={isCapturing}
