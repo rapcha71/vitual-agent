@@ -92,7 +92,7 @@ export default function AdminPage() {
                     </TableCell>
                     <TableCell>{property.signPhoneNumber || '-'}</TableCell>
                     <TableCell>
-                      {property.location && `${property.location.lat.toFixed(6)}, ${property.location.lng.toFixed(6)}`}
+                      {`${property.location.lat.toFixed(6)}, ${property.location.lng.toFixed(6)}`}
                     </TableCell>
                     <TableCell>
                       {property.images && property.images.length > 0 ? (

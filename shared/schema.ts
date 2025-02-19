@@ -29,14 +29,21 @@ export const users = pgTable("users", {
   lastLoginAt: text("last_login_at"),
 });
 
+// Define the location type for better TypeScript support
+export type LocationType = {
+  lat: number;
+  lng: number;
+  address?: string;
+};
+
 export const properties = pgTable("properties", {
   id: serial("id").primaryKey(),
   userId: integer("user_id").notNull().references(() => users.id),
   propertyType: text("property_type").notNull(),
   signPhoneNumber: text("sign_phone_number"),
-  location: jsonb("location").notNull(),
+  location: jsonb("location").notNull().$type<LocationType>(),
   propertyId: text("property_id").notNull().unique(),
-  images: jsonb("images").notNull(),
+  images: jsonb("images").notNull().$type<string[]>(),
   kmlData: text("kml_data"),
   markerColor: text("marker_color").notNull(),
   createdAt: text("created_at").notNull().default(new Date().toISOString()),
@@ -93,7 +100,17 @@ export type Property = typeof properties.$inferSelect;
 export type InsertProperty = z.infer<typeof insertPropertySchema>;
 export type Location = z.infer<typeof LocationSchema>;
 
-// Admin types
-export type PropertyWithUser = Property & {
+// Admin types with proper typing
+export type PropertyWithUser = {
+  id: number;
+  userId: number;
+  propertyType: string;
+  signPhoneNumber: string | null;
+  location: LocationType;
+  propertyId: string;
+  images: string[];
+  kmlData: string | null;
+  markerColor: string;
+  createdAt: string;
   user: User;
 };
