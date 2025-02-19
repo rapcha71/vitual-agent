@@ -3,10 +3,17 @@ import { useQuery } from "@tanstack/react-query";
 import { PropertyWithUser } from "@shared/schema";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { ChevronLeft, LogOut, Book } from "lucide-react";
+import { ChevronLeft, LogOut, Book, Image } from "lucide-react";
 import { useLocation } from "wouter";
 import { Table, TableBody, TableCaption, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { RegulationsDialog } from "@/components/ui/regulations-dialog";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog";
 
 export default function AdminPage() {
   const { user, logoutMutation } = useAuth();
@@ -68,6 +75,7 @@ export default function AdminPage() {
                   <TableHead>Tipo</TableHead>
                   <TableHead>Teléfono Rótulo</TableHead>
                   <TableHead>Ubicación</TableHead>
+                  <TableHead>Imágenes</TableHead>
                 </TableRow>
               </TableHeader>
               <TableBody>
@@ -85,6 +93,36 @@ export default function AdminPage() {
                     <TableCell>{property.signPhoneNumber || '-'}</TableCell>
                     <TableCell>
                       {property.location && `${property.location.lat.toFixed(6)}, ${property.location.lng.toFixed(6)}`}
+                    </TableCell>
+                    <TableCell>
+                      {property.images && property.images.length > 0 ? (
+                        <Dialog>
+                          <DialogTrigger asChild>
+                            <Button variant="outline" size="sm">
+                              <Image className="h-4 w-4 mr-2" />
+                              Ver Imágenes ({property.images.length})
+                            </Button>
+                          </DialogTrigger>
+                          <DialogContent className="max-w-4xl">
+                            <DialogHeader>
+                              <DialogTitle>Imágenes de la Propiedad {property.propertyId}</DialogTitle>
+                            </DialogHeader>
+                            <div className="grid grid-cols-2 md:grid-cols-3 gap-4 p-4">
+                              {property.images.map((image: string, index: number) => (
+                                <div key={index} className="relative aspect-square">
+                                  <img
+                                    src={image}
+                                    alt={`Imagen ${index + 1} de la propiedad ${property.propertyId}`}
+                                    className="object-cover w-full h-full rounded-lg"
+                                  />
+                                </div>
+                              ))}
+                            </div>
+                          </DialogContent>
+                        </Dialog>
+                      ) : (
+                        <span className="text-muted-foreground">Sin imágenes</span>
+                      )}
                     </TableCell>
                   </TableRow>
                 ))}
