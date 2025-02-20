@@ -149,21 +149,30 @@ export default function HomePage() {
             {/* Navigation Menu */}
             <div className="grid grid-cols-3 gap-3">
               <Link href="/properties">
-                <Button variant="outline" className="w-full">
-                  <Home className="h-4 w-4 mr-2" />
-                  Propiedades
+                <Button 
+                  variant="outline" 
+                  className="w-full h-full flex flex-col items-center justify-center py-4 px-2 gap-1 text-sm"
+                >
+                  <Home className="h-4 w-4" />
+                  <span>Propiedades</span>
                 </Button>
               </Link>
               <Link href="/profile">
-                <Button variant="outline" className="w-full">
-                  <User className="h-4 w-4 mr-2" />
-                  Perfil
+                <Button 
+                  variant="outline" 
+                  className="w-full h-full flex flex-col items-center justify-center py-4 px-2 gap-1 text-sm"
+                >
+                  <User className="h-4 w-4" />
+                  <span>Perfil</span>
                 </Button>
               </Link>
               <Link href="/dashboard">
-                <Button variant="outline" className="w-full">
-                  <Building className="h-4 w-4 mr-2" />
-                  Dashboard
+                <Button 
+                  variant="outline" 
+                  className="w-full h-full flex flex-col items-center justify-center py-4 px-2 gap-1 text-sm"
+                >
+                  <Building className="h-4 w-4" />
+                  <span>Dashboard</span>
                 </Button>
               </Link>
             </div>
