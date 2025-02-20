@@ -134,6 +134,7 @@ export default function HomePage() {
                     Agregar Propiedad
                   </Button>
                 </Link>
+                {/* Solo mostrar el botón de administrador si el usuario es admin */}
                 {user?.isAdmin && (
                   <Link href="/admin/web">
                     <Button variant="outline" className="w-full">
