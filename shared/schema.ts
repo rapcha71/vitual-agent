@@ -27,6 +27,11 @@ export const users = pgTable("users", {
   isAdmin: boolean("is_admin").notNull().default(false),
   rememberToken: text("remember_token"),
   lastLoginAt: text("last_login_at"),
+  // Store biometric data as base64 encoded strings
+  biometricCredentialId: text("biometric_credential_id"),
+  biometricPublicKey: text("biometric_public_key"),
+  biometricCounter: integer("biometric_counter").default(0),
+  biometricEnabled: boolean("biometric_enabled").default(false),
 });
 
 // Define the location type for better TypeScript support
@@ -68,13 +73,12 @@ const LocationSchema = z.object({
   address: z.string().optional()
 });
 
-export const insertUserSchema = createInsertSchema(users).pick({
-  username: true,
-  password: true,
-  fullName: true,
-  mobile: true,
-  nickname: true,
-  isAdmin: true
+export const insertUserSchema = createInsertSchema(users).omit({
+  id: true,
+  biometricCredentialId: true,
+  biometricPublicKey: true,
+  biometricCounter: true,
+  biometricEnabled: true
 }).extend({
   rememberMe: z.boolean().optional()
 });

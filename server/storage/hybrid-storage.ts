@@ -97,4 +97,20 @@ export class HybridStorage implements IStorage {
       }
     }
   }
+
+  async updateUserBiometricCredentials(userId: number, credentials: {
+    credentialID: Buffer;
+    publicKey: Buffer;
+    counter: number;
+  }): Promise<void> {
+    await this.dbStorage.updateUserBiometricCredentials(userId, credentials);
+    // No sincronizamos credenciales biométricas con Google Sheets por seguridad
+  }
+
+  async updateUserBiometricCounter(userId: number, counter: number): Promise<void> {
+    await this.dbStorage.updateUserBiometricCounter(userId, counter);
+    // No sincronizamos el contador biométrico con Google Sheets por seguridad
+  }
 }
+
+export const storage = new HybridStorage();

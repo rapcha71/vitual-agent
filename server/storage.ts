@@ -1,7 +1,6 @@
 import { IStorage } from "./storage";
 import session from "express-session";
 import { User, Property, InsertUser, InsertProperty } from "@shared/schema";
-import { HybridStorage } from "./storage/hybrid-storage";
 
 export interface IStorage {
   sessionStore: session.Store;
@@ -14,7 +13,13 @@ export interface IStorage {
   getAllPropertiesWithUsers(): Promise<(Property & { user: User })[]>;
   updateUserRememberToken(userId: number, token: string | null): Promise<void>;
   updateLastLogin(userId: number): Promise<void>;
+  updateUserBiometricCredentials(userId: number, credentials: {
+    credentialID: Buffer;
+    publicKey: Buffer;
+    counter: number;
+  }): Promise<void>;
+  updateUserBiometricCounter(userId: number, counter: number): Promise<void>;
 }
 
-// Switch to HybridStorage for synchronized storage
-export const storage: IStorage = new HybridStorage();
+// Export storage instance
+export { storage } from "./storage/hybrid-storage";

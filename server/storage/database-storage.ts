@@ -74,14 +74,12 @@ export class DatabaseStorage implements IStorage {
 
   async createProperty(insertProperty: InsertProperty & { userId: number }): Promise<Property> {
     const markerColor = MarkerColors[insertProperty.propertyType as keyof typeof PropertyType];
-    const property = {
-      ...insertProperty,
-      markerColor
-    };
-
     const [createdProperty] = await db
       .insert(properties)
-      .values(property)
+      .values({
+        ...insertProperty,
+        markerColor,
+      })
       .returning();
 
     return createdProperty;
@@ -100,7 +98,34 @@ export class DatabaseStorage implements IStorage {
 
     return result.map(({ property, user }) => ({
       ...property,
-      user
+      user: user as User
     }));
+  }
+
+  async updateUserBiometricCredentials(userId: number, credentials: {
+    credentialID: Buffer;
+    publicKey: Buffer;
+    counter: number;
+  }): Promise<void> {
+    console.log("Updating biometric credentials for user:", userId);
+    await db
+      .update(users)
+      .set({
+        biometricCredentialId: credentials.credentialID.toString('base64'),
+        biometricPublicKey: credentials.publicKey.toString('base64'),
+        biometricCounter: credentials.counter,
+        biometricEnabled: true
+      })
+      .where(eq(users.id, userId));
+    console.log("Biometric credentials updated successfully");
+  }
+
+  async updateUserBiometricCounter(userId: number, counter: number): Promise<void> {
+    console.log("Updating biometric counter for user:", userId);
+    await db
+      .update(users)
+      .set({ biometricCounter: counter })
+      .where(eq(users.id, userId));
+    console.log("Biometric counter updated successfully");
   }
 }
