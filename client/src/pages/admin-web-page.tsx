@@ -279,14 +279,16 @@ export default function AdminWebPage() {
                                 <div>
                                   <h4 className="font-medium">Imágenes</h4>
                                   <div className="grid grid-cols-2 gap-2 mt-2">
-                                    {property.images.map((image, idx) => (
+                                    {Array.isArray(property.images) ? property.images.map((image, idx) => (
                                       <img 
                                         key={idx}
                                         src={image}
                                         alt={`Imagen ${idx + 1}`}
                                         className="w-full h-32 object-cover rounded-lg"
                                       />
-                                    ))}
+                                    )) : (
+                                      <p className="text-sm text-muted-foreground">No hay imágenes disponibles</p>
+                                    )}
                                   </div>
                                 </div>
                                 <div>
