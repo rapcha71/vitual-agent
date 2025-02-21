@@ -193,28 +193,28 @@ export default function AdminWebPage() {
     <>
       {/* Stats Cards */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
-        <Card>
-          <CardHeader>
-            <CardTitle>Casas</CardTitle>
+        <Card className="p-2">
+          <CardHeader className="p-2">
+            <CardTitle className="text-sm">Casas</CardTitle>
           </CardHeader>
-          <CardContent>
-            <p className="text-3xl font-bold">{propertyCounts.house}</p>
+          <CardContent className="p-2">
+            <p className="text-2xl font-bold">{propertyCounts.house}</p>
           </CardContent>
         </Card>
-        <Card>
-          <CardHeader>
-            <CardTitle>Terrenos</CardTitle>
+        <Card className="p-2">
+          <CardHeader className="p-2">
+            <CardTitle className="text-sm">Terrenos</CardTitle>
           </CardHeader>
-          <CardContent>
-            <p className="text-3xl font-bold">{propertyCounts.land}</p>
+          <CardContent className="p-2">
+            <p className="text-2xl font-bold">{propertyCounts.land}</p>
           </CardContent>
         </Card>
-        <Card>
-          <CardHeader>
-            <CardTitle>Locales Comerciales</CardTitle>
+        <Card className="p-2">
+          <CardHeader className="p-2">
+            <CardTitle className="text-sm">Locales</CardTitle>
           </CardHeader>
-          <CardContent>
-            <p className="text-3xl font-bold">{propertyCounts.commercial}</p>
+          <CardContent className="p-2">
+            <p className="text-2xl font-bold">{propertyCounts.commercial}</p>
           </CardContent>
         </Card>
       </div>
