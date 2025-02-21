@@ -31,7 +31,7 @@
   }
 
   .admin-button {
-    @apply min-w-[220px] text-center px-4 py-3 rounded-md text-sm font-medium 
+    @apply w-full md:w-auto min-w-[220px] text-center px-6 py-3 rounded-md text-sm font-medium 
     hover:bg-opacity-90 whitespace-nowrap transition-colors;
   }
 
@@ -44,7 +44,7 @@
   }
 
   .admin-buttons-container {
-    @apply flex justify-center gap-4 px-4 py-2 w-full max-w-full overflow-visible;
+    @apply flex flex-col md:flex-row justify-center items-center gap-4 px-4 py-2 w-full;
   }
 
   .input-field {
