@@ -84,12 +84,26 @@ const MapComponent = memo(({ properties }: { properties: PropertyWithUser[] }) =
             }
           });
 
+          const propertyImage = Array.isArray(property.images) && property.images.length > 1 
+            ? property.images[1] 
+            : (Array.isArray(property.images) && property.images.length > 0 
+              ? property.images[0] 
+              : null);
+
           const infoWindow = new google.maps.InfoWindow({
             content: `
-              <div style="padding: 12px; min-width: 200px; max-width: 250px;">
+              <div style="padding: 12px; min-width: 200px; max-width: 300px;">
                 <h3 style="margin: 0 0 8px; font-size: 14px; font-weight: bold;">
                   Propiedad: ${property.propertyId}
                 </h3>
+                ${propertyImage ? `
+                  <div style="margin: 8px 0;">
+                    <img src="${propertyImage}" 
+                         alt="Imagen de la propiedad" 
+                         style="width: 100%; height: 150px; object-fit: cover; border-radius: 4px;"
+                    />
+                  </div>
+                ` : ''}
                 <p style="margin: 0 0 6px; font-size: 12px;">
                   Tipo: ${
                     property.propertyType === 'house' ? 'Casa' :
@@ -102,11 +116,10 @@ const MapComponent = memo(({ properties }: { properties: PropertyWithUser[] }) =
                 </p>
               </div>
             `,
-            maxWidth: 250
+            maxWidth: 300
           });
 
           marker.addListener('click', () => {
-            // Cerrar todas las ventanas de información abiertas
             currentInfoWindows.forEach(window => window.close());
             infoWindow.open(googleMap, marker);
           });
