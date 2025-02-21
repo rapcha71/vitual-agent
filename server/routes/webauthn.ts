@@ -3,14 +3,16 @@ import {
   generateRegistrationOptions,
   verifyRegistrationResponse,
   generateAuthenticationOptions,
-  verifyAuthenticationResponse
+  verifyAuthenticationResponse,
+  AuthenticationResponseJSON,
+  RegistrationResponseJSON
 } from '@simplewebauthn/server';
 import { storage } from '../storage';
 import { rpID, rpName, origin } from '../config';
+import { VerifiedRegistrationResponse } from '@simplewebauthn/server';
 
 const router = Router();
 
-// Add WebAuthn registration endpoint
 router.post('/webauthn/register', async (req, res) => {
   if (!req.isAuthenticated()) {
     return res.status(401).json({ message: "Unauthorized" });
@@ -21,7 +23,7 @@ router.post('/webauthn/register', async (req, res) => {
     const options = await generateRegistrationOptions({
       rpName,
       rpID,
-      userID: req.user.id.toString(),
+      userID: req.user.id,
       userName: req.user.username,
       attestationType: 'none',
       authenticatorSelection: {
@@ -31,7 +33,6 @@ router.post('/webauthn/register', async (req, res) => {
       }
     });
 
-    // Store challenge in session for verification
     req.session.challenge = options.challenge;
     await req.session.save();
 
@@ -43,7 +44,6 @@ router.post('/webauthn/register', async (req, res) => {
   }
 });
 
-// Add WebAuthn registration verification endpoint
 router.post('/webauthn/register/verify', async (req, res) => {
   if (!req.isAuthenticated()) {
     return res.status(401).json({ message: "Unauthorized" });
@@ -57,19 +57,20 @@ router.post('/webauthn/register/verify', async (req, res) => {
     }
 
     const verification = await verifyRegistrationResponse({
-      response: req.body,
+      response: req.body as RegistrationResponseJSON,
       expectedChallenge,
       expectedOrigin: origin,
       expectedRPID: rpID,
     });
 
-    if (verification.verified && verification.registrationInfo) {
-      const { credentialID, credentialPublicKey, counter } = verification.registrationInfo;
+    const { verified, registrationInfo } = verification as VerifiedRegistrationResponse;
 
-      // Store the credential in the database
+    if (verified && registrationInfo) {
+      const { credentialID, credentialPublicKey, counter } = registrationInfo;
+
       await storage.updateUserBiometricCredentials(req.user.id, {
-        credentialID: Buffer.from(credentialID),
-        publicKey: Buffer.from(credentialPublicKey),
+        credentialID: credentialID,
+        publicKey: credentialPublicKey,
         counter,
       });
 
@@ -102,9 +103,11 @@ router.post('/webauthn/authenticate-options', async (req, res) => {
     const options = await generateAuthenticationOptions({
       rpID,
       allowCredentials: [{
-        id: Buffer.from(user.biometricCredentialId, 'base64'),
+        id: user.biometricCredentialId,
         type: 'public-key',
+        transports: ['internal'],
       }],
+      userVerification: 'preferred',
     });
 
     req.session.currentChallenge = options.challenge;
@@ -121,9 +124,8 @@ router.post('/webauthn/authenticate-options', async (req, res) => {
 router.post('/webauthn/authenticate-verify', async (req, res) => {
   const challenge = req.session.currentChallenge;
   const username = req.session.authenticationUsername;
-  const credential = req.body;
 
-  if (!username) {
+  if (!username || !challenge) {
     return res.status(400).json({ message: 'Authentication session expired' });
   }
 
@@ -134,15 +136,16 @@ router.post('/webauthn/authenticate-verify', async (req, res) => {
     }
 
     const verification = await verifyAuthenticationResponse({
-      response: credential,
+      response: req.body as AuthenticationResponseJSON,
       expectedChallenge: challenge,
       expectedOrigin: origin,
       expectedRPID: rpID,
       authenticator: {
-        credentialID: Buffer.from(user.biometricCredentialId, 'base64'),
-        credentialPublicKey: Buffer.from(user.biometricPublicKey, 'base64'),
+        credentialID: user.biometricCredentialId,
+        credentialPublicKey: user.biometricPublicKey,
         counter: user.biometricCounter || 0,
       },
+      requireUserVerification: true,
     });
 
     if (verification.verified) {
