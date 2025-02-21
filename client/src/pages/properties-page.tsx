@@ -7,7 +7,7 @@ import { ChevronLeft, LogOut, MapPin, Image } from "lucide-react";
 import { useLocation } from "wouter";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
-import { useEffect, useState, useRef } from "react";
+import { useEffect, useState, useRef, useCallback } from "react";
 import { Loader2 } from "lucide-react";
 import { Loader } from "@googlemaps/js-api-loader";
 import { PhonePreview } from "@/components/ui/phone-preview";
@@ -18,6 +18,7 @@ export default function PropertiesPage() {
   const [, setLocation] = useLocation();
   const [isLoading, setIsLoading] = useState(true);
   const mapRef = useRef<HTMLDivElement>(null);
+  const mapInstanceRef = useRef<google.maps.Map | null>(null);
   const { toast } = useToast();
 
   const { data: properties = [] } = useQuery<Property[]>({
@@ -26,128 +27,120 @@ export default function PropertiesPage() {
     refetchOnWindowFocus: false,
   });
 
-  useEffect(() => {
-    let isMounted = true;
-    let map: google.maps.Map | null = null;
-    let markers: google.maps.Marker[] = [];
-    let infoWindows: google.maps.InfoWindow[] = [];
+  const initMap = useCallback(async () => {
+    if (!mapRef.current || !properties.length) {
+      setIsLoading(false);
+      return;
+    }
 
-    const initMap = async () => {
-      if (!mapRef.current) return;
+    try {
+      const loader = new Loader({
+        apiKey: import.meta.env.VITE_GOOGLE_MAPS_API_KEY || '',
+        version: "weekly",
+        libraries: ["places"]
+      });
 
-      try {
-        const loader = new Loader({
-          apiKey: import.meta.env.VITE_GOOGLE_MAPS_API_KEY || '',
-          version: "weekly",
-          libraries: ["places"]
+      const google = await loader.load();
+      const map = new google.maps.Map(mapRef.current, {
+        center: { lat: 9.9281, lng: -84.0907 },
+        zoom: 8,
+        mapTypeControl: false,
+        streetViewControl: false,
+        fullscreenControl: false,
+        zoomControl: true,
+        gestureHandling: 'greedy',
+        disableDefaultUI: true
+      });
+
+      mapInstanceRef.current = map;
+      const bounds = new google.maps.LatLngBounds();
+      const markers: google.maps.Marker[] = [];
+      const infoWindows: google.maps.InfoWindow[] = [];
+
+      properties.forEach(property => {
+        const marker = new google.maps.Marker({
+          position: { lat: property.location.lat, lng: property.location.lng },
+          map,
+          title: property.propertyId,
+          icon: {
+            path: google.maps.SymbolPath.CIRCLE,
+            fillColor: property.propertyType === 'house' ? '#F05023' :
+                      property.propertyType === 'land' ? '#22C55E' : '#3B82F6',
+            fillOpacity: 0.9,
+            strokeWeight: 2,
+            scale: 8
+          }
         });
 
-        const google = await loader.load();
+        const propertyImage = Array.isArray(property.images) && property.images.length > 0 
+          ? property.images[0] 
+          : null;
 
-        if (!isMounted || !mapRef.current) return;
-
-        map = new google.maps.Map(mapRef.current, {
-          center: { lat: 9.9281, lng: -84.0907 },
-          zoom: 8,
-          mapTypeControl: false,
-          streetViewControl: false,
-          fullscreenControl: false,
-          zoomControl: true,
-          gestureHandling: 'greedy',
-          disableDefaultUI: true
+        const infoWindow = new google.maps.InfoWindow({
+          content: `
+            <div style="padding: 12px; min-width: 200px; max-width: 300px;">
+              <h3 style="margin: 0 0 8px; font-size: 14px; font-weight: bold;">
+                Propiedad: ${property.propertyId}
+              </h3>
+              ${propertyImage ? `
+                <div style="margin: 8px 0;">
+                  <img src="${propertyImage}" 
+                       alt="Imagen de la propiedad" 
+                       style="width: 100%; height: 150px; object-fit: cover; border-radius: 4px;"
+                  />
+                </div>
+              ` : ''}
+              <p style="margin: 0 0 6px; font-size: 12px;">
+                Tipo: ${
+                  property.propertyType === 'house' ? 'Casa' :
+                  property.propertyType === 'land' ? 'Terreno' :
+                  'Local Comercial'
+                }
+              </p>
+              <p style="margin: 6px 0; font-size: 12px;">
+                Teléfono: ${property.signPhoneNumber || 'No disponible'}
+              </p>
+            </div>
+          `
         });
 
-        const bounds = new google.maps.LatLngBounds();
-
-        properties.forEach(property => {
-          const marker = new google.maps.Marker({
-            position: { lat: property.location.lat, lng: property.location.lng },
-            map,
-            title: property.propertyId,
-            icon: {
-              path: google.maps.SymbolPath.CIRCLE,
-              fillColor: property.propertyType === 'house' ? '#F05023' :
-                        property.propertyType === 'land' ? '#22C55E' : '#3B82F6',
-              fillOpacity: 0.9,
-              strokeWeight: 2,
-              scale: 8
-            }
-          });
-
-          const propertyImage = Array.isArray(property.images) && property.images.length > 0 
-            ? property.images[0] 
-            : null;
-
-          const infoWindow = new google.maps.InfoWindow({
-            content: `
-              <div style="padding: 12px; min-width: 200px; max-width: 300px;">
-                <h3 style="margin: 0 0 8px; font-size: 14px; font-weight: bold;">
-                  Propiedad: ${property.propertyId}
-                </h3>
-                ${propertyImage ? `
-                  <div style="margin: 8px 0;">
-                    <img src="${propertyImage}" 
-                         alt="Imagen de la propiedad" 
-                         style="width: 100%; height: 150px; object-fit: cover; border-radius: 4px;"
-                    />
-                  </div>
-                ` : ''}
-                <p style="margin: 0 0 6px; font-size: 12px;">
-                  Tipo: ${
-                    property.propertyType === 'house' ? 'Casa' :
-                    property.propertyType === 'land' ? 'Terreno' :
-                    'Local Comercial'
-                  }
-                </p>
-                <p style="margin: 6px 0; font-size: 12px;">
-                  Teléfono: ${property.signPhoneNumber || 'No disponible'}
-                </p>
-              </div>
-            `
-          });
-
-          marker.addListener('click', () => {
-            infoWindows.forEach(w => w.close());
-            infoWindow.open(map, marker);
-          });
-
-          bounds.extend(marker.getPosition()!);
-          markers.push(marker);
-          infoWindows.push(infoWindow);
+        marker.addListener('click', () => {
+          infoWindows.forEach(w => w.close());
+          infoWindow.open(map, marker);
         });
 
-        if (markers.length > 0) {
-          map.fitBounds(bounds);
-        }
+        bounds.extend(marker.getPosition()!);
+        markers.push(marker);
+        infoWindows.push(infoWindow);
+      });
 
-        if (isMounted) {
-          setIsLoading(false);
-        }
-      } catch (error) {
-        console.error('Error loading map:', error);
-        if (isMounted) {
-          toast({
-            title: "Error al cargar el mapa",
-            description: "Por favor, recarga la página",
-            variant: "destructive"
-          });
-          setIsLoading(false);
-        }
+      if (markers.length > 0) {
+        map.fitBounds(bounds);
       }
-    };
 
+      setIsLoading(false);
+    } catch (error) {
+      console.error('Error loading map:', error);
+      toast({
+        title: "Error al cargar el mapa",
+        description: "Por favor, recarga la página",
+        variant: "destructive"
+      });
+      setIsLoading(false);
+    }
+  }, [properties, toast]);
+
+  useEffect(() => {
     // Pequeño retraso para asegurar que el contenedor del mapa esté listo
-    setTimeout(initMap, 100);
+    const timeoutId = setTimeout(initMap, 100);
 
     return () => {
-      isMounted = false;
-      markers.forEach(marker => marker.setMap(null));
-      infoWindows.forEach(window => window.close());
-      if (map) {
-        google.maps.event.clearInstanceListeners(map);
+      clearTimeout(timeoutId);
+      if (mapInstanceRef.current) {
+        google.maps.event.clearInstanceListeners(mapInstanceRef.current);
       }
     };
-  }, [properties, toast]);
+  }, [initMap]);
 
   return (
     <div className="h-screen flex items-center justify-center bg-gray-100">
@@ -197,11 +190,6 @@ export default function PropertiesPage() {
                   <div 
                     ref={mapRef}
                     className="w-full h-[300px] rounded-lg relative bg-gray-100"
-                    style={{ 
-                      minHeight: '300px',
-                      width: '100%',
-                      height: '300px'
-                    }}
                   >
                     {isLoading && (
                       <div className="absolute inset-0 flex items-center justify-center bg-gray-100/80">
