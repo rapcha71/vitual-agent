@@ -789,22 +789,25 @@ export default function PropertyEntry() {
 
       {/* Modal de error de duplicación */}
       <Dialog open={showDuplicateError} onOpenChange={setShowDuplicateError}>
-        <DialogContent className="sm:max-w-md">
+        <DialogContent className="w-[90%] max-w-none mx-auto rounded-lg">
           <DialogHeader>
             <DialogTitle className="text-center text-red-600">
-              Propiedad Duplicada Detectada
+              Propiedad Duplicada
             </DialogTitle>
           </DialogHeader>
-          <div className="p-6 space-y-4">
-            <p className="text-center">
+          <div className="p-4 space-y-3">
+            <p className="text-center text-sm">
               {duplicateErrorDetails?.message}
             </p>
-            <div className="text-sm text-gray-500 space-y-2">
+            <div className="text-xs text-gray-500 space-y-1">
               <p>ID de propiedad existente: {duplicateErrorDetails?.existingPropertyId}</p>
               <p>Distancia: {duplicateErrorDetails?.distance}</p>
             </div>
-            <div className="flex justify-center pt-4">
-              <Button onClick={() => setShowDuplicateError(false)}>
+            <div className="flex justify-center pt-2">
+              <Button
+                onClick={() => setShowDuplicateError(false)}
+                className="w-full"
+              >
                 Entendido
               </Button>
             </div>
