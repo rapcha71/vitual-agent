@@ -271,7 +271,7 @@ export default function AdminWebPage() {
                                 Ver Detalles
                               </Button>
                             </DialogTrigger>
-                            <DialogContent className="w-[calc(100%-2rem)] max-w-md">
+                            <DialogContent className="w-[90%] max-w-[300px] p-4">
                               <DialogHeader>
                                 <DialogTitle>Detalles de la Propiedad</DialogTitle>
                               </DialogHeader>
@@ -284,7 +284,7 @@ export default function AdminWebPage() {
                                         key={idx}
                                         src={image}
                                         alt={`Imagen ${idx + 1}`}
-                                        className="w-full h-48 object-cover rounded-lg"
+                                        className="w-full h-40 object-cover rounded-lg"
                                       />
                                     )) : (
                                       <p className="text-sm text-muted-foreground">No hay imágenes disponibles</p>
@@ -293,8 +293,8 @@ export default function AdminWebPage() {
                                 </div>
                                 <div>
                                   <h4 className="text-sm font-medium mb-2">Ubicación</h4>
-                                  <div className="p-3 bg-muted rounded-md">
-                                    <p className="text-sm">
+                                  <div className="p-2 bg-muted rounded-md">
+                                    <p className="text-xs">
                                       {property.location.lat.toFixed(6)}, {property.location.lng.toFixed(6)}
                                     </p>
                                   </div>
