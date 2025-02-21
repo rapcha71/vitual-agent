@@ -1,14 +1,13 @@
 import { useAuth } from "@/hooks/use-auth";
 import { useQuery, useMutation } from "@tanstack/react-query";
-import { PropertyWithUser } from "@shared/schema";
+import { PropertyWithUser, insertMessageSchema, InsertMessage } from "@shared/schema";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { LogOut, MapPin, Image, ChevronLeft, Users, Plus, Trash2, MessageCircle } from "lucide-react";
+import { LogOut, MapPin, Image, ChevronLeft, Users, Plus, Trash2, MessageCircle, Loader2 } from "lucide-react";
 import { useLocation } from "wouter";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger, DialogFooter } from "@/components/ui/dialog";
-import { Loader2 } from "lucide-react";
 import { useEffect, useState, useRef, memo } from "react";
 import { Loader } from "@googlemaps/js-api-loader";
 import { useToast } from "@/hooks/use-toast";
@@ -19,7 +18,6 @@ import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "
 import { Textarea } from "@/components/ui/textarea";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { insertMessageSchema } from "@shared/schema";
 
 const MapComponent = memo(({ properties }: { properties: PropertyWithUser[] }) => {
   const [isLoading, setIsLoading] = useState(true);
@@ -202,12 +200,12 @@ export default function AdminWebPage() {
   const [activeTab, setActiveTab] = useState("map");
   const { toast } = useToast();
 
-  const { data: properties = [], refetch: refetchProperties } = useQuery<PropertyWithUser[]>({
+  const { data: properties = [] } = useQuery<PropertyWithUser[]>({
     queryKey: ['/api/admin/properties'],
     enabled: user?.isAdmin === true
   });
 
-  const { data: users = [], refetch: refetchUsers } = useQuery({
+  const { data: users = [], refetch: refetchUsers } = useQuery<any[]>({
     queryKey: ['/api/admin/users'],
     enabled: user?.isSuperAdmin === true
   });
@@ -251,7 +249,7 @@ export default function AdminWebPage() {
       return response.json();
     },
     onSuccess: () => {
-      refetchProperties();
+      queryClient.invalidateQueries(['/api/admin/properties'])
       toast({
         title: "Propiedad eliminada",
         description: "La propiedad ha sido eliminada exitosamente",
@@ -295,7 +293,7 @@ export default function AdminWebPage() {
     }
   });
 
-  const messageForm = useForm({
+  const messageForm = useForm<InsertMessage>({
     resolver: zodResolver(insertMessageSchema),
     defaultValues: {
       content: "",
@@ -303,7 +301,7 @@ export default function AdminWebPage() {
   });
 
   const sendMessageMutation = useMutation({
-    mutationFn: async (data: { content: string }) => {
+    mutationFn: async (data: InsertMessage) => {
       const response = await fetch('/api/admin/messages', {
         method: 'POST',
         headers: {
@@ -314,7 +312,7 @@ export default function AdminWebPage() {
       });
       if (!response.ok) {
         const error = await response.json();
-        throw new Error(error.message);
+        throw new Error(error.message || 'Error al enviar el mensaje');
       }
       return response.json();
     },
@@ -334,7 +332,7 @@ export default function AdminWebPage() {
     }
   });
 
-  const handleSendMessage = async (data: { content: string }) => {
+  const handleSendMessage = async (data: InsertMessage) => {
     try {
       await sendMessageMutation.mutateAsync(data);
     } catch (error) {
