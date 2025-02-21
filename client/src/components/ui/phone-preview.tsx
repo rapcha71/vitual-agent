@@ -6,7 +6,14 @@ interface PhonePreviewProps extends React.HTMLAttributes<HTMLDivElement> {
 
 export function PhonePreview({ children, className, ...props }: PhonePreviewProps) {
   return (
-    <div className="flex items-center justify-center min-h-screen bg-gray-100">
+    <div className={cn(
+      "flex items-center justify-center min-h-screen bg-gray-100",
+      "overflow-hidden", //Added to hide scrollbars on the main container
+      "[-ms-overflow-style:'none']", //Added to hide scrollbars on the main container
+      "[scrollbar-width:none]", //Added to hide scrollbars on the main container
+      "[&::-webkit-scrollbar]:hidden" //Added to hide scrollbars on the main container
+
+    )}>
       <div className={cn(
         "w-[340px] aspect-[9/16] bg-white overflow-hidden relative",
         "border-[8px] border-black rounded-[30px]",
