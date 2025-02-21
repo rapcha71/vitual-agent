@@ -24,6 +24,7 @@ const MapComponent = memo(({ properties }: { properties: PropertyWithUser[] }) =
     let isMounted = true;
     let googleMap: google.maps.Map | null = null;
     let currentMarkers: google.maps.Marker[] = [];
+    let currentInfoWindows: google.maps.InfoWindow[] = [];
 
     const initMap = async () => {
       if (!mapRef.current || !properties.length) {
@@ -64,6 +65,7 @@ const MapComponent = memo(({ properties }: { properties: PropertyWithUser[] }) =
 
         currentMarkers.forEach(marker => marker.setMap(null));
         currentMarkers = [];
+        currentInfoWindows = [];
 
         const bounds = new google.maps.LatLngBounds();
 
@@ -82,8 +84,36 @@ const MapComponent = memo(({ properties }: { properties: PropertyWithUser[] }) =
             }
           });
 
+          const infoWindow = new google.maps.InfoWindow({
+            content: `
+              <div style="padding: 12px; min-width: 200px; max-width: 250px;">
+                <h3 style="margin: 0 0 8px; font-size: 14px; font-weight: bold;">
+                  Propiedad: ${property.propertyId}
+                </h3>
+                <p style="margin: 0 0 6px; font-size: 12px;">
+                  Tipo: ${
+                    property.propertyType === 'house' ? 'Casa' :
+                    property.propertyType === 'land' ? 'Terreno' :
+                    'Local Comercial'
+                  }
+                </p>
+                <p style="margin: 6px 0; font-size: 12px;">
+                  Teléfono: ${property.signPhoneNumber || 'No disponible'}
+                </p>
+              </div>
+            `,
+            maxWidth: 250
+          });
+
+          marker.addListener('click', () => {
+            // Cerrar todas las ventanas de información abiertas
+            currentInfoWindows.forEach(window => window.close());
+            infoWindow.open(googleMap, marker);
+          });
+
           bounds.extend(marker.getPosition()!);
           currentMarkers.push(marker);
+          currentInfoWindows.push(infoWindow);
         });
 
         googleMap.fitBounds(bounds);
@@ -114,6 +144,9 @@ const MapComponent = memo(({ properties }: { properties: PropertyWithUser[] }) =
         currentMarkers.forEach(marker => {
           marker.setMap(null);
         });
+      }
+      if (currentInfoWindows.length > 0) {
+        currentInfoWindows.forEach(window => window.close());
       }
       if (googleMap) {
         google.maps.event.clearInstanceListeners(googleMap);
