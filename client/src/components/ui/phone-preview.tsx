@@ -17,7 +17,7 @@ export function PhonePreview({ children, className, ...props }: PhonePreviewProp
         "shadow-[0_8px_16px_rgba(0,0,0,0.1)]",
         className
       )} {...props}>
-        <div className="h-full overflow-y-auto">
+        <div className="h-full overflow-y-auto [&::-webkit-scrollbar]:hidden [-ms-overflow-style:'none'] [scrollbar-width:none]">
           {children}
         </div>
       </div>
