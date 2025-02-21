@@ -62,31 +62,31 @@ export default function DashboardPage() {
 
           <Card>
             <CardHeader>
-              <CardTitle>Mis Propiedades</CardTitle>
+              <CardTitle className="text-center">Mis Propiedades</CardTitle>
             </CardHeader>
             <CardContent>
               <div className="grid grid-cols-3 gap-2">
-                <Card>
-                  <CardHeader className="pb-2">
-                    <CardTitle className="text-sm">Casas</CardTitle>
+                <Card className="flex flex-col items-center">
+                  <CardHeader className="pb-2 text-center w-full">
+                    <CardTitle className="text-sm text-center">Casas</CardTitle>
                   </CardHeader>
-                  <CardContent>
+                  <CardContent className="text-center pt-0">
                     <p className="text-2xl font-bold">{propertyCounts.house}</p>
                   </CardContent>
                 </Card>
-                <Card>
-                  <CardHeader className="pb-2">
-                    <CardTitle className="text-sm">Terrenos</CardTitle>
+                <Card className="flex flex-col items-center">
+                  <CardHeader className="pb-2 text-center w-full">
+                    <CardTitle className="text-sm text-center">Terrenos</CardTitle>
                   </CardHeader>
-                  <CardContent>
+                  <CardContent className="text-center pt-0">
                     <p className="text-2xl font-bold">{propertyCounts.land}</p>
                   </CardContent>
                 </Card>
-                <Card>
-                  <CardHeader className="pb-2">
-                    <CardTitle className="text-sm">Comercial</CardTitle>
+                <Card className="flex flex-col items-center">
+                  <CardHeader className="pb-2 text-center w-full">
+                    <CardTitle className="text-sm text-center">Comercial</CardTitle>
                   </CardHeader>
-                  <CardContent>
+                  <CardContent className="text-center pt-0">
                     <p className="text-2xl font-bold">{propertyCounts.commercial}</p>
                   </CardContent>
                 </Card>
