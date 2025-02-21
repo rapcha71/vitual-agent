@@ -40,7 +40,7 @@ const MapComponent = memo(({ properties }: { properties: PropertyWithUser[] }) =
 
         if (!isActive || !mapContainer.current) return;
 
-        // Configuración específica para móvil
+        // Configuración específica para móvil con aspecto vertical
         const mapOptions: google.maps.MapOptions = {
           center: { lat: 9.9281, lng: -84.0907 },
           zoom: 7,
@@ -49,10 +49,10 @@ const MapComponent = memo(({ properties }: { properties: PropertyWithUser[] }) =
           fullscreenControl: false,
           zoomControl: true,
           zoomControlOptions: {
-            position: google.maps.ControlPosition.RIGHT_BOTTOM
+            position: google.maps.ControlPosition.RIGHT_TOP
           },
           gestureHandling: 'greedy',
-          controlSize: 32,
+          controlSize: 24,
           disableDefaultUI: true,
           styles: [
             {
@@ -63,12 +63,18 @@ const MapComponent = memo(({ properties }: { properties: PropertyWithUser[] }) =
           ]
         };
 
+        // Forzar aspecto vertical
+        mapContainer.current.style.height = '100%';
+        mapContainer.current.style.width = '100%';
+        mapContainer.current.style.aspectRatio = '9/16';
+
         map.current = new google.maps.Map(mapContainer.current, mapOptions);
 
         // Limpiar marcadores existentes
         markers.current.forEach(marker => marker.setMap(null));
         markers.current = [];
 
+        // Agregar marcadores con tamaño optimizado para móvil
         properties.forEach(property => {
           const marker = new google.maps.Marker({
             position: { 
@@ -83,30 +89,30 @@ const MapComponent = memo(({ properties }: { properties: PropertyWithUser[] }) =
                         property.propertyType === 'land' ? '#22C55E' : '#3B82F6',
               fillOpacity: 0.9,
               strokeWeight: 2,
-              scale: 14
+              scale: 10
             }
           });
 
           const infoWindow = new google.maps.InfoWindow({
             content: `
-              <div style="padding: 16px; min-width: 200px; max-width: 280px;">
-                <h3 style="margin: 0 0 12px; font-size: 16px; font-weight: bold;">
+              <div style="padding: 12px; min-width: 200px; max-width: 250px;">
+                <h3 style="margin: 0 0 8px; font-size: 14px; font-weight: bold;">
                   Propiedad: ${property.propertyId}
                 </h3>
-                <p style="margin: 0 0 8px; font-size: 14px;">
+                <p style="margin: 0 0 6px; font-size: 12px;">
                   Tipo: ${
                     property.propertyType === 'house' ? 'Casa' :
                     property.propertyType === 'land' ? 'Terreno' :
                     'Local Comercial'
                   }
                 </p>
-                <p style="margin: 8px 0; font-size: 14px;">
+                <p style="margin: 6px 0; font-size: 12px;">
                   Teléfono: ${property.signPhoneNumber || 'No disponible'}
                 </p>
               </div>
             `,
-            maxWidth: 280,
-            pixelOffset: new google.maps.Size(0, -20)
+            maxWidth: 250,
+            pixelOffset: new google.maps.Size(0, -15)
           });
 
           marker.addListener('click', () => {
@@ -116,12 +122,12 @@ const MapComponent = memo(({ properties }: { properties: PropertyWithUser[] }) =
           markers.current.push(marker);
         });
 
-        // Ajustar bounds para mostrar todos los marcadores
+        // Ajustar bounds
         const bounds = new google.maps.LatLngBounds();
         markers.current.forEach(marker => {
           bounds.extend(marker.getPosition()!);
         });
-        map.current.fitBounds(bounds, { padding: 50 });
+        map.current.fitBounds(bounds, { padding: 40 });
 
         // Forzar modo móvil
         const mobileMode = () => {
@@ -135,7 +141,6 @@ const MapComponent = memo(({ properties }: { properties: PropertyWithUser[] }) =
           }
         };
 
-        // Aplicar modo móvil después de un breve retraso para asegurar que el mapa esté completamente cargado
         setTimeout(mobileMode, 100);
 
       } catch (error) {
@@ -170,15 +175,16 @@ const MapComponent = memo(({ properties }: { properties: PropertyWithUser[] }) =
   }, [properties, toast]);
 
   return (
-    <div 
-      ref={mapContainer}
-      className="w-screen h-[calc(100vh-16rem)] touch-pan-x touch-pan-y"
-      style={{
-        margin: '0 -1rem',
-        maxHeight: '500px',
-        minHeight: '300px'
-      }}
-    >
+    <div className="relative w-full h-full">
+      <div 
+        ref={mapContainer}
+        className="absolute inset-0"
+        style={{
+          minHeight: '400px',
+          aspectRatio: '9/16',
+          touchAction: 'pan-x pan-y'
+        }}
+      />
       {isLoading && (
         <div className="absolute inset-0 flex items-center justify-center bg-gray-100/80 z-10">
           <div className="text-center">
