@@ -392,10 +392,10 @@ export default function AdminWebPage() {
             <div className="flex gap-2 mt-4">
               <Button 
                 onClick={() => setLocation("/property/new")}
-                className="transform transition-all duration-200 hover:scale-[1.02] active:scale-[0.98] shadow-[4px_4px_10px_rgba(240,80,35,0.3)] hover:shadow-[6px_6px_15px_rgba(240,80,35,0.4)]"
+                className="w-[140px] inline-flex items-center justify-center"
               >
                 <Plus className="h-4 w-4 mr-2" />
-                Agregar Propiedad
+                Agregar
               </Button>
               {user.isSuperAdmin && (
                 <Dialog>
