@@ -3,7 +3,7 @@ import { useQuery, useMutation } from "@tanstack/react-query";
 import { PropertyWithUser, User } from "@shared/schema";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { LogOut, Image, MapPin, Shield, Users } from "lucide-react";
+import { LogOut, Image, MapPin, Shield, Users, Menu } from "lucide-react";
 import { useLocation } from "wouter";
 import { Table, TableBody, TableCaption, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger, DialogDescription, DialogFooter } from "@/components/ui/dialog";
@@ -13,6 +13,7 @@ import { useEffect, useState, useRef } from "react";
 import { Loader } from "@googlemaps/js-api-loader";
 import { useToast } from "@/hooks/use-toast";
 import { queryClient } from "@/lib/queryClient";
+import { PhonePreview } from "@/components/ui/phone-preview";
 
 export default function AdminWebPage() {
   const { user, logoutMutation } = useAuth();
@@ -25,6 +26,18 @@ export default function AdminWebPage() {
   const [activeTab, setActiveTab] = useState("table");
   const [selectedUserId, setSelectedUserId] = useState<number | null>(null);
   const [isRoleDialogOpen, setIsRoleDialogOpen] = useState(false);
+  const [isDesktopView, setIsDesktopView] = useState(false);
+
+  // Effect to check window size
+  useEffect(() => {
+    const checkSize = () => {
+      setIsDesktopView(window.innerWidth >= 1024); // 1024px is our desktop breakpoint
+    };
+
+    checkSize();
+    window.addEventListener('resize', checkSize);
+    return () => window.removeEventListener('resize', checkSize);
+  }, []);
 
   // Query para obtener todos los usuarios
   const { data: users = [], isLoading: isLoadingUsers } = useQuery<User[]>({
@@ -176,9 +189,187 @@ export default function AdminWebPage() {
     commercial: properties.filter(p => p.propertyType === 'commercial').length,
   };
 
-  return (
+  const AdminContent = () => (
+    <>
+      {/* Stats Cards */}
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
+        <Card>
+          <CardHeader>
+            <CardTitle>Casas</CardTitle>
+          </CardHeader>
+          <CardContent>
+            <p className="text-3xl font-bold">{propertyCounts.house}</p>
+          </CardContent>
+        </Card>
+        <Card>
+          <CardHeader>
+            <CardTitle>Terrenos</CardTitle>
+          </CardHeader>
+          <CardContent>
+            <p className="text-3xl font-bold">{propertyCounts.land}</p>
+          </CardContent>
+        </Card>
+        <Card>
+          <CardHeader>
+            <CardTitle>Locales Comerciales</CardTitle>
+          </CardHeader>
+          <CardContent>
+            <p className="text-3xl font-bold">{propertyCounts.commercial}</p>
+          </CardContent>
+        </Card>
+      </div>
+
+      {/* Main Content Area */}
+      <Card className="overflow-hidden">
+        <CardContent className="p-4">
+          <Tabs defaultValue="table" className="w-full" onValueChange={setActiveTab}>
+            <TabsList className="w-full justify-start mb-4">
+              <TabsTrigger value="table" className="flex items-center gap-2">
+                <Image className="h-4 w-4" />
+                Vista de Tabla
+              </TabsTrigger>
+              <TabsTrigger value="map" className="flex items-center gap-2">
+                <MapPin className="h-4 w-4" />
+                Vista de Mapa
+              </TabsTrigger>
+              {user?.isSuperAdmin && (
+                <TabsTrigger value="roles" className="flex items-center gap-2">
+                  <Users className="h-4 w-4" />
+                  Gestión de Roles
+                </TabsTrigger>
+              )}
+            </TabsList>
+
+            {/* Table View */}
+            <TabsContent value="table" className="mt-0">
+              <div className="overflow-x-auto">
+                <Table>
+                  <TableHeader>
+                    <TableRow>
+                      <TableHead>ID Propiedad</TableHead>
+                      <TableHead>Usuario</TableHead>
+                      <TableHead>Tipo</TableHead>
+                      <TableHead>Teléfono</TableHead>
+                      <TableHead>Acciones</TableHead>
+                    </TableRow>
+                  </TableHeader>
+                  <TableBody>
+                    {properties.map((property) => (
+                      <TableRow key={property.propertyId}>
+                        <TableCell>{property.propertyId}</TableCell>
+                        <TableCell>{property.user.fullName || property.user.username}</TableCell>
+                        <TableCell>
+                          {property.propertyType === 'house' ? 'Casa' : 
+                           property.propertyType === 'land' ? 'Terreno' : 
+                           'Local Comercial'}
+                        </TableCell>
+                        <TableCell>{property.signPhoneNumber || '-'}</TableCell>
+                        <TableCell>
+                          <Dialog>
+                            <DialogTrigger asChild>
+                              <Button variant="outline" size="sm">
+                                Ver Detalles
+                              </Button>
+                            </DialogTrigger>
+                            <DialogContent>
+                              <DialogHeader>
+                                <DialogTitle>Detalles de la Propiedad</DialogTitle>
+                              </DialogHeader>
+                              <div className="space-y-4">
+                                <div>
+                                  <h4 className="font-medium">Imágenes</h4>
+                                  <div className="grid grid-cols-2 gap-2 mt-2">
+                                    {property.images.map((image, idx) => (
+                                      <img 
+                                        key={idx}
+                                        src={image}
+                                        alt={`Imagen ${idx + 1}`}
+                                        className="w-full h-32 object-cover rounded-lg"
+                                      />
+                                    ))}
+                                  </div>
+                                </div>
+                                <div>
+                                  <h4 className="font-medium">Ubicación</h4>
+                                  <p className="text-sm">
+                                    {property.location.lat.toFixed(6)}, {property.location.lng.toFixed(6)}
+                                  </p>
+                                </div>
+                              </div>
+                            </DialogContent>
+                          </Dialog>
+                        </TableCell>
+                      </TableRow>
+                    ))}
+                  </TableBody>
+                </Table>
+              </div>
+            </TabsContent>
+
+            {/* Map View */}
+            <TabsContent value="map" className="mt-0">
+              <div 
+                ref={mapContainerRef}
+                className="w-full h-[400px] rounded-lg relative"
+              >
+                {mapLoading && activeTab === "map" && (
+                  <div className="absolute inset-0 flex items-center justify-center bg-gray-100/80">
+                    <Loader2 className="h-8 w-8 animate-spin text-primary" />
+                  </div>
+                )}
+              </div>
+            </TabsContent>
+
+            {/* Roles Management */}
+            {user?.isSuperAdmin && (
+              <TabsContent value="roles" className="mt-0">
+                <div className="overflow-x-auto">
+                  <Table>
+                    <TableHeader>
+                      <TableRow>
+                        <TableHead>Usuario</TableHead>
+                        <TableHead>Rol</TableHead>
+                        <TableHead>Acciones</TableHead>
+                      </TableRow>
+                    </TableHeader>
+                    <TableBody>
+                      {users.map((u) => (
+                        <TableRow key={u.id}>
+                          <TableCell>{u.fullName || u.username}</TableCell>
+                          <TableCell>
+                            {u.isSuperAdmin ? 'Super Admin' : u.isAdmin ? 'Admin' : 'Usuario'}
+                          </TableCell>
+                          <TableCell>
+                            {!u.isSuperAdmin && (
+                              <Button
+                                variant="outline"
+                                size="sm"
+                                onClick={() => {
+                                  setSelectedUserId(u.id);
+                                  setIsRoleDialogOpen(true);
+                                }}
+                              >
+                                {u.isAdmin ? 'Revocar Admin' : 'Hacer Admin'}
+                              </Button>
+                            )}
+                          </TableCell>
+                        </TableRow>
+                      ))}
+                    </TableBody>
+                  </Table>
+                </div>
+              </TabsContent>
+            )}
+          </Tabs>
+        </CardContent>
+      </Card>
+    </>
+  );
+
+  // Render different layouts based on screen size
+  return isDesktopView ? (
     <div className="min-h-screen bg-gray-100">
-      {/* Header */}
+      {/* Desktop Header */}
       <header className="bg-[#F05023] px-6 py-4">
         <div className="container mx-auto flex items-center justify-between">
           <div className="flex items-center gap-4">
@@ -191,7 +382,6 @@ export default function AdminWebPage() {
           </div>
           <Button 
             variant="ghost" 
-            size="sm" 
             className="text-white hover:text-white/80"
             onClick={() => logoutMutation.mutate()}
           >
@@ -201,250 +391,48 @@ export default function AdminWebPage() {
         </div>
       </header>
 
-      {/* Main Content */}
-      <main className="container mx-auto py-6 space-y-6">
-        <div className="grid grid-cols-3 gap-6">
-          <Card>
-            <CardHeader>
-              <CardTitle>Casas</CardTitle>
-            </CardHeader>
-            <CardContent>
-              <p className="text-3xl font-bold">{propertyCounts.house}</p>
-            </CardContent>
-          </Card>
-          <Card>
-            <CardHeader>
-              <CardTitle>Terrenos</CardTitle>
-            </CardHeader>
-            <CardContent>
-              <p className="text-3xl font-bold">{propertyCounts.land}</p>
-            </CardContent>
-          </Card>
-          <Card>
-            <CardHeader>
-              <CardTitle>Propiedades Comerciales</CardTitle>
-            </CardHeader>
-            <CardContent>
-              <p className="text-3xl font-bold">{propertyCounts.commercial}</p>
-            </CardContent>
-          </Card>
-        </div>
-
-        <Card>
-          <CardContent className="p-6">
-            <Tabs defaultValue="table" className="w-full" onValueChange={setActiveTab}>
-              <TabsList className="w-full justify-start mb-6">
-                <TabsTrigger value="table" className="flex items-center gap-2">
-                  <Image className="h-4 w-4" />
-                  Vista de Tabla
-                </TabsTrigger>
-                <TabsTrigger value="map" className="flex items-center gap-2">
-                  <MapPin className="h-4 w-4" />
-                  Vista de Mapa
-                </TabsTrigger>
-                {user?.isSuperAdmin && (
-                  <TabsTrigger value="roles" className="flex items-center gap-2">
-                    <Users className="h-4 w-4" />
-                    Gestión de Roles
-                  </TabsTrigger>
-                )}
-              </TabsList>
-
-              <TabsContent value="table" className="mt-0">
-                {isLoading ? (
-                  <div className="text-center py-4">
-                    <Loader2 className="h-8 w-8 animate-spin mx-auto text-primary" />
-                    <p className="mt-2">Cargando propiedades...</p>
-                  </div>
-                ) : (
-                  <div className="rounded-md border">
-                    <Table>
-                      <TableCaption>Listado de todas las propiedades registradas</TableCaption>
-                      <TableHeader>
-                        <TableRow>
-                          <TableHead>ID Propiedad</TableHead>
-                          <TableHead>Usuario</TableHead>
-                          <TableHead>Apodo</TableHead>
-                          <TableHead>Teléfono Usuario</TableHead>
-                          <TableHead>Tipo</TableHead>
-                          <TableHead>Teléfono Rótulo (OCR)</TableHead>
-                          <TableHead>Ubicación</TableHead>
-                          <TableHead>Imágenes</TableHead>
-                        </TableRow>
-                      </TableHeader>
-                      <TableBody>
-                        {properties.map((property) => (
-                          <TableRow key={property.id}>
-                            <TableCell>{property.propertyId}</TableCell>
-                            <TableCell>{property.user.fullName || property.user.username}</TableCell>
-                            <TableCell>{property.user.nickname || '-'}</TableCell>
-                            <TableCell>{property.user.mobile || '-'}</TableCell>
-                            <TableCell>
-                              {property.propertyType === 'house' ? 'Casa' : 
-                               property.propertyType === 'land' ? 'Terreno' : 
-                               'Local Comercial'}
-                            </TableCell>
-                            <TableCell>
-                              {property.signPhoneNumber ? (
-                                <span className="font-medium text-primary">
-                                  {property.signPhoneNumber}
-                                </span>
-                              ) : '-'}
-                            </TableCell>
-                            <TableCell>
-                              {property.location.lat.toFixed(6)}, {property.location.lng.toFixed(6)}
-                            </TableCell>
-                            <TableCell>
-                              {property.images.length > 0 ? (
-                                <Dialog>
-                                  <DialogTrigger asChild>
-                                    <Button variant="outline" size="sm">
-                                      <Image className="h-4 w-4 mr-2" />
-                                      Ver Imágenes ({property.images.length})
-                                    </Button>
-                                  </DialogTrigger>
-                                  <DialogContent className="max-w-4xl">
-                                    <DialogHeader>
-                                      <DialogTitle>Imágenes de la Propiedad {property.propertyId}</DialogTitle>
-                                    </DialogHeader>
-                                    <div className="grid grid-cols-2 gap-4 p-4">
-                                      {property.images.map((image, index) => (
-                                        <div key={index} className="relative aspect-video group">
-                                          <img
-                                            src={image}
-                                            alt={`Vista previa ${index + 1} de la propiedad ${property.propertyId}`}
-                                            className="object-cover w-full h-full rounded-lg cursor-pointer"
-                                            onClick={() => {
-                                              window.open(image, '_blank');
-                                            }}
-                                          />
-                                          <div className="absolute inset-0 bg-black/50 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
-                                            <span className="text-white text-sm">Click para ver tamaño completo</span>
-                                          </div>
-                                        </div>
-                                      ))}
-                                    </div>
-                                  </DialogContent>
-                                </Dialog>
-                              ) : (
-                                <span className="text-muted-foreground">Sin imágenes</span>
-                              )}
-                            </TableCell>
-                          </TableRow>
-                        ))}
-                      </TableBody>
-                    </Table>
-                  </div>
-                )}
-              </TabsContent>
-
-              <TabsContent value="map" className="mt-0">
-                <div 
-                  ref={mapContainerRef}
-                  className="w-full h-[600px] rounded-lg relative bg-gray-100"
-                >
-                  {mapLoading && activeTab === "map" && (
-                    <div className="absolute inset-0 flex items-center justify-center bg-gray-100/80">
-                      <div className="text-center">
-                        <Loader2 className="h-8 w-8 animate-spin text-primary mx-auto mb-2" />
-                        <p className="text-sm text-muted-foreground">Cargando mapa...</p>
-                      </div>
-                    </div>
-                  )}
-                </div>
-              </TabsContent>
-
-              {user?.isSuperAdmin && (
-                <TabsContent value="roles" className="mt-0">
-                  <div className="rounded-md border">
-                    <Table>
-                      <TableCaption>Gestión de roles de administrador</TableCaption>
-                      <TableHeader>
-                        <TableRow>
-                          <TableHead>Usuario</TableHead>
-                          <TableHead>Correo</TableHead>
-                          <TableHead>Rol Actual</TableHead>
-                          <TableHead>Acciones</TableHead>
-                        </TableRow>
-                      </TableHeader>
-                      <TableBody>
-                        {users.map((u) => (
-                          <TableRow key={u.id}>
-                            <TableCell>{u.fullName || u.username}</TableCell>
-                            <TableCell>{u.username}</TableCell>
-                            <TableCell>
-                              {u.isSuperAdmin ? (
-                                <span className="text-primary font-semibold">Super Admin</span>
-                              ) : u.isAdmin ? (
-                                <span className="text-blue-600">Administrador</span>
-                              ) : (
-                                <span className="text-gray-600">Usuario</span>
-                              )}
-                            </TableCell>
-                            <TableCell>
-                              {!u.isSuperAdmin && (
-                                <Button
-                                  variant="outline"
-                                  size="sm"
-                                  onClick={() => {
-                                    setSelectedUserId(u.id);
-                                    setIsRoleDialogOpen(true);
-                                  }}
-                                >
-                                  <Shield className="h-4 w-4 mr-2" />
-                                  {u.isAdmin ? 'Revocar Admin' : 'Hacer Admin'}
-                                </Button>
-                              )}
-                            </TableCell>
-                          </TableRow>
-                        ))}
-                      </TableBody>
-                    </Table>
-                  </div>
-
-                  <Dialog open={isRoleDialogOpen} onOpenChange={setIsRoleDialogOpen}>
-                    <DialogContent>
-                      <DialogHeader>
-                        <DialogTitle>Confirmar cambio de rol</DialogTitle>
-                        <DialogDescription>
-                          {selectedUserId && users.find(u => u.id === selectedUserId)?.isAdmin
-                            ? '¿Estás seguro de que deseas revocar los privilegios de administrador de este usuario?'
-                            : '¿Estás seguro de que deseas otorgar privilegios de administrador a este usuario?'}
-                        </DialogDescription>
-                      </DialogHeader>
-                      <DialogFooter className="flex justify-end gap-2">
-                        <Button
-                          variant="outline"
-                          onClick={() => setIsRoleDialogOpen(false)}
-                        >
-                          Cancelar
-                        </Button>
-                        <Button
-                          variant="default"
-                          onClick={() => {
-                            if (selectedUserId) {
-                              const targetUser = users.find(u => u.id === selectedUserId);
-                              if (targetUser) {
-                                updateRoleMutation.mutate({
-                                  userId: selectedUserId,
-                                  isAdmin: !targetUser.isAdmin
-                                });
-                              }
-                            }
-                          }}
-                        >
-                          Confirmar
-                        </Button>
-                      </DialogFooter>
-                    </DialogContent>
-                  </Dialog>
-                </TabsContent>
-              )}
-
-            </Tabs>
-          </CardContent>
-        </Card>
+      {/* Desktop Main Content */}
+      <main className="container mx-auto py-6">
+        <AdminContent />
       </main>
+    </div>
+  ) : (
+    // Mobile View using PhonePreview
+    <div className="flex items-center justify-center min-h-screen bg-gray-100">
+      <PhonePreview>
+        {/* Mobile Header */}
+        <header className="bg-[#F05023] px-4 py-3">
+          <div className="flex items-center justify-between">
+            <Button
+              variant="ghost"
+              className="text-white hover:text-white/80 p-0"
+              onClick={() => setLocation("/")}
+            >
+              <Menu className="h-5 w-5" />
+            </Button>
+            <div className="flex items-center">
+              <img
+                src="/assets/logo.png"
+                alt="Virtual Agent"
+                className="h-10 w-auto"
+              />
+            </div>
+            <Button
+              variant="ghost"
+              size="sm"
+              className="text-white hover:text-white/80 p-0"
+              onClick={() => logoutMutation.mutate()}
+            >
+              <LogOut className="h-5 w-5" />
+            </Button>
+          </div>
+        </header>
+
+        {/* Mobile Content */}
+        <div className="p-4 overflow-y-auto">
+          <AdminContent />
+        </div>
+      </PhonePreview>
     </div>
   );
 }
