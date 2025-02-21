@@ -23,7 +23,7 @@ function Router() {
       <ProtectedRoute path="/dashboard" component={DashboardPage} />
       <ProtectedRoute path="/profile" component={ProfilePage} />
       <ProtectedRoute path="/property/new" component={PropertyEntry} />
-      <ProtectedRoute path="/property/confirmation" component={PropertyConfirmation} />
+      <ProtectedRoute path="/property-confirmation/:id" component={PropertyConfirmation} />
       <ProtectedRoute path="/properties" component={PropertiesPage} />
       <ProtectedRoute path="/admin/web" component={AdminWebPage} />
       <Route component={NotFound} />

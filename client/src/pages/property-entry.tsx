@@ -358,6 +358,7 @@ export default function PropertyEntry() {
 
   const createPropertyMutation = useMutation({
     mutationFn: async (data: any) => {
+      console.log("Starting mutation with data:", data);
       const response = await fetch('/api/properties', {
         method: 'POST',
         headers: {
@@ -373,14 +374,17 @@ export default function PropertyEntry() {
       }
 
       const result = await response.json();
+      console.log("Mutation successful, result:", result);
       return result;
     },
     onSuccess: (data) => {
+      console.log("Mutation onSuccess called with data:", data);
       queryClient.invalidateQueries({ queryKey: ['properties'] });
       // Redirigir a la página de confirmación con el ID de la propiedad
       setLocation(`/property-confirmation/${data.property.propertyId}`);
     },
     onError: (error: Error) => {
+      console.error("Mutation error:", error);
       toast({
         title: "Error",
         description: error.message,
