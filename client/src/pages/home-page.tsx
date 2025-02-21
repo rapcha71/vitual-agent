@@ -20,12 +20,46 @@ export default function HomePage() {
   const { data: properties = [], isLoading } = useQuery<Property[]>({
     queryKey: ['/api/properties'],
     staleTime: 300000,
-    cacheTime: 600000,
     refetchOnWindowFocus: false,
   });
 
   const paginatedProperties = properties.slice(0, page * ITEMS_PER_PAGE);
   const hasMore = properties.length > paginatedProperties.length;
+
+  if (!user) {
+    return (
+      <div className="flex items-center justify-center min-h-screen bg-gray-100">
+        <PhonePreview>
+          <div className="flex flex-col h-full">
+            <header className="bg-[#F05023] px-4 py-3 flex-none">
+              <div className="flex items-center justify-center">
+                <img 
+                  src="/assets/logo.png"
+                  alt="Virtual Agent"
+                  className="h-10 w-auto"
+                />
+              </div>
+            </header>
+            <main className="flex-1 p-4 space-y-4 flex flex-col items-center justify-center">
+              <h1 className="text-2xl font-bold text-center">
+                Bienvenido a Virtual Agent
+              </h1>
+              <p className="text-center text-muted-foreground">
+                Inicia sesión para administrar tus propiedades
+              </p>
+              <Link href="/auth" className="w-full max-w-sm">
+                <Button 
+                  className="w-full transform transition-all duration-200 hover:scale-[1.02] active:scale-[0.98] shadow-[4px_4px_10px_rgba(240,80,35,0.3)] hover:shadow-[6px_6px_15px_rgba(240,80,35,0.4)]"
+                >
+                  Iniciar Sesión
+                </Button>
+              </Link>
+            </main>
+          </div>
+        </PhonePreview>
+      </div>
+    );
+  }
 
   return (
     <div className="flex items-center justify-center min-h-screen bg-gray-100">
