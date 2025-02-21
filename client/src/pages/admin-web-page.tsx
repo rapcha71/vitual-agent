@@ -111,6 +111,13 @@ export default function AdminWebPage() {
     enabled: user?.isAdmin === true
   });
 
+  // Mover el loader fuera del efecto para que se inicialice una sola vez
+  const loader = new Loader({
+    apiKey: import.meta.env.VITE_GOOGLE_MAPS_API_KEY || '',
+    version: "weekly",
+    libraries: ["places"]
+  });
+
   useEffect(() => {
     let isMounted = true;
 
@@ -118,23 +125,28 @@ export default function AdminWebPage() {
       if (!mapContainerRef.current || activeTab !== "map") return;
 
       try {
+        console.log('Iniciando carga del mapa...');
+
         if (!import.meta.env.VITE_GOOGLE_MAPS_API_KEY) {
           console.error('Google Maps API key is missing');
+          toast({
+            title: "Error",
+            description: "No se pudo cargar el mapa. Por favor, contacte al administrador.",
+            variant: "destructive"
+          });
           setMapLoading(false);
           return;
         }
 
-        const loader = new Loader({
-          apiKey: import.meta.env.VITE_GOOGLE_MAPS_API_KEY,
-          version: "weekly",
-          libraries: ["places"]
-        });
-
+        // Cargar la API de Google Maps
+        console.log('Cargando API de Google Maps...');
         await loader.load();
+        console.log('API de Google Maps cargada exitosamente');
 
         if (!isMounted || !mapContainerRef.current) return;
 
         // Initialize map
+        console.log('Inicializando mapa...');
         const map = new google.maps.Map(mapContainerRef.current, {
           center: { lat: 9.9281, lng: -84.0907 }, // Costa Rica
           zoom: 8,
@@ -155,6 +167,8 @@ export default function AdminWebPage() {
 
         // Add markers if there are properties
         if (properties.length > 0 && isMounted) {
+          console.log(`Agregando ${properties.length} marcadores al mapa...`);
+
           properties.forEach(property => {
             try {
               // Create marker
@@ -216,15 +230,22 @@ export default function AdminWebPage() {
           }
         }
 
+        console.log('Mapa inicializado exitosamente');
         setMapLoading(false);
       } catch (error) {
         console.error('Error loading Google Maps:', error);
+        toast({
+          title: "Error",
+          description: "Hubo un problema al cargar el mapa. Por favor, intente nuevamente.",
+          variant: "destructive"
+        });
         setMapLoading(false);
       }
     };
 
     // Only initialize map when on "map" tab and there are properties
     if (activeTab === "map" && properties.length > 0) {
+      console.log('Tab de mapa activo, iniciando carga...');
       initMap();
     }
 
@@ -238,7 +259,7 @@ export default function AdminWebPage() {
         mapRef.current = null;
       }
     };
-  }, [properties, activeTab]);
+  }, [properties, activeTab, toast]);
 
   // Contar propiedades por tipo
   const propertyCounts = {
@@ -281,21 +302,15 @@ export default function AdminWebPage() {
       <Card className="overflow-hidden">
         <CardContent className="p-4">
           <Tabs defaultValue="table" className="w-full" onValueChange={setActiveTab}>
-            <TabsList className="w-full justify-start mb-4">
-              <TabsTrigger value="table" className="flex items-center gap-2">
-                <Image className="h-4 w-4" />
-                Vista de Tabla
+            <TabsList className="grid w-full grid-cols-2 h-9 mb-4">
+              <TabsTrigger value="table" className="text-xs flex items-center gap-1">
+                <LayoutGrid className="h-3 w-3" />
+                Tabla
               </TabsTrigger>
-              <TabsTrigger value="map" className="flex items-center gap-2">
-                <MapPin className="h-4 w-4" />
-                Vista de Mapa
+              <TabsTrigger value="map" className="text-xs flex items-center gap-1">
+                <MapPin className="h-3 w-3" />
+                Mapa
               </TabsTrigger>
-              {user?.isSuperAdmin && (
-                <TabsTrigger value="roles" className="flex items-center gap-2">
-                  <Users className="h-4 w-4" />
-                  Gestión de Roles
-                </TabsTrigger>
-              )}
             </TabsList>
 
             {/* Table View */}
@@ -372,7 +387,8 @@ export default function AdminWebPage() {
             <TabsContent value="map" className="mt-0">
               <div
                 ref={mapContainerRef}
-                className="w-full h-[400px] rounded-lg relative"
+                className="w-full h-[400px] rounded-lg relative bg-gray-100"
+                style={{ minHeight: '400px' }}
               >
                 {mapLoading && activeTab === "map" && (
                   <div className="absolute inset-0 flex items-center justify-center bg-gray-100/80">
