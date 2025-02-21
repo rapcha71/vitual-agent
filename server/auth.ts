@@ -55,20 +55,25 @@ export function setupAuth(app: Express) {
   passport.use(
     new LocalStrategy(async (username, password, done) => {
       try {
+        console.log("Attempting login for user:", username);
         const user = await storage.getUserByUsername(username);
 
         if (!user) {
+          console.log("User not found:", username);
           return done(null, false, { message: "Usuario o contraseña inválidos" });
         }
 
         const passwordValid = await comparePasswords(password, user.password);
 
         if (!passwordValid) {
+          console.log("Invalid password for user:", username);
           return done(null, false, { message: "Usuario o contraseña inválidos" });
         }
 
+        console.log("Login successful for user:", username);
         return done(null, user);
       } catch (error) {
+        console.error("Login error:", error);
         return done(error);
       }
     })
@@ -121,6 +126,7 @@ export function setupAuth(app: Express) {
   app.post("/api/login", (req, res, next) => {
     passport.authenticate("local", (err: any, user: any, info: any) => {
       if (err) {
+        console.error("Authentication error:", err);
         return res.status(500).json({ message: "Error interno del servidor" });
       }
 
@@ -130,8 +136,10 @@ export function setupAuth(app: Express) {
 
       req.login(user, (err) => {
         if (err) {
+          console.error("Session creation error:", err);
           return res.status(500).json({ message: "Error al crear la sesión" });
         }
+        console.log("Login successful, sending user data");
         res.json(user);
       });
     })(req, res, next);
