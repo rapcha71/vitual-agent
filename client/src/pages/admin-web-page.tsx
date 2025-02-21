@@ -3,17 +3,18 @@ import { useQuery, useMutation } from "@tanstack/react-query";
 import { PropertyWithUser } from "@shared/schema";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { LogOut, MapPin, Image, ChevronLeft, Users, Plus } from "lucide-react";
+import { LogOut, MapPin, Image, ChevronLeft, Users, Plus, Trash2 } from "lucide-react";
 import { useLocation } from "wouter";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger, DialogFooter } from "@/components/ui/dialog";
 import { Loader2 } from "lucide-react";
 import { useEffect, useState, useRef, memo } from "react";
 import { Loader } from "@googlemaps/js-api-loader";
 import { useToast } from "@/hooks/use-toast";
 import { PhonePreview } from "@/components/ui/phone-preview";
 import { Switch } from "@/components/ui/switch";
+import { queryClient } from "@/lib/queryClient";
 
 const MapComponent = memo(({ properties }: { properties: PropertyWithUser[] }) => {
   const [isLoading, setIsLoading] = useState(true);
@@ -196,7 +197,7 @@ export default function AdminWebPage() {
   const [activeTab, setActiveTab] = useState("map");
   const { toast } = useToast();
 
-  const { data: properties = [] } = useQuery<PropertyWithUser[]>({
+  const { data: properties = [], refetch: refetchProperties } = useQuery<PropertyWithUser[]>({
     queryKey: ['/api/admin/properties'],
     enabled: user?.isAdmin === true
   });
@@ -204,6 +205,60 @@ export default function AdminWebPage() {
   const { data: users = [], refetch: refetchUsers } = useQuery({
     queryKey: ['/api/admin/users'],
     enabled: user?.isSuperAdmin === true
+  });
+
+  const deleteUserMutation = useMutation({
+    mutationFn: async (userId: string) => {
+      const response = await fetch(`/api/admin/users/${userId}`, {
+        method: 'DELETE',
+      });
+      if (!response.ok) {
+        const error = await response.json();
+        throw new Error(error.message);
+      }
+      return response.json();
+    },
+    onSuccess: () => {
+      refetchUsers();
+      toast({
+        title: "Usuario eliminado",
+        description: "El usuario ha sido eliminado exitosamente",
+      });
+    },
+    onError: (error: Error) => {
+      toast({
+        title: "Error",
+        description: error.message,
+        variant: "destructive"
+      });
+    }
+  });
+
+  const deletePropertyMutation = useMutation({
+    mutationFn: async (propertyId: string) => {
+      const response = await fetch(`/api/admin/properties/${propertyId}`, {
+        method: 'DELETE',
+      });
+      if (!response.ok) {
+        const error = await response.json();
+        throw new Error(error.message);
+      }
+      return response.json();
+    },
+    onSuccess: () => {
+      refetchProperties();
+      toast({
+        title: "Propiedad eliminada",
+        description: "La propiedad ha sido eliminada exitosamente",
+      });
+    },
+    onError: (error: Error) => {
+      toast({
+        title: "Error",
+        description: error.message,
+        variant: "destructive"
+      });
+    }
   });
 
   const updateRoleMutation = useMutation({
@@ -340,7 +395,7 @@ export default function AdminWebPage() {
                         <TableHead>Tipo</TableHead>
                         <TableHead className="hidden sm:table-cell">Usuario</TableHead>
                         <TableHead className="hidden sm:table-cell">Teléfono</TableHead>
-                        <TableHead className="w-24">Ver</TableHead>
+                        <TableHead className="w-[140px]">Acciones</TableHead>
                       </TableRow>
                     </TableHeader>
                     <TableBody>
@@ -359,47 +414,84 @@ export default function AdminWebPage() {
                             {property.signPhoneNumber || '-'}
                           </TableCell>
                           <TableCell>
-                            <Dialog>
-                              <DialogTrigger asChild>
-                                <Button variant="outline" size="sm" className="w-full">
-                                  Detalles
-                                </Button>
-                              </DialogTrigger>
-                              <DialogContent className="w-[90vw] max-w-lg">
-                                <DialogHeader>
-                                  <DialogTitle>Detalles de la Propiedad</DialogTitle>
-                                </DialogHeader>
-                                <div className="space-y-4">
-                                  <div className="sm:hidden">
-                                    <p><strong>Usuario:</strong> {property.user.fullName || property.user.username}</p>
-                                    <p><strong>Teléfono:</strong> {property.signPhoneNumber || '-'}</p>
-                                  </div>
-                                  <p><strong>Ubicación:</strong> {property.location.lat.toFixed(6)}, {property.location.lng.toFixed(6)}</p>
-                                  {property.images && property.images.length > 0 && (
-                                    <div className="mt-4">
-                                      <h4 className="font-semibold mb-2">Imágenes de la Propiedad</h4>
-                                      <div className="grid grid-cols-2 gap-2">
-                                        {property.images.map((image, index) => (
-                                          <div key={index} className="relative aspect-video group">
-                                            <img
-                                              src={image}
-                                              alt={`Imagen ${index + 1} de la propiedad ${property.propertyId}`}
-                                              className="object-cover w-full h-full rounded-lg cursor-pointer"
-                                              onClick={() => {
-                                                window.open(image, '_blank');
-                                              }}
-                                            />
-                                            <div className="absolute inset-0 bg-black/50 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
-                                              <span className="text-white text-sm">Ver tamaño completo</span>
-                                            </div>
-                                          </div>
-                                        ))}
-                                      </div>
+                            <div className="flex gap-2">
+                              <Dialog>
+                                <DialogTrigger asChild>
+                                  <Button variant="outline" size="sm">
+                                    Detalles
+                                  </Button>
+                                </DialogTrigger>
+                                <DialogContent className="w-[90vw] max-w-lg">
+                                  <DialogHeader>
+                                    <DialogTitle>Detalles de la Propiedad</DialogTitle>
+                                  </DialogHeader>
+                                  <div className="space-y-4">
+                                    <div className="sm:hidden">
+                                      <p><strong>Usuario:</strong> {property.user.fullName || property.user.username}</p>
+                                      <p><strong>Teléfono:</strong> {property.signPhoneNumber || '-'}</p>
                                     </div>
-                                  )}
-                                </div>
-                              </DialogContent>
-                            </Dialog>
+                                    <p><strong>Ubicación:</strong> {property.location.lat.toFixed(6)}, {property.location.lng.toFixed(6)}</p>
+                                    {property.images && property.images.length > 0 && (
+                                      <div className="mt-4">
+                                        <h4 className="font-semibold mb-2">Imágenes de la Propiedad</h4>
+                                        <div className="grid grid-cols-2 gap-2">
+                                          {property.images.map((image, index) => (
+                                            <div key={index} className="relative aspect-video group">
+                                              <img
+                                                src={image}
+                                                alt={`Imagen ${index + 1} de la propiedad ${property.propertyId}`}
+                                                className="object-cover w-full h-full rounded-lg cursor-pointer"
+                                                onClick={() => {
+                                                  window.open(image, '_blank');
+                                                }}
+                                              />
+                                              <div className="absolute inset-0 bg-black/50 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
+                                                <span className="text-white text-sm">Ver tamaño completo</span>
+                                              </div>
+                                            </div>
+                                          ))}
+                                        </div>
+                                      </div>
+                                    )}
+                                  </div>
+                                </DialogContent>
+                              </Dialog>
+                              {user?.isSuperAdmin && (
+                                <Dialog>
+                                  <DialogTrigger asChild>
+                                    <Button 
+                                      variant="destructive" 
+                                      size="sm"
+                                      className="w-8 h-8 p-0"
+                                    >
+                                      <Trash2 className="h-4 w-4" />
+                                    </Button>
+                                  </DialogTrigger>
+                                  <DialogContent>
+                                    <DialogHeader>
+                                      <DialogTitle>Confirmar eliminación</DialogTitle>
+                                    </DialogHeader>
+                                    <p>¿Está seguro que desea eliminar esta propiedad? Esta acción no se puede deshacer.</p>
+                                    <DialogFooter>
+                                      <Button
+                                        variant="destructive"
+                                        onClick={() => deletePropertyMutation.mutate(property.propertyId)}
+                                        disabled={deletePropertyMutation.isPending}
+                                      >
+                                        {deletePropertyMutation.isPending ? (
+                                          <>
+                                            <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                                            Eliminando...
+                                          </>
+                                        ) : (
+                                          "Eliminar"
+                                        )}
+                                      </Button>
+                                    </DialogFooter>
+                                  </DialogContent>
+                                </Dialog>
+                              )}
+                            </div>
                           </TableCell>
                         </TableRow>
                       ))}
@@ -420,7 +512,8 @@ export default function AdminWebPage() {
                                 <TableRow>
                                   <TableHead className="w-40">Usuario</TableHead>
                                   <TableHead className="w-32">Rol</TableHead>
-                                  <TableHead className="w-24 text-right pr-6">Admin</TableHead>
+                                  <TableHead className="w-24 text-right">Admin</TableHead>
+                                  <TableHead className="w-20 text-right pr-6">Acciones</TableHead>
                                 </TableRow>
                               </TableHeader>
                               <TableBody>
@@ -431,7 +524,7 @@ export default function AdminWebPage() {
                                       {adminUser.isSuperAdmin ? 'Super Admin' : 
                                        adminUser.isAdmin ? 'Admin' : 'Usuario'}
                                     </TableCell>
-                                    <TableCell className="py-2 text-right pr-6">
+                                    <TableCell className="py-2 text-right">
                                       {!adminUser.isSuperAdmin && (
                                         <Switch
                                           checked={adminUser.isAdmin}
@@ -443,6 +536,43 @@ export default function AdminWebPage() {
                                           }
                                           disabled={updateRoleMutation.isPending}
                                         />
+                                      )}
+                                    </TableCell>
+                                    <TableCell className="py-2 text-right pr-6">
+                                      {!adminUser.isSuperAdmin && (
+                                        <Dialog>
+                                          <DialogTrigger asChild>
+                                            <Button 
+                                              variant="destructive" 
+                                              size="sm"
+                                              className="w-8 h-8 p-0"
+                                            >
+                                              <Trash2 className="h-4 w-4" />
+                                            </Button>
+                                          </DialogTrigger>
+                                          <DialogContent>
+                                            <DialogHeader>
+                                              <DialogTitle>Confirmar eliminación</DialogTitle>
+                                            </DialogHeader>
+                                            <p>¿Está seguro que desea eliminar este usuario? Esta acción no se puede deshacer.</p>
+                                            <DialogFooter>
+                                              <Button
+                                                variant="destructive"
+                                                onClick={() => deleteUserMutation.mutate(adminUser.id)}
+                                                disabled={deleteUserMutation.isPending}
+                                              >
+                                                {deleteUserMutation.isPending ? (
+                                                  <>
+                                                    <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                                                    Eliminando...
+                                                  </>
+                                                ) : (
+                                                  "Eliminar"
+                                                )}
+                                              </Button>
+                                            </DialogFooter>
+                                          </DialogContent>
+                                        </Dialog>
                                       )}
                                     </TableCell>
                                   </TableRow>
