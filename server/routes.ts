@@ -6,21 +6,13 @@ import { insertPropertySchema } from "@shared/schema";
 import { nanoid } from "nanoid";
 import ocrService from "./services/ocr";
 import { isWithinRadius } from "./lib/geo-utils";
+import { requireAdmin } from "./middleware/admin";
 
 export async function registerRoutes(app: Express): Promise<Server> {
   setupAuth(app);
 
   // Admin route to get all properties with user information
-  app.get("/api/admin/properties", async (req, res) => {
-    if (!req.isAuthenticated()) {
-      return res.status(401).json({ message: "Unauthorized" });
-    }
-
-    // Check if user is admin
-    if (!req.user.isAdmin) {
-      return res.status(403).json({ message: "Forbidden: Admin access required" });
-    }
-
+  app.get("/api/admin/properties", requireAdmin, async (req, res) => {
     try {
       const properties = await storage.getAllPropertiesWithUsers();
       console.log("Admin properties fetch:", {
