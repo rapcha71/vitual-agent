@@ -62,7 +62,6 @@ const MapComponent = memo(({ properties }: { properties: PropertyWithUser[] }) =
         googleMap = new google.maps.Map(mapRef.current, mapOptions);
         map.current = googleMap;
 
-        // Clear existing markers
         currentMarkers.forEach(marker => marker.setMap(null));
         currentMarkers = [];
 
@@ -87,7 +86,7 @@ const MapComponent = memo(({ properties }: { properties: PropertyWithUser[] }) =
           currentMarkers.push(marker);
         });
 
-        googleMap.fitBounds(bounds, { padding: 40 });
+        googleMap.fitBounds(bounds);
         markers.current = currentMarkers;
 
         if (isMounted) {
@@ -123,22 +122,20 @@ const MapComponent = memo(({ properties }: { properties: PropertyWithUser[] }) =
   }, [properties, toast]);
 
   return (
-    <div className="grid grid-cols-1 w-full max-w-[430px] mx-auto">
-      <div className="aspect-[9/16] w-full relative bg-gray-100 rounded-lg overflow-hidden shadow-md">
-        <div
-          ref={mapRef}
-          className="absolute inset-0"
-          style={{
-            width: '100%',
-            height: '100%'
-          }}
-        />
-        {isLoading && (
-          <div className="absolute inset-0 flex items-center justify-center bg-gray-100/80">
-            <Loader2 className="h-8 w-8 animate-spin text-primary" />
-          </div>
-        )}
-      </div>
+    <div className="aspect-[9/16] w-full relative bg-gray-100 rounded-lg overflow-hidden shadow-md">
+      <div
+        ref={mapRef}
+        className="absolute inset-0"
+        style={{
+          width: '100%',
+          height: '100%'
+        }}
+      />
+      {isLoading && (
+        <div className="absolute inset-0 flex items-center justify-center bg-gray-100/80">
+          <Loader2 className="h-8 w-8 animate-spin text-primary" />
+        </div>
+      )}
     </div>
   );
 });
@@ -167,35 +164,37 @@ export default function AdminWebPage() {
   };
 
   return (
-    <div className="flex flex-col min-h-screen bg-gray-100">
+    <div className="relative min-h-screen max-w-[430px] mx-auto bg-gray-100 overflow-hidden">
       <div className="fixed top-0 left-0 right-0 z-50 bg-[#F05023] shadow-md">
-        <div className="w-full max-w-[430px] mx-auto px-4 py-3 flex items-center justify-between">
-          <Button
-            variant="ghost"
-            className="text-white hover:text-white/80 p-0"
-            onClick={() => setLocation("/dashboard")}
-          >
-            <ChevronLeft className="h-5 w-5" />
-          </Button>
-          <div className="flex-1 flex justify-center">
-            <img
-              src="/assets/logo.png"
-              alt="Virtual Agent"
-              className="h-10 w-auto"
-            />
+        <div className="max-w-[430px] mx-auto">
+          <div className="px-4 py-3 flex items-center justify-between">
+            <Button
+              variant="ghost"
+              className="text-white hover:text-white/80 p-0"
+              onClick={() => setLocation("/dashboard")}
+            >
+              <ChevronLeft className="h-5 w-5" />
+            </Button>
+            <div className="flex-1 flex justify-center">
+              <img
+                src="/assets/logo.png"
+                alt="Virtual Agent"
+                className="h-8 w-auto"
+              />
+            </div>
+            <Button
+              variant="ghost"
+              size="sm"
+              className="text-white hover:text-white/80 p-0"
+              onClick={() => logoutMutation.mutate()}
+            >
+              <LogOut className="h-5 w-5" />
+            </Button>
           </div>
-          <Button
-            variant="ghost"
-            size="sm"
-            className="text-white hover:text-white/80 p-0"
-            onClick={() => logoutMutation.mutate()}
-          >
-            <LogOut className="h-5 w-5" />
-          </Button>
         </div>
       </div>
 
-      <main className="flex-1 pt-[72px] w-full max-w-[430px] mx-auto px-4 pb-4">
+      <main className="pt-[60px] px-4 pb-4">
         <h1 className="text-xl font-bold">Panel de Administración</h1>
 
         <div className="grid grid-cols-3 gap-2 mt-4">
