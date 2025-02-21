@@ -31,6 +31,37 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  // Ruta protegida para gestionar roles de administrador (solo super admin)
+  app.post("/api/admin/roles", requireAdmin, async (req, res) => {
+    try {
+      // Verificar si el usuario actual es super admin
+      if (!req.user?.isSuperAdmin) {
+        return res.status(403).json({ 
+          message: "Esta acción requiere privilegios de super administrador" 
+        });
+      }
+
+      const { userId, isAdmin } = req.body;
+
+      // No permitir cambios en el rol de super admin
+      const targetUser = await storage.getUser(userId);
+      if (targetUser?.isSuperAdmin) {
+        return res.status(403).json({ 
+          message: "No se pueden modificar los privilegios de un super administrador" 
+        });
+      }
+
+      // Actualizar rol de administrador
+      const updatedUser = await storage.updateUserRole(userId, isAdmin);
+      res.json(updatedUser);
+    } catch (error: any) {
+      console.error("Error updating admin role:", error);
+      res.status(500).json({ 
+        message: error.message || "Error al actualizar rol de administrador" 
+      });
+    }
+  });
+
   // Regular users route to get their own properties
   app.get("/api/properties", async (req, res) => {
     if (!req.isAuthenticated()) {

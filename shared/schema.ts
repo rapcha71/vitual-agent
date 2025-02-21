@@ -25,9 +25,9 @@ export const users = pgTable("users", {
   mobile: text("mobile"),
   nickname: text("nickname"),
   isAdmin: boolean("is_admin").notNull().default(false),
+  isSuperAdmin: boolean("is_super_admin").notNull().default(false), // Nuevo campo
   rememberToken: text("remember_token"),
   lastLoginAt: text("last_login_at"),
-  // Store biometric data as base64 encoded strings
   biometricCredentialId: text("biometric_credential_id"),
   biometricPublicKey: text("biometric_public_key"),
   biometricCounter: integer("biometric_counter").default(0),

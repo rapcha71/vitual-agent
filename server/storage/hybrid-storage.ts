@@ -98,6 +98,23 @@ export class HybridStorage implements IStorage {
     }
   }
 
+  async updateUserRole(userId: number, isAdmin: boolean): Promise<User> {
+    // Actualizar el rol en la base de datos
+    const updatedUser = await this.dbStorage.updateUserRole(userId, isAdmin);
+
+    // Sincronizar con Google Sheets si está disponible
+    if (this.sheetsStorage) {
+      try {
+        await this.sheetsStorage.updateUserRole(userId, isAdmin);
+      } catch (error) {
+        console.error("Error syncing user role to Google Sheets:", error);
+        // Continuar incluso si falla la sincronización
+      }
+    }
+
+    return updatedUser;
+  }
+
   async updateUserBiometricCredentials(userId: number, credentials: {
     credentialID: Buffer;
     publicKey: Buffer;
