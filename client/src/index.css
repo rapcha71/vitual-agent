@@ -13,7 +13,6 @@
 }
 
 @layer utilities {
-  /* Estilo mejorado para ocultar scrollbar */
   .no-scrollbar {
     scrollbar-width: none;
     -ms-overflow-style: none;
@@ -28,11 +27,12 @@
 
 @layer components {
   .btn-primary {
-    @apply bg-white text-primary px-4 py-2 rounded-md hover:bg-opacity-90 transition-all duration-200 animate-fade-in;
+    @apply bg-white text-primary px-4 py-2 rounded-md hover:bg-opacity-90 transition-colors;
   }
 
   .admin-button {
-    @apply min-w-[200px] text-center px-4 py-3 rounded-md text-sm font-medium transition-all duration-200 hover:bg-opacity-90 whitespace-nowrap animate-fade-in;
+    @apply min-w-[200px] text-center px-4 py-3 rounded-md text-sm font-medium 
+    hover:bg-opacity-90 whitespace-nowrap transition-colors;
   }
 
   .admin-button-primary {
@@ -48,21 +48,21 @@
   }
 
   .input-field {
-    @apply border border-gray-300 bg-white rounded-md px-3 py-2 focus:ring-2 focus:ring-primary focus:border-transparent transition-all duration-200;
+    @apply border border-gray-300 bg-white rounded-md px-3 py-2 focus:ring-2 focus:ring-primary focus:border-transparent transition-colors;
   }
 
   .card {
-    @apply bg-white rounded-lg shadow-md p-6 animate-slide-in;
+    @apply bg-white rounded-lg shadow-md p-6;
   }
 
   .nav-link {
-    @apply text-black hover:text-white transition-colors duration-200;
+    @apply text-black hover:text-white transition-colors;
   }
 }
 
 /* Custom Transitions */
 .transition-base {
-  @apply transition-all duration-200 ease-in-out;
+  @apply transition-colors duration-200 ease-in-out;
 }
 
 .page-container {
@@ -72,13 +72,11 @@
 /* Animations for page transitions */
 .page-enter {
   opacity: 0;
-  transform: translateY(10px);
 }
 
 .page-enter-active {
   opacity: 1;
-  transform: translateY(0);
-  transition: opacity 300ms, transform 300ms;
+  transition: opacity 200ms ease-out;
 }
 
 .page-exit {
@@ -87,6 +85,5 @@
 
 .page-exit-active {
   opacity: 0;
-  transform: translateY(-10px);
-  transition: opacity 300ms, transform 300ms;
+  transition: opacity 200ms ease-out;
 }
