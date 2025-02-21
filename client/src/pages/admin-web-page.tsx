@@ -1,13 +1,13 @@
 import { useAuth } from "@/hooks/use-auth";
 import { useQuery } from "@tanstack/react-query";
 import { PropertyWithUser } from "@shared/schema";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { LogOut, Image, MapPin, ChevronLeft } from "lucide-react";
+import { LogOut, MapPin, Image, ChevronLeft } from "lucide-react";
 import { useLocation } from "wouter";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Loader2 } from "lucide-react";
 import { useEffect, useState, useRef, memo } from "react";
 import { Loader } from "@googlemaps/js-api-loader";
@@ -40,10 +40,10 @@ const MapComponent = memo(({ properties }: { properties: PropertyWithUser[] }) =
 
         if (!isActive || !mapContainer.current) return;
 
-        // Configuración específica para móvil con aspecto vertical
+        // Configuración optimizada para vista vertical
         const mapOptions: google.maps.MapOptions = {
           center: { lat: 9.9281, lng: -84.0907 },
-          zoom: 7,
+          zoom: 8,
           mapTypeControl: false,
           streetViewControl: false,
           fullscreenControl: false,
@@ -69,13 +69,10 @@ const MapComponent = memo(({ properties }: { properties: PropertyWithUser[] }) =
         markers.current.forEach(marker => marker.setMap(null));
         markers.current = [];
 
-        // Agregar marcadores con tamaño optimizado para móvil
+        // Agregar marcadores optimizados para vista vertical
         properties.forEach(property => {
           const marker = new google.maps.Marker({
-            position: { 
-              lat: property.location.lat, 
-              lng: property.location.lng 
-            },
+            position: { lat: property.location.lat, lng: property.location.lng },
             map: map.current,
             title: property.propertyId,
             icon: {
@@ -84,7 +81,7 @@ const MapComponent = memo(({ properties }: { properties: PropertyWithUser[] }) =
                         property.propertyType === 'land' ? '#22C55E' : '#3B82F6',
               fillOpacity: 0.9,
               strokeWeight: 2,
-              scale: 10
+              scale: 8
             }
           });
 
@@ -156,17 +153,12 @@ const MapComponent = memo(({ properties }: { properties: PropertyWithUser[] }) =
   }, [properties, toast]);
 
   return (
-    <Card>
-      <CardContent>
-        <div 
-          id="map" 
-          className="w-full h-[600px] rounded-lg relative bg-gray-100"
-          style={{ minHeight: '600px' }}
-        >
+    <Card className="overflow-hidden">
+      <CardContent className="p-0">
+        <div className="relative w-full" style={{ aspectRatio: '9/16' }}>
           <div 
             ref={mapContainer}
             className="absolute inset-0"
-            style={{ aspectRatio: '9/16' }}
           />
           {isLoading && (
             <div className="absolute inset-0 flex items-center justify-center bg-gray-100/80">
@@ -236,26 +228,20 @@ export default function AdminWebPage() {
 
         <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
           <Card className="bg-white shadow-sm">
-            <CardHeader className="pb-2">
-              <CardTitle className="text-base">Casas</CardTitle>
-            </CardHeader>
-            <CardContent>
+            <CardContent className="py-2">
+              <p className="text-base font-medium">Casas</p>
               <p className="text-2xl font-bold">{propertyCounts.house}</p>
             </CardContent>
           </Card>
           <Card className="bg-white shadow-sm">
-            <CardHeader className="pb-2">
-              <CardTitle className="text-base">Terrenos</CardTitle>
-            </CardHeader>
-            <CardContent>
+            <CardContent className="py-2">
+              <p className="text-base font-medium">Terrenos</p>
               <p className="text-2xl font-bold">{propertyCounts.land}</p>
             </CardContent>
           </Card>
           <Card className="bg-white shadow-sm">
-            <CardHeader className="pb-2">
-              <CardTitle className="text-base">Comercial</CardTitle>
-            </CardHeader>
-            <CardContent>
+            <CardContent className="py-2">
+              <p className="text-base font-medium">Comercial</p>
               <p className="text-2xl font-bold">{propertyCounts.commercial}</p>
             </CardContent>
           </Card>
