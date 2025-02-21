@@ -122,7 +122,7 @@ const MapComponent = memo(({ properties }: { properties: PropertyWithUser[] }) =
         });
         map.current.fitBounds(bounds, { padding: 40 });
 
-        // Forzar el reajuste del mapa después de renderizar
+        // Asegurar que el mapa se renderice correctamente
         setTimeout(() => {
           if (map.current) {
             google.maps.event.trigger(map.current, 'resize');
@@ -158,17 +158,11 @@ const MapComponent = memo(({ properties }: { properties: PropertyWithUser[] }) =
   }, [properties, toast]);
 
   return (
-    <div className="w-full overflow-hidden rounded-lg">
-      <div 
-        className="relative w-full"
-        style={{ 
-          paddingTop: '177.78%', // Proporción 9:16 (16/9 = 1.7778)
-          background: '#f1f5f9'
-        }}
-      >
+    <div className="grid grid-cols-1 w-full">
+      <div className="aspect-[9/16] w-full relative bg-gray-100 rounded-lg overflow-hidden">
         <div 
           ref={mapRef}
-          className="absolute top-0 left-0 w-full h-full"
+          className="absolute inset-0 flex items-stretch"
         />
         {isLoading && (
           <div className="absolute inset-0 flex items-center justify-center bg-gray-100/80">
