@@ -23,7 +23,6 @@ export default function PropertiesPage() {
   const { data: properties = [] } = useQuery<Property[]>({
     queryKey: ['/api/properties'],
     staleTime: 300000,
-    cacheTime: 600000,
     refetchOnWindowFocus: false,
   });
 
@@ -68,10 +67,6 @@ export default function PropertiesPage() {
         };
 
         googleMap = new google.maps.Map(mapRef.current, mapOptions);
-
-        currentMarkers.forEach(marker => marker.setMap(null));
-        currentMarkers = [];
-        currentInfoWindows = [];
 
         const bounds = new google.maps.LatLngBounds();
 
@@ -133,10 +128,7 @@ export default function PropertiesPage() {
         });
 
         googleMap.fitBounds(bounds);
-
-        if (isMounted) {
-          setIsLoading(false);
-        }
+        setIsLoading(false);
 
       } catch (error) {
         console.error('Error loading map:', error);
@@ -156,9 +148,7 @@ export default function PropertiesPage() {
     return () => {
       isMounted = false;
       if (currentMarkers.length > 0) {
-        currentMarkers.forEach(marker => {
-          marker.setMap(null);
-        });
+        currentMarkers.forEach(marker => marker.setMap(null));
       }
       if (currentInfoWindows.length > 0) {
         currentInfoWindows.forEach(window => window.close());
@@ -170,9 +160,9 @@ export default function PropertiesPage() {
   }, [properties, toast]);
 
   return (
-    <div className="min-h-screen flex items-center justify-center">
+    <div className="h-screen flex items-center justify-center bg-gray-100">
       <PhonePreview>
-        <div className="flex flex-col h-full">
+        <div className="flex flex-col h-full bg-white">
           <header className="bg-[#F05023] px-4 py-3 flex-none">
             <div className="flex items-center justify-between">
               <Button 
@@ -200,13 +190,13 @@ export default function PropertiesPage() {
             </div>
           </header>
 
-          <main className="flex-1 overflow-y-auto bg-cover bg-center bg-fixed">
+          <main className="flex-1 overflow-y-auto">
             <div className="p-4 space-y-4">
-              <h1 className="text-xl font-bold bg-white/90 backdrop-blur-sm p-3 rounded-lg">
+              <h1 className="text-xl font-bold">
                 Mis Propiedades
               </h1>
 
-              <Card className="bg-white/90 backdrop-blur-sm">
+              <Card>
                 <CardHeader>
                   <CardTitle className="flex items-center gap-2">
                     <MapPin className="h-5 w-5" />
@@ -217,6 +207,7 @@ export default function PropertiesPage() {
                   <div 
                     ref={mapRef}
                     className="w-full h-[300px] rounded-lg relative bg-gray-100"
+                    style={{ minHeight: '300px' }}
                   >
                     {isLoading && (
                       <div className="absolute inset-0 flex items-center justify-center bg-gray-100/80">
@@ -227,7 +218,7 @@ export default function PropertiesPage() {
                 </CardContent>
               </Card>
 
-              <Card className="bg-white/90 backdrop-blur-sm">
+              <Card>
                 <CardContent className="p-6">
                   {properties.length === 0 ? (
                     <div className="text-center py-8">
