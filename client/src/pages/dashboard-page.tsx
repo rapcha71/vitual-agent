@@ -65,28 +65,28 @@ export default function DashboardPage() {
               <CardTitle className="text-center">Mis Propiedades</CardTitle>
             </CardHeader>
             <CardContent>
-              <div className="grid grid-cols-3 gap-2">
-                <Card className="flex flex-col items-center">
-                  <CardHeader className="pb-2 text-center w-full">
-                    <CardTitle className="text-sm text-center">Casas</CardTitle>
+              <div className="grid grid-cols-3 gap-4">
+                <Card className="flex flex-col justify-center items-center h-[120px]">
+                  <CardHeader className="pb-0 pt-2 space-y-0">
+                    <CardTitle className="text-sm">Casas</CardTitle>
                   </CardHeader>
-                  <CardContent className="text-center pt-0">
+                  <CardContent className="text-center py-2">
                     <p className="text-2xl font-bold">{propertyCounts.house}</p>
                   </CardContent>
                 </Card>
-                <Card className="flex flex-col items-center">
-                  <CardHeader className="pb-2 text-center w-full">
-                    <CardTitle className="text-sm text-center">Terrenos</CardTitle>
+                <Card className="flex flex-col justify-center items-center h-[120px]">
+                  <CardHeader className="pb-0 pt-2 space-y-0">
+                    <CardTitle className="text-sm">Terrenos</CardTitle>
                   </CardHeader>
-                  <CardContent className="text-center pt-0">
+                  <CardContent className="text-center py-2">
                     <p className="text-2xl font-bold">{propertyCounts.land}</p>
                   </CardContent>
                 </Card>
-                <Card className="flex flex-col items-center">
-                  <CardHeader className="pb-2 text-center w-full">
-                    <CardTitle className="text-sm text-center">Comercial</CardTitle>
+                <Card className="flex flex-col justify-center items-center h-[120px]">
+                  <CardHeader className="pb-0 pt-2 space-y-0">
+                    <CardTitle className="text-sm">Comercial</CardTitle>
                   </CardHeader>
-                  <CardContent className="text-center pt-0">
+                  <CardContent className="text-center py-2">
                     <p className="text-2xl font-bold">{propertyCounts.commercial}</p>
                   </CardContent>
                 </Card>
