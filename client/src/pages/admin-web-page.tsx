@@ -3,7 +3,7 @@ import { useQuery } from "@tanstack/react-query";
 import { PropertyWithUser } from "@shared/schema";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { LogOut, Image, MapPin, Menu } from "lucide-react";
+import { LogOut, Image, MapPin, Menu, ChevronLeft } from "lucide-react";
 import { useLocation } from "wouter";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
@@ -127,7 +127,6 @@ const MapComponent = memo(({ properties }: { properties: PropertyWithUser[] }) =
     };
   }, [properties, toast]);
 
-  // Ajustar altura del mapa según el tamaño de pantalla
   return (
     <div className="relative w-full bg-gray-50 rounded-lg">
       <div
@@ -172,123 +171,132 @@ export default function AdminWebPage() {
 
   return (
     <div className="min-h-screen bg-gray-100">
-      {/* Header Responsive */}
-      <header className="bg-[#F05023] px-4 py-3 sticky top-0 z-50">
-        <div className="flex items-center justify-between max-w-7xl mx-auto">
-          <Button
-            variant="ghost"
-            className="text-white hover:text-white/80 p-0"
-            onClick={() => setLocation("/dashboard")}
-          >
-            <Menu className="h-5 w-5" />
-          </Button>
-          <div className="flex items-center">
-            <img
-              src="/assets/logo.png"
-              alt="Virtual Agent"
-              className="h-8 md:h-10 w-auto"
-            />
-          </div>
-          <Button
-            variant="ghost"
-            size="sm"
-            className="text-white hover:text-white/80 p-0"
-            onClick={() => logoutMutation.mutate()}
-          >
-            <LogOut className="h-5 w-5" />
-          </Button>
+      {/* Header consistente con el estilo móvil */}
+      <header className="bg-[#F05023] px-4 py-3 flex items-center justify-between">
+        <Button 
+          variant="ghost" 
+          className="text-white hover:text-white/80 p-0"
+          onClick={() => setLocation("/dashboard")}
+        >
+          <ChevronLeft className="h-5 w-5" />
+        </Button>
+        <div className="flex items-center gap-4">
+          <img 
+            src="/assets/logo.png"
+            alt="Virtual Agent"
+            className="h-10 w-auto"
+          />
         </div>
+        <Button 
+          variant="ghost" 
+          size="sm" 
+          className="text-white hover:text-white/80 p-0"
+          onClick={() => logoutMutation.mutate()}
+        >
+          <LogOut className="h-5 w-5" />
+        </Button>
       </header>
 
-      {/* Contenido Principal Responsive */}
-      <div className="p-4 max-w-7xl mx-auto">
-        {/* Stats Cards - Grid responsive */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-4">
-          <Card>
-            <CardHeader className="pb-2">
-              <CardTitle className="text-lg">Casas</CardTitle>
-            </CardHeader>
-            <CardContent>
-              <p className="text-2xl md:text-3xl font-bold">{propertyCounts.house}</p>
-            </CardContent>
-          </Card>
-          <Card>
-            <CardHeader className="pb-2">
-              <CardTitle className="text-lg">Terrenos</CardTitle>
-            </CardHeader>
-            <CardContent>
-              <p className="text-2xl md:text-3xl font-bold">{propertyCounts.land}</p>
-            </CardContent>
-          </Card>
-          <Card>
-            <CardHeader className="pb-2">
-              <CardTitle className="text-lg">Locales Comerciales</CardTitle>
-            </CardHeader>
-            <CardContent>
-              <p className="text-2xl md:text-3xl font-bold">{propertyCounts.commercial}</p>
-            </CardContent>
-          </Card>
-        </div>
+      {/* Main Content */}
+      <main className="p-4 space-y-4">
+        <h1 className="text-2xl font-bold">Panel de Administración</h1>
 
-        {/* Contenedor Principal con Tabs */}
         <Card>
-          <CardContent className="p-4 md:p-6">
-            <Tabs value={activeTab} onValueChange={setActiveTab}>
-              <TabsList className="grid w-full grid-cols-2 h-12">
-                <TabsTrigger value="map" className="text-sm">
-                  <MapPin className="h-4 w-4 mr-2" />
-                  Mapa
-                </TabsTrigger>
-                <TabsTrigger value="list" className="text-sm">
-                  <Image className="h-4 w-4 mr-2" />
-                  Lista
-                </TabsTrigger>
-              </TabsList>
+          <CardHeader>
+            <CardTitle>Resumen de Propiedades</CardTitle>
+          </CardHeader>
+          <CardContent>
+            <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+              <Card>
+                <CardHeader className="pb-2">
+                  <CardTitle className="text-lg">Casas</CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <p className="text-3xl font-bold">{propertyCounts.house}</p>
+                </CardContent>
+              </Card>
+              <Card>
+                <CardHeader className="pb-2">
+                  <CardTitle className="text-lg">Terrenos</CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <p className="text-3xl font-bold">{propertyCounts.land}</p>
+                </CardContent>
+              </Card>
+              <Card>
+                <CardHeader className="pb-2">
+                  <CardTitle className="text-lg">Propiedades Comerciales</CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <p className="text-3xl font-bold">{propertyCounts.commercial}</p>
+                </CardContent>
+              </Card>
+            </div>
+          </CardContent>
+        </Card>
 
-              <TabsContent value="map" className="mt-4">
+        <Tabs defaultValue="map" className="w-full">
+          <TabsList className="w-full justify-start">
+            <TabsTrigger value="map" className="flex items-center gap-2">
+              <MapPin className="h-4 w-4" />
+              Mapa
+            </TabsTrigger>
+            <TabsTrigger value="properties" className="flex items-center gap-2">
+              <Image className="h-4 w-4" />
+              Propiedades
+            </TabsTrigger>
+          </TabsList>
+
+          <TabsContent value="map">
+            <Card>
+              <CardContent>
                 <MapComponent properties={properties} />
-              </TabsContent>
+              </CardContent>
+            </Card>
+          </TabsContent>
 
-              <TabsContent value="list">
-                <div className="overflow-x-auto -mx-4 md:mx-0">
+          <TabsContent value="properties">
+            <Card>
+              <CardContent className="px-0 sm:px-6">
+                <div className="overflow-x-auto">
                   <Table>
                     <TableHeader>
                       <TableRow>
-                        <TableHead className="whitespace-nowrap">ID</TableHead>
-                        <TableHead className="whitespace-nowrap">Tipo</TableHead>
-                        <TableHead className="hidden md:table-cell">Usuario</TableHead>
-                        <TableHead className="hidden md:table-cell">Teléfono</TableHead>
-                        <TableHead>Acciones</TableHead>
+                        <TableHead className="px-2 sm:px-4">ID</TableHead>
+                        <TableHead className="px-2 sm:px-4">Tipo</TableHead>
+                        <TableHead className="hidden sm:table-cell">Usuario</TableHead>
+                        <TableHead className="hidden sm:table-cell">Teléfono</TableHead>
+                        <TableHead className="px-2 sm:px-4">Acciones</TableHead>
                       </TableRow>
                     </TableHeader>
                     <TableBody>
                       {properties.map((property) => (
                         <TableRow key={property.propertyId}>
-                          <TableCell className="font-medium">{property.propertyId}</TableCell>
-                          <TableCell>
-                            {property.propertyType === 'house' ? 'Casa' :
-                             property.propertyType === 'land' ? 'Terreno' :
+                          <TableCell className="px-2 sm:px-4">{property.propertyId}</TableCell>
+                          <TableCell className="px-2 sm:px-4">
+                            {property.propertyType === 'house' ? 'Casa' : 
+                             property.propertyType === 'land' ? 'Terreno' : 
                              'Local Comercial'}
                           </TableCell>
-                          <TableCell className="hidden md:table-cell">
+                          <TableCell className="hidden sm:table-cell">
                             {property.user.fullName || property.user.username}
                           </TableCell>
-                          <TableCell className="hidden md:table-cell">
+                          <TableCell className="hidden sm:table-cell">
                             {property.signPhoneNumber || '-'}
                           </TableCell>
-                          <TableCell>
+                          <TableCell className="px-2 sm:px-4">
                             <Dialog>
                               <DialogTrigger asChild>
-                                <Button variant="outline" size="sm" className="w-full md:w-auto">
+                                <Button variant="outline" size="sm" className="w-full sm:w-auto">
                                   Ver Detalles
                                 </Button>
                               </DialogTrigger>
-                              <DialogContent className="max-w-lg">
+                              <DialogContent className="w-[90vw] max-w-lg">
                                 <DialogHeader>
                                   <DialogTitle>Detalles de la Propiedad</DialogTitle>
                                 </DialogHeader>
                                 <div className="space-y-4">
-                                  <div className="md:hidden">
+                                  <div className="sm:hidden">
                                     <p><strong>Usuario:</strong> {property.user.fullName || property.user.username}</p>
                                     <p><strong>Teléfono:</strong> {property.signPhoneNumber || '-'}</p>
                                   </div>
@@ -302,11 +310,11 @@ export default function AdminWebPage() {
                     </TableBody>
                   </Table>
                 </div>
-              </TabsContent>
-            </Tabs>
-          </CardContent>
-        </Card>
-      </div>
+              </CardContent>
+            </Card>
+          </TabsContent>
+        </Tabs>
+      </main>
     </div>
   );
 }
