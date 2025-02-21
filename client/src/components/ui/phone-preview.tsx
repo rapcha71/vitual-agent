@@ -15,9 +15,18 @@ export function PhonePreview({ children, className, ...props }: PhonePreviewProp
         "after:content-[''] after:absolute after:bottom-2 after:left-1/2 after:-translate-x-1/2",
         "after:w-24 after:h-1 after:bg-black after:rounded-full",
         "shadow-[0_8px_16px_rgba(0,0,0,0.1)]",
+        "overflow-hidden", 
         className
       )} {...props}>
-        <div className="absolute inset-0 overflow-auto no-scrollbar">
+        {/* Contenedor principal con scroll */}
+        <div 
+          className="absolute inset-0 overflow-y-scroll no-scrollbar"
+          style={{
+            WebkitOverflowScrolling: 'touch', 
+            msOverflowStyle: 'none',
+            scrollbarWidth: 'none'
+          }}
+        >
           {children}
         </div>
       </div>
