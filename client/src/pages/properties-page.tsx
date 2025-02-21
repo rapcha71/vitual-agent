@@ -1,19 +1,20 @@
 import { useAuth } from "@/hooks/use-auth";
 import { useQuery } from "@tanstack/react-query";
 import { Property } from "@shared/schema";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { ChevronLeft, LogOut, Image } from "lucide-react";
 import { useLocation } from "wouter";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { PhonePreview } from "@/components/ui/phone-preview";
+import { Loader2 } from "lucide-react";
 
 export default function PropertiesPage() {
   const { user, logoutMutation } = useAuth();
   const [, setLocation] = useLocation();
 
-  const { data: properties = [] } = useQuery<Property[]>({
+  const { data: properties = [], isLoading } = useQuery<Property[]>({
     queryKey: ['/api/properties'],
     staleTime: 300000,
     refetchOnWindowFocus: false,
@@ -58,12 +59,17 @@ export default function PropertiesPage() {
 
               <Card>
                 <CardContent className="p-6">
-                  {properties.length === 0 ? (
+                  {isLoading ? (
+                    <div className="text-center py-4">
+                      <Loader2 className="h-8 w-8 animate-spin mx-auto text-primary" />
+                      <p className="mt-2">Cargando propiedades...</p>
+                    </div>
+                  ) : properties.length === 0 ? (
                     <div className="text-center py-8">
                       <p className="text-muted-foreground">No tienes propiedades registradas</p>
                     </div>
                   ) : (
-                    <div className="overflow-x-auto -mx-6">
+                    <div className="overflow-x-auto">
                       <Table>
                         <TableHeader>
                           <TableRow>
@@ -75,7 +81,7 @@ export default function PropertiesPage() {
                         </TableHeader>
                         <TableBody>
                           {properties.map((property) => (
-                            <TableRow key={property.id}>
+                            <TableRow key={property.propertyId}>
                               <TableCell className="font-medium">{property.propertyId}</TableCell>
                               <TableCell>
                                 {property.propertyType === 'house' ? 'Casa' : 
@@ -92,7 +98,7 @@ export default function PropertiesPage() {
                                         Ver Imagen
                                       </Button>
                                     </DialogTrigger>
-                                    <DialogContent className="max-w-4xl">
+                                    <DialogContent>
                                       <DialogHeader>
                                         <DialogTitle>Imagen de la Propiedad {property.propertyId}</DialogTitle>
                                       </DialogHeader>
