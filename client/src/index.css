@@ -32,7 +32,7 @@
   }
 
   .admin-button {
-    @apply min-w-[140px] text-center px-4 py-3 rounded-md text-sm font-medium transition-colors whitespace-nowrap;
+    @apply min-w-[160px] text-center px-4 py-3 rounded-md text-sm font-medium transition-colors whitespace-nowrap;
   }
 
   .admin-button-primary {
