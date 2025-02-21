@@ -149,7 +149,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
         if (duplicateProperty) {
           return res.status(400).json({
             success: false,
-            message: "Ya existe una propiedad con el mismo número de teléfono en un radio de 15 metros. Por este motivo, la propiedad no será registrada nuevamente.",
+            message: "Ya existe una propiedad con el mismo número de teléfono en esta ubicación. Por este motivo, la propiedad no será registrada nuevamente.",
             details: {
               existingPropertyId: duplicateProperty.propertyId,
               distance: "menos de 15 metros"
