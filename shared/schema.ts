@@ -89,13 +89,19 @@ export const insertPropertySchema = createInsertSchema(properties)
     signPhoneNumber: true,
     location: true,
     propertyId: true,
-    images: true
+    images: true,
+    kmlData: true,
+    markerColor: true
   })
   .extend({
     propertyType: z.enum([PropertyType.house, PropertyType.land, PropertyType.commercial]),
     location: LocationSchema,
     kmlData: z.string().optional(),
-    markerColor: z.string()
+    markerColor: z.string(),
+    images: z.object({
+      sign: z.string().optional(),
+      property: z.string().optional()
+    })
   });
 
 export type InsertUser = z.infer<typeof insertUserSchema>;

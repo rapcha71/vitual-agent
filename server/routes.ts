@@ -105,8 +105,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
     try {
       console.log("Received property submission request:", {
         propertyType: req.body.propertyType,
-        hasSignImage: !!req.body.images?.sign,
-        hasPropertyImage: !!req.body.images?.property,
+        hasImages: !!req.body.images,
         location: req.body.location
       });
 
@@ -116,7 +115,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
       // Extract text from sign image if present
       let extractedPhoneNumber = null;
-      if (propertyData.images.sign) {
+      if (propertyData.images?.sign) {
         try {
           const extractedText = await ocrService.extractTextFromBase64Image(propertyData.images.sign);
           const phoneNumbers = await ocrService.extractPhoneNumbers(extractedText);
@@ -130,38 +129,18 @@ export async function registerRoutes(app: Express): Promise<Server> {
         }
       }
 
-      // Check for duplicate properties
-      if (extractedPhoneNumber) {
-        const existingProperties = await storage.getPropertiesByUserId(req.user.id);
-        const duplicates = existingProperties.filter(existingProperty => {
-          const phoneMatch = existingProperty.signPhoneNumber === extractedPhoneNumber;
-          const locationMatch = isWithinRadius(
-            existingProperty.location,
-            propertyData.location,
-            15 // 15 meters radius
-          );
-          return phoneMatch && locationMatch;
-        });
-
-        if (duplicates.length > 0) {
-          return res.status(400).json({
-            success: false,
-            message: "Se ha detectado una propiedad similar en un radio de 15 metros con el mismo número de teléfono. Por favor, verifique que no sea una propiedad duplicada.",
-            duplicateProperties: duplicates.map(d => ({
-              propertyId: d.propertyId,
-              location: d.location,
-              signPhoneNumber: d.signPhoneNumber
-            }))
-          });
-        }
-      }
+      // Convert images object to array for storage
+      const imagesArray = [];
+      if (propertyData.images?.sign) imagesArray.push(propertyData.images.sign);
+      if (propertyData.images?.property) imagesArray.push(propertyData.images.property);
 
       // Create the property with extracted phone number if found
       const property = await storage.createProperty({
         ...propertyData,
         userId: req.user.id,
         propertyId,
-        signPhoneNumber: extractedPhoneNumber || propertyData.signPhoneNumber
+        signPhoneNumber: extractedPhoneNumber || propertyData.signPhoneNumber,
+        images: imagesArray
       });
 
       console.log("Property created successfully:", property.propertyId);
