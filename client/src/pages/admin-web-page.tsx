@@ -9,7 +9,7 @@ import { Table, TableBody, TableCaption, TableCell, TableHead, TableHeader, Tabl
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Loader2 } from "lucide-react";
-import { useEffect, useState, useRef, useCallback } from "react";
+import { useEffect, useState, useRef, memo } from "react";
 import { Loader } from "@googlemaps/js-api-loader";
 import { useToast } from "@/hooks/use-toast";
 
@@ -26,31 +26,41 @@ const getMarkerColor = (propertyType: string) => {
   }
 };
 
-// Componente separado para el mapa
-const MapView = ({ properties }: { properties: PropertyWithUser[] }) => {
+// Componente del mapa memoizado
+const MapView = memo(({ properties }: { properties: PropertyWithUser[] }) => {
   const { toast } = useToast();
   const [mapLoading, setMapLoading] = useState(true);
   const mapRef = useRef<google.maps.Map | null>(null);
   const markersRef = useRef<google.maps.Marker[]>([]);
   const mapContainerRef = useRef<HTMLDivElement>(null);
+  const mountedRef = useRef(true);
 
-  const clearMap = useCallback(() => {
+  // Limpieza del mapa
+  const cleanupMap = () => {
     if (markersRef.current) {
-      markersRef.current.forEach(marker => marker.setMap(null));
+      markersRef.current.forEach(marker => {
+        if (marker) {
+          google.maps.event.clearInstanceListeners(marker);
+          marker.setMap(null);
+        }
+      });
       markersRef.current = [];
     }
     if (mapRef.current) {
+      google.maps.event.clearInstanceListeners(mapRef.current);
       mapRef.current = null;
     }
-  }, []);
+  };
 
   useEffect(() => {
+    mountedRef.current = true;
+
     const initMap = async () => {
       if (!mapContainerRef.current || !properties.length) return;
 
       try {
         setMapLoading(true);
-        clearMap();
+        cleanupMap();
 
         if (!import.meta.env.VITE_GOOGLE_MAPS_API_KEY) {
           throw new Error('Google Maps API key is missing');
@@ -64,7 +74,7 @@ const MapView = ({ properties }: { properties: PropertyWithUser[] }) => {
 
         const google = await loader.load();
 
-        if (!mapContainerRef.current) return;
+        if (!mountedRef.current || !mapContainerRef.current) return;
 
         const map = new google.maps.Map(mapContainerRef.current, {
           center: { lat: 9.9281, lng: -84.0907 },
@@ -76,7 +86,12 @@ const MapView = ({ properties }: { properties: PropertyWithUser[] }) => {
 
         mapRef.current = map;
 
-        const newMarkers = properties.map(property => {
+        if (!mountedRef.current) {
+          cleanupMap();
+          return;
+        }
+
+        const markers = properties.map(property => {
           const marker = new google.maps.Marker({
             position: {
               lat: property.location.lat,
@@ -114,43 +129,52 @@ const MapView = ({ properties }: { properties: PropertyWithUser[] }) => {
           return marker;
         });
 
-        markersRef.current = newMarkers;
+        markersRef.current = markers;
 
       } catch (error) {
         console.error('Error initializing map:', error);
-        toast({
-          title: "Error al cargar el mapa",
-          description: "Por favor, intente nuevamente.",
-          variant: "destructive"
-        });
+        if (mountedRef.current) {
+          toast({
+            title: "Error al cargar el mapa",
+            description: "Por favor, intente nuevamente.",
+            variant: "destructive"
+          });
+        }
       } finally {
-        setMapLoading(false);
+        if (mountedRef.current) {
+          setMapLoading(false);
+        }
       }
     };
 
     initMap();
 
     return () => {
-      clearMap();
+      mountedRef.current = false;
+      cleanupMap();
     };
-  }, [properties, toast, clearMap]);
+  }, [properties, toast]);
 
   return (
-    <div
-      ref={mapContainerRef}
-      className="w-full h-[600px] rounded-lg relative bg-gray-50"
-    >
-      {mapLoading && (
-        <div className="absolute inset-0 flex items-center justify-center bg-gray-100/80 z-10 rounded-lg">
-          <div className="text-center">
-            <Loader2 className="h-8 w-8 animate-spin mx-auto text-primary mb-2" />
-            <p className="text-sm text-muted-foreground">Cargando mapa...</p>
+    <div className="w-full h-[600px]">
+      <div
+        ref={mapContainerRef}
+        className="w-full h-full rounded-lg relative bg-gray-50"
+      >
+        {mapLoading && (
+          <div className="absolute inset-0 flex items-center justify-center bg-gray-100/80 z-10 rounded-lg">
+            <div className="text-center">
+              <Loader2 className="h-8 w-8 animate-spin mx-auto text-primary mb-2" />
+              <p className="text-sm text-muted-foreground">Cargando mapa...</p>
+            </div>
           </div>
-        </div>
-      )}
+        )}
+      </div>
     </div>
   );
-};
+});
+
+MapView.displayName = 'MapView';
 
 export default function AdminWebPage() {
   const { user, logoutMutation } = useAuth();
@@ -245,7 +269,9 @@ export default function AdminWebPage() {
               </TabsList>
 
               <TabsContent value="map" className="mt-4">
-                {activeTab === "map" && <MapView properties={properties} />}
+                {activeTab === "map" && properties.length > 0 && (
+                  <MapView key="map-view" properties={properties} />
+                )}
               </TabsContent>
 
               <TabsContent value="list">
