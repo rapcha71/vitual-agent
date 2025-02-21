@@ -304,7 +304,7 @@ export default function AdminWebPage() {
             </div>
 
             <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full mt-4">
-              <TabsList className="w-full grid grid-cols-2 h-auto">
+              <TabsList className="w-full grid grid-cols-3 h-12">
                 <TabsTrigger value="map" className="text-sm">
                   <MapPin className="h-4 w-4 mr-2" />
                   Mapa
@@ -314,7 +314,7 @@ export default function AdminWebPage() {
                   Lista
                 </TabsTrigger>
                 {user.isSuperAdmin && (
-                  <TabsTrigger value="roles" className="text-sm col-span-2">
+                  <TabsTrigger value="roles" className="text-sm">
                     <Users className="h-4 w-4 mr-2" />
                     Roles
                   </TabsTrigger>
@@ -407,40 +407,44 @@ export default function AdminWebPage() {
                   <div className="space-y-4">
                     <Card>
                       <CardContent className="pt-6">
-                        <Table>
-                          <TableHeader>
-                            <TableRow>
-                              <TableHead>Usuario</TableHead>
-                              <TableHead>Rol</TableHead>
-                              <TableHead className="w-[100px]">Admin</TableHead>
-                            </TableRow>
-                          </TableHeader>
-                          <TableBody>
-                            {users.map((adminUser) => (
-                              <TableRow key={adminUser.id}>
-                                <TableCell>{adminUser.fullName || adminUser.username}</TableCell>
-                                <TableCell>
-                                  {adminUser.isSuperAdmin ? 'Super Admin' : 
-                                   adminUser.isAdmin ? 'Admin' : 'Usuario'}
-                                </TableCell>
-                                <TableCell>
-                                  {!adminUser.isSuperAdmin && (
-                                    <Switch
-                                      checked={adminUser.isAdmin}
-                                      onCheckedChange={(checked) => 
-                                        updateRoleMutation.mutate({ 
-                                          userId: adminUser.id, 
-                                          isAdmin: checked 
-                                        })
-                                      }
-                                      disabled={updateRoleMutation.isPending}
-                                    />
-                                  )}
-                                </TableCell>
-                              </TableRow>
-                            ))}
-                          </TableBody>
-                        </Table>
+                        <div className="overflow-x-auto -mx-6">
+                          <div className="inline-block min-w-full align-middle">
+                            <Table>
+                              <TableHeader>
+                                <TableRow>
+                                  <TableHead className="w-40">Usuario</TableHead>
+                                  <TableHead className="w-32">Rol</TableHead>
+                                  <TableHead className="w-24 text-right pr-6">Admin</TableHead>
+                                </TableRow>
+                              </TableHeader>
+                              <TableBody>
+                                {users.map((adminUser) => (
+                                  <TableRow key={adminUser.id}>
+                                    <TableCell className="py-2">{adminUser.fullName || adminUser.username}</TableCell>
+                                    <TableCell className="py-2">
+                                      {adminUser.isSuperAdmin ? 'Super Admin' : 
+                                       adminUser.isAdmin ? 'Admin' : 'Usuario'}
+                                    </TableCell>
+                                    <TableCell className="py-2 text-right pr-6">
+                                      {!adminUser.isSuperAdmin && (
+                                        <Switch
+                                          checked={adminUser.isAdmin}
+                                          onCheckedChange={(checked) => 
+                                            updateRoleMutation.mutate({ 
+                                              userId: adminUser.id, 
+                                              isAdmin: checked 
+                                            })
+                                          }
+                                          disabled={updateRoleMutation.isPending}
+                                        />
+                                      )}
+                                    </TableCell>
+                                  </TableRow>
+                                ))}
+                              </TableBody>
+                            </Table>
+                          </div>
+                        </div>
                       </CardContent>
                     </Card>
                   </div>
