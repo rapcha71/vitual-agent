@@ -160,7 +160,7 @@ const MapComponent = memo(({ properties }: { properties: PropertyWithUser[] }) =
   return (
     <div className="grid grid-cols-1 w-full max-w-[430px] mx-auto">
       <div className="aspect-[9/16] w-full relative bg-gray-100 rounded-lg overflow-hidden shadow-md">
-        <div 
+        <div
           ref={mapRef}
           className="absolute inset-0 flex items-stretch"
           style={{
@@ -205,35 +205,37 @@ export default function AdminWebPage() {
     <div className="min-h-screen bg-gray-100">
       {/* Header */}
       <header className="bg-[#F05023] px-4 py-3 flex items-center justify-between fixed top-0 w-full z-50">
-        <Button
-          variant="ghost"
-          className="text-white hover:text-white/80 p-0"
-          onClick={() => setLocation("/dashboard")}
-        >
-          <ChevronLeft className="h-5 w-5" />
-        </Button>
-        <div className="flex items-center gap-4">
-          <img
-            src="/assets/logo.png"
-            alt="Virtual Agent"
-            className="h-8 w-auto"
-          />
+        <div className="w-full max-w-[430px] mx-auto flex items-center justify-between">
+          <Button
+            variant="ghost"
+            className="text-white hover:text-white/80 p-0"
+            onClick={() => setLocation("/dashboard")}
+          >
+            <ChevronLeft className="h-5 w-5" />
+          </Button>
+          <div className="flex items-center gap-4">
+            <img
+              src="/assets/logo.png"
+              alt="Virtual Agent"
+              className="h-8 w-auto"
+            />
+          </div>
+          <Button
+            variant="ghost"
+            size="sm"
+            className="text-white hover:text-white/80 p-0"
+            onClick={() => logoutMutation.mutate()}
+          >
+            <LogOut className="h-5 w-5" />
+          </Button>
         </div>
-        <Button
-          variant="ghost"
-          size="sm"
-          className="text-white hover:text-white/80 p-0"
-          onClick={() => logoutMutation.mutate()}
-        >
-          <LogOut className="h-5 w-5" />
-        </Button>
       </header>
 
       {/* Main Content */}
-      <main className="pt-16 px-4 space-y-4 max-w-[430px] mx-auto">
+      <main className="pt-16 px-4 pb-4 w-full max-w-[430px] mx-auto">
         <h1 className="text-xl font-bold">Panel de Administración</h1>
 
-        <div className="grid grid-cols-3 gap-2">
+        <div className="grid grid-cols-3 gap-2 mt-4">
           <Card className="bg-white shadow-sm">
             <CardContent className="py-2">
               <p className="text-base font-medium">Casas</p>
@@ -254,7 +256,7 @@ export default function AdminWebPage() {
           </Card>
         </div>
 
-        <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
+        <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full mt-4">
           <TabsList className="w-full grid grid-cols-2 h-12">
             <TabsTrigger value="map" className="text-sm">
               <MapPin className="h-4 w-4 mr-2" />
