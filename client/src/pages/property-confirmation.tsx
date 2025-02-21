@@ -1,16 +1,15 @@
 import { PhonePreview } from "@/components/ui/phone-preview";
 import { useLocation } from "wouter";
-import { useQuery } from "@tanstack/react-query";
 import { Button } from "@/components/ui/button";
 import { ChevronLeft, LogOut } from "lucide-react";
 import { useAuth } from "@/hooks/use-auth";
 
 export default function PropertyConfirmation() {
-  const [, setLocation] = useLocation();
+  const [location, setLocation] = useLocation();
   const { logoutMutation } = useAuth();
 
-  // Get the latest property from the query parameters
-  const propertyId = new URLSearchParams(window.location.search).get('id');
+  // Get the propertyId from the URL path parameter
+  const propertyId = location.split('/').pop();
 
   return (
     <div className="flex items-center justify-center min-h-screen bg-gray-100">
@@ -60,7 +59,7 @@ export default function PropertyConfirmation() {
 
               <div className="mt-6">
                 <img 
-                  src="/emoji-success.png" 
+                  src="/assets/emoji-success.png" 
                   alt="Success"
                   className="w-24 h-24 mx-auto"
                 />

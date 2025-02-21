@@ -358,7 +358,7 @@ export default function PropertyEntry() {
 
   const createPropertyMutation = useMutation({
     mutationFn: async (data: any) => {
-      await fetch('/api/properties', {
+      const response = await fetch('/api/properties', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -366,8 +366,26 @@ export default function PropertyEntry() {
         body: JSON.stringify(data),
         credentials: 'include'
       });
+
+      if (!response.ok) {
+        const error = await response.json();
+        throw new Error(error.message || 'Error al crear la propiedad');
+      }
+
+      const result = await response.json();
+      return result;
+    },
+    onSuccess: (data) => {
       queryClient.invalidateQueries({ queryKey: ['properties'] });
-      setLocation('/');
+      // Redirigir a la página de confirmación con el ID de la propiedad
+      setLocation(`/property-confirmation/${data.property.propertyId}`);
+    },
+    onError: (error: Error) => {
+      toast({
+        title: "Error",
+        description: error.message,
+        variant: "destructive"
+      });
     }
   });
 

@@ -92,10 +92,17 @@ export class DatabaseStorage implements IStorage {
 
   async createProperty(insertProperty: InsertProperty & { userId: number }): Promise<Property> {
     const markerColor = MarkerColors[insertProperty.propertyType as keyof typeof PropertyType];
+
+    // Convert images object to array if it's not already an array
+    const images = Array.isArray(insertProperty.images) 
+      ? insertProperty.images 
+      : Object.values(insertProperty.images).filter(Boolean);
+
     const [createdProperty] = await db
       .insert(properties)
       .values({
         ...insertProperty,
+        images,
         markerColor,
       })
       .returning();
