@@ -31,7 +31,7 @@
   }
 
   .admin-button {
-    @apply min-w-[200px] text-center px-4 py-3 rounded-md text-sm font-medium 
+    @apply min-w-[220px] text-center px-4 py-3 rounded-md text-sm font-medium 
     hover:bg-opacity-90 whitespace-nowrap transition-colors;
   }
 
