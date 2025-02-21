@@ -274,35 +274,29 @@ export default function AdminWebPage() {
                             <DialogContent className="w-[calc(100%-2rem)] max-w-md">
                               <DialogHeader>
                                 <DialogTitle>Detalles de la Propiedad</DialogTitle>
-                                <DialogDescription>
-                                  Resultado del análisis de la imagen del rótulo:
-                                </DialogDescription>
                               </DialogHeader>
                               <div className="space-y-4">
                                 <div>
-                                  <h4 className="text-sm font-medium mb-2">Texto Extraído:</h4>
-                                  <div className="p-3 bg-muted rounded-md">
-                                    <p className="text-sm whitespace-pre-wrap">
-                                      {ocrTestResult?.extractedText || "No se extrajo texto"}
-                                    </p>
+                                  <h4 className="text-sm font-medium mb-2">Imágenes</h4>
+                                  <div className="grid grid-cols-1 gap-2 mt-2">
+                                    {Array.isArray(property.images) ? property.images.map((image, idx) => (
+                                      <img 
+                                        key={idx}
+                                        src={image}
+                                        alt={`Imagen ${idx + 1}`}
+                                        className="w-full h-48 object-cover rounded-lg"
+                                      />
+                                    )) : (
+                                      <p className="text-sm text-muted-foreground">No hay imágenes disponibles</p>
+                                    )}
                                   </div>
                                 </div>
                                 <div>
-                                  <h4 className="text-sm font-medium mb-2">Números de Teléfono Detectados:</h4>
+                                  <h4 className="text-sm font-medium mb-2">Ubicación</h4>
                                   <div className="p-3 bg-muted rounded-md">
-                                    {ocrTestResult?.phoneNumbers?.length ? (
-                                      <ul className="space-y-1">
-                                        {ocrTestResult.phoneNumbers.map((phone, i) => (
-                                          <li key={i} className="text-sm">
-                                            <span className="font-medium text-primary">{phone}</span>
-                                          </li>
-                                        ))}
-                                      </ul>
-                                    ) : (
-                                      <p className="text-sm text-muted-foreground">
-                                        No se detectaron números de teléfono
-                                      </p>
-                                    )}
+                                    <p className="text-sm">
+                                      {property.location.lat.toFixed(6)}, {property.location.lng.toFixed(6)}
+                                    </p>
                                   </div>
                                 </div>
                               </div>
