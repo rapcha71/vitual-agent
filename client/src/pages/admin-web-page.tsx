@@ -1,9 +1,9 @@
 import { useAuth } from "@/hooks/use-auth";
-import { useQuery, useMutation } from "@tanstack/react-query";
-import { PropertyWithUser, User } from "@shared/schema";
+import { useQuery } from "@tanstack/react-query";
+import { PropertyWithUser } from "@shared/schema";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { LogOut, Image, MapPin, Shield, Users, Menu } from "lucide-react";
+import { LogOut, Image, MapPin, Menu } from "lucide-react";
 import { useLocation } from "wouter";
 import { Table, TableBody, TableCaption, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
@@ -12,9 +12,7 @@ import { Loader2 } from "lucide-react";
 import { useEffect, useState, useRef } from "react";
 import { Loader } from "@googlemaps/js-api-loader";
 import { useToast } from "@/hooks/use-toast";
-import { queryClient } from "@/lib/queryClient";
 
-// Función para obtener el color según el tipo de propiedad
 const getMarkerColor = (propertyType: string) => {
   switch (propertyType) {
     case 'house':
@@ -37,16 +35,11 @@ export default function AdminWebPage() {
   const markersRef = useRef<google.maps.Marker[]>([]);
   const mapContainerRef = useRef<HTMLDivElement>(null);
   const [activeTab, setActiveTab] = useState("map");
+  const mapInitializedRef = useRef(false);
 
-  // Queries
   const { data: properties = [], isLoading: isLoadingProperties } = useQuery<PropertyWithUser[]>({
     queryKey: ['/api/admin/properties'],
     enabled: user?.isAdmin === true
-  });
-
-  const { data: users = [], isLoading: isLoadingUsers } = useQuery<User[]>({
-    queryKey: ['/api/admin/users'],
-    enabled: user?.isSuperAdmin === true
   });
 
   // Si el usuario no es administrador, redirigir
@@ -56,10 +49,10 @@ export default function AdminWebPage() {
   }
 
   useEffect(() => {
-    let isMounted = true;
-
-    const initializeMap = async () => {
-      if (!mapContainerRef.current) return;
+    const initMap = async () => {
+      if (!mapContainerRef.current || !properties.length || mapInitializedRef.current) {
+        return;
+      }
 
       try {
         setMapLoading(true);
@@ -76,9 +69,8 @@ export default function AdminWebPage() {
 
         const google = await loader.load();
 
-        if (!isMounted) return;
+        if (!mapContainerRef.current) return;
 
-        // Create map
         const map = new google.maps.Map(mapContainerRef.current, {
           center: { lat: 9.9281, lng: -84.0907 },
           zoom: 8,
@@ -87,9 +79,8 @@ export default function AdminWebPage() {
           fullscreenControl: true,
         });
 
-        // Clear existing markers
-        markersRef.current.forEach(marker => marker.setMap(null));
-        markersRef.current = [];
+        mapRef.current = map;
+        mapInitializedRef.current = true;
 
         // Add markers
         properties.forEach(property => {
@@ -130,8 +121,6 @@ export default function AdminWebPage() {
           });
         });
 
-        mapRef.current = map;
-
       } catch (error) {
         console.error('Error initializing map:', error);
         toast({
@@ -140,23 +129,22 @@ export default function AdminWebPage() {
           variant: "destructive"
         });
       } finally {
-        if (isMounted) {
-          setMapLoading(false);
-        }
+        setMapLoading(false);
       }
     };
 
-    // Initialize map when properties are loaded
-    if (properties.length > 0) {
-      initializeMap();
+    if (activeTab === "map" && !mapInitializedRef.current) {
+      initMap();
     }
 
     return () => {
-      isMounted = false;
-      markersRef.current.forEach(marker => marker.setMap(null));
-      markersRef.current = [];
+      if (mapRef.current) {
+        markersRef.current.forEach(marker => marker.setMap(null));
+        markersRef.current = [];
+        mapInitializedRef.current = false;
+      }
     };
-  }, [properties, toast]);
+  }, [activeTab, properties, toast]);
 
   const propertyCounts = {
     house: properties.filter(p => p.propertyType === 'house').length,
@@ -166,7 +154,6 @@ export default function AdminWebPage() {
 
   return (
     <div className="min-h-screen bg-gray-100">
-      {/* Header */}
       <header className="bg-[#F05023] px-4 py-3">
         <div className="flex items-center justify-between">
           <Button
@@ -194,9 +181,7 @@ export default function AdminWebPage() {
         </div>
       </header>
 
-      {/* Content */}
       <div className="p-4">
-        {/* Stats Cards */}
         <div className="grid grid-cols-3 gap-4 mb-4">
           <Card>
             <CardHeader className="pb-2">
@@ -224,7 +209,6 @@ export default function AdminWebPage() {
           </Card>
         </div>
 
-        {/* Main Content */}
         <Card>
           <CardContent className="p-6">
             <Tabs value={activeTab} onValueChange={setActiveTab}>
@@ -239,24 +223,24 @@ export default function AdminWebPage() {
                 </TabsTrigger>
               </TabsList>
 
-              {/* Map View */}
               <TabsContent value="map" className="mt-4">
-                <div
-                  ref={mapContainerRef}
-                  className="w-full h-[600px] rounded-lg relative bg-gray-50"
-                >
-                  {mapLoading && (
-                    <div className="absolute inset-0 flex items-center justify-center bg-gray-100/80 z-10 rounded-lg">
-                      <div className="text-center">
-                        <Loader2 className="h-8 w-8 animate-spin mx-auto text-primary mb-2" />
-                        <p className="text-sm text-muted-foreground">Cargando mapa...</p>
+                {activeTab === "map" && (
+                  <div
+                    ref={mapContainerRef}
+                    className="w-full h-[600px] rounded-lg relative bg-gray-50"
+                  >
+                    {mapLoading && (
+                      <div className="absolute inset-0 flex items-center justify-center bg-gray-100/80 z-10 rounded-lg">
+                        <div className="text-center">
+                          <Loader2 className="h-8 w-8 animate-spin mx-auto text-primary mb-2" />
+                          <p className="text-sm text-muted-foreground">Cargando mapa...</p>
+                        </div>
                       </div>
-                    </div>
-                  )}
-                </div>
+                    )}
+                  </div>
+                )}
               </TabsContent>
 
-              {/* List View */}
               <TabsContent value="list">
                 <div className="overflow-x-auto">
                   <Table>
