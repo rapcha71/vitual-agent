@@ -49,10 +49,19 @@ export class HybridStorage implements IStorage {
         await this.sheetsStorage.createUser(user);
       } catch (error) {
         console.error("Error syncing user to Google Sheets:", error);
-        // Continuar incluso si falla la sincronización con Google Sheets
       }
     }
     return dbUser;
+  }
+
+  async getAllUsers(): Promise<User[]> {
+    try {
+      // Obtener usuarios solo de la base de datos principal
+      return await this.dbStorage.getAllUsers();
+    } catch (error) {
+      console.error("Error getting all users:", error);
+      throw error;
+    }
   }
 
   async createProperty(property: InsertProperty & { userId: number }): Promise<Property> {
@@ -62,7 +71,6 @@ export class HybridStorage implements IStorage {
         await this.sheetsStorage.createProperty(property);
       } catch (error) {
         console.error("Error syncing property to Google Sheets:", error);
-        // Continuar incluso si falla la sincronización con Google Sheets
       }
     }
     return dbProperty;
@@ -99,19 +107,14 @@ export class HybridStorage implements IStorage {
   }
 
   async updateUserRole(userId: number, isAdmin: boolean): Promise<User> {
-    // Actualizar el rol en la base de datos
     const updatedUser = await this.dbStorage.updateUserRole(userId, isAdmin);
-
-    // Sincronizar con Google Sheets si está disponible
     if (this.sheetsStorage) {
       try {
         await this.sheetsStorage.updateUserRole(userId, isAdmin);
       } catch (error) {
         console.error("Error syncing user role to Google Sheets:", error);
-        // Continuar incluso si falla la sincronización
       }
     }
-
     return updatedUser;
   }
 
@@ -121,12 +124,10 @@ export class HybridStorage implements IStorage {
     counter: number;
   }): Promise<void> {
     await this.dbStorage.updateUserBiometricCredentials(userId, credentials);
-    // No sincronizamos credenciales biométricas con Google Sheets por seguridad
   }
 
   async updateUserBiometricCounter(userId: number, counter: number): Promise<void> {
     await this.dbStorage.updateUserBiometricCounter(userId, counter);
-    // No sincronizamos el contador biométrico con Google Sheets por seguridad
   }
 }
 
