@@ -138,9 +138,9 @@ export default function AdminWebPage() {
             try {
               const marker = new google.maps.Marker({
                 map,
-                position: { 
-                  lat: property.location.lat, 
-                  lng: property.location.lng 
+                position: {
+                  lat: property.location.lat,
+                  lng: property.location.lng
                 },
                 title: `${property.propertyId} - ${property.user.fullName || property.user.username}`,
                 icon: {
@@ -259,9 +259,9 @@ export default function AdminWebPage() {
                         <TableCell>{property.propertyId}</TableCell>
                         <TableCell>{property.user.fullName || property.user.username}</TableCell>
                         <TableCell>
-                          {property.propertyType === 'house' ? 'Casa' : 
-                           property.propertyType === 'land' ? 'Terreno' : 
-                           'Local Comercial'}
+                          {property.propertyType === 'house' ? 'Casa' :
+                            property.propertyType === 'land' ? 'Terreno' :
+                              'Local Comercial'}
                         </TableCell>
                         <TableCell>{property.signPhoneNumber || '-'}</TableCell>
                         <TableCell>
@@ -271,31 +271,39 @@ export default function AdminWebPage() {
                                 Ver Detalles
                               </Button>
                             </DialogTrigger>
-                            <DialogContent className="w-[calc(100%-2rem)] max-w-lg mx-auto">
+                            <DialogContent className="w-[calc(100%-2rem)] max-w-md">
                               <DialogHeader>
                                 <DialogTitle>Detalles de la Propiedad</DialogTitle>
+                                <DialogDescription>
+                                  Resultado del análisis de la imagen del rótulo:
+                                </DialogDescription>
                               </DialogHeader>
                               <div className="space-y-4">
                                 <div>
-                                  <h4 className="font-medium">Imágenes</h4>
-                                  <div className="grid grid-cols-1 gap-2 mt-2">
-                                    {Array.isArray(property.images) ? property.images.map((image, idx) => (
-                                      <img 
-                                        key={idx}
-                                        src={image}
-                                        alt={`Imagen ${idx + 1}`}
-                                        className="w-full h-48 object-cover rounded-lg"
-                                      />
-                                    )) : (
-                                      <p className="text-sm text-muted-foreground">No hay imágenes disponibles</p>
-                                    )}
+                                  <h4 className="text-sm font-medium mb-2">Texto Extraído:</h4>
+                                  <div className="p-3 bg-muted rounded-md">
+                                    <p className="text-sm whitespace-pre-wrap">
+                                      {ocrTestResult?.extractedText || "No se extrajo texto"}
+                                    </p>
                                   </div>
                                 </div>
                                 <div>
-                                  <h4 className="font-medium">Ubicación</h4>
-                                  <p className="text-sm">
-                                    {property.location.lat.toFixed(6)}, {property.location.lng.toFixed(6)}
-                                  </p>
+                                  <h4 className="text-sm font-medium mb-2">Números de Teléfono Detectados:</h4>
+                                  <div className="p-3 bg-muted rounded-md">
+                                    {ocrTestResult?.phoneNumbers?.length ? (
+                                      <ul className="space-y-1">
+                                        {ocrTestResult.phoneNumbers.map((phone, i) => (
+                                          <li key={i} className="text-sm">
+                                            <span className="font-medium text-primary">{phone}</span>
+                                          </li>
+                                        ))}
+                                      </ul>
+                                    ) : (
+                                      <p className="text-sm text-muted-foreground">
+                                        No se detectaron números de teléfono
+                                      </p>
+                                    )}
+                                  </div>
                                 </div>
                               </div>
                             </DialogContent>
@@ -310,7 +318,7 @@ export default function AdminWebPage() {
 
             {/* Map View */}
             <TabsContent value="map" className="mt-0">
-              <div 
+              <div
                 ref={mapContainerRef}
                 className="w-full h-[400px] rounded-lg relative"
               >
@@ -395,15 +403,15 @@ export default function AdminWebPage() {
           <header className="bg-[#F05023] px-6 py-4">
             <div className="container mx-auto flex items-center justify-between">
               <div className="flex items-center gap-4">
-                <img 
+                <img
                   src="/assets/logo.png"
                   alt="Virtual Agent"
                   className="h-12 w-auto"
                 />
                 <h1 className="text-white text-2xl font-bold">Panel de Administración</h1>
               </div>
-              <Button 
-                variant="ghost" 
+              <Button
+                variant="ghost"
                 className="text-white hover:text-white/80"
                 onClick={() => logoutMutation.mutate()}
               >
