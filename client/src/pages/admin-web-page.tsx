@@ -9,7 +9,7 @@ import { Table, TableBody, TableCaption, TableCell, TableHead, TableHeader, Tabl
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Loader2 } from "lucide-react";
-import { useEffect, useState, useRef } from "react";
+import { useEffect, useState, useRef, useCallback } from "react";
 import { Loader } from "@googlemaps/js-api-loader";
 import { useToast } from "@/hooks/use-toast";
 
@@ -26,36 +26,31 @@ const getMarkerColor = (propertyType: string) => {
   }
 };
 
-export default function AdminWebPage() {
-  const { user, logoutMutation } = useAuth();
+// Componente separado para el mapa
+const MapView = ({ properties }: { properties: PropertyWithUser[] }) => {
   const { toast } = useToast();
-  const [, setLocation] = useLocation();
   const [mapLoading, setMapLoading] = useState(true);
   const mapRef = useRef<google.maps.Map | null>(null);
   const markersRef = useRef<google.maps.Marker[]>([]);
   const mapContainerRef = useRef<HTMLDivElement>(null);
-  const [activeTab, setActiveTab] = useState("map");
-  const mapInitializedRef = useRef(false);
 
-  const { data: properties = [], isLoading: isLoadingProperties } = useQuery<PropertyWithUser[]>({
-    queryKey: ['/api/admin/properties'],
-    enabled: user?.isAdmin === true
-  });
-
-  // Si el usuario no es administrador, redirigir
-  if (!user?.isAdmin) {
-    setLocation("/dashboard");
-    return null;
-  }
+  const clearMap = useCallback(() => {
+    if (markersRef.current) {
+      markersRef.current.forEach(marker => marker.setMap(null));
+      markersRef.current = [];
+    }
+    if (mapRef.current) {
+      mapRef.current = null;
+    }
+  }, []);
 
   useEffect(() => {
     const initMap = async () => {
-      if (!mapContainerRef.current || !properties.length || mapInitializedRef.current) {
-        return;
-      }
+      if (!mapContainerRef.current || !properties.length) return;
 
       try {
         setMapLoading(true);
+        clearMap();
 
         if (!import.meta.env.VITE_GOOGLE_MAPS_API_KEY) {
           throw new Error('Google Maps API key is missing');
@@ -80,10 +75,8 @@ export default function AdminWebPage() {
         });
 
         mapRef.current = map;
-        mapInitializedRef.current = true;
 
-        // Add markers
-        properties.forEach(property => {
+        const newMarkers = properties.map(property => {
           const marker = new google.maps.Marker({
             position: {
               lat: property.location.lat,
@@ -99,8 +92,6 @@ export default function AdminWebPage() {
               scale: 8
             }
           });
-
-          markersRef.current.push(marker);
 
           const infoWindow = new google.maps.InfoWindow({
             content: `
@@ -119,7 +110,11 @@ export default function AdminWebPage() {
           marker.addListener('click', () => {
             infoWindow.open(map, marker);
           });
+
+          return marker;
         });
+
+        markersRef.current = newMarkers;
 
       } catch (error) {
         console.error('Error initializing map:', error);
@@ -133,18 +128,44 @@ export default function AdminWebPage() {
       }
     };
 
-    if (activeTab === "map" && !mapInitializedRef.current) {
-      initMap();
-    }
+    initMap();
 
     return () => {
-      if (mapRef.current) {
-        markersRef.current.forEach(marker => marker.setMap(null));
-        markersRef.current = [];
-        mapInitializedRef.current = false;
-      }
+      clearMap();
     };
-  }, [activeTab, properties, toast]);
+  }, [properties, toast, clearMap]);
+
+  return (
+    <div
+      ref={mapContainerRef}
+      className="w-full h-[600px] rounded-lg relative bg-gray-50"
+    >
+      {mapLoading && (
+        <div className="absolute inset-0 flex items-center justify-center bg-gray-100/80 z-10 rounded-lg">
+          <div className="text-center">
+            <Loader2 className="h-8 w-8 animate-spin mx-auto text-primary mb-2" />
+            <p className="text-sm text-muted-foreground">Cargando mapa...</p>
+          </div>
+        </div>
+      )}
+    </div>
+  );
+};
+
+export default function AdminWebPage() {
+  const { user, logoutMutation } = useAuth();
+  const [, setLocation] = useLocation();
+  const [activeTab, setActiveTab] = useState("map");
+
+  const { data: properties = [] } = useQuery<PropertyWithUser[]>({
+    queryKey: ['/api/admin/properties'],
+    enabled: user?.isAdmin === true
+  });
+
+  if (!user?.isAdmin) {
+    setLocation("/dashboard");
+    return null;
+  }
 
   const propertyCounts = {
     house: properties.filter(p => p.propertyType === 'house').length,
@@ -224,21 +245,7 @@ export default function AdminWebPage() {
               </TabsList>
 
               <TabsContent value="map" className="mt-4">
-                {activeTab === "map" && (
-                  <div
-                    ref={mapContainerRef}
-                    className="w-full h-[600px] rounded-lg relative bg-gray-50"
-                  >
-                    {mapLoading && (
-                      <div className="absolute inset-0 flex items-center justify-center bg-gray-100/80 z-10 rounded-lg">
-                        <div className="text-center">
-                          <Loader2 className="h-8 w-8 animate-spin mx-auto text-primary mb-2" />
-                          <p className="text-sm text-muted-foreground">Cargando mapa...</p>
-                        </div>
-                      </div>
-                    )}
-                  </div>
-                )}
+                {activeTab === "map" && <MapView properties={properties} />}
               </TabsContent>
 
               <TabsContent value="list">
