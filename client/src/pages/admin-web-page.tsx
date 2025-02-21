@@ -40,7 +40,20 @@ const MapComponent = memo(({ properties }: { properties: PropertyWithUser[] }) =
 
         if (!isActive || !mapContainer.current) return;
 
-        // Configuración optimizada para vista vertical
+        // Forzar modo vertical
+        const forceMobileMode = () => {
+          const containerWidth = mapContainer.current?.clientWidth || 300;
+          const containerHeight = (containerWidth * 16) / 9;
+
+          if (mapContainer.current) {
+            mapContainer.current.style.height = `${containerHeight}px`;
+          }
+        };
+
+        // Aplicar modo vertical inicial
+        forceMobileMode();
+
+        // Configuración optimizada para móvil
         const mapOptions: google.maps.MapOptions = {
           center: { lat: 9.9281, lng: -84.0907 },
           zoom: 8,
@@ -121,6 +134,15 @@ const MapComponent = memo(({ properties }: { properties: PropertyWithUser[] }) =
         });
         map.current.fitBounds(bounds, { padding: 40 });
 
+        // Reajustar tamaño al cambiar dimensiones de ventana
+        window.addEventListener('resize', forceMobileMode);
+
+        // Trigger resize event después de un breve retraso
+        setTimeout(() => {
+          forceMobileMode();
+          google.maps.event.trigger(map.current, 'resize');
+        }, 100);
+
       } catch (error) {
         console.error('Error loading map:', error);
         if (isActive) {
@@ -141,6 +163,7 @@ const MapComponent = memo(({ properties }: { properties: PropertyWithUser[] }) =
 
     return () => {
       isActive = false;
+      window.removeEventListener('resize', forceMobileMode);
       markers.current.forEach(marker => {
         google.maps.event.clearInstanceListeners(marker);
         marker.setMap(null);
@@ -153,21 +176,22 @@ const MapComponent = memo(({ properties }: { properties: PropertyWithUser[] }) =
   }, [properties, toast]);
 
   return (
-    <Card className="overflow-hidden">
-      <CardContent className="p-0">
-        <div className="relative w-full" style={{ aspectRatio: '9/16' }}>
-          <div 
-            ref={mapContainer}
-            className="absolute inset-0"
-          />
-          {isLoading && (
-            <div className="absolute inset-0 flex items-center justify-center bg-gray-100/80">
-              <Loader2 className="h-8 w-8 animate-spin text-primary" />
-            </div>
-          )}
+    <div className="relative bg-gray-100 w-full overflow-hidden">
+      <div 
+        ref={mapContainer}
+        className="w-full"
+        style={{
+          minHeight: '300px',
+          aspectRatio: '9/16',
+          touchAction: 'pan-x pan-y'
+        }}
+      />
+      {isLoading && (
+        <div className="absolute inset-0 flex items-center justify-center bg-gray-100/80">
+          <Loader2 className="h-8 w-8 animate-spin text-primary" />
         </div>
-      </CardContent>
-    </Card>
+      )}
+    </div>
   );
 });
 
