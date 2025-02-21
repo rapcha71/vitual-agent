@@ -15,13 +15,14 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { useAuth } from "@/hooks/use-auth";
 import { insertUserSchema } from "@shared/schema";
-import { Redirect } from "wouter";
+import { Redirect, useLocation } from "wouter";
 import { useToast } from "@/hooks/use-toast";
 import { Loader2 } from "lucide-react";
 
 export default function AuthPage() {
   const { user, loginMutation, registerMutation } = useAuth();
   const { toast } = useToast();
+  const [, setLocation] = useLocation();
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   const loginForm = useForm({
@@ -44,14 +45,12 @@ export default function AuthPage() {
   });
 
   const handleLogin = async (data: any) => {
+    if (isSubmitting) return;
+
     try {
       setIsSubmitting(true);
-      console.log("Iniciando proceso de login", data);
       await loginMutation.mutateAsync(data);
-      toast({
-        title: "Inicio de sesión exitoso",
-        description: "Bienvenido de vuelta",
-      });
+      // La redirección se maneja automáticamente cuando el usuario se actualiza
     } catch (error: any) {
       console.error('Login error:', error);
       toast({
@@ -65,14 +64,12 @@ export default function AuthPage() {
   };
 
   const handleRegister = async (data: any) => {
+    if (isSubmitting) return;
+
     try {
       setIsSubmitting(true);
-      console.log("Iniciando proceso de registro", data);
       await registerMutation.mutateAsync(data);
-      toast({
-        title: "Registro exitoso",
-        description: "Tu cuenta ha sido creada correctamente",
-      });
+      // La redirección se maneja automáticamente cuando el usuario se actualiza
     } catch (error: any) {
       console.error('Registration error:', error);
       toast({
@@ -87,7 +84,6 @@ export default function AuthPage() {
 
   // Si el usuario ya está autenticado, redirigir al dashboard
   if (user) {
-    console.log("Usuario autenticado, redirigiendo a home");
     return <Redirect to="/" />;
   }
 
