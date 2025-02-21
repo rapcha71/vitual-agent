@@ -77,7 +77,7 @@ export default function HomePage() {
                 </p>
                 <div className="flex flex-col gap-2">
                   <Link href="/property/new">
-                    <Button className="w-full">
+                    <Button className="w-full transform transition-all duration-200 hover:scale-[1.02] active:scale-[0.98] shadow-[4px_4px_10px_rgba(240,80,35,0.3)] hover:shadow-[6px_6px_15px_rgba(240,80,35,0.4)]">
                       <Plus className="h-4 w-4 mr-2" />
                       Agregar Propiedad
                     </Button>

@@ -3,7 +3,7 @@ import { useQuery, useMutation } from "@tanstack/react-query";
 import { PropertyWithUser } from "@shared/schema";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { LogOut, MapPin, Image, ChevronLeft, Users } from "lucide-react";
+import { LogOut, MapPin, Image, ChevronLeft, Users, Plus } from "lucide-react";
 import { useLocation } from "wouter";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
@@ -281,7 +281,13 @@ export default function AdminWebPage() {
 
           <main className="pt-[60px] px-4 pb-4">
             <h1 className="text-xl font-bold">Panel de Administración</h1>
-
+            <Button 
+              onClick={() => setLocation("/property/new")}
+              className="transform transition-all duration-200 hover:scale-[1.02] active:scale-[0.98] shadow-[4px_4px_10px_rgba(240,80,35,0.3)] hover:shadow-[6px_6px_15px_rgba(240,80,35,0.4)]"
+            >
+              <Plus className="h-4 w-4 mr-2" />
+              Agregar Propiedad
+            </Button>
             <div className="grid grid-cols-3 gap-2 mt-4">
               <Card className="bg-white shadow-sm">
                 <CardContent className="py-2">
