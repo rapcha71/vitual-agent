@@ -11,6 +11,26 @@ import { requireAdmin } from "./middleware/admin";
 export async function registerRoutes(app: Express): Promise<Server> {
   setupAuth(app);
 
+  // Ruta para obtener todos los usuarios (solo super admin)
+  app.get("/api/admin/users", requireAdmin, async (req, res) => {
+    try {
+      // Verificar si el usuario es super admin
+      if (!req.user?.isSuperAdmin) {
+        return res.status(403).json({ 
+          message: "Esta acción requiere privilegios de super administrador" 
+        });
+      }
+
+      const users = await storage.getAllUsers();
+      res.json(users);
+    } catch (error: any) {
+      console.error("Error fetching users:", error);
+      res.status(500).json({ 
+        message: error.message || "Error al obtener la lista de usuarios" 
+      });
+    }
+  });
+
   // Admin route to get all properties with user information
   app.get("/api/admin/properties", requireAdmin, async (req, res) => {
     try {

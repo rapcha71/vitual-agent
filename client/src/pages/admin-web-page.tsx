@@ -1,25 +1,67 @@
 import { useAuth } from "@/hooks/use-auth";
-import { useQuery } from "@tanstack/react-query";
-import { PropertyWithUser } from "@shared/schema";
+import { useQuery, useMutation } from "@tanstack/react-query";
+import { PropertyWithUser, User } from "@shared/schema";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { LogOut, Image, MapPin } from "lucide-react";
+import { LogOut, Image, MapPin, Shield, Users } from "lucide-react";
 import { useLocation } from "wouter";
 import { Table, TableBody, TableCaption, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger, DialogDescription, DialogFooter } from "@/components/ui/dialog";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Loader2 } from "lucide-react";
 import { useEffect, useState, useRef } from "react";
 import { Loader } from "@googlemaps/js-api-loader";
+import { useToast } from "@/hooks/use-toast";
+import { queryClient } from "@/lib/queryClient";
 
 export default function AdminWebPage() {
   const { user, logoutMutation } = useAuth();
+  const { toast } = useToast();
   const [, setLocation] = useLocation();
   const [mapLoading, setMapLoading] = useState(true);
   const mapRef = useRef<google.maps.Map | null>(null);
   const markersRef = useRef<google.maps.Marker[]>([]);
   const mapContainerRef = useRef<HTMLDivElement>(null);
   const [activeTab, setActiveTab] = useState("table");
+  const [selectedUserId, setSelectedUserId] = useState<number | null>(null);
+  const [isRoleDialogOpen, setIsRoleDialogOpen] = useState(false);
+
+  // Query para obtener todos los usuarios
+  const { data: users = [], isLoading: isLoadingUsers } = useQuery<User[]>({
+    queryKey: ['/api/admin/users'],
+    enabled: user?.isSuperAdmin === true
+  });
+
+  // Mutation para actualizar roles
+  const updateRoleMutation = useMutation({
+    mutationFn: async ({ userId, isAdmin }: { userId: number; isAdmin: boolean }) => {
+      const response = await fetch('/api/admin/roles', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ userId, isAdmin })
+      });
+      if (!response.ok) {
+        const error = await response.json();
+        throw new Error(error.message);
+      }
+      return response.json();
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['/api/admin/users'] });
+      toast({
+        title: "Rol actualizado",
+        description: "Los privilegios de administrador han sido actualizados exitosamente.",
+      });
+      setIsRoleDialogOpen(false);
+    },
+    onError: (error: Error) => {
+      toast({
+        title: "Error al actualizar rol",
+        description: error.message,
+        variant: "destructive",
+      });
+    }
+  });
 
   // Si el usuario no es administrador, redirigir al dashboard
   useEffect(() => {
@@ -200,6 +242,12 @@ export default function AdminWebPage() {
                   <MapPin className="h-4 w-4" />
                   Vista de Mapa
                 </TabsTrigger>
+                {user?.isSuperAdmin && (
+                  <TabsTrigger value="roles" className="flex items-center gap-2">
+                    <Users className="h-4 w-4" />
+                    Gestión de Roles
+                  </TabsTrigger>
+                )}
               </TabsList>
 
               <TabsContent value="table" className="mt-0">
@@ -305,6 +353,94 @@ export default function AdminWebPage() {
                   )}
                 </div>
               </TabsContent>
+
+              {user?.isSuperAdmin && (
+                <TabsContent value="roles" className="mt-0">
+                  <div className="rounded-md border">
+                    <Table>
+                      <TableCaption>Gestión de roles de administrador</TableCaption>
+                      <TableHeader>
+                        <TableRow>
+                          <TableHead>Usuario</TableHead>
+                          <TableHead>Correo</TableHead>
+                          <TableHead>Rol Actual</TableHead>
+                          <TableHead>Acciones</TableHead>
+                        </TableRow>
+                      </TableHeader>
+                      <TableBody>
+                        {users.map((u) => (
+                          <TableRow key={u.id}>
+                            <TableCell>{u.fullName || u.username}</TableCell>
+                            <TableCell>{u.username}</TableCell>
+                            <TableCell>
+                              {u.isSuperAdmin ? (
+                                <span className="text-primary font-semibold">Super Admin</span>
+                              ) : u.isAdmin ? (
+                                <span className="text-blue-600">Administrador</span>
+                              ) : (
+                                <span className="text-gray-600">Usuario</span>
+                              )}
+                            </TableCell>
+                            <TableCell>
+                              {!u.isSuperAdmin && (
+                                <Button
+                                  variant="outline"
+                                  size="sm"
+                                  onClick={() => {
+                                    setSelectedUserId(u.id);
+                                    setIsRoleDialogOpen(true);
+                                  }}
+                                >
+                                  <Shield className="h-4 w-4 mr-2" />
+                                  {u.isAdmin ? 'Revocar Admin' : 'Hacer Admin'}
+                                </Button>
+                              )}
+                            </TableCell>
+                          </TableRow>
+                        ))}
+                      </TableBody>
+                    </Table>
+                  </div>
+
+                  <Dialog open={isRoleDialogOpen} onOpenChange={setIsRoleDialogOpen}>
+                    <DialogContent>
+                      <DialogHeader>
+                        <DialogTitle>Confirmar cambio de rol</DialogTitle>
+                        <DialogDescription>
+                          {selectedUserId && users.find(u => u.id === selectedUserId)?.isAdmin
+                            ? '¿Estás seguro de que deseas revocar los privilegios de administrador de este usuario?'
+                            : '¿Estás seguro de que deseas otorgar privilegios de administrador a este usuario?'}
+                        </DialogDescription>
+                      </DialogHeader>
+                      <DialogFooter className="flex justify-end gap-2">
+                        <Button
+                          variant="outline"
+                          onClick={() => setIsRoleDialogOpen(false)}
+                        >
+                          Cancelar
+                        </Button>
+                        <Button
+                          variant="default"
+                          onClick={() => {
+                            if (selectedUserId) {
+                              const targetUser = users.find(u => u.id === selectedUserId);
+                              if (targetUser) {
+                                updateRoleMutation.mutate({
+                                  userId: selectedUserId,
+                                  isAdmin: !targetUser.isAdmin
+                                });
+                              }
+                            }
+                          }}
+                        >
+                          Confirmar
+                        </Button>
+                      </DialogFooter>
+                    </DialogContent>
+                  </Dialog>
+                </TabsContent>
+              )}
+
             </Tabs>
           </CardContent>
         </Card>

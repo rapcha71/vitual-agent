@@ -7,6 +7,7 @@ export interface IStorage {
   getUserByUsername(username: string): Promise<User | undefined>;
   getUserByRememberToken(token: string): Promise<User | undefined>;
   createUser(user: InsertUser): Promise<User>;
+  getAllUsers(): Promise<User[]>; // Nuevo método
   createProperty(property: InsertProperty & { userId: number }): Promise<Property>;
   getPropertiesByUserId(userId: number): Promise<Property[]>;
   getAllPropertiesWithUsers(): Promise<(Property & { user: User })[]>;
