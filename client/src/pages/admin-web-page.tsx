@@ -98,17 +98,19 @@ const MapComponent = memo(({ properties }: { properties: PropertyWithUser[] }) =
             title: property.propertyId,
             optimized: true,
             icon: {
-              path: google.maps.SymbolPath.CIRCLE,
+              path: 'M12 0C7.802 0 4 3.403 4 7.602C4 11.8 7.469 16.812 12 24C16.531 16.812 20 11.8 20 7.602C20 3.403 16.199 0 12 0ZM12 11C10.343 11 9 9.657 9 8C9 6.343 10.343 5 12 5C13.657 5 15 6.343 15 8C15 9.657 13.657 11 12 11Z',
               fillColor: property.propertyType === 'house' ? '#F05023' :
-                        property.propertyType === 'land' ? '#22C55E' : '#3B82F6',
-              fillOpacity: 0.9,
-              strokeWeight: 2,
-              scale: 8
+                          property.propertyType === 'land' ? '#22C55E' : '#3B82F6',
+              fillOpacity: 1,
+              strokeWeight: 1,
+              strokeColor: '#FFFFFF',
+              scale: 1.5,
+              anchor: new google.maps.Point(12, 24),
             }
           });
 
-          const propertyImage = Array.isArray(property.images) && property.images.length > 0 
-            ? property.images[0] 
+          const propertyImage = Array.isArray(property.images) && property.images.length > 0
+            ? property.images[0]
             : null;
 
           const infoWindow = new google.maps.InfoWindow({
@@ -390,7 +392,7 @@ export default function AdminWebPage() {
           <main className="pt-[60px] px-4 pb-4">
             <h1 className="text-xl font-bold">Panel de Administración</h1>
             <div className="flex gap-2 mt-4">
-              <Button 
+              <Button
                 onClick={() => setLocation("/property/new")}
                 variant="outline"
                 size="sm"
@@ -573,8 +575,8 @@ export default function AdminWebPage() {
                               {user?.isSuperAdmin && (
                                 <Dialog>
                                   <DialogTrigger asChild>
-                                    <Button 
-                                      variant="destructive" 
+                                    <Button
+                                      variant="destructive"
                                       size="sm"
                                       className="w-8 h-8 p-0"
                                     >
@@ -635,17 +637,17 @@ export default function AdminWebPage() {
                                   <TableRow key={adminUser.id}>
                                     <TableCell className="py-2">{adminUser.fullName || adminUser.username}</TableCell>
                                     <TableCell className="py-2">
-                                      {adminUser.isSuperAdmin ? 'Super Admin' : 
+                                      {adminUser.isSuperAdmin ? 'Super Admin' :
                                        adminUser.isAdmin ? 'Admin' : 'Usuario'}
                                     </TableCell>
                                     <TableCell className="py-2 text-right">
                                       {!adminUser.isSuperAdmin && (
                                         <Switch
                                           checked={adminUser.isAdmin}
-                                          onCheckedChange={(checked) => 
-                                            updateRoleMutation.mutate({ 
-                                              userId: adminUser.id, 
-                                              isAdmin: checked 
+                                          onCheckedChange={(checked) =>
+                                            updateRoleMutation.mutate({
+                                              userId: adminUser.id,
+                                              isAdmin: checked
                                             })
                                           }
                                           disabled={updateRoleMutation.isPending}
@@ -656,8 +658,8 @@ export default function AdminWebPage() {
                                       {!adminUser.isSuperAdmin && (
                                         <Dialog>
                                           <DialogTrigger asChild>
-                                            <Button 
-                                              variant="destructive" 
+                                            <Button
+                                              variant="destructive"
                                               size="sm"
                                               className="w-8 h-8 p-0"
                                             >
