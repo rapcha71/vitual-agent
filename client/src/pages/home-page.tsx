@@ -1,24 +1,33 @@
 import { Button } from "@/components/ui/button";
 import { useAuth } from "@/hooks/use-auth";
 import { Link, useLocation } from "wouter";
-import { Building2, Plus, LogOut, Home, MapPin, Building, ChevronLeft, Book, User, Shield } from "lucide-react";
+import { Plus, LogOut, ChevronLeft, Shield, User, Building } from "lucide-react";
 import { useQuery } from "@tanstack/react-query";
 import { Property } from "@shared/schema";
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
 import { PhonePreview } from "@/components/ui/phone-preview";
 import { RegulationsDialog } from "@/components/ui/regulations-dialog";
+import { useState } from "react";
+import { Loader2 } from "lucide-react";
+
+const ITEMS_PER_PAGE = 5;
 
 export default function HomePage() {
   const { user, logoutMutation } = useAuth();
   const [, setLocation] = useLocation();
+  const [page, setPage] = useState(1);
 
   // Optimizada la consulta con staleTime y cacheTime
-  const { data: properties = [] } = useQuery<Property[]>({
+  const { data: properties = [], isLoading } = useQuery<Property[]>({
     queryKey: ['/api/properties'],
     staleTime: 300000, // 5 minutos
     cacheTime: 600000, // 10 minutos
     refetchOnWindowFocus: false,
   });
+
+  // Calcular propiedades para la página actual
+  const paginatedProperties = properties.slice(0, page * ITEMS_PER_PAGE);
+  const hasMore = properties.length > paginatedProperties.length;
 
   return (
     <div className="flex items-center justify-center min-h-screen bg-gray-100">
@@ -95,7 +104,7 @@ export default function HomePage() {
                   variant="outline" 
                   className="w-full h-full flex flex-col items-center justify-center py-4 px-2 gap-1 text-sm"
                 >
-                  <Home className="h-4 w-4" />
+                  <Building className="h-4 w-4" />
                   <span>Propiedades</span>
                 </Button>
               </Link>
@@ -119,14 +128,18 @@ export default function HomePage() {
               </Link>
             </div>
 
-            {/* Properties List */}
-            {properties.length > 0 ? (
+            {/* Properties List with Pagination */}
+            {isLoading ? (
+              <div className="flex justify-center py-4">
+                <Loader2 className="h-6 w-6 animate-spin text-primary" />
+              </div>
+            ) : paginatedProperties.length > 0 ? (
               <div className="space-y-3">
                 <h2 className="text-lg font-semibold bg-white/90 backdrop-blur-sm p-2 rounded-lg shadow-sm">
                   Tus Propiedades
                 </h2>
                 <div className="space-y-3">
-                  {properties.map((property) => (
+                  {paginatedProperties.map((property) => (
                     <Card key={property.id} className="bg-white/90 backdrop-blur-sm shadow-sm">
                       <CardHeader className="p-3">
                         <CardTitle className="text-base">
@@ -152,6 +165,15 @@ export default function HomePage() {
                       </CardContent>
                     </Card>
                   ))}
+                  {hasMore && (
+                    <Button
+                      variant="outline"
+                      className="w-full mt-4"
+                      onClick={() => setPage(p => p + 1)}
+                    >
+                      Cargar más propiedades
+                    </Button>
+                  )}
                 </div>
               </div>
             ) : (
