@@ -51,8 +51,8 @@ const MapComponent = memo(({ properties }: { properties: PropertyWithUser[] }) =
           zoomControlOptions: {
             position: google.maps.ControlPosition.RIGHT_BOTTOM
           },
-          gestureHandling: 'cooperative',
-          controlSize: 40,
+          gestureHandling: 'greedy',
+          controlSize: 32,
           disableDefaultUI: true,
           styles: [
             {
@@ -69,7 +69,6 @@ const MapComponent = memo(({ properties }: { properties: PropertyWithUser[] }) =
         markers.current.forEach(marker => marker.setMap(null));
         markers.current = [];
 
-        // Agregar marcadores optimizados para móvil
         properties.forEach(property => {
           const marker = new google.maps.Marker({
             position: {
@@ -90,23 +89,23 @@ const MapComponent = memo(({ properties }: { properties: PropertyWithUser[] }) =
 
           const infoWindow = new google.maps.InfoWindow({
             content: `
-              <div style="padding: 16px; min-width: 280px; max-width: 320px;">
-                <h3 style="margin: 0 0 12px; font-size: 18px; font-weight: bold;">
+              <div style="padding: 16px; min-width: 200px; max-width: 280px;">
+                <h3 style="margin: 0 0 12px; font-size: 16px; font-weight: bold;">
                   Propiedad: ${property.propertyId}
                 </h3>
-                <p style="margin: 0 0 8px; font-size: 16px;">
+                <p style="margin: 0 0 8px; font-size: 14px;">
                   Tipo: ${
                     property.propertyType === 'house' ? 'Casa' :
                     property.propertyType === 'land' ? 'Terreno' :
                     'Local Comercial'
                   }
                 </p>
-                <p style="margin: 8px 0; font-size: 16px;">
+                <p style="margin: 8px 0; font-size: 14px;">
                   Teléfono: ${property.signPhoneNumber || 'No disponible'}
                 </p>
               </div>
             `,
-            maxWidth: 320,
+            maxWidth: 280,
             pixelOffset: new google.maps.Size(0, -20)
           });
 
@@ -156,18 +155,15 @@ const MapComponent = memo(({ properties }: { properties: PropertyWithUser[] }) =
   }, [properties, toast]);
 
   return (
-    <div className="relative w-full">
-      <div
-        ref={mapContainer}
-        className="touch-pan-x touch-pan-y"
-        style={{
-          width: '100vw',
-          height: '70vh',
-          margin: '0 -1rem',
-          maxHeight: '600px',
-          minHeight: '300px'
-        }}
-      />
+    <div 
+      ref={mapContainer}
+      className="w-screen h-[70vh] touch-pan-x touch-pan-y"
+      style={{
+        margin: '0 -1rem',
+        maxHeight: '600px',
+        minHeight: '300px'
+      }}
+    >
       {isLoading && (
         <div className="absolute inset-0 flex items-center justify-center bg-gray-100/80 z-10">
           <div className="text-center">
