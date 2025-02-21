@@ -30,8 +30,14 @@ const MapComponent = memo(({ properties }: { properties: PropertyWithUser[] }) =
       }
 
       try {
+        if (!import.meta.env.VITE_GOOGLE_MAPS_API_KEY) {
+          console.error('Google Maps API key is missing');
+          setIsLoading(false);
+          return;
+        }
+
         const loader = new Loader({
-          apiKey: import.meta.env.VITE_GOOGLE_MAPS_API_KEY || '',
+          apiKey: import.meta.env.VITE_GOOGLE_MAPS_API_KEY,
           version: "weekly",
           libraries: ["places"]
         });
@@ -64,11 +70,9 @@ const MapComponent = memo(({ properties }: { properties: PropertyWithUser[] }) =
 
         map.current = new google.maps.Map(mapRef.current, mapOptions);
 
-        // Limpiar marcadores existentes
         markers.current.forEach(marker => marker.setMap(null));
         markers.current = [];
 
-        // Agregar marcadores
         properties.forEach(property => {
           const marker = new google.maps.Marker({
             position: { lat: property.location.lat, lng: property.location.lng },
@@ -112,12 +116,19 @@ const MapComponent = memo(({ properties }: { properties: PropertyWithUser[] }) =
           markers.current.push(marker);
         });
 
-        // Ajustar bounds
         const bounds = new google.maps.LatLngBounds();
         markers.current.forEach(marker => {
           bounds.extend(marker.getPosition()!);
         });
         map.current.fitBounds(bounds, { padding: 40 });
+
+        // Forzar el reajuste del mapa después de renderizar
+        setTimeout(() => {
+          if (map.current) {
+            google.maps.event.trigger(map.current, 'resize');
+            map.current.fitBounds(bounds, { padding: 40 });
+          }
+        }, 100);
 
         setIsLoading(false);
 
@@ -147,14 +158,17 @@ const MapComponent = memo(({ properties }: { properties: PropertyWithUser[] }) =
   }, [properties, toast]);
 
   return (
-    <div className="w-full overflow-hidden rounded-lg bg-gray-100">
-      <div
+    <div className="w-full overflow-hidden rounded-lg">
+      <div 
         className="relative w-full"
-        style={{ paddingBottom: '177.78%' }} // Proporción 9:16
+        style={{ 
+          paddingTop: '177.78%', // Proporción 9:16 (16/9 = 1.7778)
+          background: '#f1f5f9'
+        }}
       >
-        <div
+        <div 
           ref={mapRef}
-          className="absolute inset-0"
+          className="absolute top-0 left-0 w-full h-full"
         />
         {isLoading && (
           <div className="absolute inset-0 flex items-center justify-center bg-gray-100/80">
