@@ -63,11 +63,6 @@ const MapComponent = memo(({ properties }: { properties: PropertyWithUser[] }) =
           ]
         };
 
-        // Forzar aspecto vertical
-        mapContainer.current.style.height = '100%';
-        mapContainer.current.style.width = '100%';
-        mapContainer.current.style.aspectRatio = '9/16';
-
         map.current = new google.maps.Map(mapContainer.current, mapOptions);
 
         // Limpiar marcadores existentes
@@ -129,20 +124,6 @@ const MapComponent = memo(({ properties }: { properties: PropertyWithUser[] }) =
         });
         map.current.fitBounds(bounds, { padding: 40 });
 
-        // Forzar modo móvil
-        const mobileMode = () => {
-          if (map.current) {
-            google.maps.event.trigger(map.current, 'resize');
-            map.current.setOptions({ 
-              scrollwheel: true,
-              draggable: true,
-              gestureHandling: 'greedy'
-            });
-          }
-        };
-
-        setTimeout(mobileMode, 100);
-
       } catch (error) {
         console.error('Error loading map:', error);
         if (isActive) {
@@ -175,25 +156,26 @@ const MapComponent = memo(({ properties }: { properties: PropertyWithUser[] }) =
   }, [properties, toast]);
 
   return (
-    <div className="relative w-full h-full">
-      <div 
-        ref={mapContainer}
-        className="absolute inset-0"
-        style={{
-          minHeight: '400px',
-          aspectRatio: '9/16',
-          touchAction: 'pan-x pan-y'
-        }}
-      />
-      {isLoading && (
-        <div className="absolute inset-0 flex items-center justify-center bg-gray-100/80 z-10">
-          <div className="text-center">
-            <Loader2 className="h-8 w-8 animate-spin mx-auto text-primary mb-2" />
-            <p className="text-sm text-muted-foreground">Cargando mapa...</p>
-          </div>
+    <Card>
+      <CardContent>
+        <div 
+          id="map" 
+          className="w-full h-[600px] rounded-lg relative bg-gray-100"
+          style={{ minHeight: '600px' }}
+        >
+          <div 
+            ref={mapContainer}
+            className="absolute inset-0"
+            style={{ aspectRatio: '9/16' }}
+          />
+          {isLoading && (
+            <div className="absolute inset-0 flex items-center justify-center bg-gray-100/80">
+              <Loader2 className="h-8 w-8 animate-spin text-primary" />
+            </div>
+          )}
         </div>
-      )}
-    </div>
+      </CardContent>
+    </Card>
   );
 });
 
@@ -224,23 +206,23 @@ export default function AdminWebPage() {
     <div className="min-h-screen bg-gray-100">
       {/* Header */}
       <header className="bg-[#F05023] px-4 py-3 flex items-center justify-between fixed top-0 w-full z-50">
-        <Button 
-          variant="ghost" 
+        <Button
+          variant="ghost"
           className="text-white hover:text-white/80 p-0"
           onClick={() => setLocation("/dashboard")}
         >
           <ChevronLeft className="h-5 w-5" />
         </Button>
         <div className="flex items-center gap-4">
-          <img 
+          <img
             src="/assets/logo.png"
             alt="Virtual Agent"
             className="h-8 w-auto"
           />
         </div>
-        <Button 
-          variant="ghost" 
-          size="sm" 
+        <Button
+          variant="ghost"
+          size="sm"
           className="text-white hover:text-white/80 p-0"
           onClick={() => logoutMutation.mutate()}
         >
@@ -314,8 +296,8 @@ export default function AdminWebPage() {
                         <TableCell className="font-medium">{property.propertyId}</TableCell>
                         <TableCell>
                           {property.propertyType === 'house' ? 'Casa' :
-                           property.propertyType === 'land' ? 'Terreno' :
-                           'Comercial'}
+                            property.propertyType === 'land' ? 'Terreno' :
+                              'Comercial'}
                         </TableCell>
                         <TableCell className="hidden sm:table-cell">
                           {property.user.fullName || property.user.username}
@@ -340,6 +322,30 @@ export default function AdminWebPage() {
                                   <p><strong>Teléfono:</strong> {property.signPhoneNumber || '-'}</p>
                                 </div>
                                 <p><strong>Ubicación:</strong> {property.location.lat.toFixed(6)}, {property.location.lng.toFixed(6)}</p>
+
+                                {/* Agregar visualización de imágenes */}
+                                {property.images && property.images.length > 0 && (
+                                  <div className="mt-4">
+                                    <h4 className="font-semibold mb-2">Imágenes de la Propiedad</h4>
+                                    <div className="grid grid-cols-2 gap-2">
+                                      {property.images.map((image, index) => (
+                                        <div key={index} className="relative aspect-video group">
+                                          <img
+                                            src={image}
+                                            alt={`Imagen ${index + 1} de la propiedad ${property.propertyId}`}
+                                            className="object-cover w-full h-full rounded-lg cursor-pointer"
+                                            onClick={() => {
+                                              window.open(image, '_blank');
+                                            }}
+                                          />
+                                          <div className="absolute inset-0 bg-black/50 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
+                                            <span className="text-white text-sm">Ver tamaño completo</span>
+                                          </div>
+                                        </div>
+                                      ))}
+                                    </div>
+                                  </div>
+                                )}
                               </div>
                             </DialogContent>
                           </Dialog>
