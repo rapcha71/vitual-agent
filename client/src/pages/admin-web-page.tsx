@@ -40,7 +40,6 @@ export default function AdminWebPage() {
   const [activeTab, setActiveTab] = useState("table");
   const [selectedUserId, setSelectedUserId] = useState<number | null>(null);
   const [isRoleDialogOpen, setIsRoleDialogOpen] = useState(false);
-  const [isDesktopView, setIsDesktopView] = useState(false);
 
   // Si el usuario no es administrador, redirigir al dashboard
   useEffect(() => {
@@ -69,7 +68,7 @@ export default function AdminWebPage() {
     enabled: user?.isSuperAdmin === true
   });
 
-  // Mutation para actualizar roles
+  // Mutation para actualizar roles (sin cambios)
   const updateRoleMutation = useMutation({
     mutationFn: async ({ userId, isAdmin }: { userId: number; isAdmin: boolean }) => {
       const response = await fetch('/api/admin/roles', {
@@ -100,30 +99,38 @@ export default function AdminWebPage() {
     }
   });
 
-  // Mover el loader fuera del efecto para que se inicialice una sola vez
-  const loader = new Loader({
-    apiKey: import.meta.env.VITE_GOOGLE_MAPS_API_KEY || '',
-    version: "weekly",
-    libraries: ["places"]
-  });
-
   useEffect(() => {
     let isMounted = true;
 
-    const initMap = async () => {
-      if (!mapContainerRef.current || activeTab !== "map" || !properties.length) return;
+    const initializeMap = async () => {
+      if (!mapContainerRef.current || activeTab !== "map" || !properties.length) {
+        return;
+      }
 
       try {
         setMapLoading(true);
+        console.log('Iniciando carga del mapa...');
 
-        // Cargar la API de Google Maps
+        const loader = new Loader({
+          apiKey: import.meta.env.VITE_GOOGLE_MAPS_API_KEY || '',
+          version: "weekly",
+          libraries: ["places"]
+        });
+
         await loader.load();
+        console.log('API de Google Maps cargada');
 
         if (!isMounted || !mapContainerRef.current) return;
 
-        // Initialize map
+        // Limpiar marcadores existentes
+        if (mapRef.current) {
+          markersRef.current.forEach(marker => marker.setMap(null));
+          markersRef.current = [];
+        }
+
+        console.log('Inicializando nuevo mapa');
         const map = new google.maps.Map(mapContainerRef.current, {
-          center: { lat: 9.9281, lng: -84.0907 }, // Costa Rica
+          center: { lat: 9.9281, lng: -84.0907 },
           zoom: 8,
           styles: [
             {
@@ -135,111 +142,89 @@ export default function AdminWebPage() {
         });
 
         mapRef.current = map;
+        console.log('Mapa creado');
 
-        // Clear existing markers
-        markersRef.current.forEach(marker => marker.setMap(null));
-        markersRef.current = [];
+        const bounds = new google.maps.LatLngBounds();
 
-        // Add markers if there are properties
-        if (properties.length > 0 && isMounted) {
-          const bounds = new google.maps.LatLngBounds();
+        // Agregar marcadores
+        properties.forEach(property => {
+          try {
+            const marker = new google.maps.Marker({
+              position: {
+                lat: property.location.lat,
+                lng: property.location.lng
+              },
+              map,
+              title: `${property.propertyId} - ${property.propertyType}`,
+              icon: {
+                path: google.maps.SymbolPath.CIRCLE,
+                fillColor: getMarkerColor(property.propertyType),
+                fillOpacity: 0.9,
+                strokeWeight: 2,
+                strokeColor: '#FFFFFF',
+                scale: 12
+              }
+            });
 
-          properties.forEach(property => {
-            try {
-              // Create marker
-              const marker = new google.maps.Marker({
-                map,
-                position: {
-                  lat: property.location.lat,
-                  lng: property.location.lng
-                },
-                title: `${property.propertyId} - ${property.propertyType}`,
-                label: {
-                  text: property.propertyId.toString(),
-                  color: '#FFFFFF',
-                  fontSize: '10px',
-                  fontWeight: 'bold'
-                },
-                icon: {
-                  path: google.maps.SymbolPath.CIRCLE,
-                  fillColor: getMarkerColor(property.propertyType),
-                  fillOpacity: 0.9,
-                  strokeWeight: 2,
-                  strokeColor: '#FFFFFF',
-                  scale: 12
-                }
-              });
+            bounds.extend(marker.getPosition()!);
+            markersRef.current.push(marker);
 
-              bounds.extend(marker.getPosition()!);
+            // Info window
+            const infoWindow = new google.maps.InfoWindow({
+              content: `
+                <div class="p-2">
+                  <p class="font-bold">ID: ${property.propertyId}</p>
+                  <p>Tipo: ${
+                    property.propertyType === 'house' ? 'Casa' :
+                    property.propertyType === 'land' ? 'Terreno' :
+                    'Local Comercial'
+                  }</p>
+                  ${property.signPhoneNumber ? `<p>Tel: ${property.signPhoneNumber}</p>` : ''}
+                </div>
+              `
+            });
 
-              // Add info window
-              const infoWindow = new google.maps.InfoWindow({
-                content: `
-                  <div class="p-2">
-                    <p class="font-bold">ID: ${property.propertyId}</p>
-                    <p>Tipo: ${
-                      property.propertyType === 'house' ? 'Casa' :
-                      property.propertyType === 'land' ? 'Terreno' :
-                      'Local Comercial'
-                    }</p>
-                    ${property.signPhoneNumber ? `<p>Tel: ${property.signPhoneNumber}</p>` : ''}
-                  </div>
-                `
-              });
-
-              marker.addListener('click', () => {
-                infoWindow.open(map, marker);
-              });
-
-              markersRef.current.push(marker);
-            } catch (error) {
-              console.error('Error creating marker for property:', property.propertyId, error);
-            }
-          });
-
-          // Ajustar el mapa para mostrar todos los marcadores
-          if (markersRef.current.length > 0) {
-            map.fitBounds(bounds);
+            marker.addListener('click', () => {
+              infoWindow.open(map, marker);
+            });
+          } catch (error) {
+            console.error('Error creating marker:', error);
           }
+        });
+
+        // Ajustar el mapa para mostrar todos los marcadores
+        if (markersRef.current.length > 0) {
+          map.fitBounds(bounds);
         }
 
         setMapLoading(false);
+        console.log('Mapa inicializado completamente');
       } catch (error) {
-        console.error('Error loading Google Maps:', error);
+        console.error('Error cargando el mapa:', error);
         toast({
           title: "Error",
-          description: "Hubo un problema al cargar el mapa. Por favor, intente nuevamente.",
+          description: "No se pudo cargar el mapa. Por favor, intente nuevamente.",
           variant: "destructive"
         });
         setMapLoading(false);
       }
     };
 
-    // Only initialize map when on "map" tab and there are properties
-    if (activeTab === "map" && properties.length > 0) {
-      initMap();
+    // Inicializar mapa cuando se cambia a la pestaña de mapa
+    if (activeTab === "map") {
+      console.log('Tab de mapa activado');
+      initializeMap();
     }
 
     return () => {
       isMounted = false;
-      // Cleanup markers
+      // Limpiar marcadores
       markersRef.current.forEach(marker => marker.setMap(null));
       markersRef.current = [];
-      // Clear map reference
-      if (mapRef.current) {
-        mapRef.current = null;
-      }
     };
-  }, [properties, activeTab, toast]);
+  }, [activeTab, properties, toast]);
 
-  // Contar propiedades por tipo
-  const propertyCounts = {
-    house: properties.filter(p => p.propertyType === 'house').length,
-    land: properties.filter(p => p.propertyType === 'land').length,
-    commercial: properties.filter(p => p.propertyType === 'commercial').length,
-  };
-
-  // Si está cargando los datos iniciales, mostrar un indicador de carga
+  // Render loading state
   if (isLoadingProperties) {
     return (
       <div className="flex items-center justify-center min-h-screen">
@@ -248,10 +233,17 @@ export default function AdminWebPage() {
     );
   }
 
+  // Stats counts
+  const propertyCounts = {
+    house: properties.filter(p => p.propertyType === 'house').length,
+    land: properties.filter(p => p.propertyType === 'land').length,
+    commercial: properties.filter(p => p.propertyType === 'commercial').length,
+  };
+
   const AdminContent = () => (
     <>
       {/* Stats Cards */}
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
+      <div className="grid grid-cols-3 gap-2 mb-4">
         <Card className="p-2">
           <CardHeader className="p-2">
             <CardTitle className="text-sm">Casas</CardTitle>
@@ -278,10 +270,10 @@ export default function AdminWebPage() {
         </Card>
       </div>
 
-      {/* Main Content Area */}
+      {/* Main Content */}
       <Card className="overflow-hidden">
         <CardContent className="p-4">
-          <Tabs defaultValue="table" className="w-full" onValueChange={setActiveTab}>
+          <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
             <TabsList className="grid w-full grid-cols-2 h-9 mb-4">
               <TabsTrigger value="table" className="text-xs flex items-center gap-1">
                 <LayoutGrid className="h-3 w-3" />
@@ -367,10 +359,13 @@ export default function AdminWebPage() {
             <TabsContent value="map" className="mt-0">
               <div
                 ref={mapContainerRef}
-                className="w-full h-[400px] rounded-lg relative bg-gray-100"
-                style={{ minHeight: '400px' }}
+                className="w-full h-[300px] rounded-lg relative bg-gray-100"
+                style={{
+                  minHeight: '300px',
+                  maxHeight: '300px'
+                }}
               >
-                {mapLoading && activeTab === "map" && (
+                {mapLoading && (
                   <div className="absolute inset-0 flex items-center justify-center bg-gray-100/80">
                     <Loader2 className="h-8 w-8 animate-spin text-primary" />
                   </div>
@@ -422,13 +417,11 @@ export default function AdminWebPage() {
     </>
   );
 
-  // Render different layouts based on screen size
   return (
     <div className="min-h-screen bg-gray-100">
-      {/* Mobile View using PhonePreview */}
-      <div className="flex items-center justify-center min-h-screen bg-gray-100">
+      <div className="flex items-center justify-center min-h-screen">
         <PhonePreview>
-          {/* Mobile Header */}
+          {/* Header */}
           <header className="bg-[#F05023] px-4 py-3">
             <div className="flex items-center justify-between">
               <Button
@@ -456,7 +449,7 @@ export default function AdminWebPage() {
             </div>
           </header>
 
-          {/* Mobile Content */}
+          {/* Content */}
           <div className="p-4 overflow-y-auto">
             <AdminContent />
           </div>
