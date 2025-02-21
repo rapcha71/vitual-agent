@@ -15,6 +15,20 @@ import { useToast } from "@/hooks/use-toast";
 import { queryClient } from "@/lib/queryClient";
 import { PhonePreview } from "@/components/ui/phone-preview";
 
+// Función para obtener el color según el tipo de propiedad
+const getMarkerColor = (propertyType: string) => {
+  switch (propertyType) {
+    case 'house':
+      return '#F05023'; // Rojo - color primario
+    case 'land':
+      return '#22C55E'; // Verde
+    case 'commercial':
+      return '#3B82F6'; // Azul
+    default:
+      return '#F05023';
+  }
+};
+
 export default function AdminWebPage() {
   const { user, logoutMutation } = useAuth();
   const { toast } = useToast();
@@ -124,6 +138,13 @@ export default function AdminWebPage() {
         const map = new google.maps.Map(mapContainerRef.current, {
           center: { lat: 9.9281, lng: -84.0907 }, // Costa Rica
           zoom: 8,
+          styles: [
+            {
+              featureType: "poi",
+              elementType: "labels",
+              stylers: [{ visibility: "off" }]
+            }
+          ]
         });
 
         mapRef.current = map;
@@ -136,26 +157,63 @@ export default function AdminWebPage() {
         if (properties.length > 0 && isMounted) {
           properties.forEach(property => {
             try {
+              // Create marker
               const marker = new google.maps.Marker({
                 map,
                 position: {
                   lat: property.location.lat,
                   lng: property.location.lng
                 },
-                title: `${property.propertyId} - ${property.user.fullName || property.user.username}`,
+                title: `${property.propertyId} - ${property.propertyType}`,
+                label: {
+                  text: property.propertyId.toString(),
+                  color: '#FFFFFF',
+                  fontSize: '10px',
+                  fontWeight: 'bold'
+                },
                 icon: {
                   path: google.maps.SymbolPath.CIRCLE,
-                  fillColor: property.markerColor || '#F05023',
+                  fillColor: getMarkerColor(property.propertyType),
                   fillOpacity: 0.9,
-                  strokeWeight: 1,
-                  scale: 8
+                  strokeWeight: 2,
+                  strokeColor: '#FFFFFF',
+                  scale: 12
                 }
               });
+
+              // Add info window
+              const infoWindow = new google.maps.InfoWindow({
+                content: `
+                  <div class="p-2">
+                    <p class="font-bold">ID: ${property.propertyId}</p>
+                    <p>Tipo: ${
+                      property.propertyType === 'house' ? 'Casa' :
+                      property.propertyType === 'land' ? 'Terreno' :
+                      'Local Comercial'
+                    }</p>
+                    ${property.signPhoneNumber ? `<p>Tel: ${property.signPhoneNumber}</p>` : ''}
+                  </div>
+                `
+              });
+
+              marker.addListener('click', () => {
+                infoWindow.open(map, marker);
+              });
+
               markersRef.current.push(marker);
             } catch (error) {
               console.error('Error creating marker for property:', property.propertyId, error);
             }
           });
+
+          // Ajustar el mapa para mostrar todos los marcadores
+          if (markersRef.current.length > 0) {
+            const bounds = new google.maps.LatLngBounds();
+            markersRef.current.forEach(marker => {
+              bounds.extend(marker.getPosition()!);
+            });
+            map.fitBounds(bounds);
+          }
         }
 
         setMapLoading(false);
