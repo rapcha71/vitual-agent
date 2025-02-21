@@ -158,11 +158,15 @@ const MapComponent = memo(({ properties }: { properties: PropertyWithUser[] }) =
   }, [properties, toast]);
 
   return (
-    <div className="grid grid-cols-1 w-full">
-      <div className="aspect-[9/16] w-full relative bg-gray-100 rounded-lg overflow-hidden">
+    <div className="grid grid-cols-1 w-full max-w-[430px] mx-auto">
+      <div className="aspect-[9/16] w-full relative bg-gray-100 rounded-lg overflow-hidden shadow-md">
         <div 
           ref={mapRef}
           className="absolute inset-0 flex items-stretch"
+          style={{
+            width: '100%',
+            height: '100%'
+          }}
         />
         {isLoading && (
           <div className="absolute inset-0 flex items-center justify-center bg-gray-100/80">
@@ -226,10 +230,10 @@ export default function AdminWebPage() {
       </header>
 
       {/* Main Content */}
-      <main className="pt-16 px-4 space-y-4">
+      <main className="pt-16 px-4 space-y-4 max-w-[430px] mx-auto">
         <h1 className="text-xl font-bold">Panel de Administración</h1>
 
-        <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+        <div className="grid grid-cols-3 gap-2">
           <Card className="bg-white shadow-sm">
             <CardContent className="py-2">
               <p className="text-base font-medium">Casas</p>
@@ -312,7 +316,6 @@ export default function AdminWebPage() {
                                 </div>
                                 <p><strong>Ubicación:</strong> {property.location.lat.toFixed(6)}, {property.location.lng.toFixed(6)}</p>
 
-                                {/* Agregar visualización de imágenes */}
                                 {property.images && property.images.length > 0 && (
                                   <div className="mt-4">
                                     <h4 className="font-semibold mb-2">Imágenes de la Propiedad</h4>
