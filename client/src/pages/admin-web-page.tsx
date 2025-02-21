@@ -99,85 +99,110 @@ export default function AdminWebPage() {
     }
   });
 
-  // Inicialización del mapa
+  // Actualizar la función initializeMap dentro del useEffect
   useEffect(() => {
     let isMounted = true;
 
     const initializeMap = async () => {
-      console.log('Iniciando inicialización del mapa...');
-
       if (!mapContainerRef.current || activeTab !== "map") {
-        console.log('Contenedor no disponible o tab incorrecto');
         return;
       }
 
       try {
         setMapLoading(true);
-        console.log('Estado de carga activado');
 
-        // Verificar dimensiones del contenedor
-        console.log('Dimensiones del contenedor:', {
-          width: mapContainerRef.current.clientWidth,
-          height: mapContainerRef.current.clientHeight
-        });
-
-        // Cargar Google Maps
-        const loader = new Loader({
-          apiKey: import.meta.env.VITE_GOOGLE_MAPS_API_KEY,
-          version: "weekly"
-        });
-
-        console.log('Cargando API de Google Maps...');
-        await loader.load();
-        console.log('API de Google Maps cargada exitosamente');
-
-        if (!isMounted) {
-          console.log('Componente desmontado, cancelando inicialización');
-          return;
+        if (!import.meta.env.VITE_GOOGLE_MAPS_API_KEY) {
+          throw new Error('Google Maps API key is missing');
         }
 
-        // Crear mapa básico
-        console.log('Creando instancia del mapa...');
-        const map = new google.maps.Map(mapContainerRef.current, {
-          center: { lat: 9.9281, lng: -84.0907 },
-          zoom: 8
+        const loader = new Loader({
+          apiKey: import.meta.env.VITE_GOOGLE_MAPS_API_KEY,
+          version: "weekly",
+          libraries: ["places"]
         });
 
-        console.log('Mapa creado exitosamente');
+        await loader.load();
+
+        if (!isMounted) return;
+
+        const map = new google.maps.Map(mapContainerRef.current, {
+          center: { lat: 9.9281, lng: -84.0907 }, // Costa Rica
+          zoom: 8,
+          mapTypeControl: true,
+          streetViewControl: false,
+          fullscreenControl: true,
+        });
+
+        // Limpiar marcadores anteriores
+        markersRef.current.forEach(marker => marker.setMap(null));
+        markersRef.current = [];
+
+        // Agregar marcadores para cada propiedad
+        properties.forEach(property => {
+          const marker = new google.maps.Marker({
+            position: {
+              lat: property.location.lat,
+              lng: property.location.lng
+            },
+            map,
+            title: `${property.propertyType} - ${property.propertyId}`,
+            icon: {
+              path: google.maps.SymbolPath.CIRCLE,
+              fillColor: getMarkerColor(property.propertyType),
+              fillOpacity: 0.8,
+              strokeWeight: 1,
+              scale: 8
+            }
+          });
+
+          // Agregar al array de referencia
+          markersRef.current.push(marker);
+
+          // Opcional: Agregar InfoWindow para mostrar detalles al hacer click
+          const infoWindow = new google.maps.InfoWindow({
+            content: `
+              <div style="padding: 10px">
+                <h3 style="margin: 0 0 5px">Propiedad: ${property.propertyId}</h3>
+                <p style="margin: 0">Tipo: ${property.propertyType === 'house' ? 'Casa' :
+                                             property.propertyType === 'land' ? 'Terreno' :
+                                             'Local Comercial'}</p>
+                <p style="margin: 5px 0">Teléfono: ${property.signPhoneNumber || 'No disponible'}</p>
+              </div>
+            `
+          });
+
+          marker.addListener('click', () => {
+            infoWindow.open(map, marker);
+          });
+        });
+
         mapRef.current = map;
 
-        // Agregar un solo marcador de prueba
-        new google.maps.Marker({
-          position: { lat: 9.9281, lng: -84.0907 },
-          map,
-          title: "Marcador de prueba"
-        });
-
-        console.log('Marcador de prueba agregado');
-        setMapLoading(false);
-
       } catch (error) {
-        console.error('Error en la inicialización del mapa:', error);
-        setMapLoading(false);
+        console.error('Error initializing map:', error);
         toast({
           title: "Error al cargar el mapa",
-          description: "Por favor, actualice la página e intente nuevamente.",
+          description: "Por favor, intente nuevamente.",
           variant: "destructive"
         });
+      } finally {
+        if (isMounted) {
+          setMapLoading(false);
+        }
       }
     };
 
-    if (activeTab === "map") {
+    if (activeTab === "map" && properties.length > 0) {
       initializeMap();
     }
 
     return () => {
       isMounted = false;
-      if (mapRef.current) {
-        mapRef.current = null;
-      }
+      // Limpiar marcadores al desmontar
+      markersRef.current.forEach(marker => marker.setMap(null));
+      markersRef.current = [];
     };
-  }, [activeTab, toast]);
+  }, [activeTab, properties, toast]);
 
   // Stats counts
   const propertyCounts = {
@@ -303,21 +328,27 @@ export default function AdminWebPage() {
 
             {/* Map View */}
             <TabsContent value="map" className="mt-0">
-              <div
-                ref={mapContainerRef}
-                style={{
-                  width: '100%',
-                  height: '400px',
-                  position: 'relative',
-                  backgroundColor: '#f3f4f6'
-                }}
-              >
-                {mapLoading && (
-                  <div className="absolute inset-0 flex items-center justify-center bg-gray-100/80 z-10">
-                    <Loader2 className="h-8 w-8 animate-spin text-primary" />
+              <Card>
+                <CardContent className="p-4">
+                  <div
+                    ref={mapContainerRef}
+                    className="w-full rounded-lg bg-gray-50 relative"
+                    style={{
+                      height: '500px',
+                      minHeight: '500px'
+                    }}
+                  >
+                    {mapLoading && (
+                      <div className="absolute inset-0 flex items-center justify-center bg-gray-100/80 z-10 rounded-lg">
+                        <div className="text-center">
+                          <Loader2 className="h-8 w-8 animate-spin mx-auto text-primary mb-2" />
+                          <p className="text-sm text-muted-foreground">Cargando mapa...</p>
+                        </div>
+                      </div>
+                    )}
                   </div>
-                )}
-              </div>
+                </CardContent>
+              </Card>
             </TabsContent>
             {user?.isSuperAdmin && (
               <TabsContent value="roles" className="mt-0">
