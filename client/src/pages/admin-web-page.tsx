@@ -71,9 +71,9 @@ const MapComponent = memo(({ properties }: { properties: PropertyWithUser[] }) =
 
         properties.forEach(property => {
           const marker = new google.maps.Marker({
-            position: {
-              lat: property.location.lat,
-              lng: property.location.lng
+            position: { 
+              lat: property.location.lat, 
+              lng: property.location.lng 
             },
             map: map.current,
             title: property.propertyId,
@@ -123,6 +123,21 @@ const MapComponent = memo(({ properties }: { properties: PropertyWithUser[] }) =
         });
         map.current.fitBounds(bounds, { padding: 50 });
 
+        // Forzar modo móvil
+        const mobileMode = () => {
+          if (map.current) {
+            google.maps.event.trigger(map.current, 'resize');
+            map.current.setOptions({ 
+              scrollwheel: true,
+              draggable: true,
+              gestureHandling: 'greedy'
+            });
+          }
+        };
+
+        // Aplicar modo móvil después de un breve retraso para asegurar que el mapa esté completamente cargado
+        setTimeout(mobileMode, 100);
+
       } catch (error) {
         console.error('Error loading map:', error);
         if (isActive) {
@@ -157,10 +172,10 @@ const MapComponent = memo(({ properties }: { properties: PropertyWithUser[] }) =
   return (
     <div 
       ref={mapContainer}
-      className="w-screen h-[70vh] touch-pan-x touch-pan-y"
+      className="w-screen h-[calc(100vh-16rem)] touch-pan-x touch-pan-y"
       style={{
         margin: '0 -1rem',
-        maxHeight: '600px',
+        maxHeight: '500px',
         minHeight: '300px'
       }}
     >
