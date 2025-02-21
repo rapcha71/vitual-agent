@@ -156,12 +156,14 @@ const MapComponent = memo(({ properties }: { properties: PropertyWithUser[] }) =
   }, [properties, toast]);
 
   return (
-    <div className="relative w-full bg-gray-50 rounded-lg overflow-hidden">
+    <div className="relative w-full">
       <div
         ref={mapContainer}
-        className="h-[70vh] touch-pan-x touch-pan-y"
+        className="touch-pan-x touch-pan-y"
         style={{
-          width: '100%',
+          width: '100vw',
+          height: '70vh',
+          margin: '0 -1rem',
           maxHeight: '600px',
           minHeight: '300px'
         }}
@@ -230,7 +232,7 @@ export default function AdminWebPage() {
       </header>
 
       {/* Main Content */}
-      <main className="pt-16 p-4 space-y-4">
+      <main className="pt-16 px-4 space-y-4">
         <h1 className="text-xl font-bold">Panel de Administración</h1>
 
         <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
@@ -273,13 +275,11 @@ export default function AdminWebPage() {
           </TabsList>
 
           <TabsContent value="map" className="mt-4">
-            <div className="-mx-4">
-              <MapComponent properties={properties} />
-            </div>
+            <MapComponent properties={properties} />
           </TabsContent>
 
           <TabsContent value="list">
-            <div className="overflow-x-auto -mx-4">
+            <div className="overflow-x-auto">
               <div className="min-w-full">
                 <Table>
                   <TableHeader>
