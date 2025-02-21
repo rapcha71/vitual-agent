@@ -395,7 +395,7 @@ export default function AdminWebPage() {
                 className="w-[140px] inline-flex items-center justify-center"
               >
                 <Plus className="h-4 w-4 mr-2" />
-                Agregar
+                Agregar Prop.
               </Button>
               {user.isSuperAdmin && (
                 <Dialog>
@@ -403,11 +403,11 @@ export default function AdminWebPage() {
                     <Button
                       variant="outline"
                       size="sm"
-                      className="w-[160px] inline-flex items-center justify-center"
+                      className="w-[140px] inline-flex items-center justify-center"
                     >
                       <span className="inline-flex items-center">
                         <MessageCircle className="h-4 w-4 mr-2" />
-                        <span className="whitespace-nowrap">Enviar Mensaje</span>
+                        Enviar Mensaje
                       </span>
                     </Button>
                   </DialogTrigger>
