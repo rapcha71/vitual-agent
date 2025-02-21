@@ -3,6 +3,7 @@ import { useLocation } from "wouter";
 import { Button } from "@/components/ui/button";
 import { ChevronLeft, LogOut } from "lucide-react";
 import { useAuth } from "@/hooks/use-auth";
+import { SuccessCheck } from "@/components/ui/success-check";
 
 export default function PropertyConfirmation() {
   const [location, setLocation] = useLocation();
@@ -58,11 +59,7 @@ export default function PropertyConfirmation() {
               </div>
 
               <div className="mt-6">
-                <img 
-                  src="/assets/emoji-success.png" 
-                  alt="Success"
-                  className="w-24 h-24 mx-auto"
-                />
+                <SuccessCheck />
               </div>
             </div>
 
