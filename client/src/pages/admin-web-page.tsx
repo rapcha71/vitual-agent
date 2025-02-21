@@ -15,16 +15,16 @@ import { useToast } from "@/hooks/use-toast";
 
 const MapComponent = memo(({ properties }: { properties: PropertyWithUser[] }) => {
   const [isLoading, setIsLoading] = useState(true);
-  const mapContainer = useRef<HTMLDivElement>(null);
+  const mapRef = useRef<HTMLDivElement>(null);
   const map = useRef<google.maps.Map | null>(null);
   const markers = useRef<google.maps.Marker[]>([]);
   const { toast } = useToast();
 
   useEffect(() => {
-    let isActive = true;
+    let isMounted = true;
 
-    const initializeMap = async () => {
-      if (!mapContainer.current || !properties.length) {
+    const initMap = async () => {
+      if (!mapRef.current || !properties.length) {
         setIsLoading(false);
         return;
       }
@@ -38,22 +38,9 @@ const MapComponent = memo(({ properties }: { properties: PropertyWithUser[] }) =
 
         await loader.load();
 
-        if (!isActive || !mapContainer.current) return;
+        if (!isMounted || !mapRef.current) return;
 
-        // Forzar modo vertical
-        const forceMobileMode = () => {
-          const containerWidth = mapContainer.current?.clientWidth || 300;
-          const containerHeight = (containerWidth * 16) / 9;
-
-          if (mapContainer.current) {
-            mapContainer.current.style.height = `${containerHeight}px`;
-          }
-        };
-
-        // Aplicar modo vertical inicial
-        forceMobileMode();
-
-        // Configuración optimizada para móvil
+        // Configuración del mapa
         const mapOptions: google.maps.MapOptions = {
           center: { lat: 9.9281, lng: -84.0907 },
           zoom: 8,
@@ -76,13 +63,13 @@ const MapComponent = memo(({ properties }: { properties: PropertyWithUser[] }) =
           ]
         };
 
-        map.current = new google.maps.Map(mapContainer.current, mapOptions);
+        map.current = new google.maps.Map(mapRef.current, mapOptions);
 
         // Limpiar marcadores existentes
         markers.current.forEach(marker => marker.setMap(null));
         markers.current = [];
 
-        // Agregar marcadores optimizados para vista vertical
+        // Agregar marcadores
         properties.forEach(property => {
           const marker = new google.maps.Marker({
             position: { lat: property.location.lat, lng: property.location.lng },
@@ -134,36 +121,25 @@ const MapComponent = memo(({ properties }: { properties: PropertyWithUser[] }) =
         });
         map.current.fitBounds(bounds, { padding: 40 });
 
-        // Reajustar tamaño al cambiar dimensiones de ventana
-        window.addEventListener('resize', forceMobileMode);
-
-        // Trigger resize event después de un breve retraso
-        setTimeout(() => {
-          forceMobileMode();
-          google.maps.event.trigger(map.current, 'resize');
-        }, 100);
+        setIsLoading(false);
 
       } catch (error) {
         console.error('Error loading map:', error);
-        if (isActive) {
+        if (isMounted) {
           toast({
             title: "Error al cargar el mapa",
             description: "Por favor, recarga la página",
             variant: "destructive"
           });
-        }
-      } finally {
-        if (isActive) {
           setIsLoading(false);
         }
       }
     };
 
-    initializeMap();
+    initMap();
 
     return () => {
-      isActive = false;
-      window.removeEventListener('resize', forceMobileMode);
+      isMounted = false;
       markers.current.forEach(marker => {
         google.maps.event.clearInstanceListeners(marker);
         marker.setMap(null);
@@ -176,15 +152,10 @@ const MapComponent = memo(({ properties }: { properties: PropertyWithUser[] }) =
   }, [properties, toast]);
 
   return (
-    <div className="relative bg-gray-100 w-full overflow-hidden">
+    <div className="relative w-full" style={{ height: '80vh', maxHeight: '600px', minHeight: '400px' }}>
       <div 
-        ref={mapContainer}
-        className="w-full"
-        style={{
-          minHeight: '300px',
-          aspectRatio: '9/16',
-          touchAction: 'pan-x pan-y'
-        }}
+        ref={mapRef}
+        className="absolute inset-0 rounded-lg"
       />
       {isLoading && (
         <div className="absolute inset-0 flex items-center justify-center bg-gray-100/80">
