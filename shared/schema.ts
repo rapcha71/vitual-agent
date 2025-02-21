@@ -25,13 +25,22 @@ export const users = pgTable("users", {
   mobile: text("mobile"),
   nickname: text("nickname"),
   isAdmin: boolean("is_admin").notNull().default(false),
-  isSuperAdmin: boolean("is_super_admin").notNull().default(false), // Nuevo campo
+  isSuperAdmin: boolean("is_super_admin").notNull().default(false),
   rememberToken: text("remember_token"),
   lastLoginAt: text("last_login_at"),
   biometricCredentialId: text("biometric_credential_id"),
   biometricPublicKey: text("biometric_public_key"),
   biometricCounter: integer("biometric_counter").default(0),
   biometricEnabled: boolean("biometric_enabled").default(false),
+});
+
+// Define the messages table
+export const messages = pgTable("messages", {
+  id: serial("id").primaryKey(),
+  content: text("content").notNull(),
+  createdAt: text("created_at").notNull().default(new Date().toISOString()),
+  unreadByUsers: jsonb("unread_by_users").notNull().$type<number[]>(), // Array of user IDs who haven't read the message
+  senderId: integer("sender_id").notNull().references(() => users.id),
 });
 
 // Define the location type for better TypeScript support
@@ -56,12 +65,20 @@ export const properties = pgTable("properties", {
 
 // Define relations
 export const usersRelations = relations(users, ({ many }) => ({
-  properties: many(properties)
+  properties: many(properties),
+  messages: many(messages, { relationName: "sentMessages" })
 }));
 
 export const propertiesRelations = relations(properties, ({ one }) => ({
   user: one(users, {
     fields: [properties.userId],
+    references: [users.id],
+  })
+}));
+
+export const messagesRelations = relations(messages, ({ one }) => ({
+  sender: one(users, {
+    fields: [messages.senderId],
     references: [users.id],
   })
 }));
@@ -81,6 +98,12 @@ export const insertUserSchema = createInsertSchema(users).omit({
   biometricEnabled: true
 }).extend({
   rememberMe: z.boolean().optional()
+});
+
+export const insertMessageSchema = createInsertSchema(messages).omit({
+  id: true,
+}).extend({
+  content: z.string().min(1, "El mensaje no puede estar vacío"),
 });
 
 export const insertPropertySchema = createInsertSchema(properties)
@@ -109,6 +132,8 @@ export type User = typeof users.$inferSelect;
 export type Property = typeof properties.$inferSelect;
 export type InsertProperty = z.infer<typeof insertPropertySchema>;
 export type Location = z.infer<typeof LocationSchema>;
+export type Message = typeof messages.$inferSelect;
+export type InsertMessage = z.infer<typeof insertMessageSchema>;
 
 // Admin types with proper typing
 export type PropertyWithUser = {

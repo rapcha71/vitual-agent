@@ -7,6 +7,7 @@ import { nanoid } from "nanoid";
 import ocrService from "./services/ocr";
 import { isWithinRadius } from "./lib/geo-utils";
 import { requireAdmin } from "./middleware/admin";
+import { insertMessageSchema } from "@shared/schema";
 
 export async function registerRoutes(app: Express): Promise<Server> {
   setupAuth(app);
@@ -271,6 +272,82 @@ export async function registerRoutes(app: Express): Promise<Server> {
       user: req.user
     });
   });
+
+  // Route for super admin to send messages
+  app.post("/api/admin/messages", requireAdmin, async (req, res) => {
+    try {
+      if (!req.user?.isSuperAdmin) {
+        return res.status(403).json({
+          message: "Esta acción requiere privilegios de super administrador"
+        });
+      }
+
+      const messageData = insertMessageSchema.parse(req.body);
+      const message = await storage.createMessage({
+        ...messageData,
+        senderId: req.user.id
+      });
+
+      res.status(201).json(message);
+    } catch (error: any) {
+      console.error("Error creating message:", error);
+      res.status(500).json({
+        message: error.message || "Error al enviar el mensaje"
+      });
+    }
+  });
+
+  // Route to get all messages
+  app.get("/api/messages", async (req, res) => {
+    if (!req.isAuthenticated()) {
+      return res.status(401).json({ message: "Unauthorized" });
+    }
+
+    try {
+      const messages = await storage.getMessages();
+      res.json(messages);
+    } catch (error: any) {
+      console.error("Error fetching messages:", error);
+      res.status(500).json({
+        message: error.message || "Error al obtener los mensajes"
+      });
+    }
+  });
+
+  // Route to mark a message as read
+  app.post("/api/messages/:messageId/read", async (req, res) => {
+    if (!req.isAuthenticated()) {
+      return res.status(401).json({ message: "Unauthorized" });
+    }
+
+    try {
+      await storage.markMessageAsRead(parseInt(req.params.messageId), req.user.id);
+      res.json({ success: true });
+    } catch (error: any) {
+      console.error("Error marking message as read:", error);
+      res.status(500).json({
+        message: error.message || "Error al marcar el mensaje como leído"
+      });
+    }
+  });
+
+  // Route to get unread message count
+  app.get("/api/messages/unread/count", async (req, res) => {
+    if (!req.isAuthenticated()) {
+      return res.status(401).json({ message: "Unauthorized" });
+    }
+
+    try {
+      const count = await storage.getUnreadMessageCount(req.user.id);
+      res.json({ count });
+    } catch (error: any) {
+      console.error("Error getting unread message count:", error);
+      res.status(500).json({
+        message: error.message || "Error al obtener el conteo de mensajes no leídos"
+      });
+    }
+  });
+
 
   const httpServer = createServer(app);
   return httpServer;
