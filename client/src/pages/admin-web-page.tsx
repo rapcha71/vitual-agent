@@ -40,7 +40,12 @@ const MapComponent = memo(({ properties }: { properties: PropertyWithUser[] }) =
 
         if (!isMounted || !mapRef.current) return;
 
-        // Configuración del mapa
+        // Forzar aspecto vertical
+        const parentWidth = mapRef.current.parentElement?.clientWidth || window.innerWidth;
+        const mapHeight = (parentWidth * 16) / 9;
+        mapRef.current.style.height = `${mapHeight}px`;
+
+        // Configuración del mapa optimizada para vista vertical
         const mapOptions: google.maps.MapOptions = {
           center: { lat: 9.9281, lng: -84.0907 },
           zoom: 8,
@@ -121,7 +126,22 @@ const MapComponent = memo(({ properties }: { properties: PropertyWithUser[] }) =
         });
         map.current.fitBounds(bounds, { padding: 40 });
 
+        // Manejar cambios de tamaño
+        const handleResize = () => {
+          if (mapRef.current && map.current) {
+            const newWidth = mapRef.current.parentElement?.clientWidth || window.innerWidth;
+            const newHeight = (newWidth * 16) / 9;
+            mapRef.current.style.height = `${newHeight}px`;
+            google.maps.event.trigger(map.current, 'resize');
+          }
+        };
+
+        window.addEventListener('resize', handleResize);
         setIsLoading(false);
+
+        return () => {
+          window.removeEventListener('resize', handleResize);
+        };
 
       } catch (error) {
         console.error('Error loading map:', error);
@@ -152,10 +172,14 @@ const MapComponent = memo(({ properties }: { properties: PropertyWithUser[] }) =
   }, [properties, toast]);
 
   return (
-    <div className="relative w-full" style={{ height: '80vh', maxHeight: '600px', minHeight: '400px' }}>
+    <div className="w-full overflow-hidden rounded-lg bg-gray-100">
       <div 
         ref={mapRef}
-        className="absolute inset-0 rounded-lg"
+        className="w-full"
+        style={{
+          minHeight: '400px',
+          maxHeight: '80vh',
+        }}
       />
       {isLoading && (
         <div className="absolute inset-0 flex items-center justify-center bg-gray-100/80">
