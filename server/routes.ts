@@ -111,7 +111,6 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
       // Validate the request body
       const propertyData = insertPropertySchema.parse(req.body);
-      const propertyId = nanoid();
 
       // Extract text from sign image if present
       let extractedPhoneNumber = null;
@@ -129,17 +128,48 @@ export async function registerRoutes(app: Express): Promise<Server> {
         }
       }
 
+      // Check for duplicate properties
+      const phoneToCheck = extractedPhoneNumber || propertyData.signPhoneNumber;
+      if (phoneToCheck) {
+        const existingProperties = await storage.getAllPropertiesWithUsers();
+
+        const duplicateProperty = existingProperties.find(existingProp => {
+          // Check if phone numbers match
+          if (existingProp.signPhoneNumber === phoneToCheck) {
+            // Check if locations are within 15 meters
+            return isWithinRadius(
+              existingProp.location,
+              propertyData.location,
+              15 // 15 meters radius
+            );
+          }
+          return false;
+        });
+
+        if (duplicateProperty) {
+          return res.status(400).json({
+            success: false,
+            message: "Ya existe una propiedad con el mismo número de teléfono en un radio de 15 metros. Por este motivo, la propiedad no será registrada nuevamente.",
+            details: {
+              existingPropertyId: duplicateProperty.propertyId,
+              distance: "menos de 15 metros"
+            }
+          });
+        }
+      }
+
       // Convert images object to array for storage
       const imagesArray = [];
       if (propertyData.images?.sign) imagesArray.push(propertyData.images.sign);
       if (propertyData.images?.property) imagesArray.push(propertyData.images.property);
 
       // Create the property with extracted phone number if found
+      const propertyId = nanoid();
       const property = await storage.createProperty({
         ...propertyData,
         userId: req.user.id,
         propertyId,
-        signPhoneNumber: extractedPhoneNumber || propertyData.signPhoneNumber,
+        signPhoneNumber: phoneToCheck || propertyData.signPhoneNumber,
         images: imagesArray
       });
 
