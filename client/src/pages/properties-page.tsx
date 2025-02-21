@@ -28,25 +28,16 @@ export default function PropertiesPage() {
 
   useEffect(() => {
     let isMounted = true;
-    let googleMap: google.maps.Map | null = null;
-    let currentMarkers: google.maps.Marker[] = [];
-    let currentInfoWindows: google.maps.InfoWindow[] = [];
+    let map: google.maps.Map | null = null;
+    let markers: google.maps.Marker[] = [];
+    let infoWindows: google.maps.InfoWindow[] = [];
 
     const initMap = async () => {
-      if (!mapRef.current || !properties.length) {
-        setIsLoading(false);
-        return;
-      }
+      if (!mapRef.current) return;
 
       try {
-        if (!import.meta.env.VITE_GOOGLE_MAPS_API_KEY) {
-          console.error('Google Maps API key is missing');
-          setIsLoading(false);
-          return;
-        }
-
         const loader = new Loader({
-          apiKey: import.meta.env.VITE_GOOGLE_MAPS_API_KEY,
+          apiKey: import.meta.env.VITE_GOOGLE_MAPS_API_KEY || '',
           version: "weekly",
           libraries: ["places"]
         });
@@ -55,7 +46,7 @@ export default function PropertiesPage() {
 
         if (!isMounted || !mapRef.current) return;
 
-        const mapOptions: google.maps.MapOptions = {
+        map = new google.maps.Map(mapRef.current, {
           center: { lat: 9.9281, lng: -84.0907 },
           zoom: 8,
           mapTypeControl: false,
@@ -64,16 +55,14 @@ export default function PropertiesPage() {
           zoomControl: true,
           gestureHandling: 'greedy',
           disableDefaultUI: true
-        };
-
-        googleMap = new google.maps.Map(mapRef.current, mapOptions);
+        });
 
         const bounds = new google.maps.LatLngBounds();
 
         properties.forEach(property => {
           const marker = new google.maps.Marker({
             position: { lat: property.location.lat, lng: property.location.lng },
-            map: googleMap,
+            map,
             title: property.propertyId,
             icon: {
               path: google.maps.SymbolPath.CIRCLE,
@@ -118,18 +107,22 @@ export default function PropertiesPage() {
           });
 
           marker.addListener('click', () => {
-            currentInfoWindows.forEach(window => window.close());
-            infoWindow.open(googleMap, marker);
+            infoWindows.forEach(w => w.close());
+            infoWindow.open(map, marker);
           });
 
           bounds.extend(marker.getPosition()!);
-          currentMarkers.push(marker);
-          currentInfoWindows.push(infoWindow);
+          markers.push(marker);
+          infoWindows.push(infoWindow);
         });
 
-        googleMap.fitBounds(bounds);
-        setIsLoading(false);
+        if (markers.length > 0) {
+          map.fitBounds(bounds);
+        }
 
+        if (isMounted) {
+          setIsLoading(false);
+        }
       } catch (error) {
         console.error('Error loading map:', error);
         if (isMounted) {
@@ -143,18 +136,15 @@ export default function PropertiesPage() {
       }
     };
 
-    initMap();
+    // Pequeño retraso para asegurar que el contenedor del mapa esté listo
+    setTimeout(initMap, 100);
 
     return () => {
       isMounted = false;
-      if (currentMarkers.length > 0) {
-        currentMarkers.forEach(marker => marker.setMap(null));
-      }
-      if (currentInfoWindows.length > 0) {
-        currentInfoWindows.forEach(window => window.close());
-      }
-      if (googleMap) {
-        google.maps.event.clearInstanceListeners(googleMap);
+      markers.forEach(marker => marker.setMap(null));
+      infoWindows.forEach(window => window.close());
+      if (map) {
+        google.maps.event.clearInstanceListeners(map);
       }
     };
   }, [properties, toast]);
@@ -207,7 +197,11 @@ export default function PropertiesPage() {
                   <div 
                     ref={mapRef}
                     className="w-full h-[300px] rounded-lg relative bg-gray-100"
-                    style={{ minHeight: '300px' }}
+                    style={{ 
+                      minHeight: '300px',
+                      width: '100%',
+                      height: '300px'
+                    }}
                   >
                     {isLoading && (
                       <div className="absolute inset-0 flex items-center justify-center bg-gray-100/80">
