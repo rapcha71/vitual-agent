@@ -1,4 +1,5 @@
 import { cn } from "@/lib/utils"
+import { ScrollArea } from "@/components/ui/scroll-area"
 
 interface PhonePreviewProps extends React.HTMLAttributes<HTMLDivElement> {
   children: React.ReactNode
@@ -18,17 +19,11 @@ export function PhonePreview({ children, className, ...props }: PhonePreviewProp
         "overflow-hidden", 
         className
       )} {...props}>
-        {/* Contenedor principal con scroll */}
-        <div 
-          className="absolute inset-0 overflow-y-scroll no-scrollbar"
-          style={{
-            WebkitOverflowScrolling: 'touch', 
-            msOverflowStyle: 'none',
-            scrollbarWidth: 'none'
-          }}
-        >
-          {children}
-        </div>
+        <ScrollArea className="h-full w-full">
+          <div className="px-4 py-2">
+            {children}
+          </div>
+        </ScrollArea>
       </div>
     </div>
   )
