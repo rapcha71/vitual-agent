@@ -9,60 +9,61 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Loader2 } from "lucide-react";
-import { useEffect, useState, useRef } from "react";
+import { useEffect, useState, useRef, memo } from "react";
 import { Loader } from "@googlemaps/js-api-loader";
 import { useToast } from "@/hooks/use-toast";
 
-const MapComponent = ({ properties }: { properties: PropertyWithUser[] }) => {
+// Separar el componente del mapa para evitar re-renders innecesarios
+const MapComponent = memo(({ properties }: { properties: PropertyWithUser[] }) => {
+  const [isLoading, setIsLoading] = useState(true);
+  const mapContainer = useRef<HTMLDivElement>(null);
+  const map = useRef<google.maps.Map | null>(null);
+  const markers = useRef<google.maps.Marker[]>([]);
   const { toast } = useToast();
-  const [mapLoading, setMapLoading] = useState(true);
-  const mapContainerRef = useRef<HTMLDivElement>(null);
-  const mapInstanceRef = useRef<google.maps.Map | null>(null);
-  const markersRef = useRef<google.maps.Marker[]>([]);
-  const isInitializedRef = useRef(false);
 
   useEffect(() => {
-    let isMounted = true;
+    let isActive = true;
+    const googleMapsApiKey = import.meta.env.VITE_GOOGLE_MAPS_API_KEY;
+
+    if (!googleMapsApiKey || !mapContainer.current || !properties.length) {
+      setIsLoading(false);
+      return;
+    }
+
+    const loader = new Loader({
+      apiKey: googleMapsApiKey,
+      version: "weekly",
+      libraries: ["places"]
+    });
 
     const initializeMap = async () => {
-      if (!mapContainerRef.current || isInitializedRef.current || !properties.length) {
-        return;
-      }
-
       try {
-        const loader = new Loader({
-          apiKey: import.meta.env.VITE_GOOGLE_MAPS_API_KEY || '',
-          version: "weekly",
-          libraries: ["places"]
-        });
-
-        // Cargar la API de Google Maps
         await loader.load();
 
-        // Si el componente fue desmontado mientras se cargaba la API, salir
-        if (!isMounted || !mapContainerRef.current) return;
+        if (!isActive || !mapContainer.current) return;
 
-        // Crear nueva instancia del mapa
-        const map = new google.maps.Map(mapContainerRef.current, {
-          center: { lat: 9.9281, lng: -84.0907 },
-          zoom: 8,
-          mapTypeControl: true,
-          streetViewControl: false,
-          fullscreenControl: true,
-        });
+        if (!map.current) {
+          map.current = new google.maps.Map(mapContainer.current, {
+            center: { lat: 9.9281, lng: -84.0907 },
+            zoom: 8,
+            mapTypeControl: true,
+            streetViewControl: false,
+            fullscreenControl: true,
+          });
+        }
 
-        // Guardar la instancia del mapa
-        mapInstanceRef.current = map;
-        isInitializedRef.current = true;
+        // Limpiar marcadores existentes
+        markers.current.forEach(marker => marker.setMap(null));
+        markers.current = [];
 
-        // Agregar marcadores
+        // Agregar nuevos marcadores
         properties.forEach(property => {
           const marker = new google.maps.Marker({
             position: {
               lat: property.location.lat,
               lng: property.location.lng
             },
-            map,
+            map: map.current,
             title: property.propertyId,
             icon: {
               path: google.maps.SymbolPath.CIRCLE,
@@ -89,21 +90,24 @@ const MapComponent = ({ properties }: { properties: PropertyWithUser[] }) => {
           });
 
           marker.addListener('click', () => {
-            infoWindow.open(map, marker);
+            infoWindow.open(map.current, marker);
           });
 
-          markersRef.current.push(marker);
+          markers.current.push(marker);
         });
 
-        setMapLoading(false);
       } catch (error) {
-        console.error('Error initializing map:', error);
-        if (isMounted) {
+        console.error('Error loading map:', error);
+        if (isActive) {
           toast({
             title: "Error al cargar el mapa",
-            description: "Por favor, recarga la página e intenta nuevamente.",
+            description: "Por favor, recarga la página",
             variant: "destructive"
           });
+        }
+      } finally {
+        if (isActive) {
+          setIsLoading(false);
         }
       }
     };
@@ -111,34 +115,28 @@ const MapComponent = ({ properties }: { properties: PropertyWithUser[] }) => {
     initializeMap();
 
     return () => {
-      isMounted = false;
-      // Limpiar marcadores
-      if (markersRef.current) {
-        markersRef.current.forEach(marker => {
-          if (marker) {
-            google.maps.event.clearInstanceListeners(marker);
-            marker.setMap(null);
-          }
+      isActive = false;
+      if (markers.current) {
+        markers.current.forEach(marker => {
+          google.maps.event.clearInstanceListeners(marker);
+          marker.setMap(null);
         });
-        markersRef.current = [];
+        markers.current = [];
       }
-      // Limpiar mapa
-      if (mapInstanceRef.current) {
-        google.maps.event.clearInstanceListeners(mapInstanceRef.current);
-        mapInstanceRef.current = null;
+      if (map.current) {
+        google.maps.event.clearInstanceListeners(map.current);
       }
-      isInitializedRef.current = false;
     };
   }, [properties, toast]);
 
   return (
-    <div className="w-full h-[600px] bg-gray-50 rounded-lg overflow-hidden">
+    <div className="relative w-full h-[600px] bg-gray-50 rounded-lg">
       <div
-        ref={mapContainerRef}
+        ref={mapContainer}
         style={{ width: '100%', height: '100%' }}
-        className="relative"
+        className="rounded-lg"
       />
-      {mapLoading && (
+      {isLoading && (
         <div className="absolute inset-0 flex items-center justify-center bg-gray-100/80 z-10">
           <div className="text-center">
             <Loader2 className="h-8 w-8 animate-spin mx-auto text-primary mb-2" />
@@ -148,7 +146,9 @@ const MapComponent = ({ properties }: { properties: PropertyWithUser[] }) => {
       )}
     </div>
   );
-};
+});
+
+MapComponent.displayName = 'MapComponent';
 
 export default function AdminWebPage() {
   const { user, logoutMutation } = useAuth();
@@ -243,7 +243,7 @@ export default function AdminWebPage() {
               </TabsList>
 
               <TabsContent value="map" className="mt-4">
-                {activeTab === "map" && <MapComponent properties={properties} />}
+                <MapComponent properties={properties} />
               </TabsContent>
 
               <TabsContent value="list">
