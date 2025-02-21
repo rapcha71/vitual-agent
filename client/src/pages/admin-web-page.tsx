@@ -402,10 +402,13 @@ export default function AdminWebPage() {
                   <DialogTrigger asChild>
                     <Button
                       variant="outline"
-                      className="flex-1 md:flex-initial flex items-center justify-center gap-2 min-w-[180px]"
+                      size="sm"
+                      className="w-[160px] inline-flex items-center justify-center"
                     >
-                      <MessageCircle className="h-4 w-4" />
-                      Enviar Mensaje
+                      <span className="inline-flex items-center">
+                        <MessageCircle className="h-4 w-4 mr-2" />
+                        <span className="whitespace-nowrap">Enviar Mensaje</span>
+                      </span>
                     </Button>
                   </DialogTrigger>
                   <DialogContent>
