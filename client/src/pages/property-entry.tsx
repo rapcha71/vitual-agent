@@ -325,32 +325,58 @@ export default function PropertyEntry() {
     }
   };
 
-  const captureLocation = () => {
-    if ("geolocation" in navigator) {
-      navigator.geolocation.getCurrentPosition(
-        (position) => {
-          form.setValue("location", {
-            lat: position.coords.latitude,
-            lng: position.coords.longitude
-          });
-          toast({
-            title: "Location Captured",
-            description: "Property location has been recorded successfully."
-          });
-        },
-        (error) => {
-          console.error("Error getting location:", error);
-          toast({
-            title: "Location Error",
-            description: "Unable to get current location. Please check permissions.",
-            variant: "destructive"
-          });
-        }
-      );
-    } else {
+  const captureLocation = async () => {
+    try {
       toast({
-        title: "Location Error",
-        description: "Geolocation is not supported by your browser.",
+        title: "Capturando ubicación",
+        description: "Por favor, espere mientras obtenemos su ubicación...",
+      });
+
+      if (!("geolocation" in navigator)) {
+        toast({
+          title: "Error",
+          description: "Su navegador no soporta la geolocalización",
+          variant: "destructive"
+        });
+        return;
+      }
+
+      const position = await new Promise<GeolocationPosition>((resolve, reject) => {
+        navigator.geolocation.getCurrentPosition(
+          resolve,
+          reject,
+          {
+            enableHighAccuracy: true,
+            timeout: 10000,
+            maximumAge: 0
+          }
+        );
+      });
+
+      form.setValue("location", {
+        lat: position.coords.latitude,
+        lng: position.coords.longitude
+      });
+
+      toast({
+        title: "Ubicación capturada",
+        description: "La ubicación se ha registrado exitosamente."
+      });
+    } catch (error: any) {
+      console.error("Error getting location:", error);
+      let errorMessage = "Error al obtener la ubicación.";
+
+      if (error.code === 1) {
+        errorMessage = "Por favor, permita el acceso a su ubicación en la configuración de su navegador.";
+      } else if (error.code === 2) {
+        errorMessage = "No se pudo obtener la ubicación. Por favor, verifique su conexión GPS.";
+      } else if (error.code === 3) {
+        errorMessage = "Tiempo de espera agotado. Por favor, intente nuevamente.";
+      }
+
+      toast({
+        title: "Error de ubicación",
+        description: errorMessage,
         variant: "destructive"
       });
     }
