@@ -5,77 +5,44 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { LogOut, Image, MapPin, Menu } from "lucide-react";
 import { useLocation } from "wouter";
-import { Table, TableBody, TableCaption, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Loader2 } from "lucide-react";
-import { useEffect, useState, useRef, memo } from "react";
+import { useEffect, useState, useRef } from "react";
 import { Loader } from "@googlemaps/js-api-loader";
 import { useToast } from "@/hooks/use-toast";
 
-const getMarkerColor = (propertyType: string) => {
-  switch (propertyType) {
-    case 'house':
-      return '#F05023';
-    case 'land':
-      return '#22C55E';
-    case 'commercial':
-      return '#3B82F6';
-    default:
-      return '#F05023';
-  }
-};
-
-// Componente del mapa memoizado
-const MapView = memo(({ properties }: { properties: PropertyWithUser[] }) => {
+const MapComponent = ({ properties }: { properties: PropertyWithUser[] }) => {
   const { toast } = useToast();
   const [mapLoading, setMapLoading] = useState(true);
-  const mapRef = useRef<google.maps.Map | null>(null);
-  const markersRef = useRef<google.maps.Marker[]>([]);
   const mapContainerRef = useRef<HTMLDivElement>(null);
-  const mountedRef = useRef(true);
-
-  // Limpieza del mapa
-  const cleanupMap = () => {
-    if (markersRef.current) {
-      markersRef.current.forEach(marker => {
-        if (marker) {
-          google.maps.event.clearInstanceListeners(marker);
-          marker.setMap(null);
-        }
-      });
-      markersRef.current = [];
-    }
-    if (mapRef.current) {
-      google.maps.event.clearInstanceListeners(mapRef.current);
-      mapRef.current = null;
-    }
-  };
+  const mapInstanceRef = useRef<google.maps.Map | null>(null);
+  const markersRef = useRef<google.maps.Marker[]>([]);
+  const isInitializedRef = useRef(false);
 
   useEffect(() => {
-    mountedRef.current = true;
+    let isMounted = true;
 
-    const initMap = async () => {
-      if (!mapContainerRef.current || !properties.length) return;
+    const initializeMap = async () => {
+      if (!mapContainerRef.current || isInitializedRef.current || !properties.length) {
+        return;
+      }
 
       try {
-        setMapLoading(true);
-        cleanupMap();
-
-        if (!import.meta.env.VITE_GOOGLE_MAPS_API_KEY) {
-          throw new Error('Google Maps API key is missing');
-        }
-
         const loader = new Loader({
-          apiKey: import.meta.env.VITE_GOOGLE_MAPS_API_KEY,
+          apiKey: import.meta.env.VITE_GOOGLE_MAPS_API_KEY || '',
           version: "weekly",
           libraries: ["places"]
         });
 
-        const google = await loader.load();
+        // Cargar la API de Google Maps
+        await loader.load();
 
-        if (!mountedRef.current || !mapContainerRef.current) return;
+        // Si el componente fue desmontado mientras se cargaba la API, salir
+        if (!isMounted || !mapContainerRef.current) return;
 
+        // Crear nueva instancia del mapa
         const map = new google.maps.Map(mapContainerRef.current, {
           center: { lat: 9.9281, lng: -84.0907 },
           zoom: 8,
@@ -84,24 +51,23 @@ const MapView = memo(({ properties }: { properties: PropertyWithUser[] }) => {
           fullscreenControl: true,
         });
 
-        mapRef.current = map;
+        // Guardar la instancia del mapa
+        mapInstanceRef.current = map;
+        isInitializedRef.current = true;
 
-        if (!mountedRef.current) {
-          cleanupMap();
-          return;
-        }
-
-        const markers = properties.map(property => {
+        // Agregar marcadores
+        properties.forEach(property => {
           const marker = new google.maps.Marker({
             position: {
               lat: property.location.lat,
               lng: property.location.lng
             },
             map,
-            title: `${property.propertyType} - ${property.propertyId}`,
+            title: property.propertyId,
             icon: {
               path: google.maps.SymbolPath.CIRCLE,
-              fillColor: getMarkerColor(property.propertyType),
+              fillColor: property.propertyType === 'house' ? '#F05023' : 
+                        property.propertyType === 'land' ? '#22C55E' : '#3B82F6',
               fillOpacity: 0.8,
               strokeWeight: 1,
               scale: 8
@@ -126,55 +92,63 @@ const MapView = memo(({ properties }: { properties: PropertyWithUser[] }) => {
             infoWindow.open(map, marker);
           });
 
-          return marker;
+          markersRef.current.push(marker);
         });
 
-        markersRef.current = markers;
-
+        setMapLoading(false);
       } catch (error) {
         console.error('Error initializing map:', error);
-        if (mountedRef.current) {
+        if (isMounted) {
           toast({
             title: "Error al cargar el mapa",
-            description: "Por favor, intente nuevamente.",
+            description: "Por favor, recarga la página e intenta nuevamente.",
             variant: "destructive"
           });
-        }
-      } finally {
-        if (mountedRef.current) {
-          setMapLoading(false);
         }
       }
     };
 
-    initMap();
+    initializeMap();
 
     return () => {
-      mountedRef.current = false;
-      cleanupMap();
+      isMounted = false;
+      // Limpiar marcadores
+      if (markersRef.current) {
+        markersRef.current.forEach(marker => {
+          if (marker) {
+            google.maps.event.clearInstanceListeners(marker);
+            marker.setMap(null);
+          }
+        });
+        markersRef.current = [];
+      }
+      // Limpiar mapa
+      if (mapInstanceRef.current) {
+        google.maps.event.clearInstanceListeners(mapInstanceRef.current);
+        mapInstanceRef.current = null;
+      }
+      isInitializedRef.current = false;
     };
   }, [properties, toast]);
 
   return (
-    <div className="w-full h-[600px]">
+    <div className="w-full h-[600px] bg-gray-50 rounded-lg overflow-hidden">
       <div
         ref={mapContainerRef}
-        className="w-full h-full rounded-lg relative bg-gray-50"
-      >
-        {mapLoading && (
-          <div className="absolute inset-0 flex items-center justify-center bg-gray-100/80 z-10 rounded-lg">
-            <div className="text-center">
-              <Loader2 className="h-8 w-8 animate-spin mx-auto text-primary mb-2" />
-              <p className="text-sm text-muted-foreground">Cargando mapa...</p>
-            </div>
+        style={{ width: '100%', height: '100%' }}
+        className="relative"
+      />
+      {mapLoading && (
+        <div className="absolute inset-0 flex items-center justify-center bg-gray-100/80 z-10">
+          <div className="text-center">
+            <Loader2 className="h-8 w-8 animate-spin mx-auto text-primary mb-2" />
+            <p className="text-sm text-muted-foreground">Cargando mapa...</p>
           </div>
-        )}
-      </div>
+        </div>
+      )}
     </div>
   );
-});
-
-MapView.displayName = 'MapView';
+};
 
 export default function AdminWebPage() {
   const { user, logoutMutation } = useAuth();
@@ -269,9 +243,7 @@ export default function AdminWebPage() {
               </TabsList>
 
               <TabsContent value="map" className="mt-4">
-                {activeTab === "map" && properties.length > 0 && (
-                  <MapView key="map-view" properties={properties} />
-                )}
+                {activeTab === "map" && <MapComponent properties={properties} />}
               </TabsContent>
 
               <TabsContent value="list">
