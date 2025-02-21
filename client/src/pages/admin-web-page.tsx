@@ -40,20 +40,6 @@ const MapComponent = memo(({ properties }: { properties: PropertyWithUser[] }) =
 
         if (!isMounted || !mapRef.current) return;
 
-        // Establecer el contenedor del mapa con proporción 9:16
-        const container = mapRef.current;
-        container.style.width = '100%';
-        container.style.paddingBottom = '177.78%'; // Proporción 9:16 (16/9 * 100)
-        container.style.position = 'relative';
-
-        const mapContainer = document.createElement('div');
-        mapContainer.style.position = 'absolute';
-        mapContainer.style.top = '0';
-        mapContainer.style.left = '0';
-        mapContainer.style.width = '100%';
-        mapContainer.style.height = '100%';
-        container.appendChild(mapContainer);
-
         const mapOptions: google.maps.MapOptions = {
           center: { lat: 9.9281, lng: -84.0907 },
           zoom: 8,
@@ -76,7 +62,7 @@ const MapComponent = memo(({ properties }: { properties: PropertyWithUser[] }) =
           ]
         };
 
-        map.current = new google.maps.Map(mapContainer, mapOptions);
+        map.current = new google.maps.Map(mapRef.current, mapOptions);
 
         // Limpiar marcadores existentes
         markers.current.forEach(marker => marker.setMap(null));
@@ -90,7 +76,7 @@ const MapComponent = memo(({ properties }: { properties: PropertyWithUser[] }) =
             title: property.propertyId,
             icon: {
               path: google.maps.SymbolPath.CIRCLE,
-              fillColor: property.propertyType === 'house' ? '#F05023' : 
+              fillColor: property.propertyType === 'house' ? '#F05023' :
                         property.propertyType === 'land' ? '#22C55E' : '#3B82F6',
               fillOpacity: 0.9,
               strokeWeight: 2,
@@ -152,9 +138,6 @@ const MapComponent = memo(({ properties }: { properties: PropertyWithUser[] }) =
 
     return () => {
       isMounted = false;
-      if (mapRef.current) {
-        mapRef.current.innerHTML = '';
-      }
       markers.current.forEach(marker => {
         google.maps.event.clearInstanceListeners(marker);
         marker.setMap(null);
@@ -165,15 +148,20 @@ const MapComponent = memo(({ properties }: { properties: PropertyWithUser[] }) =
 
   return (
     <div className="w-full overflow-hidden rounded-lg bg-gray-100">
-      <div 
-        ref={mapRef}
+      <div
         className="relative w-full"
-      />
-      {isLoading && (
-        <div className="absolute inset-0 flex items-center justify-center bg-gray-100/80">
-          <Loader2 className="h-8 w-8 animate-spin text-primary" />
-        </div>
-      )}
+        style={{ paddingBottom: '177.78%' }} // Proporción 9:16
+      >
+        <div
+          ref={mapRef}
+          className="absolute inset-0"
+        />
+        {isLoading && (
+          <div className="absolute inset-0 flex items-center justify-center bg-gray-100/80">
+            <Loader2 className="h-8 w-8 animate-spin text-primary" />
+          </div>
+        )}
+      </div>
     </div>
   );
 });
