@@ -7,14 +7,17 @@ import { Property } from "@shared/schema";
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
 import { PhonePreview } from "@/components/ui/phone-preview";
 import { RegulationsDialog } from "@/components/ui/regulations-dialog";
-import { useMemo } from "react";
 
 export default function HomePage() {
   const { user, logoutMutation } = useAuth();
   const [, setLocation] = useLocation();
 
+  // Optimizada la consulta con staleTime y cacheTime
   const { data: properties = [] } = useQuery<Property[]>({
     queryKey: ['/api/properties'],
+    staleTime: 300000, // 5 minutos
+    cacheTime: 600000, // 10 minutos
+    refetchOnWindowFocus: false,
   });
 
   return (
@@ -73,7 +76,6 @@ export default function HomePage() {
                     Agregar Propiedad
                   </Button>
                 </Link>
-                {/* Solo mostrar el botón de administrador si el usuario es admin */}
                 {user?.isAdmin && (
                   <Link href="/admin/web">
                     <Button variant="outline" className="w-full">
