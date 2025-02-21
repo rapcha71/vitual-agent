@@ -1,9 +1,9 @@
 import { useAuth } from "@/hooks/use-auth";
-import { useQuery } from "@tanstack/react-query";
+import { useQuery, useMutation } from "@tanstack/react-query";
 import { PropertyWithUser } from "@shared/schema";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { LogOut, MapPin, Image, ChevronLeft } from "lucide-react";
+import { LogOut, MapPin, Image, ChevronLeft, Users } from "lucide-react";
 import { useLocation } from "wouter";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
@@ -13,6 +13,7 @@ import { useEffect, useState, useRef, memo } from "react";
 import { Loader } from "@googlemaps/js-api-loader";
 import { useToast } from "@/hooks/use-toast";
 import { PhonePreview } from "@/components/ui/phone-preview";
+import { Switch } from "@/components/ui/switch";
 
 const MapComponent = memo(({ properties }: { properties: PropertyWithUser[] }) => {
   const [isLoading, setIsLoading] = useState(true);
@@ -193,10 +194,45 @@ export default function AdminWebPage() {
   const { user, logoutMutation } = useAuth();
   const [, setLocation] = useLocation();
   const [activeTab, setActiveTab] = useState("map");
+  const { toast } = useToast();
 
   const { data: properties = [] } = useQuery<PropertyWithUser[]>({
     queryKey: ['/api/admin/properties'],
     enabled: user?.isAdmin === true
+  });
+
+  const { data: users = [], refetch: refetchUsers } = useQuery({
+    queryKey: ['/api/admin/users'],
+    enabled: user?.isSuperAdmin === true
+  });
+
+  const updateRoleMutation = useMutation({
+    mutationFn: async ({ userId, isAdmin }: { userId: string, isAdmin: boolean }) => {
+      const response = await fetch('/api/admin/roles', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ userId, isAdmin })
+      });
+      if (!response.ok) {
+        const error = await response.json();
+        throw new Error(error.message);
+      }
+      return response.json();
+    },
+    onSuccess: () => {
+      refetchUsers();
+      toast({
+        title: "Rol actualizado",
+        description: "El rol del usuario ha sido actualizado exitosamente",
+      });
+    },
+    onError: (error: Error) => {
+      toast({
+        title: "Error",
+        description: error.message,
+        variant: "destructive"
+      });
+    }
   });
 
   if (!user?.isAdmin) {
@@ -268,7 +304,7 @@ export default function AdminWebPage() {
             </div>
 
             <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full mt-4">
-              <TabsList className="w-full grid grid-cols-2 h-12">
+              <TabsList className="w-full grid grid-cols-3 h-12">
                 <TabsTrigger value="map" className="text-sm">
                   <MapPin className="h-4 w-4 mr-2" />
                   Mapa
@@ -277,6 +313,12 @@ export default function AdminWebPage() {
                   <Image className="h-4 w-4 mr-2" />
                   Lista
                 </TabsTrigger>
+                {user.isSuperAdmin && (
+                  <TabsTrigger value="roles" className="text-sm">
+                    <Users className="h-4 w-4 mr-2" />
+                    Roles
+                  </TabsTrigger>
+                )}
               </TabsList>
 
               <TabsContent value="map" className="mt-4">
@@ -359,6 +401,51 @@ export default function AdminWebPage() {
                   </Table>
                 </div>
               </TabsContent>
+
+              {user.isSuperAdmin && (
+                <TabsContent value="roles" className="mt-4">
+                  <div className="space-y-4">
+                    <Card>
+                      <CardContent className="pt-6">
+                        <Table>
+                          <TableHeader>
+                            <TableRow>
+                              <TableHead>Usuario</TableHead>
+                              <TableHead>Rol</TableHead>
+                              <TableHead className="w-[100px]">Admin</TableHead>
+                            </TableRow>
+                          </TableHeader>
+                          <TableBody>
+                            {users.map((adminUser) => (
+                              <TableRow key={adminUser.id}>
+                                <TableCell>{adminUser.fullName || adminUser.username}</TableCell>
+                                <TableCell>
+                                  {adminUser.isSuperAdmin ? 'Super Admin' : 
+                                   adminUser.isAdmin ? 'Admin' : 'Usuario'}
+                                </TableCell>
+                                <TableCell>
+                                  {!adminUser.isSuperAdmin && (
+                                    <Switch
+                                      checked={adminUser.isAdmin}
+                                      onCheckedChange={(checked) => 
+                                        updateRoleMutation.mutate({ 
+                                          userId: adminUser.id, 
+                                          isAdmin: checked 
+                                        })
+                                      }
+                                      disabled={updateRoleMutation.isPending}
+                                    />
+                                  )}
+                                </TableCell>
+                              </TableRow>
+                            ))}
+                          </TableBody>
+                        </Table>
+                      </CardContent>
+                    </Card>
+                  </div>
+                </TabsContent>
+              )}
             </Tabs>
           </main>
         </div>
