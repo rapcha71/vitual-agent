@@ -13,70 +13,9 @@ export default function HomePage() {
   const { user, logoutMutation } = useAuth();
   const [, setLocation] = useLocation();
 
-  // Optimized query with proper configuration
-  const { data: properties = [], isLoading, error } = useQuery({
+  const { data: properties = [] } = useQuery<Property[]>({
     queryKey: ['/api/properties'],
-    staleTime: 60000, // Cache for 1 minute
-    retry: 1, // Only retry once on failure
-    refetchOnWindowFocus: false, // Prevent unnecessary refetches
   });
-
-  // Memoized property counts to prevent unnecessary recalculations
-  const propertyCounts = useMemo(() => ({
-    house: properties.filter(p => p.propertyType === 'house').length,
-    land: properties.filter(p => p.propertyType === 'land').length,
-    commercial: properties.filter(p => p.propertyType === 'commercial').length
-  }), [properties]);
-
-  // Loading state
-  if (isLoading) {
-    return (
-      <div className="flex items-center justify-center min-h-screen bg-gray-100">
-        <PhonePreview>
-          <header className="bg-[#F05023] px-4 py-3">
-            <div className="flex items-center justify-center">
-              <img 
-                src="/assets/logo.png"
-                alt="Virtual Agent"
-                className="h-10 w-auto"
-              />
-            </div>
-          </header>
-          <div className="flex items-center justify-center h-[80vh]">
-            <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-[#F05023]"></div>
-          </div>
-        </PhonePreview>
-      </div>
-    );
-  }
-
-  // Error state
-  if (error) {
-    return (
-      <div className="flex items-center justify-center min-h-screen bg-gray-100">
-        <PhonePreview>
-          <header className="bg-[#F05023] px-4 py-3">
-            <div className="flex items-center justify-center">
-              <img 
-                src="/assets/logo.png"
-                alt="Virtual Agent"
-                className="h-10 w-auto"
-              />
-            </div>
-          </header>
-          <div className="p-4 text-center">
-            <p className="text-red-600 mb-4">Error al cargar los datos.</p>
-            <Button 
-              onClick={() => window.location.reload()} 
-              variant="outline"
-            >
-              Recargar página
-            </Button>
-          </div>
-        </PhonePreview>
-      </div>
-    );
-  }
 
   return (
     <div className="flex items-center justify-center min-h-screen bg-gray-100">
@@ -176,45 +115,6 @@ export default function HomePage() {
                   <span>Dashboard</span>
                 </Button>
               </Link>
-            </div>
-
-            {/* Property Statistics */}
-            <div className="grid grid-cols-3 gap-3">
-              <Card className="bg-white/90 backdrop-blur-sm shadow-sm">
-                <CardHeader className="p-3">
-                  <CardTitle className="text-sm font-medium flex items-center justify-between">
-                    Casas
-                    <Home className="h-4 w-4 text-muted-foreground" />
-                  </CardTitle>
-                </CardHeader>
-                <CardContent className="p-3 pt-0">
-                  <div className="text-2xl font-bold">{propertyCounts.house}</div>
-                </CardContent>
-              </Card>
-
-              <Card className="bg-white/90 backdrop-blur-sm shadow-sm">
-                <CardHeader className="p-3">
-                  <CardTitle className="text-sm font-medium flex items-center justify-between">
-                    Terrenos
-                    <MapPin className="h-4 w-4 text-muted-foreground" />
-                  </CardTitle>
-                </CardHeader>
-                <CardContent className="p-3 pt-0">
-                  <div className="text-2xl font-bold">{propertyCounts.land}</div>
-                </CardContent>
-              </Card>
-
-              <Card className="bg-white/90 backdrop-blur-sm shadow-sm">
-                <CardHeader className="p-3">
-                  <CardTitle className="text-sm font-medium flex items-center justify-between">
-                    Comercial
-                    <Building className="h-4 w-4 text-muted-foreground" />
-                  </CardTitle>
-                </CardHeader>
-                <CardContent className="p-3 pt-0">
-                  <div className="text-2xl font-bold">{propertyCounts.commercial}</div>
-                </CardContent>
-              </Card>
             </div>
 
             {/* Properties List */}
