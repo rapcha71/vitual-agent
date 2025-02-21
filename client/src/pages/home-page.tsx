@@ -30,7 +30,7 @@ export default function HomePage() {
     return (
       <div className="flex items-center justify-center min-h-screen bg-gray-100">
         <PhonePreview>
-          <div className="flex flex-col h-full">
+          <div className="flex flex-col h-full bg-white overflow-hidden">
             <header className="bg-[#F05023] px-4 py-3 flex-none">
               <div className="flex items-center justify-center">
                 <img 
