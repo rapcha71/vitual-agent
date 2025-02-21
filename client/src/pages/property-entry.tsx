@@ -33,6 +33,12 @@ export default function PropertyEntry() {
     phoneNumbers?: string[];
   } | null>(null);
   const [showOcrDialog, setShowOcrDialog] = useState(false);
+  const [showDuplicateError, setShowDuplicateError] = useState(false);
+  const [duplicateErrorDetails, setDuplicateErrorDetails] = useState<{
+    message: string;
+    existingPropertyId?: string;
+    distance?: string;
+  } | null>(null);
 
   const form = useForm({
     resolver: zodResolver(insertPropertySchema),
@@ -327,57 +333,94 @@ export default function PropertyEntry() {
 
   const captureLocation = async () => {
     try {
+      // Verificar si el navegador soporta geolocalización
+      if (!("geolocation" in navigator)) {
+        console.error("Geolocation API not available");
+        toast({
+          title: "Error",
+          description: "Su navegador no soporta la geolocalización",
+          variant: "destructive",
+          duration: 5000
+        });
+        return;
+      }
+
+      // Mostrar toast de cargando
       toast({
         title: "Capturando ubicación",
         description: "Por favor, espere mientras obtenemos su ubicación...",
       });
 
-      if (!("geolocation" in navigator)) {
-        toast({
-          title: "Error",
-          description: "Su navegador no soporta la geolocalización",
-          variant: "destructive"
-        });
-        return;
+      console.log("Starting location capture...");
+
+      // Verificar permisos
+      const permission = await navigator.permissions.query({ name: 'geolocation' });
+      console.log("Geolocation permission status:", permission.state);
+
+      if (permission.state === 'denied') {
+        throw new Error('PERMISSION_DENIED');
       }
 
       const position = await new Promise<GeolocationPosition>((resolve, reject) => {
+        console.log("Requesting position...");
         navigator.geolocation.getCurrentPosition(
-          resolve,
-          reject,
+          (pos) => {
+            console.log("Position success:", {
+              lat: pos.coords.latitude,
+              lng: pos.coords.longitude,
+              accuracy: pos.coords.accuracy
+            });
+            resolve(pos);
+          },
+          (error) => {
+            console.error("Detailed geolocation error:", {
+              code: error.code,
+              message: error.message,
+              PERMISSION_DENIED: error.PERMISSION_DENIED,
+              POSITION_UNAVAILABLE: error.POSITION_UNAVAILABLE,
+              TIMEOUT: error.TIMEOUT
+            });
+            reject(error);
+          },
           {
             enableHighAccuracy: true,
-            timeout: 10000,
+            timeout: 30000,
             maximumAge: 0
           }
         );
       });
 
+      // Actualizar el formulario con la ubicación
       form.setValue("location", {
         lat: position.coords.latitude,
         lng: position.coords.longitude
       });
 
+      // Mostrar mensaje de éxito
       toast({
         title: "Ubicación capturada",
-        description: "La ubicación se ha registrado exitosamente."
+        description: `Ubicación registrada: ${position.coords.latitude.toFixed(6)}, ${position.coords.longitude.toFixed(6)}`,
+        duration: 5000
       });
+
     } catch (error: any) {
-      console.error("Error getting location:", error);
+      console.error("Location capture error:", error);
+
       let errorMessage = "Error al obtener la ubicación.";
 
-      if (error.code === 1) {
-        errorMessage = "Por favor, permita el acceso a su ubicación en la configuración de su navegador.";
+      if (error.message === 'PERMISSION_DENIED' || error.code === 1) {
+        errorMessage = "Por favor, permita el acceso a su ubicación en la configuración de su navegador y vuelva a intentarlo. Asegúrese de que su dispositivo tenga el GPS activado.";
       } else if (error.code === 2) {
-        errorMessage = "No se pudo obtener la ubicación. Por favor, verifique su conexión GPS.";
+        errorMessage = "No se pudo obtener la ubicación. Por favor, verifique que su GPS está activado y que se encuentra en un lugar con buena señal.";
       } else if (error.code === 3) {
-        errorMessage = "Tiempo de espera agotado. Por favor, intente nuevamente.";
+        errorMessage = "La obtención de ubicación tomó demasiado tiempo. Por favor, asegúrese de tener el GPS activado y estar en un lugar con buena señal, luego intente nuevamente.";
       }
 
       toast({
         title: "Error de ubicación",
         description: errorMessage,
-        variant: "destructive"
+        variant: "destructive",
+        duration: 7000
       });
     }
   };
@@ -394,28 +437,41 @@ export default function PropertyEntry() {
         credentials: 'include'
       });
 
+      const result = await response.json();
+
       if (!response.ok) {
-        const error = await response.json();
-        throw new Error(error.message || 'Error al crear la propiedad');
+        // Si el error contiene detalles de duplicación, guardamos la información
+        if (result.details?.existingPropertyId) {
+          setDuplicateErrorDetails({
+            message: result.message,
+            existingPropertyId: result.details.existingPropertyId,
+            distance: result.details.distance
+          });
+          setShowDuplicateError(true);
+          throw new Error('DUPLICATE_PROPERTY');
+        }
+        throw new Error(result.message || 'Error al crear la propiedad');
       }
 
-      const result = await response.json();
       console.log("Mutation successful, result:", result);
       return result;
     },
     onSuccess: (data) => {
       console.log("Mutation onSuccess called with data:", data);
       queryClient.invalidateQueries({ queryKey: ['properties'] });
-      // Redirigir a la página de confirmación con el ID de la propiedad
       setLocation(`/property-confirmation/${data.property.propertyId}`);
     },
     onError: (error: Error) => {
       console.error("Mutation error:", error);
-      toast({
-        title: "Error",
-        description: error.message,
-        variant: "destructive"
-      });
+      // Solo mostrar el toast para errores que no son de duplicación
+      if (error.message !== 'DUPLICATE_PROPERTY') {
+        toast({
+          title: "Error",
+          description: error.message,
+          variant: "destructive",
+          duration: 7000
+        });
+      }
     }
   });
 
@@ -730,6 +786,31 @@ export default function PropertyEntry() {
           </DialogContent>
         </Dialog>
       )}
+
+      {/* Modal de error de duplicación */}
+      <Dialog open={showDuplicateError} onOpenChange={setShowDuplicateError}>
+        <DialogContent className="sm:max-w-md">
+          <DialogHeader>
+            <DialogTitle className="text-center text-red-600">
+              Propiedad Duplicada Detectada
+            </DialogTitle>
+          </DialogHeader>
+          <div className="p-6 space-y-4">
+            <p className="text-center">
+              {duplicateErrorDetails?.message}
+            </p>
+            <div className="text-sm text-gray-500 space-y-2">
+              <p>ID de propiedad existente: {duplicateErrorDetails?.existingPropertyId}</p>
+              <p>Distancia: {duplicateErrorDetails?.distance}</p>
+            </div>
+            <div className="flex justify-center pt-4">
+              <Button onClick={() => setShowDuplicateError(false)}>
+                Entendido
+              </Button>
+            </div>
+          </div>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }
