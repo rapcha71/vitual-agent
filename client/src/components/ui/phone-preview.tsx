@@ -20,9 +20,7 @@ export function PhonePreview({ children, className, ...props }: PhonePreviewProp
         className
       )} {...props}>
         <ScrollArea className="h-full w-full">
-          <div className="px-4 py-2">
-            {children}
-          </div>
+          {children}
         </ScrollArea>
       </div>
     </div>
