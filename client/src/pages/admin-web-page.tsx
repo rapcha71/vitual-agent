@@ -3,7 +3,7 @@ import { useQuery, useMutation } from "@tanstack/react-query";
 import { PropertyWithUser } from "@shared/schema";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { LogOut, MapPin, Image, ChevronLeft, Users, Plus, Trash2 } from "lucide-react";
+import { LogOut, MapPin, Image, ChevronLeft, Users, Plus, Trash2, MessageCircle } from "lucide-react";
 import { useLocation } from "wouter";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
@@ -15,6 +15,11 @@ import { useToast } from "@/hooks/use-toast";
 import { PhonePreview } from "@/components/ui/phone-preview";
 import { Switch } from "@/components/ui/switch";
 import { queryClient } from "@/lib/queryClient";
+import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
+import { Textarea } from "@/components/ui/textarea";
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { insertMessageSchema } from "@shared/schema";
 
 const MapComponent = memo(({ properties }: { properties: PropertyWithUser[] }) => {
   const [isLoading, setIsLoading] = useState(true);
@@ -290,6 +295,53 @@ export default function AdminWebPage() {
     }
   });
 
+  const messageForm = useForm({
+    resolver: zodResolver(insertMessageSchema),
+    defaultValues: {
+      content: "",
+    }
+  });
+
+  const sendMessageMutation = useMutation({
+    mutationFn: async (data: { content: string }) => {
+      const response = await fetch('/api/admin/messages', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        credentials: 'include',
+        body: JSON.stringify(data),
+      });
+      if (!response.ok) {
+        const error = await response.json();
+        throw new Error(error.message);
+      }
+      return response.json();
+    },
+    onSuccess: () => {
+      toast({
+        title: "Mensaje enviado",
+        description: "El mensaje ha sido enviado a todos los usuarios",
+      });
+      messageForm.reset();
+    },
+    onError: (error: Error) => {
+      toast({
+        title: "Error",
+        description: error.message,
+        variant: "destructive"
+      });
+    }
+  });
+
+  const handleSendMessage = async (data: { content: string }) => {
+    try {
+      await sendMessageMutation.mutateAsync(data);
+    } catch (error) {
+      console.error('Error sending message:', error);
+    }
+  };
+
   if (!user?.isAdmin) {
     setLocation("/dashboard");
     return null;
@@ -336,13 +388,69 @@ export default function AdminWebPage() {
 
           <main className="pt-[60px] px-4 pb-4">
             <h1 className="text-xl font-bold">Panel de Administración</h1>
-            <Button 
-              onClick={() => setLocation("/property/new")}
-              className="transform transition-all duration-200 hover:scale-[1.02] active:scale-[0.98] shadow-[4px_4px_10px_rgba(240,80,35,0.3)] hover:shadow-[6px_6px_15px_rgba(240,80,35,0.4)]"
-            >
-              <Plus className="h-4 w-4 mr-2" />
-              Agregar Propiedad
-            </Button>
+            <div className="flex gap-2 mt-4">
+              <Button 
+                onClick={() => setLocation("/property/new")}
+                className="transform transition-all duration-200 hover:scale-[1.02] active:scale-[0.98] shadow-[4px_4px_10px_rgba(240,80,35,0.3)] hover:shadow-[6px_6px_15px_rgba(240,80,35,0.4)]"
+              >
+                <Plus className="h-4 w-4 mr-2" />
+                Agregar Propiedad
+              </Button>
+              {user.isSuperAdmin && (
+                <Dialog>
+                  <DialogTrigger asChild>
+                    <Button
+                      variant="outline"
+                      className="transform transition-all duration-200 hover:scale-[1.02] active:scale-[0.98]"
+                    >
+                      <MessageCircle className="h-4 w-4 mr-2" />
+                      Enviar Mensaje
+                    </Button>
+                  </DialogTrigger>
+                  <DialogContent>
+                    <DialogHeader>
+                      <DialogTitle>Enviar Mensaje a Todos los Usuarios</DialogTitle>
+                    </DialogHeader>
+                    <Form {...messageForm}>
+                      <form onSubmit={messageForm.handleSubmit(handleSendMessage)} className="space-y-4">
+                        <FormField
+                          control={messageForm.control}
+                          name="content"
+                          render={({ field }) => (
+                            <FormItem>
+                              <FormLabel>Mensaje</FormLabel>
+                              <FormControl>
+                                <Textarea
+                                  placeholder="Escriba su mensaje aquí..."
+                                  className="min-h-[100px]"
+                                  {...field}
+                                />
+                              </FormControl>
+                              <FormMessage />
+                            </FormItem>
+                          )}
+                        />
+                        <DialogFooter>
+                          <Button
+                            type="submit"
+                            disabled={sendMessageMutation.isPending}
+                          >
+                            {sendMessageMutation.isPending ? (
+                              <>
+                                <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                                Enviando...
+                              </>
+                            ) : (
+                              "Enviar Mensaje"
+                            )}
+                          </Button>
+                        </DialogFooter>
+                      </form>
+                    </Form>
+                  </DialogContent>
+                </Dialog>
+              )}
+            </div>
             <div className="grid grid-cols-3 gap-2 mt-4">
               <Card className="bg-white shadow-sm">
                 <CardContent className="py-2">
