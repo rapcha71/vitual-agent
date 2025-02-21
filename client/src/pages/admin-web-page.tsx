@@ -22,6 +22,8 @@ const MapComponent = memo(({ properties }: { properties: PropertyWithUser[] }) =
 
   useEffect(() => {
     let isMounted = true;
+    let googleMap: google.maps.Map | null = null;
+    let currentMarkers: google.maps.Marker[] = [];
 
     const initMap = async () => {
       if (!mapRef.current || !properties.length) {
@@ -42,7 +44,7 @@ const MapComponent = memo(({ properties }: { properties: PropertyWithUser[] }) =
           libraries: ["places"]
         });
 
-        await loader.load();
+        const google = await loader.load();
 
         if (!isMounted || !mapRef.current) return;
 
@@ -53,30 +55,23 @@ const MapComponent = memo(({ properties }: { properties: PropertyWithUser[] }) =
           streetViewControl: false,
           fullscreenControl: false,
           zoomControl: true,
-          zoomControlOptions: {
-            position: google.maps.ControlPosition.RIGHT_TOP
-          },
           gestureHandling: 'greedy',
-          controlSize: 24,
-          disableDefaultUI: true,
-          styles: [
-            {
-              featureType: "poi",
-              elementType: "labels",
-              stylers: [{ visibility: "off" }]
-            }
-          ]
+          disableDefaultUI: true
         };
 
-        map.current = new google.maps.Map(mapRef.current, mapOptions);
+        googleMap = new google.maps.Map(mapRef.current, mapOptions);
+        map.current = googleMap;
 
-        markers.current.forEach(marker => marker.setMap(null));
-        markers.current = [];
+        // Clear existing markers
+        currentMarkers.forEach(marker => marker.setMap(null));
+        currentMarkers = [];
+
+        const bounds = new google.maps.LatLngBounds();
 
         properties.forEach(property => {
           const marker = new google.maps.Marker({
             position: { lat: property.location.lat, lng: property.location.lng },
-            map: map.current,
+            map: googleMap,
             title: property.propertyId,
             icon: {
               path: google.maps.SymbolPath.CIRCLE,
@@ -88,49 +83,16 @@ const MapComponent = memo(({ properties }: { properties: PropertyWithUser[] }) =
             }
           });
 
-          const infoWindow = new google.maps.InfoWindow({
-            content: `
-              <div style="padding: 12px; min-width: 200px; max-width: 250px;">
-                <h3 style="margin: 0 0 8px; font-size: 14px; font-weight: bold;">
-                  Propiedad: ${property.propertyId}
-                </h3>
-                <p style="margin: 0 0 6px; font-size: 12px;">
-                  Tipo: ${
-                    property.propertyType === 'house' ? 'Casa' :
-                    property.propertyType === 'land' ? 'Terreno' :
-                    'Local Comercial'
-                  }
-                </p>
-                <p style="margin: 6px 0; font-size: 12px;">
-                  Teléfono: ${property.signPhoneNumber || 'No disponible'}
-                </p>
-              </div>
-            `,
-            maxWidth: 250
-          });
-
-          marker.addListener('click', () => {
-            infoWindow.open(map.current, marker);
-          });
-
-          markers.current.push(marker);
-        });
-
-        const bounds = new google.maps.LatLngBounds();
-        markers.current.forEach(marker => {
           bounds.extend(marker.getPosition()!);
+          currentMarkers.push(marker);
         });
-        map.current.fitBounds(bounds, { padding: 40 });
 
-        // Asegurar que el mapa se renderice correctamente
-        setTimeout(() => {
-          if (map.current) {
-            google.maps.event.trigger(map.current, 'resize');
-            map.current.fitBounds(bounds, { padding: 40 });
-          }
-        }, 100);
+        googleMap.fitBounds(bounds, { padding: 40 });
+        markers.current = currentMarkers;
 
-        setIsLoading(false);
+        if (isMounted) {
+          setIsLoading(false);
+        }
 
       } catch (error) {
         console.error('Error loading map:', error);
@@ -149,11 +111,14 @@ const MapComponent = memo(({ properties }: { properties: PropertyWithUser[] }) =
 
     return () => {
       isMounted = false;
-      markers.current.forEach(marker => {
-        google.maps.event.clearInstanceListeners(marker);
-        marker.setMap(null);
-      });
-      markers.current = [];
+      if (currentMarkers.length > 0) {
+        currentMarkers.forEach(marker => {
+          marker.setMap(null);
+        });
+      }
+      if (googleMap) {
+        google.maps.event.clearInstanceListeners(googleMap);
+      }
     };
   }, [properties, toast]);
 
@@ -162,7 +127,7 @@ const MapComponent = memo(({ properties }: { properties: PropertyWithUser[] }) =
       <div className="aspect-[9/16] w-full relative bg-gray-100 rounded-lg overflow-hidden shadow-md">
         <div
           ref={mapRef}
-          className="absolute inset-0 flex items-stretch"
+          className="absolute inset-0"
           style={{
             width: '100%',
             height: '100%'
@@ -203,7 +168,6 @@ export default function AdminWebPage() {
 
   return (
     <div className="min-h-screen bg-gray-100">
-      {/* Header */}
       <header className="bg-[#F05023] px-4 py-3 flex items-center justify-between fixed top-0 w-full z-50">
         <div className="w-full max-w-[430px] mx-auto flex items-center justify-between">
           <Button
@@ -231,7 +195,6 @@ export default function AdminWebPage() {
         </div>
       </header>
 
-      {/* Main Content */}
       <main className="pt-16 px-4 pb-4 w-full max-w-[430px] mx-auto">
         <h1 className="text-xl font-bold">Panel de Administración</h1>
 
@@ -274,81 +237,78 @@ export default function AdminWebPage() {
 
           <TabsContent value="list">
             <div className="overflow-x-auto">
-              <div className="min-w-full">
-                <Table>
-                  <TableHeader>
-                    <TableRow>
-                      <TableHead className="w-20">ID</TableHead>
-                      <TableHead>Tipo</TableHead>
-                      <TableHead className="hidden sm:table-cell">Usuario</TableHead>
-                      <TableHead className="hidden sm:table-cell">Teléfono</TableHead>
-                      <TableHead className="w-24">Ver</TableHead>
-                    </TableRow>
-                  </TableHeader>
-                  <TableBody>
-                    {properties.map((property) => (
-                      <TableRow key={property.propertyId}>
-                        <TableCell className="font-medium">{property.propertyId}</TableCell>
-                        <TableCell>
-                          {property.propertyType === 'house' ? 'Casa' :
-                            property.propertyType === 'land' ? 'Terreno' :
-                              'Comercial'}
-                        </TableCell>
-                        <TableCell className="hidden sm:table-cell">
-                          {property.user.fullName || property.user.username}
-                        </TableCell>
-                        <TableCell className="hidden sm:table-cell">
-                          {property.signPhoneNumber || '-'}
-                        </TableCell>
-                        <TableCell>
-                          <Dialog>
-                            <DialogTrigger asChild>
-                              <Button variant="outline" size="sm" className="w-full">
-                                Detalles
-                              </Button>
-                            </DialogTrigger>
-                            <DialogContent className="w-[90vw] max-w-lg">
-                              <DialogHeader>
-                                <DialogTitle>Detalles de la Propiedad</DialogTitle>
-                              </DialogHeader>
-                              <div className="space-y-4">
-                                <div className="sm:hidden">
-                                  <p><strong>Usuario:</strong> {property.user.fullName || property.user.username}</p>
-                                  <p><strong>Teléfono:</strong> {property.signPhoneNumber || '-'}</p>
-                                </div>
-                                <p><strong>Ubicación:</strong> {property.location.lat.toFixed(6)}, {property.location.lng.toFixed(6)}</p>
-
-                                {property.images && property.images.length > 0 && (
-                                  <div className="mt-4">
-                                    <h4 className="font-semibold mb-2">Imágenes de la Propiedad</h4>
-                                    <div className="grid grid-cols-2 gap-2">
-                                      {property.images.map((image, index) => (
-                                        <div key={index} className="relative aspect-video group">
-                                          <img
-                                            src={image}
-                                            alt={`Imagen ${index + 1} de la propiedad ${property.propertyId}`}
-                                            className="object-cover w-full h-full rounded-lg cursor-pointer"
-                                            onClick={() => {
-                                              window.open(image, '_blank');
-                                            }}
-                                          />
-                                          <div className="absolute inset-0 bg-black/50 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
-                                            <span className="text-white text-sm">Ver tamaño completo</span>
-                                          </div>
-                                        </div>
-                                      ))}
-                                    </div>
-                                  </div>
-                                )}
+              <Table>
+                <TableHeader>
+                  <TableRow>
+                    <TableHead className="w-20">ID</TableHead>
+                    <TableHead>Tipo</TableHead>
+                    <TableHead className="hidden sm:table-cell">Usuario</TableHead>
+                    <TableHead className="hidden sm:table-cell">Teléfono</TableHead>
+                    <TableHead className="w-24">Ver</TableHead>
+                  </TableRow>
+                </TableHeader>
+                <TableBody>
+                  {properties.map((property) => (
+                    <TableRow key={property.propertyId}>
+                      <TableCell className="font-medium">{property.propertyId}</TableCell>
+                      <TableCell>
+                        {property.propertyType === 'house' ? 'Casa' :
+                          property.propertyType === 'land' ? 'Terreno' :
+                            'Comercial'}
+                      </TableCell>
+                      <TableCell className="hidden sm:table-cell">
+                        {property.user.fullName || property.user.username}
+                      </TableCell>
+                      <TableCell className="hidden sm:table-cell">
+                        {property.signPhoneNumber || '-'}
+                      </TableCell>
+                      <TableCell>
+                        <Dialog>
+                          <DialogTrigger asChild>
+                            <Button variant="outline" size="sm" className="w-full">
+                              Detalles
+                            </Button>
+                          </DialogTrigger>
+                          <DialogContent className="w-[90vw] max-w-lg">
+                            <DialogHeader>
+                              <DialogTitle>Detalles de la Propiedad</DialogTitle>
+                            </DialogHeader>
+                            <div className="space-y-4">
+                              <div className="sm:hidden">
+                                <p><strong>Usuario:</strong> {property.user.fullName || property.user.username}</p>
+                                <p><strong>Teléfono:</strong> {property.signPhoneNumber || '-'}</p>
                               </div>
-                            </DialogContent>
-                          </Dialog>
-                        </TableCell>
-                      </TableRow>
-                    ))}
-                  </TableBody>
-                </Table>
-              </div>
+                              <p><strong>Ubicación:</strong> {property.location.lat.toFixed(6)}, {property.location.lng.toFixed(6)}</p>
+                              {property.images && property.images.length > 0 && (
+                                <div className="mt-4">
+                                  <h4 className="font-semibold mb-2">Imágenes de la Propiedad</h4>
+                                  <div className="grid grid-cols-2 gap-2">
+                                    {property.images.map((image, index) => (
+                                      <div key={index} className="relative aspect-video group">
+                                        <img
+                                          src={image}
+                                          alt={`Imagen ${index + 1} de la propiedad ${property.propertyId}`}
+                                          className="object-cover w-full h-full rounded-lg cursor-pointer"
+                                          onClick={() => {
+                                            window.open(image, '_blank');
+                                          }}
+                                        />
+                                        <div className="absolute inset-0 bg-black/50 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
+                                          <span className="text-white text-sm">Ver tamaño completo</span>
+                                        </div>
+                                      </div>
+                                    ))}
+                                  </div>
+                                </div>
+                              )}
+                            </div>
+                          </DialogContent>
+                        </Dialog>
+                      </TableCell>
+                    </TableRow>
+                  ))}
+                </TableBody>
+              </Table>
             </div>
           </TabsContent>
         </Tabs>
