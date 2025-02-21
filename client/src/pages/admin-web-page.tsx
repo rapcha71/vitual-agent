@@ -3,7 +3,7 @@ import { useQuery } from "@tanstack/react-query";
 import { PropertyWithUser } from "@shared/schema";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { LogOut, Image, MapPin, Menu, ChevronLeft } from "lucide-react";
+import { LogOut, Image, MapPin, ChevronLeft } from "lucide-react";
 import { useLocation } from "wouter";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
@@ -13,7 +13,6 @@ import { useEffect, useState, useRef, memo } from "react";
 import { Loader } from "@googlemaps/js-api-loader";
 import { useToast } from "@/hooks/use-toast";
 
-// Componente del mapa memoizado
 const MapComponent = memo(({ properties }: { properties: PropertyWithUser[] }) => {
   const [isLoading, setIsLoading] = useState(true);
   const mapContainer = useRef<HTMLDivElement>(null);
@@ -23,38 +22,45 @@ const MapComponent = memo(({ properties }: { properties: PropertyWithUser[] }) =
 
   useEffect(() => {
     let isActive = true;
-    const googleMapsApiKey = import.meta.env.VITE_GOOGLE_MAPS_API_KEY;
-
-    if (!googleMapsApiKey || !mapContainer.current || !properties.length) {
-      setIsLoading(false);
-      return;
-    }
-
-    const loader = new Loader({
-      apiKey: googleMapsApiKey,
-      version: "weekly",
-      libraries: ["places"]
-    });
 
     const initializeMap = async () => {
+      if (!mapContainer.current || !properties.length) {
+        setIsLoading(false);
+        return;
+      }
+
       try {
+        const loader = new Loader({
+          apiKey: import.meta.env.VITE_GOOGLE_MAPS_API_KEY || '',
+          version: "weekly",
+          libraries: ["places"]
+        });
+
         await loader.load();
 
         if (!isActive || !mapContainer.current) return;
 
-        // Configuración optimizada para móvil
+        // Configuración específica para móvil
         const mapOptions: google.maps.MapOptions = {
           center: { lat: 9.9281, lng: -84.0907 },
-          zoom: 8,
-          mapTypeControl: false, // Ocultar controles de tipo de mapa en móvil
+          zoom: 7,
+          mapTypeControl: false,
           streetViewControl: false,
-          fullscreenControl: true,
+          fullscreenControl: false,
           zoomControl: true,
           zoomControlOptions: {
             position: google.maps.ControlPosition.RIGHT_BOTTOM
           },
-          gestureHandling: 'greedy', // Mejor manejo de gestos táctiles
-          controlSize: 32, // Controles más grandes para móvil
+          gestureHandling: 'cooperative',
+          controlSize: 40,
+          disableDefaultUI: true,
+          styles: [
+            {
+              featureType: "poi",
+              elementType: "labels",
+              stylers: [{ visibility: "off" }]
+            }
+          ]
         };
 
         map.current = new google.maps.Map(mapContainer.current, mapOptions);
@@ -63,7 +69,7 @@ const MapComponent = memo(({ properties }: { properties: PropertyWithUser[] }) =
         markers.current.forEach(marker => marker.setMap(null));
         markers.current = [];
 
-        // Agregar nuevos marcadores optimizados para móvil
+        // Agregar marcadores optimizados para móvil
         properties.forEach(property => {
           const marker = new google.maps.Marker({
             position: {
@@ -76,32 +82,32 @@ const MapComponent = memo(({ properties }: { properties: PropertyWithUser[] }) =
               path: google.maps.SymbolPath.CIRCLE,
               fillColor: property.propertyType === 'house' ? '#F05023' : 
                         property.propertyType === 'land' ? '#22C55E' : '#3B82F6',
-              fillOpacity: 0.8,
-              strokeWeight: 1,
-              scale: 12, // Marcadores más grandes para mejor toque
+              fillOpacity: 0.9,
+              strokeWeight: 2,
+              scale: 14
             }
           });
 
-          // InfoWindow optimizada para móvil
           const infoWindow = new google.maps.InfoWindow({
             content: `
-              <div style="padding: 12px; min-width: 200px;">
-                <h3 style="margin: 0 0 8px; font-size: 16px; font-weight: bold;">
+              <div style="padding: 16px; min-width: 280px; max-width: 320px;">
+                <h3 style="margin: 0 0 12px; font-size: 18px; font-weight: bold;">
                   Propiedad: ${property.propertyId}
                 </h3>
-                <p style="margin: 0 0 4px; font-size: 14px;">
+                <p style="margin: 0 0 8px; font-size: 16px;">
                   Tipo: ${
                     property.propertyType === 'house' ? 'Casa' :
                     property.propertyType === 'land' ? 'Terreno' :
                     'Local Comercial'
                   }
                 </p>
-                <p style="margin: 4px 0; font-size: 14px;">
+                <p style="margin: 8px 0; font-size: 16px;">
                   Teléfono: ${property.signPhoneNumber || 'No disponible'}
                 </p>
               </div>
             `,
-            maxWidth: 300
+            maxWidth: 320,
+            pixelOffset: new google.maps.Size(0, -20)
           });
 
           marker.addListener('click', () => {
@@ -110,6 +116,13 @@ const MapComponent = memo(({ properties }: { properties: PropertyWithUser[] }) =
 
           markers.current.push(marker);
         });
+
+        // Ajustar bounds para mostrar todos los marcadores
+        const bounds = new google.maps.LatLngBounds();
+        markers.current.forEach(marker => {
+          bounds.extend(marker.getPosition()!);
+        });
+        map.current.fitBounds(bounds, { padding: 50 });
 
       } catch (error) {
         console.error('Error loading map:', error);
@@ -131,13 +144,11 @@ const MapComponent = memo(({ properties }: { properties: PropertyWithUser[] }) =
 
     return () => {
       isActive = false;
-      if (markers.current) {
-        markers.current.forEach(marker => {
-          google.maps.event.clearInstanceListeners(marker);
-          marker.setMap(null);
-        });
-        markers.current = [];
-      }
+      markers.current.forEach(marker => {
+        google.maps.event.clearInstanceListeners(marker);
+        marker.setMap(null);
+      });
+      markers.current = [];
       if (map.current) {
         google.maps.event.clearInstanceListeners(map.current);
       }
@@ -148,8 +159,12 @@ const MapComponent = memo(({ properties }: { properties: PropertyWithUser[] }) =
     <div className="relative w-full bg-gray-50 rounded-lg overflow-hidden">
       <div
         ref={mapContainer}
-        style={{ width: '100%' }}
-        className="h-[300px] sm:h-[400px] lg:h-[600px] touch-pan-x touch-pan-y"
+        className="h-[70vh] touch-pan-x touch-pan-y"
+        style={{
+          width: '100%',
+          maxHeight: '600px',
+          minHeight: '300px'
+        }}
       />
       {isLoading && (
         <div className="absolute inset-0 flex items-center justify-center bg-gray-100/80 z-10">
@@ -188,8 +203,8 @@ export default function AdminWebPage() {
 
   return (
     <div className="min-h-screen bg-gray-100">
-      {/* Header consistente con el estilo móvil */}
-      <header className="bg-[#F05023] px-4 py-3 flex items-center justify-between">
+      {/* Header */}
+      <header className="bg-[#F05023] px-4 py-3 flex items-center justify-between fixed top-0 w-full z-50">
         <Button 
           variant="ghost" 
           className="text-white hover:text-white/80 p-0"
@@ -201,7 +216,7 @@ export default function AdminWebPage() {
           <img 
             src="/assets/logo.png"
             alt="Virtual Agent"
-            className="h-10 w-auto"
+            className="h-8 w-auto"
           />
         </div>
         <Button 
@@ -215,120 +230,109 @@ export default function AdminWebPage() {
       </header>
 
       {/* Main Content */}
-      <main className="p-4 space-y-4">
-        <h1 className="text-2xl font-bold">Panel de Administración</h1>
+      <main className="pt-16 p-4 space-y-4">
+        <h1 className="text-xl font-bold">Panel de Administración</h1>
 
-        <Card>
-          <CardHeader>
-            <CardTitle>Resumen de Propiedades</CardTitle>
-          </CardHeader>
-          <CardContent>
-            <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-              <Card>
-                <CardHeader className="pb-2">
-                  <CardTitle className="text-lg">Casas</CardTitle>
-                </CardHeader>
-                <CardContent>
-                  <p className="text-3xl font-bold">{propertyCounts.house}</p>
-                </CardContent>
-              </Card>
-              <Card>
-                <CardHeader className="pb-2">
-                  <CardTitle className="text-lg">Terrenos</CardTitle>
-                </CardHeader>
-                <CardContent>
-                  <p className="text-3xl font-bold">{propertyCounts.land}</p>
-                </CardContent>
-              </Card>
-              <Card>
-                <CardHeader className="pb-2">
-                  <CardTitle className="text-lg">Propiedades Comerciales</CardTitle>
-                </CardHeader>
-                <CardContent>
-                  <p className="text-3xl font-bold">{propertyCounts.commercial}</p>
-                </CardContent>
-              </Card>
-            </div>
-          </CardContent>
-        </Card>
+        <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+          <Card className="bg-white shadow-sm">
+            <CardHeader className="pb-2">
+              <CardTitle className="text-base">Casas</CardTitle>
+            </CardHeader>
+            <CardContent>
+              <p className="text-2xl font-bold">{propertyCounts.house}</p>
+            </CardContent>
+          </Card>
+          <Card className="bg-white shadow-sm">
+            <CardHeader className="pb-2">
+              <CardTitle className="text-base">Terrenos</CardTitle>
+            </CardHeader>
+            <CardContent>
+              <p className="text-2xl font-bold">{propertyCounts.land}</p>
+            </CardContent>
+          </Card>
+          <Card className="bg-white shadow-sm">
+            <CardHeader className="pb-2">
+              <CardTitle className="text-base">Comercial</CardTitle>
+            </CardHeader>
+            <CardContent>
+              <p className="text-2xl font-bold">{propertyCounts.commercial}</p>
+            </CardContent>
+          </Card>
+        </div>
 
-        <Tabs defaultValue="map" className="w-full">
-          <TabsList className="w-full justify-start">
-            <TabsTrigger value="map" className="flex items-center gap-2">
-              <MapPin className="h-4 w-4" />
+        <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
+          <TabsList className="w-full grid grid-cols-2 h-12">
+            <TabsTrigger value="map" className="text-sm">
+              <MapPin className="h-4 w-4 mr-2" />
               Mapa
             </TabsTrigger>
-            <TabsTrigger value="properties" className="flex items-center gap-2">
-              <Image className="h-4 w-4" />
-              Propiedades
+            <TabsTrigger value="list" className="text-sm">
+              <Image className="h-4 w-4 mr-2" />
+              Lista
             </TabsTrigger>
           </TabsList>
 
-          <TabsContent value="map">
-            <Card>
-              <CardContent>
-                <MapComponent properties={properties} />
-              </CardContent>
-            </Card>
+          <TabsContent value="map" className="mt-4">
+            <div className="-mx-4">
+              <MapComponent properties={properties} />
+            </div>
           </TabsContent>
 
-          <TabsContent value="properties">
-            <Card>
-              <CardContent className="px-0 sm:px-6">
-                <div className="overflow-x-auto">
-                  <Table>
-                    <TableHeader>
-                      <TableRow>
-                        <TableHead className="px-2 sm:px-4">ID</TableHead>
-                        <TableHead className="px-2 sm:px-4">Tipo</TableHead>
-                        <TableHead className="hidden sm:table-cell">Usuario</TableHead>
-                        <TableHead className="hidden sm:table-cell">Teléfono</TableHead>
-                        <TableHead className="px-2 sm:px-4">Acciones</TableHead>
-                      </TableRow>
-                    </TableHeader>
-                    <TableBody>
-                      {properties.map((property) => (
-                        <TableRow key={property.propertyId}>
-                          <TableCell className="px-2 sm:px-4">{property.propertyId}</TableCell>
-                          <TableCell className="px-2 sm:px-4">
-                            {property.propertyType === 'house' ? 'Casa' : 
-                             property.propertyType === 'land' ? 'Terreno' : 
-                             'Local Comercial'}
-                          </TableCell>
-                          <TableCell className="hidden sm:table-cell">
-                            {property.user.fullName || property.user.username}
-                          </TableCell>
-                          <TableCell className="hidden sm:table-cell">
-                            {property.signPhoneNumber || '-'}
-                          </TableCell>
-                          <TableCell className="px-2 sm:px-4">
-                            <Dialog>
-                              <DialogTrigger asChild>
-                                <Button variant="outline" size="sm" className="w-full sm:w-auto">
-                                  Ver Detalles
-                                </Button>
-                              </DialogTrigger>
-                              <DialogContent className="w-[90vw] max-w-lg">
-                                <DialogHeader>
-                                  <DialogTitle>Detalles de la Propiedad</DialogTitle>
-                                </DialogHeader>
-                                <div className="space-y-4">
-                                  <div className="sm:hidden">
-                                    <p><strong>Usuario:</strong> {property.user.fullName || property.user.username}</p>
-                                    <p><strong>Teléfono:</strong> {property.signPhoneNumber || '-'}</p>
-                                  </div>
-                                  <p><strong>Ubicación:</strong> {property.location.lat.toFixed(6)}, {property.location.lng.toFixed(6)}</p>
+          <TabsContent value="list">
+            <div className="overflow-x-auto -mx-4">
+              <div className="min-w-full">
+                <Table>
+                  <TableHeader>
+                    <TableRow>
+                      <TableHead className="w-20">ID</TableHead>
+                      <TableHead>Tipo</TableHead>
+                      <TableHead className="hidden sm:table-cell">Usuario</TableHead>
+                      <TableHead className="hidden sm:table-cell">Teléfono</TableHead>
+                      <TableHead className="w-24">Ver</TableHead>
+                    </TableRow>
+                  </TableHeader>
+                  <TableBody>
+                    {properties.map((property) => (
+                      <TableRow key={property.propertyId}>
+                        <TableCell className="font-medium">{property.propertyId}</TableCell>
+                        <TableCell>
+                          {property.propertyType === 'house' ? 'Casa' :
+                           property.propertyType === 'land' ? 'Terreno' :
+                           'Comercial'}
+                        </TableCell>
+                        <TableCell className="hidden sm:table-cell">
+                          {property.user.fullName || property.user.username}
+                        </TableCell>
+                        <TableCell className="hidden sm:table-cell">
+                          {property.signPhoneNumber || '-'}
+                        </TableCell>
+                        <TableCell>
+                          <Dialog>
+                            <DialogTrigger asChild>
+                              <Button variant="outline" size="sm" className="w-full">
+                                Detalles
+                              </Button>
+                            </DialogTrigger>
+                            <DialogContent className="w-[90vw] max-w-lg">
+                              <DialogHeader>
+                                <DialogTitle>Detalles de la Propiedad</DialogTitle>
+                              </DialogHeader>
+                              <div className="space-y-4">
+                                <div className="sm:hidden">
+                                  <p><strong>Usuario:</strong> {property.user.fullName || property.user.username}</p>
+                                  <p><strong>Teléfono:</strong> {property.signPhoneNumber || '-'}</p>
                                 </div>
-                              </DialogContent>
-                            </Dialog>
-                          </TableCell>
-                        </TableRow>
-                      ))}
-                    </TableBody>
-                  </Table>
-                </div>
-              </CardContent>
-            </Card>
+                                <p><strong>Ubicación:</strong> {property.location.lat.toFixed(6)}, {property.location.lng.toFixed(6)}</p>
+                              </div>
+                            </DialogContent>
+                          </Dialog>
+                        </TableCell>
+                      </TableRow>
+                    ))}
+                  </TableBody>
+                </Table>
+              </div>
+            </div>
           </TabsContent>
         </Tabs>
       </main>
