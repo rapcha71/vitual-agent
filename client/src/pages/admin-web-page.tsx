@@ -402,9 +402,9 @@ export default function AdminWebPage() {
                   <DialogTrigger asChild>
                     <Button
                       variant="outline"
-                      className="transform transition-all duration-200 hover:scale-[1.02] active:scale-[0.98]"
+                      className="flex-1 md:flex-initial flex items-center justify-center gap-2 min-w-[180px]"
                     >
-                      <MessageCircle className="h-4 w-4 mr-2" />
+                      <MessageCircle className="h-4 w-4" />
                       Enviar Mensaje
                     </Button>
                   </DialogTrigger>
