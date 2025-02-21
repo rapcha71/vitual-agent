@@ -30,7 +30,7 @@ export default function HomePage() {
     return (
       <div className="flex items-center justify-center min-h-screen bg-gray-100">
         <PhonePreview>
-          <div className="flex flex-col h-full bg-white overflow-hidden">
+          <div className="flex flex-col h-full bg-white">
             <header className="bg-[#F05023] px-4 py-3 flex-none">
               <div className="flex items-center justify-center">
                 <img 
@@ -47,13 +47,15 @@ export default function HomePage() {
               <p className="text-center text-muted-foreground">
                 Inicia sesión para administrar tus propiedades
               </p>
-              <Link href="/auth" className="w-full max-w-sm">
-                <Button 
-                  className="w-full transform transition-all duration-200 hover:scale-[1.02] active:scale-[0.98] shadow-[4px_4px_10px_rgba(240,80,35,0.3)] hover:shadow-[6px_6px_15px_rgba(240,80,35,0.4)]"
-                >
-                  Iniciar Sesión
-                </Button>
-              </Link>
+              <div className="w-full max-w-sm">
+                <Link href="/auth">
+                  <Button 
+                    className="w-full transform transition-all duration-200 hover:scale-[1.02] active:scale-[0.98] shadow-[4px_4px_10px_rgba(240,80,35,0.3)] hover:shadow-[6px_6px_15px_rgba(240,80,35,0.4)]"
+                  >
+                    Iniciar Sesión
+                  </Button>
+                </Link>
+              </div>
             </main>
           </div>
         </PhonePreview>
