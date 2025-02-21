@@ -338,7 +338,7 @@ export default function AdminWebPage() {
                                   <h4 className="text-sm font-medium mb-2">Imágenes</h4>
                                   <div className="grid grid-cols-1 gap-2 mt-2">
                                     {Array.isArray(property.images) ? property.images.map((image, idx) => (
-                                      <img 
+                                      <img
                                         key={idx}
                                         src={image}
                                         alt={`Imagen ${idx + 1}`}
