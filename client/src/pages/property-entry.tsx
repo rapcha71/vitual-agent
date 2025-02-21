@@ -396,35 +396,39 @@ export default function PropertyEntry() {
 
   const onSubmit = async (data: any) => {
     try {
-      console.log("Form submission started");
+      console.log("Form submission started with data:", data);
 
       if (!data.propertyType) {
+        console.log("Property type validation failed");
         toast({
           title: "Error",
-          description: "Please select a property type",
+          description: "Por favor, seleccione un tipo de propiedad",
           variant: "destructive"
         });
         return;
       }
 
       if (!data.images.sign || !data.images.property) {
+        console.log("Images validation failed:", data.images);
         toast({
           title: "Error",
-          description: "Please capture both sign and property photos",
+          description: "Por favor, capture ambas fotos: rótulo y propiedad",
           variant: "destructive"
         });
         return;
       }
 
       if (data.location.lat === 0 && data.location.lng === 0) {
+        console.log("Location validation failed:", data.location);
         toast({
           title: "Error",
-          description: "Please capture the property location",
+          description: "Por favor, capture la ubicación de la propiedad",
           variant: "destructive"
         });
         return;
       }
 
+      console.log("All validations passed, calling mutation");
       await createPropertyMutation.mutateAsync(data);
 
       console.log("Form submission completed successfully");
@@ -432,7 +436,7 @@ export default function PropertyEntry() {
       console.error('Error submitting property:', error);
       toast({
         title: "Error",
-        description: "Failed to submit property. Please try again.",
+        description: "Error al enviar la propiedad. Por favor, intente nuevamente.",
         variant: "destructive"
       });
     }
