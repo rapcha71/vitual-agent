@@ -8,7 +8,7 @@ export function PhonePreview({ children, className, ...props }: PhonePreviewProp
   return (
     <div className="flex items-center justify-center min-h-screen bg-gray-100">
       <div className={cn(
-        "w-[340px] aspect-[9/19] bg-white overflow-hidden relative",
+        "w-[340px] aspect-[9/16] bg-white overflow-hidden relative",
         "border-[8px] border-black rounded-[30px]",
         "before:content-[''] before:absolute before:top-0 before:left-1/2 before:-translate-x-1/2",
         "before:w-20 before:h-4 before:bg-black before:rounded-b-2xl",
