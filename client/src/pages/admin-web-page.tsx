@@ -122,7 +122,7 @@ const MapComponent = memo(({ properties }: { properties: PropertyWithUser[] }) =
   }, [properties, toast]);
 
   return (
-    <div className="aspect-[9/16] w-full relative bg-gray-100 rounded-lg overflow-hidden shadow-md">
+    <div className="w-full h-[500px] relative bg-gray-100 rounded-lg overflow-hidden shadow-md">
       <div
         ref={mapRef}
         className="absolute inset-0"
@@ -164,9 +164,9 @@ export default function AdminWebPage() {
   };
 
   return (
-    <div className="relative min-h-screen max-w-[430px] mx-auto bg-gray-100 overflow-hidden">
-      <div className="fixed top-0 left-0 right-0 z-50 bg-[#F05023] shadow-md">
-        <div className="max-w-[430px] mx-auto">
+    <div className="relative max-w-[430px] mx-auto bg-white">
+      <div className="fixed top-0 left-0 right-0 z-50">
+        <div className="bg-[#F05023] max-w-[430px] mx-auto">
           <div className="px-4 py-3 flex items-center justify-between">
             <Button
               variant="ghost"
