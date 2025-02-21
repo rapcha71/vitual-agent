@@ -3,7 +3,7 @@ import { useQuery, useMutation } from "@tanstack/react-query";
 import { PropertyWithUser, User } from "@shared/schema";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { LogOut, Image, MapPin, Shield, Users, Menu } from "lucide-react";
+import { LogOut, Image, MapPin, Shield, Users, Menu, LayoutGrid, Smartphone } from "lucide-react";
 import { useLocation } from "wouter";
 import { Table, TableBody, TableCaption, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger, DialogDescription, DialogFooter } from "@/components/ui/dialog";
@@ -28,16 +28,16 @@ export default function AdminWebPage() {
   const [isRoleDialogOpen, setIsRoleDialogOpen] = useState(false);
   const [isDesktopView, setIsDesktopView] = useState(false);
 
-  // Effect to check window size
-  useEffect(() => {
+  // Effect to check window size - disabled for testing
+  /*useEffect(() => {
     const checkSize = () => {
-      setIsDesktopView(window.innerWidth >= 1024); // 1024px is our desktop breakpoint
+      setIsDesktopView(window.innerWidth >= 1024);
     };
 
     checkSize();
     window.addEventListener('resize', checkSize);
     return () => window.removeEventListener('resize', checkSize);
-  }, []);
+  }, []);*/
 
   // Query para obtener todos los usuarios
   const { data: users = [], isLoading: isLoadingUsers } = useQuery<User[]>({
@@ -369,72 +369,94 @@ export default function AdminWebPage() {
   );
 
   // Render different layouts based on screen size
-  return isDesktopView ? (
-    <div className="min-h-screen bg-gray-100">
-      {/* Desktop Header */}
-      <header className="bg-[#F05023] px-6 py-4">
-        <div className="container mx-auto flex items-center justify-between">
-          <div className="flex items-center gap-4">
-            <img 
-              src="/assets/logo.png"
-              alt="Virtual Agent"
-              className="h-12 w-auto"
-            />
-            <h1 className="text-white text-2xl font-bold">Panel de Administración</h1>
-          </div>
-          <Button 
-            variant="ghost" 
-            className="text-white hover:text-white/80"
-            onClick={() => logoutMutation.mutate()}
-          >
-            <LogOut className="h-5 w-5 mr-2" />
-            Cerrar Sesión
-          </Button>
-        </div>
-      </header>
+  return (
+    <div className="min-h-screen bg-gray-100 relative">
+      {/* View Toggle Button */}
+      <Button
+        className="fixed top-4 right-4 z-50"
+        onClick={() => setIsDesktopView(!isDesktopView)}
+      >
+        {isDesktopView ? (
+          <>
+            <Smartphone className="h-4 w-4 mr-2" />
+            Ver Móvil
+          </>
+        ) : (
+          <>
+            <LayoutGrid className="h-4 w-4 mr-2" />
+            Ver Escritorio
+          </>
+        )}
+      </Button>
 
-      {/* Desktop Main Content */}
-      <main className="container mx-auto py-6">
-        <AdminContent />
-      </main>
-    </div>
-  ) : (
-    // Mobile View using PhonePreview
-    <div className="flex items-center justify-center min-h-screen bg-gray-100">
-      <PhonePreview>
-        {/* Mobile Header */}
-        <header className="bg-[#F05023] px-4 py-3">
-          <div className="flex items-center justify-between">
-            <Button
-              variant="ghost"
-              className="text-white hover:text-white/80 p-0"
-              onClick={() => setLocation("/")}
-            >
-              <Menu className="h-5 w-5" />
-            </Button>
-            <div className="flex items-center">
-              <img
-                src="/assets/logo.png"
-                alt="Virtual Agent"
-                className="h-10 w-auto"
-              />
+      {isDesktopView ? (
+        <div className="min-h-screen bg-gray-100">
+          {/* Desktop Header */}
+          <header className="bg-[#F05023] px-6 py-4">
+            <div className="container mx-auto flex items-center justify-between">
+              <div className="flex items-center gap-4">
+                <img 
+                  src="/assets/logo.png"
+                  alt="Virtual Agent"
+                  className="h-12 w-auto"
+                />
+                <h1 className="text-white text-2xl font-bold">Panel de Administración</h1>
+              </div>
+              <Button 
+                variant="ghost" 
+                className="text-white hover:text-white/80"
+                onClick={() => logoutMutation.mutate()}
+              >
+                <LogOut className="h-5 w-5 mr-2" />
+                Cerrar Sesión
+              </Button>
             </div>
-            <Button
-              variant="ghost"
-              size="sm"
-              className="text-white hover:text-white/80 p-0"
-              onClick={() => logoutMutation.mutate()}
-            >
-              <LogOut className="h-5 w-5" />
-            </Button>
-          </div>
-        </header>
+          </header>
 
-        {/* Mobile Content */}
-        <div className="p-4 overflow-y-auto">
-          <AdminContent />
+          {/* Desktop Main Content */}
+          <main className="container mx-auto py-6">
+            <AdminContent />
+          </main>
         </div>
-      </PhonePreview>
+      ) : (
+        // Mobile View using PhonePreview
+        <div className="flex items-center justify-center min-h-screen bg-gray-100">
+          <PhonePreview>
+            {/* Mobile Header */}
+            <header className="bg-[#F05023] px-4 py-3">
+              <div className="flex items-center justify-between">
+                <Button
+                  variant="ghost"
+                  className="text-white hover:text-white/80 p-0"
+                  onClick={() => setLocation("/")}
+                >
+                  <Menu className="h-5 w-5" />
+                </Button>
+                <div className="flex items-center">
+                  <img
+                    src="/assets/logo.png"
+                    alt="Virtual Agent"
+                    className="h-10 w-auto"
+                  />
+                </div>
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  className="text-white hover:text-white/80 p-0"
+                  onClick={() => logoutMutation.mutate()}
+                >
+                  <LogOut className="h-5 w-5" />
+                </Button>
+              </div>
+            </header>
+
+            {/* Mobile Content */}
+            <div className="p-4 overflow-y-auto">
+              <AdminContent />
+            </div>
+          </PhonePreview>
+        </div>
+      )}
     </div>
   );
 }
