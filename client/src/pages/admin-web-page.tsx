@@ -8,7 +8,7 @@ import { useLocation } from "wouter";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger, DialogFooter } from "@/components/ui/dialog";
-import { useEffect, useState, useRef, memo } from "react";
+import { useEffect, useState, useRef, memo, useCallback } from "react";
 import { Loader } from "@googlemaps/js-api-loader";
 import { useToast } from "@/hooks/use-toast";
 import { PhonePreview } from "@/components/ui/phone-preview";
@@ -23,14 +23,32 @@ const MapComponent = memo(({ properties }: { properties: PropertyWithUser[] }) =
   const [isLoading, setIsLoading] = useState(true);
   const mapRef = useRef<HTMLDivElement>(null);
   const map = useRef<google.maps.Map | null>(null);
-  const markers = useRef<google.maps.Marker[]>([]);
+  const markersRef = useRef<google.maps.Marker[]>([]);
+  const infoWindowsRef = useRef<google.maps.InfoWindow[]>([]);
   const { toast } = useToast();
+
+  // Cleanup function to remove markers and listeners
+  const cleanupMap = useCallback(() => {
+    if (markersRef.current.length > 0) {
+      markersRef.current.forEach(marker => {
+        google.maps.event.clearInstanceListeners(marker);
+        marker.setMap(null);
+      });
+      markersRef.current = [];
+    }
+
+    if (infoWindowsRef.current.length > 0) {
+      infoWindowsRef.current.forEach(window => window.close());
+      infoWindowsRef.current = [];
+    }
+
+    if (map.current) {
+      google.maps.event.clearInstanceListeners(map.current);
+    }
+  }, []);
 
   useEffect(() => {
     let isMounted = true;
-    let googleMap: google.maps.Map | null = null;
-    let currentMarkers: google.maps.Marker[] = [];
-    let currentInfoWindows: google.maps.InfoWindow[] = [];
 
     const initMap = async () => {
       if (!mapRef.current || !properties.length) {
@@ -55,6 +73,8 @@ const MapComponent = memo(({ properties }: { properties: PropertyWithUser[] }) =
 
         if (!isMounted || !mapRef.current) return;
 
+        cleanupMap();
+
         const mapOptions: google.maps.MapOptions = {
           center: { lat: 9.9281, lng: -84.0907 },
           zoom: 8,
@@ -66,20 +86,17 @@ const MapComponent = memo(({ properties }: { properties: PropertyWithUser[] }) =
           disableDefaultUI: true
         };
 
-        googleMap = new google.maps.Map(mapRef.current, mapOptions);
-        map.current = googleMap;
-
-        currentMarkers.forEach(marker => marker.setMap(null));
-        currentMarkers = [];
-        currentInfoWindows = [];
+        const newMap = new google.maps.Map(mapRef.current, mapOptions);
+        map.current = newMap;
 
         const bounds = new google.maps.LatLngBounds();
 
         properties.forEach(property => {
           const marker = new google.maps.Marker({
             position: { lat: property.location.lat, lng: property.location.lng },
-            map: googleMap,
+            map: newMap,
             title: property.propertyId,
+            optimized: true,
             icon: {
               path: google.maps.SymbolPath.CIRCLE,
               fillColor: property.propertyType === 'house' ? '#F05023' :
@@ -90,11 +107,9 @@ const MapComponent = memo(({ properties }: { properties: PropertyWithUser[] }) =
             }
           });
 
-          const propertyImage = Array.isArray(property.images) && property.images.length > 1 
-            ? property.images[1] 
-            : (Array.isArray(property.images) && property.images.length > 0 
-              ? property.images[0] 
-              : null);
+          const propertyImage = Array.isArray(property.images) && property.images.length > 0 
+            ? property.images[0] 
+            : null;
 
           const infoWindow = new google.maps.InfoWindow({
             content: `
@@ -126,17 +141,18 @@ const MapComponent = memo(({ properties }: { properties: PropertyWithUser[] }) =
           });
 
           marker.addListener('click', () => {
-            currentInfoWindows.forEach(window => window.close());
-            infoWindow.open(googleMap, marker);
+            infoWindowsRef.current.forEach(window => window.close());
+            infoWindow.open(newMap, marker);
           });
 
           bounds.extend(marker.getPosition()!);
-          currentMarkers.push(marker);
-          currentInfoWindows.push(infoWindow);
+          markersRef.current.push(marker);
+          infoWindowsRef.current.push(infoWindow);
         });
 
-        googleMap.fitBounds(bounds);
-        markers.current = currentMarkers;
+        if (properties.length > 0) {
+          newMap.fitBounds(bounds);
+        }
 
         if (isMounted) {
           setIsLoading(false);
@@ -159,29 +175,16 @@ const MapComponent = memo(({ properties }: { properties: PropertyWithUser[] }) =
 
     return () => {
       isMounted = false;
-      if (currentMarkers.length > 0) {
-        currentMarkers.forEach(marker => {
-          marker.setMap(null);
-        });
-      }
-      if (currentInfoWindows.length > 0) {
-        currentInfoWindows.forEach(window => window.close());
-      }
-      if (googleMap) {
-        google.maps.event.clearInstanceListeners(googleMap);
-      }
+      cleanupMap();
     };
-  }, [properties, toast]);
+  }, [properties, toast, cleanupMap]);
 
   return (
     <div className="w-full h-[500px] relative bg-gray-100 rounded-lg overflow-hidden shadow-md">
       <div
         ref={mapRef}
         className="absolute inset-0"
-        style={{
-          width: '100%',
-          height: '100%'
-        }}
+        style={{ width: '100%', height: '100%' }}
       />
       {isLoading && (
         <div className="absolute inset-0 flex items-center justify-center bg-gray-100/80">
