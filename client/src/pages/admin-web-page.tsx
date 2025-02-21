@@ -41,10 +41,6 @@ const MapComponent = memo(({ properties }: { properties: PropertyWithUser[] }) =
       infoWindowsRef.current.forEach(window => window.close());
       infoWindowsRef.current = [];
     }
-
-    if (map.current) {
-      google.maps.event.clearInstanceListeners(map.current);
-    }
   }, []);
 
   useEffect(() => {
@@ -86,21 +82,19 @@ const MapComponent = memo(({ properties }: { properties: PropertyWithUser[] }) =
           disableDefaultUI: true
         };
 
-        const newMap = new google.maps.Map(mapRef.current, mapOptions);
-        map.current = newMap;
-
+        map.current = new google.maps.Map(mapRef.current, mapOptions);
         const bounds = new google.maps.LatLngBounds();
 
         properties.forEach(property => {
           const marker = new google.maps.Marker({
             position: { lat: property.location.lat, lng: property.location.lng },
-            map: newMap,
+            map: map.current,
             title: property.propertyId,
             optimized: true,
             icon: {
               path: 'M12 0C7.802 0 4 3.403 4 7.602C4 11.8 7.469 16.812 12 24C16.531 16.812 20 11.8 20 7.602C20 3.403 16.199 0 12 0ZM12 11C10.343 11 9 9.657 9 8C9 6.343 10.343 5 12 5C13.657 5 15 6.343 15 8C15 9.657 13.657 11 12 11Z',
               fillColor: property.propertyType === 'house' ? '#F05023' :
-                          property.propertyType === 'land' ? '#22C55E' : '#3B82F6',
+                        property.propertyType === 'land' ? '#22C55E' : '#3B82F6',
               fillOpacity: 1,
               strokeWeight: 1,
               strokeColor: '#FFFFFF',
@@ -144,7 +138,7 @@ const MapComponent = memo(({ properties }: { properties: PropertyWithUser[] }) =
 
           marker.addListener('click', () => {
             infoWindowsRef.current.forEach(window => window.close());
-            infoWindow.open(newMap, marker);
+            infoWindow.open(map.current, marker);
           });
 
           bounds.extend(marker.getPosition()!);
@@ -153,7 +147,7 @@ const MapComponent = memo(({ properties }: { properties: PropertyWithUser[] }) =
         });
 
         if (properties.length > 0) {
-          newMap.fitBounds(bounds);
+          map.current.fitBounds(bounds);
         }
 
         if (isMounted) {
