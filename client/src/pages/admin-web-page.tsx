@@ -99,6 +99,18 @@ export default function AdminWebPage() {
     }
   });
 
+  // Verificación de API key
+  useEffect(() => {
+    if (activeTab === "map" && !import.meta.env.VITE_GOOGLE_MAPS_API_KEY) {
+      toast({
+        title: "Error",
+        description: "La clave de API de Google Maps no está configurada.",
+        variant: "destructive"
+      });
+    }
+  }, [activeTab, toast]);
+
+  // Inicialización del mapa
   useEffect(() => {
     let isMounted = true;
 
@@ -109,8 +121,8 @@ export default function AdminWebPage() {
 
       try {
         setMapLoading(true);
-        console.log('Iniciando carga del mapa...');
 
+        // Cargar API de Google Maps
         const loader = new Loader({
           apiKey: import.meta.env.VITE_GOOGLE_MAPS_API_KEY || '',
           version: "weekly",
@@ -118,20 +130,20 @@ export default function AdminWebPage() {
         });
 
         await loader.load();
-        console.log('API de Google Maps cargada');
 
         if (!isMounted || !mapContainerRef.current) return;
 
         // Limpiar marcadores existentes
-        if (mapRef.current) {
-          markersRef.current.forEach(marker => marker.setMap(null));
-          markersRef.current = [];
-        }
+        markersRef.current.forEach(marker => marker.setMap(null));
+        markersRef.current = [];
 
-        console.log('Inicializando nuevo mapa');
+        // Crear nuevo mapa
         const map = new google.maps.Map(mapContainerRef.current, {
           center: { lat: 9.9281, lng: -84.0907 },
           zoom: 8,
+          mapTypeControl: false,
+          fullscreenControl: false,
+          streetViewControl: false,
           styles: [
             {
               featureType: "poi",
@@ -142,83 +154,72 @@ export default function AdminWebPage() {
         });
 
         mapRef.current = map;
-        console.log('Mapa creado');
-
-        const bounds = new google.maps.LatLngBounds();
 
         // Agregar marcadores
+        const bounds = new google.maps.LatLngBounds();
+
         properties.forEach(property => {
-          try {
-            const marker = new google.maps.Marker({
-              position: {
-                lat: property.location.lat,
-                lng: property.location.lng
-              },
-              map,
-              title: `${property.propertyId} - ${property.propertyType}`,
-              icon: {
-                path: google.maps.SymbolPath.CIRCLE,
-                fillColor: getMarkerColor(property.propertyType),
-                fillOpacity: 0.9,
-                strokeWeight: 2,
-                strokeColor: '#FFFFFF',
-                scale: 12
-              }
-            });
+          const marker = new google.maps.Marker({
+            position: {
+              lat: property.location.lat,
+              lng: property.location.lng
+            },
+            map,
+            title: `${property.propertyId}`,
+            icon: {
+              path: google.maps.SymbolPath.CIRCLE,
+              fillColor: getMarkerColor(property.propertyType),
+              fillOpacity: 0.9,
+              strokeWeight: 2,
+              strokeColor: '#FFFFFF',
+              scale: 12
+            }
+          });
 
-            bounds.extend(marker.getPosition()!);
-            markersRef.current.push(marker);
+          bounds.extend(marker.getPosition()!);
+          markersRef.current.push(marker);
 
-            // Info window
-            const infoWindow = new google.maps.InfoWindow({
-              content: `
-                <div class="p-2">
-                  <p class="font-bold">ID: ${property.propertyId}</p>
-                  <p>Tipo: ${
-                    property.propertyType === 'house' ? 'Casa' :
-                    property.propertyType === 'land' ? 'Terreno' :
-                    'Local Comercial'
-                  }</p>
-                  ${property.signPhoneNumber ? `<p>Tel: ${property.signPhoneNumber}</p>` : ''}
-                </div>
-              `
-            });
+          const infoWindow = new google.maps.InfoWindow({
+            content: `
+              <div class="p-2">
+                <p class="font-bold">ID: ${property.propertyId}</p>
+                <p>Tipo: ${
+                  property.propertyType === 'house' ? 'Casa' :
+                  property.propertyType === 'land' ? 'Terreno' :
+                  'Local Comercial'
+                }</p>
+                ${property.signPhoneNumber ? `<p>Tel: ${property.signPhoneNumber}</p>` : ''}
+              </div>
+            `
+          });
 
-            marker.addListener('click', () => {
-              infoWindow.open(map, marker);
-            });
-          } catch (error) {
-            console.error('Error creating marker:', error);
-          }
+          marker.addListener('click', () => {
+            infoWindow.open(map, marker);
+          });
         });
 
-        // Ajustar el mapa para mostrar todos los marcadores
         if (markersRef.current.length > 0) {
           map.fitBounds(bounds);
         }
 
         setMapLoading(false);
-        console.log('Mapa inicializado completamente');
       } catch (error) {
-        console.error('Error cargando el mapa:', error);
+        console.error('Error al cargar el mapa:', error);
+        setMapLoading(false);
         toast({
           title: "Error",
           description: "No se pudo cargar el mapa. Por favor, intente nuevamente.",
           variant: "destructive"
         });
-        setMapLoading(false);
       }
     };
 
-    // Inicializar mapa cuando se cambia a la pestaña de mapa
     if (activeTab === "map") {
-      console.log('Tab de mapa activado');
       initializeMap();
     }
 
     return () => {
       isMounted = false;
-      // Limpiar marcadores
       markersRef.current.forEach(marker => marker.setMap(null));
       markersRef.current = [];
     };
@@ -359,10 +360,11 @@ export default function AdminWebPage() {
             <TabsContent value="map" className="mt-0">
               <div
                 ref={mapContainerRef}
-                className="w-full h-[300px] rounded-lg relative bg-gray-100"
+                className="w-full rounded-lg relative bg-gray-100"
                 style={{
-                  minHeight: '300px',
-                  maxHeight: '300px'
+                  height: '350px',
+                  minHeight: '350px',
+                  maxHeight: '350px'
                 }}
               >
                 {mapLoading && (
