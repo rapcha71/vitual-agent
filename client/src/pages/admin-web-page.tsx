@@ -271,20 +271,20 @@ export default function AdminWebPage() {
                                 Ver Detalles
                               </Button>
                             </DialogTrigger>
-                            <DialogContent>
+                            <DialogContent className="w-[calc(100%-2rem)] max-w-lg mx-auto">
                               <DialogHeader>
                                 <DialogTitle>Detalles de la Propiedad</DialogTitle>
                               </DialogHeader>
                               <div className="space-y-4">
                                 <div>
                                   <h4 className="font-medium">Imágenes</h4>
-                                  <div className="grid grid-cols-2 gap-2 mt-2">
+                                  <div className="grid grid-cols-1 gap-2 mt-2">
                                     {Array.isArray(property.images) ? property.images.map((image, idx) => (
                                       <img 
                                         key={idx}
                                         src={image}
                                         alt={`Imagen ${idx + 1}`}
-                                        className="w-full h-32 object-cover rounded-lg"
+                                        className="w-full h-48 object-cover rounded-lg"
                                       />
                                     )) : (
                                       <p className="text-sm text-muted-foreground">No hay imágenes disponibles</p>
