@@ -33,7 +33,7 @@ export default function AdminWebPage() {
   const { user, logoutMutation } = useAuth();
   const { toast } = useToast();
   const [, setLocation] = useLocation();
-  const [mapLoading, setMapLoading] = useState(true);
+  const [mapLoading, setMapLoading] = useState(false);
   const mapRef = useRef<google.maps.Map | null>(null);
   const markersRef = useRef<google.maps.Marker[]>([]);
   const mapContainerRef = useRef<HTMLDivElement>(null);
@@ -42,16 +42,26 @@ export default function AdminWebPage() {
   const [isRoleDialogOpen, setIsRoleDialogOpen] = useState(false);
   const [isDesktopView, setIsDesktopView] = useState(false);
 
-  // Effect to check window size - disabled for testing
-  /*useEffect(() => {
-    const checkSize = () => {
-      setIsDesktopView(window.innerWidth >= 1024);
-    };
+  // Si el usuario no es administrador, redirigir al dashboard
+  useEffect(() => {
+    if (user && !user.isAdmin) {
+      setLocation("/dashboard");
+    }
+  }, [user, setLocation]);
 
-    checkSize();
-    window.addEventListener('resize', checkSize);
-    return () => window.removeEventListener('resize', checkSize);
-  }, []);*/
+  // Si no hay usuario autenticado, no renderizar nada
+  if (!user) {
+    return null;
+  }
+
+  // Optimized query with proper configuration
+  const { data: properties = [], isLoading: isLoadingProperties } = useQuery<PropertyWithUser[]>({
+    queryKey: ['/api/admin/properties'],
+    staleTime: 60000,
+    retry: 1,
+    refetchOnWindowFocus: false,
+    enabled: user?.isAdmin === true
+  });
 
   // Query para obtener todos los usuarios
   const { data: users = [], isLoading: isLoadingUsers } = useQuery<User[]>({
@@ -90,27 +100,6 @@ export default function AdminWebPage() {
     }
   });
 
-  // Si el usuario no es administrador, redirigir al dashboard
-  useEffect(() => {
-    if (user && !user.isAdmin) {
-      setLocation("/dashboard");
-    }
-  }, [user, setLocation]);
-
-  // Si no hay usuario autenticado, no renderizar nada
-  if (!user) {
-    return null;
-  }
-
-  // Optimized query with proper configuration
-  const { data: properties = [], isLoading } = useQuery<PropertyWithUser[]>({
-    queryKey: ['/api/admin/properties'],
-    staleTime: 60000,
-    retry: 1,
-    refetchOnWindowFocus: false,
-    enabled: user?.isAdmin === true
-  });
-
   // Mover el loader fuera del efecto para que se inicialice una sola vez
   const loader = new Loader({
     apiKey: import.meta.env.VITE_GOOGLE_MAPS_API_KEY || '',
@@ -122,31 +111,17 @@ export default function AdminWebPage() {
     let isMounted = true;
 
     const initMap = async () => {
-      if (!mapContainerRef.current || activeTab !== "map") return;
+      if (!mapContainerRef.current || activeTab !== "map" || !properties.length) return;
 
       try {
-        console.log('Iniciando carga del mapa...');
-
-        if (!import.meta.env.VITE_GOOGLE_MAPS_API_KEY) {
-          console.error('Google Maps API key is missing');
-          toast({
-            title: "Error",
-            description: "No se pudo cargar el mapa. Por favor, contacte al administrador.",
-            variant: "destructive"
-          });
-          setMapLoading(false);
-          return;
-        }
+        setMapLoading(true);
 
         // Cargar la API de Google Maps
-        console.log('Cargando API de Google Maps...');
         await loader.load();
-        console.log('API de Google Maps cargada exitosamente');
 
         if (!isMounted || !mapContainerRef.current) return;
 
         // Initialize map
-        console.log('Inicializando mapa...');
         const map = new google.maps.Map(mapContainerRef.current, {
           center: { lat: 9.9281, lng: -84.0907 }, // Costa Rica
           zoom: 8,
@@ -167,7 +142,7 @@ export default function AdminWebPage() {
 
         // Add markers if there are properties
         if (properties.length > 0 && isMounted) {
-          console.log(`Agregando ${properties.length} marcadores al mapa...`);
+          const bounds = new google.maps.LatLngBounds();
 
           properties.forEach(property => {
             try {
@@ -194,6 +169,8 @@ export default function AdminWebPage() {
                   scale: 12
                 }
               });
+
+              bounds.extend(marker.getPosition()!);
 
               // Add info window
               const infoWindow = new google.maps.InfoWindow({
@@ -222,15 +199,10 @@ export default function AdminWebPage() {
 
           // Ajustar el mapa para mostrar todos los marcadores
           if (markersRef.current.length > 0) {
-            const bounds = new google.maps.LatLngBounds();
-            markersRef.current.forEach(marker => {
-              bounds.extend(marker.getPosition()!);
-            });
             map.fitBounds(bounds);
           }
         }
 
-        console.log('Mapa inicializado exitosamente');
         setMapLoading(false);
       } catch (error) {
         console.error('Error loading Google Maps:', error);
@@ -245,7 +217,6 @@ export default function AdminWebPage() {
 
     // Only initialize map when on "map" tab and there are properties
     if (activeTab === "map" && properties.length > 0) {
-      console.log('Tab de mapa activo, iniciando carga...');
       initMap();
     }
 
@@ -267,6 +238,15 @@ export default function AdminWebPage() {
     land: properties.filter(p => p.propertyType === 'land').length,
     commercial: properties.filter(p => p.propertyType === 'commercial').length,
   };
+
+  // Si está cargando los datos iniciales, mostrar un indicador de carga
+  if (isLoadingProperties) {
+    return (
+      <div className="flex items-center justify-center min-h-screen">
+        <Loader2 className="h-8 w-8 animate-spin text-primary" />
+      </div>
+    );
+  }
 
   const AdminContent = () => (
     <>
@@ -397,8 +377,6 @@ export default function AdminWebPage() {
                 )}
               </div>
             </TabsContent>
-
-            {/* Roles Management */}
             {user?.isSuperAdmin && (
               <TabsContent value="roles" className="mt-0">
                 <div className="overflow-x-auto">
@@ -446,93 +424,44 @@ export default function AdminWebPage() {
 
   // Render different layouts based on screen size
   return (
-    <div className="min-h-screen bg-gray-100 relative">
-      {/* View Toggle Button */}
-      <Button
-        className="fixed top-4 right-4 z-50"
-        onClick={() => setIsDesktopView(!isDesktopView)}
-      >
-        {isDesktopView ? (
-          <>
-            <Smartphone className="h-4 w-4 mr-2" />
-            Ver Móvil
-          </>
-        ) : (
-          <>
-            <LayoutGrid className="h-4 w-4 mr-2" />
-            Ver Escritorio
-          </>
-        )}
-      </Button>
-
-      {isDesktopView ? (
-        <div className="min-h-screen bg-gray-100">
-          {/* Desktop Header */}
-          <header className="bg-[#F05023] px-6 py-4">
-            <div className="container mx-auto flex items-center justify-between">
-              <div className="flex items-center gap-4">
+    <div className="min-h-screen bg-gray-100">
+      {/* Mobile View using PhonePreview */}
+      <div className="flex items-center justify-center min-h-screen bg-gray-100">
+        <PhonePreview>
+          {/* Mobile Header */}
+          <header className="bg-[#F05023] px-4 py-3">
+            <div className="flex items-center justify-between">
+              <Button
+                variant="ghost"
+                className="text-white hover:text-white/80 p-0"
+                onClick={() => setLocation("/")}
+              >
+                <Menu className="h-5 w-5" />
+              </Button>
+              <div className="flex items-center">
                 <img
                   src="/assets/logo.png"
                   alt="Virtual Agent"
-                  className="h-12 w-auto"
+                  className="h-10 w-auto"
                 />
-                <h1 className="text-white text-2xl font-bold">Panel de Administración</h1>
               </div>
               <Button
                 variant="ghost"
-                className="text-white hover:text-white/80"
+                size="sm"
+                className="text-white hover:text-white/80 p-0"
                 onClick={() => logoutMutation.mutate()}
               >
-                <LogOut className="h-5 w-5 mr-2" />
-                Cerrar Sesión
+                <LogOut className="h-5 w-5" />
               </Button>
             </div>
           </header>
 
-          {/* Desktop Main Content */}
-          <main className="container mx-auto py-6">
+          {/* Mobile Content */}
+          <div className="p-4 overflow-y-auto">
             <AdminContent />
-          </main>
-        </div>
-      ) : (
-        // Mobile View using PhonePreview
-        <div className="flex items-center justify-center min-h-screen bg-gray-100">
-          <PhonePreview>
-            {/* Mobile Header */}
-            <header className="bg-[#F05023] px-4 py-3">
-              <div className="flex items-center justify-between">
-                <Button
-                  variant="ghost"
-                  className="text-white hover:text-white/80 p-0"
-                  onClick={() => setLocation("/")}
-                >
-                  <Menu className="h-5 w-5" />
-                </Button>
-                <div className="flex items-center">
-                  <img
-                    src="/assets/logo.png"
-                    alt="Virtual Agent"
-                    className="h-10 w-auto"
-                  />
-                </div>
-                <Button
-                  variant="ghost"
-                  size="sm"
-                  className="text-white hover:text-white/80 p-0"
-                  onClick={() => logoutMutation.mutate()}
-                >
-                  <LogOut className="h-5 w-5" />
-                </Button>
-              </div>
-            </header>
-
-            {/* Mobile Content */}
-            <div className="p-4 overflow-y-auto">
-              <AdminContent />
-            </div>
-          </PhonePreview>
-        </div>
-      )}
+          </div>
+        </PhonePreview>
+      </div>
     </div>
   );
 }
