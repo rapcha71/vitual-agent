@@ -392,6 +392,8 @@ export default function AdminWebPage() {
             <div className="flex gap-2 mt-4">
               <Button 
                 onClick={() => setLocation("/property/new")}
+                variant="outline"
+                size="sm"
                 className="w-[140px] inline-flex items-center justify-center"
               >
                 <Plus className="h-4 w-4 mr-2" />
