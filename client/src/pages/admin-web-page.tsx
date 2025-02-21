@@ -104,132 +104,80 @@ export default function AdminWebPage() {
     let isMounted = true;
 
     const initializeMap = async () => {
-      if (!mapContainerRef.current || activeTab !== "map" || !properties.length) {
-        return;
-      }
+      console.log('Iniciando inicialización del mapa...');
 
-      // Verificar API key
-      if (!import.meta.env.VITE_GOOGLE_MAPS_API_KEY) {
-        toast({
-          title: "Error",
-          description: "La clave de API de Google Maps no está configurada.",
-          variant: "destructive"
-        });
+      if (!mapContainerRef.current || activeTab !== "map") {
+        console.log('Contenedor no disponible o tab incorrecto');
         return;
       }
 
       try {
         setMapLoading(true);
+        console.log('Estado de carga activado');
 
-        // Limpiar marcadores existentes
-        if (mapRef.current) {
-          markersRef.current.forEach(marker => marker.setMap(null));
-          markersRef.current = [];
-          mapRef.current = null;
-        }
+        // Verificar dimensiones del contenedor
+        console.log('Dimensiones del contenedor:', {
+          width: mapContainerRef.current.clientWidth,
+          height: mapContainerRef.current.clientHeight
+        });
 
-        // Cargar API de Google Maps
+        // Cargar Google Maps
         const loader = new Loader({
           apiKey: import.meta.env.VITE_GOOGLE_MAPS_API_KEY,
-          version: "weekly",
-          libraries: ["places"]
+          version: "weekly"
         });
 
+        console.log('Cargando API de Google Maps...');
         await loader.load();
+        console.log('API de Google Maps cargada exitosamente');
 
-        if (!isMounted || !mapContainerRef.current) return;
-
-        // Asegurar que el contenedor sea visible
-        mapContainerRef.current.style.display = 'block';
-        mapContainerRef.current.style.visibility = 'visible';
-
-        // Crear nuevo mapa con opciones simplificadas
-        const map = new google.maps.Map(mapContainerRef.current, {
-          center: { lat: 9.9281, lng: -84.0907 },
-          zoom: 8,
-          mapTypeControl: false,
-          fullscreenControl: false,
-          streetViewControl: false,
-          gestureHandling: 'greedy',
-          disableDefaultUI: true
-        });
-
-        mapRef.current = map;
-
-        // Agregar marcadores con bounds
-        const bounds = new google.maps.LatLngBounds();
-
-        properties.forEach(property => {
-          const marker = new google.maps.Marker({
-            position: {
-              lat: property.location.lat,
-              lng: property.location.lng
-            },
-            map,
-            icon: {
-              path: google.maps.SymbolPath.CIRCLE,
-              fillColor: getMarkerColor(property.propertyType),
-              fillOpacity: 0.9,
-              strokeWeight: 2,
-              strokeColor: '#FFFFFF',
-              scale: 12
-            }
-          });
-
-          bounds.extend(marker.getPosition()!);
-          markersRef.current.push(marker);
-
-          const infoWindow = new google.maps.InfoWindow({
-            content: `
-              <div style="padding: 8px;">
-                <p style="font-weight: bold;">ID: ${property.propertyId}</p>
-                <p>Tipo: ${
-                  property.propertyType === 'house' ? 'Casa' :
-                  property.propertyType === 'land' ? 'Terreno' :
-                  'Local Comercial'
-                }</p>
-                ${property.signPhoneNumber ? `<p>Tel: ${property.signPhoneNumber}</p>` : ''}
-              </div>
-            `
-          });
-
-          marker.addListener('click', () => {
-            infoWindow.open(map, marker);
-          });
-        });
-
-        // Ajustar el mapa para mostrar todos los marcadores
-        if (markersRef.current.length > 0) {
-          map.fitBounds(bounds);
-          map.setZoom(Math.min(map.getZoom() || 8, 15));
+        if (!isMounted) {
+          console.log('Componente desmontado, cancelando inicialización');
+          return;
         }
 
+        // Crear mapa básico
+        console.log('Creando instancia del mapa...');
+        const map = new google.maps.Map(mapContainerRef.current, {
+          center: { lat: 9.9281, lng: -84.0907 },
+          zoom: 8
+        });
+
+        console.log('Mapa creado exitosamente');
+        mapRef.current = map;
+
+        // Agregar un solo marcador de prueba
+        new google.maps.Marker({
+          position: { lat: 9.9281, lng: -84.0907 },
+          map,
+          title: "Marcador de prueba"
+        });
+
+        console.log('Marcador de prueba agregado');
         setMapLoading(false);
+
       } catch (error) {
-        console.error('Error al cargar el mapa:', error);
+        console.error('Error en la inicialización del mapa:', error);
         setMapLoading(false);
         toast({
-          title: "Error",
-          description: "No se pudo cargar el mapa. Por favor, intente nuevamente.",
+          title: "Error al cargar el mapa",
+          description: "Por favor, actualice la página e intente nuevamente.",
           variant: "destructive"
         });
       }
     };
 
     if (activeTab === "map") {
-      // Pequeño retraso para asegurar que el contenedor esté listo
-      setTimeout(initializeMap, 100);
+      initializeMap();
     }
 
     return () => {
       isMounted = false;
       if (mapRef.current) {
-        markersRef.current.forEach(marker => marker.setMap(null));
-        markersRef.current = [];
         mapRef.current = null;
       }
     };
-  }, [activeTab, properties, toast]);
+  }, [activeTab, toast]);
 
   // Stats counts
   const propertyCounts = {
@@ -357,13 +305,11 @@ export default function AdminWebPage() {
             <TabsContent value="map" className="mt-0">
               <div
                 ref={mapContainerRef}
-                className="w-full rounded-lg relative bg-gray-100"
                 style={{
-                  height: '350px',
-                  minHeight: '350px',
-                  maxHeight: '350px',
-                  display: activeTab === 'map' ? 'block' : 'none',
-                  visibility: activeTab === 'map' ? 'visible' : 'hidden'
+                  width: '100%',
+                  height: '400px',
+                  position: 'relative',
+                  backgroundColor: '#f3f4f6'
                 }}
               >
                 {mapLoading && (
