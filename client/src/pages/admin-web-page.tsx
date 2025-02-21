@@ -304,7 +304,7 @@ export default function AdminWebPage() {
             </div>
 
             <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full mt-4">
-              <TabsList className="w-full grid grid-cols-3 h-12">
+              <TabsList className="w-full grid grid-cols-2 h-auto">
                 <TabsTrigger value="map" className="text-sm">
                   <MapPin className="h-4 w-4 mr-2" />
                   Mapa
@@ -314,7 +314,7 @@ export default function AdminWebPage() {
                   Lista
                 </TabsTrigger>
                 {user.isSuperAdmin && (
-                  <TabsTrigger value="roles" className="text-sm">
+                  <TabsTrigger value="roles" className="text-sm col-span-2">
                     <Users className="h-4 w-4 mr-2" />
                     Roles
                   </TabsTrigger>
