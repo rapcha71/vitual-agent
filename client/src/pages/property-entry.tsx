@@ -673,6 +673,35 @@ export default function PropertyEntry() {
             </form>
           </Form>
         </div>
+
+        {showDuplicateError && (
+          <div className="absolute inset-0 bg-black/50 flex items-center justify-center p-4">
+            <div className="bg-white w-full max-w-[90%] rounded-lg overflow-hidden">
+              <div className="p-4 border-b border-gray-200">
+                <h3 className="text-center text-red-600 font-semibold">
+                  Propiedad Duplicada
+                </h3>
+              </div>
+              <div className="p-4 space-y-3">
+                <p className="text-center text-sm">
+                  {duplicateErrorDetails?.message}
+                </p>
+                <div className="text-xs text-gray-500 space-y-1">
+                  <p>ID de propiedad existente: {duplicateErrorDetails?.existingPropertyId}</p>
+                  <p>Distancia: {duplicateErrorDetails?.distance}</p>
+                </div>
+                <div className="flex justify-center pt-2">
+                  <Button
+                    onClick={() => setShowDuplicateError(false)}
+                    className="w-full"
+                  >
+                    Entendido
+                  </Button>
+                </div>
+              </div>
+            </div>
+          </div>
+        )}
       </PhonePreview>
 
       {isCapturing && (
@@ -786,34 +815,6 @@ export default function PropertyEntry() {
           </DialogContent>
         </Dialog>
       )}
-
-      {/* Modal de error de duplicación */}
-      <Dialog open={showDuplicateError} onOpenChange={setShowDuplicateError}>
-        <DialogContent className="w-[90%] max-w-none mx-auto rounded-lg">
-          <DialogHeader>
-            <DialogTitle className="text-center text-red-600">
-              Propiedad Duplicada
-            </DialogTitle>
-          </DialogHeader>
-          <div className="p-4 space-y-3">
-            <p className="text-center text-sm">
-              {duplicateErrorDetails?.message}
-            </p>
-            <div className="text-xs text-gray-500 space-y-1">
-              <p>ID de propiedad existente: {duplicateErrorDetails?.existingPropertyId}</p>
-              <p>Distancia: {duplicateErrorDetails?.distance}</p>
-            </div>
-            <div className="flex justify-center pt-2">
-              <Button
-                onClick={() => setShowDuplicateError(false)}
-                className="w-full"
-              >
-                Entendido
-              </Button>
-            </div>
-          </div>
-        </DialogContent>
-      </Dialog>
     </div>
   );
 }
