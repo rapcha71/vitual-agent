@@ -54,6 +54,24 @@ export class DatabaseStorage implements IStorage {
     return user;
   }
 
+  async getAllUsers(): Promise<User[]> {
+    console.log("Getting all users");
+    const allUsers = await db.select().from(users);
+    console.log("Found users count:", allUsers.length);
+    return allUsers;
+  }
+
+  async updateUserRole(userId: number, isAdmin: boolean): Promise<User> {
+    console.log("Updating user role:", { userId, isAdmin });
+    const [updatedUser] = await db
+      .update(users)
+      .set({ isAdmin })
+      .where(eq(users.id, userId))
+      .returning();
+    console.log("User role updated successfully");
+    return updatedUser;
+  }
+
   async updateUserRememberToken(userId: number, token: string | null): Promise<void> {
     console.log("Updating remember token for user:", userId);
     await db
