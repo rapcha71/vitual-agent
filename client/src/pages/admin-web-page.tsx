@@ -167,9 +167,9 @@ export default function AdminWebPage() {
   };
 
   return (
-    <div className="min-h-screen bg-gray-100">
-      <header className="bg-[#F05023] px-4 py-3 flex items-center justify-between fixed top-0 w-full z-50">
-        <div className="w-full max-w-[430px] mx-auto flex items-center justify-between">
+    <div className="flex flex-col min-h-screen bg-gray-100">
+      <div className="fixed top-0 left-0 right-0 z-50 bg-[#F05023] shadow-md">
+        <div className="w-full max-w-[430px] mx-auto px-4 py-3 flex items-center justify-between">
           <Button
             variant="ghost"
             className="text-white hover:text-white/80 p-0"
@@ -177,11 +177,11 @@ export default function AdminWebPage() {
           >
             <ChevronLeft className="h-5 w-5" />
           </Button>
-          <div className="flex items-center gap-4">
+          <div className="flex-1 flex justify-center">
             <img
               src="/assets/logo.png"
               alt="Virtual Agent"
-              className="h-8 w-auto"
+              className="h-10 w-auto"
             />
           </div>
           <Button
@@ -193,9 +193,9 @@ export default function AdminWebPage() {
             <LogOut className="h-5 w-5" />
           </Button>
         </div>
-      </header>
+      </div>
 
-      <main className="pt-16 px-4 pb-4 w-full max-w-[430px] mx-auto">
+      <main className="flex-1 pt-[72px] w-full max-w-[430px] mx-auto px-4 pb-4">
         <h1 className="text-xl font-bold">Panel de Administración</h1>
 
         <div className="grid grid-cols-3 gap-2 mt-4">
