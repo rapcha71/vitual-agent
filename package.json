@@ -23,7 +23,7 @@
   "express-session": "^1.18.1",
   "passport": "^0.7.0",
   "passport-local": "^1.0.0",
-  "cookie-parser": "^1.4.6"
+  "cookie-parser": "^1.4.6",
 }
   "devDependencies": {
   "@types/node": "20.16.11",
