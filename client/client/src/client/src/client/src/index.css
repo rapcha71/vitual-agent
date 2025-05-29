@@ -1,0 +1,89 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+
+  body {
+    @apply font-sans antialiased bg-primary text-black min-h-screen;
+  }
+}
+
+@layer utilities {
+  .no-scrollbar {
+    scrollbar-width: none;
+    -ms-overflow-style: none;
+  }
+
+  .no-scrollbar::-webkit-scrollbar {
+    width: 0;
+    height: 0;
+    display: none;
+  }
+}
+
+@layer components {
+  .btn-primary {
+    @apply bg-white text-primary px-4 py-2 rounded-md hover:bg-opacity-90 transition-colors;
+  }
+
+  .admin-button {
+    @apply w-full md:w-auto min-w-[220px] text-center px-6 py-3 rounded-md text-sm font-medium 
+    hover:bg-opacity-90 whitespace-nowrap transition-colors;
+  }
+
+  .admin-button-primary {
+    @apply admin-button bg-primary text-white hover:bg-primary/90;
+  }
+
+  .admin-button-secondary {
+    @apply admin-button bg-pink-200 text-black hover:bg-pink-300;
+  }
+
+  .admin-buttons-container {
+    @apply flex flex-col md:flex-row justify-center items-center gap-4 px-4 py-2 w-full;
+  }
+
+  .input-field {
+    @apply border border-gray-300 bg-white rounded-md px-3 py-2 focus:ring-2 focus:ring-primary focus:border-transparent transition-colors;
+  }
+
+  .card {
+    @apply bg-white rounded-lg shadow-md p-6;
+  }
+
+  .nav-link {
+    @apply text-black hover:text-white transition-colors;
+  }
+}
+
+/* Custom Transitions */
+.transition-base {
+  @apply transition-colors duration-200 ease-in-out;
+}
+
+.page-container {
+  @apply max-w-7xl mx-auto px-4 sm:px-6 lg:px-8;
+}
+
+/* Animations for page transitions */
+.page-enter {
+  opacity: 0;
+}
+
+.page-enter-active {
+  opacity: 1;
+  transition: opacity 200ms ease-out;
+}
+
+.page-exit {
+  opacity: 1;
+}
+
+.page-exit-active {
+  opacity: 0;
+  transition: opacity 200ms ease-out;
+}
