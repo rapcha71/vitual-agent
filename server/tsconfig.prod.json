@@ -1,14 +1,13 @@
 {
   "compilerOptions": {
     "target": "ES2020",
-    "module": "ESNext",
+    "module": "CommonJS",
     "moduleResolution": "node",
     "allowSyntheticDefaultImports": true,
     "esModuleInterop": true,
-    "allowJs": true,
-    "strict": true,
+    "strict": false,
     "skipLibCheck": true,
-    "forceConsistentCasingInFileNames": true,
+    "forceConsistentCasingInFileNames": false,
     "outDir": "./dist",
     "rootDir": "./",
     "declaration": false,
@@ -22,7 +21,7 @@
   "exclude": [
     "node_modules",
     "dist",
-    "client/**/*",
+    "client",
     "server/vite.ts",
     "server/index.ts"
   ]
