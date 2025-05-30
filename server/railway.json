@@ -1,0 +1,10 @@
+{
+  "build": {
+    "builder": "nixpacks",
+    "buildCommand": "npm install && npx tsc --project tsconfig.prod.json"
+  },
+  "deploy": {
+    "startCommand": "node dist/server/index.prod.js",
+    "restartPolicyType": "always"
+  }
+}
