@@ -1,8 +1,10 @@
-import express, { type Request, Response, NextFunction } from "express";
-import { registerRoutes } from "./routes.js";
-import cors from "cors";
-import { setupAuth } from "./auth.js";
-import cookieParser from "cookie-parser";
+const express = require("express");
+const cors = require("cors");
+const cookieParser = require("cookie-parser");
+
+// Importar nuestros módulos (se compilarán a CommonJS)
+const { registerRoutes } = require("./routes");
+const { setupAuth } = require("./auth");
 
 const app = express();
 
@@ -35,7 +37,7 @@ try {
   debugLog("Authentication setup complete");
 
   // Logging middleware
-  app.use((req, res, next) => {
+  app.use((req: any, res: any, next: any) => {
     const start = Date.now();
     debugLog(`Incoming ${req.method} request to ${req.path}`);
 
@@ -54,7 +56,7 @@ try {
       const server = await registerRoutes(app);
 
       // Error handling middleware
-      app.use((err: any, _req: Request, res: Response, _next: NextFunction) => {
+      app.use((err: any, _req: any, res: any, _next: any) => {
         console.error('Server Error:', err);
         const status = err.status || err.statusCode || 500;
         const message = err.message || "Internal Server Error";
@@ -68,7 +70,7 @@ try {
       app.use(express.static('public'));
       
       // Health check endpoint
-      app.get('/health', (req, res) => {
+      app.get('/health', (req: any, res: any) => {
         res.json({ status: 'ok', timestamp: new Date().toISOString() });
       });
 
