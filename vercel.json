@@ -1,37 +1,8 @@
 {
   "version": 2,
-  "builds": [
-    {
-      "src": "server/index.ts",
-      "use": "@vercel/node",
-      "config": {
-        "includeFiles": ["shared/**", "server/**"],
-        "maxLambdaSize": "50mb"
-      }
-    },
-    {
-      "src": "client/**",
-      "use": "@vercel/static-build",
-      "config": {
-        "distDir": "client/dist"
-      }
-    }
-  ],
-  "routes": [
-    {
-      "src": "/api/(.*)",
-      "dest": "/server/index.ts"
-    },
-    {
-      "src": "/(.*)",
-      "dest": "/client/dist/$1"
-    }
-  ],
   "functions": {
     "server/index.ts": {
       "maxDuration": 30
     }
-  },
-  "buildCommand": "cd client && npm run build && cd ../server && npx tsc --project ../tsconfig.build.json",
-  "outputDirectory": "client/dist"
+  }
 }
