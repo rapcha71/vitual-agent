@@ -1,8 +1,15 @@
 {
   "version": 2,
-  "functions": {
-    "dist/index.js": {
-      "maxDuration": 30
+  "builds": [
+    {
+      "src": "package.json",
+      "use": "@vercel/node"
     }
-  }
+  ],
+  "routes": [
+    {
+      "src": "/(.*)",
+      "dest": "/dist/index.js"
+    }
+  ]
 }
