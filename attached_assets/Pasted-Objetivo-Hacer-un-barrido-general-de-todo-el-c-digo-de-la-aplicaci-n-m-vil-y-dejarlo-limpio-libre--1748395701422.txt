@@ -1,0 +1,56 @@
+Objetivo: Hacer un barrido general de todo el código de la aplicación móvil y dejarlo limpio, libre de “basura” y perfectamente optimizado.
+
+Tareas a realizar:
+
+Detección y eliminación de código muerto
+
+Busca y elimina funciones, variables, componentes y módulos que no se estén usando en ninguna parte.
+
+Limpia importaciones redundantes o duplicadas en cada archivo.
+
+Refactorización para claridad y rendimiento
+
+Agrupa lógica común en helpers o servicios reutilizables.
+
+Renombra variables o funciones crípticas para que sean expresivas y coherentes con el estilo del proyecto.
+
+Asegúrate de que no haya anidaciones excesivas ni callbacks interminables; usa async/await o promesas limpias.
+
+Optimización de la carga y el bundle
+
+Verifica que el tree-shaking esté funcionando correctamente y que no se incluyan librerías innecesarias en el bundle final.
+
+Implementa code-splitting o lazy-loading en rutas y componentes que no sean críticos al inicio.
+
+Revisa que las imágenes y assets estén comprimidos y cacheados con un service worker.
+
+Revisión de Service Worker y caching
+
+Comprueba que las estrategias de caché (Cache First, Network First, Stale-while-revalidate…) estén aplicadas donde convenga.
+
+Elimina reglas de caché obsoletas y revisa que el service worker no esté cacheando archivos temporales ni logs.
+
+Verificación de dependencias y seguridad
+
+Actualiza dependencias a versiones estables y elimina dependencias que no aporten valor.
+
+Escanea posibles vulnerabilidades con herramientas como npm audit o Snyk.
+
+Pruebas y validación final
+
+Asegúrate de que toda la suite de tests (unitarios y de integración) siga pasando sin fallos.
+
+Ejecuta audit de Lighthouse para comprobar mejoras en performance, accesibilidad y PWA.
+
+Resultado esperado:
+
+Código más legible, modular y libre de elementos muertos.
+
+Bundle reducido y tiempos de carga optimizados.
+
+Service worker y estrategias de caché afinadas.
+
+Cero errores de seguridad o dependencias obsoletas.
+
+Por favor, repórtame al final un resumen de los cambios más importantes que hiciste y cualquier recomendación extra para mantener el proyecto limpio a futuro.
+

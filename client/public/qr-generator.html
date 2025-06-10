@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Código QR - Virtual Agent</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background: linear-gradient(135deg, #F05023, #FF7849);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin: 0;
+            padding: 20px;
+            box-sizing: border-box;
+        }
+        .container {
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+            padding: 40px;
+            text-align: center;
+            max-width: 500px;
+            width: 100%;
+        }
+        h1 {
+            color: #F05023;
+            margin-bottom: 10px;
+            font-size: 28px;
+        }
+        .subtitle {
+            color: #666;
+            margin-bottom: 30px;
+            font-size: 16px;
+        }
+        #qrcode {
+            margin: 30px auto;
+            padding: 20px;
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 10px 20px rgba(0,0,0,0.1);
+            display: inline-block;
+        }
+        .instructions {
+            color: #333;
+            margin-top: 30px;
+            font-size: 14px;
+            line-height: 1.6;
+        }
+        .url-display {
+            background: #f8f9fa;
+            border: 1px solid #dee2e6;
+            border-radius: 8px;
+            padding: 15px;
+            margin: 20px 0;
+            font-family: monospace;
+            font-size: 12px;
+            word-break: break-all;
+            color: #495057;
+        }
+        .logo {
+            width: 60px;
+            height: 60px;
+            margin: 0 auto 20px;
+            background: #F05023;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: bold;
+            font-size: 24px;
+        }
+    </style>
+    <script src="https://cdn.jsdelivr.net/npm/qrcode@1.5.3/build/qrcode.min.js"></script>
+</head>
+<body>
+    <div class="container">
+        <div class="logo">VA</div>
+        <h1>Virtual Agent</h1>
+        <p class="subtitle">Tu llave de ingreso a los bienes raíces</p>
+        
+        <div id="qrcode"></div>
+        
+        <div class="url-display" id="app-url"></div>
+        
+        <div class="instructions">
+            <strong>¿Cómo usar este código QR?</strong><br>
+            1. Abre la cámara de tu teléfono<br>
+            2. Apunta al código QR<br>
+            3. Toca la notificación que aparece<br>
+            4. ¡Instala Virtual Agent como PWA!
+        </div>
+    </div>
+
+    <script>
+        // Detectar la URL actual automáticamente
+        const currentUrl = window.location.origin;
+        
+        // Mostrar la URL
+        document.getElementById('app-url').textContent = currentUrl;
+        
+        // Generar el código QR con logo
+        const canvas = document.createElement('canvas');
+        document.getElementById('qrcode').appendChild(canvas);
+        
+        QRCode.toCanvas(canvas, currentUrl, {
+            width: 200,
+            height: 200,
+            color: {
+                dark: '#F05023',
+                light: '#FFFFFF'
+            },
+            margin: 2,
+            errorCorrectionLevel: 'M'
+        }, function (error) {
+            if (error) {
+                console.error(error);
+                return;
+            }
+            
+            // Agregar el logo en el centro
+            const ctx = canvas.getContext('2d');
+            const logoSize = 40;
+            const x = (canvas.width - logoSize) / 2;
+            const y = (canvas.height - logoSize) / 2;
+            
+            // Crear fondo blanco para el logo
+            ctx.fillStyle = '#FFFFFF';
+            ctx.fillRect(x - 5, y - 5, logoSize + 10, logoSize + 10);
+            
+            // Crear el logo VA
+            ctx.fillStyle = '#F05023';
+            ctx.fillRect(x, y, logoSize, logoSize);
+            
+            // Agregar texto VA
+            ctx.fillStyle = '#FFFFFF';
+            ctx.font = 'bold 16px Arial';
+            ctx.textAlign = 'center';
+            ctx.textBaseline = 'middle';
+            ctx.fillText('VA', x + logoSize/2, y + logoSize/2);
+            
+            console.log('¡Código QR con logo generado exitosamente!');
+        });
+    </script>
+</body>
+</html>
