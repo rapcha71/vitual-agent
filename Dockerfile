@@ -18,9 +18,8 @@ WORKDIR /app
 # Copiar package files
 COPY package*.json ./
 
-# Instalar dependencias y herramientas globalmente
+# Instalar dependencias del proyecto
 RUN npm cache clean --force
-RUN npm install -g vite esbuild typescript
 RUN npm install --no-audit --no-fund
 
 # Copiar archivos de configuración
@@ -36,13 +35,13 @@ COPY . .
 # Crear directorio dist
 RUN mkdir -p dist
 
-# Build frontend con vite global
-RUN echo "Building frontend with global vite..."
-RUN vite build
+# Build frontend usando vite local
+RUN echo "Building frontend with npx vite..."
+RUN npx vite build
 
-# Build backend con esbuild global
-RUN echo "Building backend with global esbuild..."
-RUN esbuild server/index.ts --platform=node --packages=external --bundle --format=esm --outdir=dist
+# Build backend usando esbuild local
+RUN echo "Building backend with npx esbuild..."
+RUN npx esbuild server/index.ts --platform=node --packages=external --bundle --format=esm --outdir=dist
 
 # Verificar builds
 RUN echo "Verifying builds..."
