@@ -35,13 +35,12 @@ COPY . .
 # Crear directorio dist
 RUN mkdir -p dist
 
-# Build frontend usando vite local
-RUN echo "Building frontend with npx vite..."
-RUN npx vite build
+# Build frontend y backend usando scripts npm
+RUN echo "Building frontend with npm run build:client..."
+RUN npm run build:client
 
-# Build backend usando esbuild local
-RUN echo "Building backend with npx esbuild..."
-RUN npx esbuild server/index.ts --platform=node --packages=external --bundle --format=esm --outdir=dist
+RUN echo "Building backend with npm run build:server..."
+RUN npm run build:server
 
 # Verificar builds
 RUN echo "Verifying builds..."
