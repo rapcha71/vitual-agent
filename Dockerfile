@@ -18,7 +18,7 @@ RUN apk add --no-cache \
 
 WORKDIR /app
 
-# Copiar archivos de configuración
+# Copiar archivos de configuración primero
 COPY package*.json ./
 COPY tsconfig*.json ./
 COPY vite.config.ts ./
@@ -26,14 +26,23 @@ COPY tailwind.config.ts ./
 COPY postcss.config.js ./
 COPY drizzle.config.ts ./
 
-# Instalar todas las dependencias (incluyendo devDependencies para el build)
-RUN npm ci
+# Limpiar caché y instalar dependencias
+RUN npm cache clean --force
+RUN npm install --verbose
+RUN npm ls
 
 # Copiar código fuente
 COPY . .
 
+# Verificar estructura antes del build
+RUN ls -la
+RUN ls -la server/
+
 # Build de la aplicación (frontend y backend)
 RUN npm run build
+
+# Verificar que el build se completó
+RUN ls -la dist/
 
 # Stage de producción
 FROM node:18-alpine AS production
@@ -50,12 +59,18 @@ WORKDIR /app
 
 # Copiar package files para instalar solo dependencias de producción
 COPY package*.json ./
-RUN npm ci --only=production && npm cache clean --force
+RUN npm cache clean --force
+RUN npm ci --only=production --verbose
+RUN npm cache clean --force
 
 # Copiar archivos built desde el stage anterior
 COPY --from=builder /app/dist ./dist
 COPY --from=builder /app/server ./server
 COPY --from=builder /app/shared ./shared
+
+# Verificar estructura final
+RUN ls -la
+RUN ls -la dist/
 
 # Crear usuario no-root
 RUN addgroup -g 1001 -S nodejs && \
