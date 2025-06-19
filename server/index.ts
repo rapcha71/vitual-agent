@@ -73,8 +73,9 @@ try {
         serveStatic(app);
       }
 
-      const PORT = process.env.PORT || 5000;
-      server.listen(PORT, "0.0.0.0", () => {
+      // Cloud Run asigna el puerto dinámicamente
+      const PORT = process.env.PORT || 8080;
+      server.listen(Number(PORT), "0.0.0.0", () => {
         debugLog(`Server is running on port ${PORT}`);
         console.log(`
         🚀 Server is running!
