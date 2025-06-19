@@ -1,10 +1,7 @@
-# Usar Node.js 18 LTS como imagen base
-FROM node:18-alpine
+# Multi-stage build para Virtual Agent en Google Cloud Run
+FROM node:18-alpine AS builder
 
-# Establecer directorio de trabajo
-WORKDIR /app
-
-# Instalar dependencias del sistema necesarias para build
+# Instalar dependencias del sistema para el build
 RUN apk add --no-cache \
     python3 \
     make \
@@ -19,32 +16,66 @@ RUN apk add --no-cache \
     libjpeg-turbo-dev \
     freetype-dev
 
-# Copiar package.json y package-lock.json
+WORKDIR /app
+
+# Copiar archivos de configuración
 COPY package*.json ./
+COPY tsconfig*.json ./
+COPY vite.config.ts ./
+COPY tailwind.config.ts ./
+COPY postcss.config.js ./
+COPY drizzle.config.ts ./
 
-# Instalar dependencias de Node.js
-RUN npm ci --only=production && npm cache clean --force
+# Instalar todas las dependencias (incluyendo devDependencies para el build)
+RUN npm ci
 
-# Copiar el código fuente
+# Copiar código fuente
 COPY . .
 
-# Crear directorio para archivos estáticos
-RUN mkdir -p /app/dist
-
-# Build de la aplicación frontend
+# Build de la aplicación (frontend y backend)
 RUN npm run build
 
-# Exponer puerto (Cloud Run asigna dinámicamente)
-EXPOSE $PORT
+# Stage de producción
+FROM node:18-alpine AS production
 
-# Variables de entorno por defecto
-ENV NODE_ENV=production
-ENV HOST=0.0.0.0
+# Instalar dependencias runtime mínimas
+RUN apk add --no-cache \
+    cairo \
+    jpeg \
+    pango \
+    giflib \
+    pixman
 
-# Usuario no root para seguridad
-RUN addgroup -g 1001 -S nodejs
-RUN adduser -S virtual-agent -u 1001
+WORKDIR /app
+
+# Copiar package files para instalar solo dependencias de producción
+COPY package*.json ./
+RUN npm ci --only=production && npm cache clean --force
+
+# Copiar archivos built desde el stage anterior
+COPY --from=builder /app/dist ./dist
+COPY --from=builder /app/server ./server
+COPY --from=builder /app/shared ./shared
+
+# Crear usuario no-root
+RUN addgroup -g 1001 -S nodejs && \
+    adduser -S virtual-agent -u 1001 -G nodejs
+
+# Cambiar ownership de archivos
+RUN chown -R virtual-agent:nodejs /app
 USER virtual-agent
 
-# Comando para iniciar la aplicación
-CMD ["node", "server/index.js"]
+# Variables de entorno
+ENV NODE_ENV=production
+ENV HOST=0.0.0.0
+ENV PORT=8080
+
+# Exponer puerto
+EXPOSE 8080
+
+# Health check
+HEALTHCHECK --interval=30s --timeout=10s --start-period=5s --retries=3 \
+    CMD node -e "require('http').get('http://localhost:8080/api/health', (res) => { process.exit(res.statusCode === 200 ? 0 : 1) })"
+
+# Comando de inicio
+CMD ["node", "dist/index.js"]

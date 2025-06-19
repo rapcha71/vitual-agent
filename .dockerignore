@@ -11,17 +11,11 @@ yarn-error.log*
 .env.test.local
 .env.production.local
 
-# Build outputs
-dist
-build
-coverage
-
 # Git
 .git
 .gitignore
 
-# Docker
-Dockerfile
+# Docker files (except Dockerfile itself)
 .dockerignore
 
 # IDE
@@ -54,7 +48,7 @@ replit.nix
 *.bundle
 virtual-agent-*.bundle
 
-# Documentation (not needed in container)
+# Documentation (keep README)
 *.md
 !README.md
 
@@ -64,3 +58,6 @@ tests
 __tests__
 *.test.js
 *.spec.js
+
+# Coverage reports
+coverage
