@@ -1,27 +1,58 @@
-# Dockerfile minimal para Virtual Agent
-FROM node:18-alpine
+# Dockerfile multietapa para Google Cloud Run
+# Etapa 1: Build
+FROM node:20-alpine AS builder
 
-# Instalar solo dependencias esenciales
+# Instalar dependencias del sistema necesarias para build
 RUN apk add --no-cache python3 make g++
 
+# Crear directorio de trabajo
 WORKDIR /app
 
-# Copiar todo el proyecto
+# Copiar archivos de dependencias
+COPY package*.json ./
+
+# Instalar todas las dependencias (incluyendo devDependencies)
+RUN npm ci
+
+# Copiar código fuente
 COPY . .
 
-# Instalar dependencias
-RUN npm install
+# Construir aplicación
+RUN npm run build
 
-# Build directo con el script principal
-RUN npm run build || (echo "Build failed, trying alternatives..." && npx vite build && npx tsc server/index.ts --outDir dist --module esnext --target es2020 --moduleResolution node)
+# Etapa 2: Producción
+FROM node:20-alpine AS production
 
-# Verificar que tenemos los archivos necesarios
-RUN ls -la dist/ && test -f dist/index.js
+# Crear usuario no-root para seguridad
+RUN addgroup -g 1001 -S nodejs
+RUN adduser -S nodejs -u 1001
 
-# Configuración
+# Crear directorio de trabajo
+WORKDIR /app
+
+# Copiar package.json para instalar solo dependencias de producción
+COPY package*.json ./
+RUN npm ci --only=production && npm cache clean --force
+
+# Copiar archivos construidos desde la etapa builder
+COPY --from=builder --chown=nodejs:nodejs /app/dist ./dist
+
+# Copiar archivos necesarios para el servidor
+COPY --from=builder --chown=nodejs:nodejs /app/shared ./shared
+
+# Cambiar a usuario no-root
+USER nodejs
+
+# Exponer puerto
+EXPOSE 8080
+
+# Variables de entorno
 ENV NODE_ENV=production
 ENV PORT=8080
 
-EXPOSE 8080
+# Health check
+HEALTHCHECK --interval=30s --timeout=3s --start-period=5s --retries=3 \
+  CMD node -e "require('http').get('http://localhost:8080/api/health', (res) => { process.exit(res.statusCode === 200 ? 0 : 1); }).on('error', () => { process.exit(1); });"
 
-CMD ["npm", "start"]
+# Comando para iniciar
+CMD ["node", "dist/index.js"]
