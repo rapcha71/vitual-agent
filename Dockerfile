@@ -1,73 +1,42 @@
-# Dockerfile multietapa para Google Cloud Run
-# Etapa 1: Build
-FROM node:20-alpine AS builder
+# --- ETAPA 1: BUILDER ---
+# Usa la imagen base de Node.js. 'slim' es una buena opción de tamaño.
+FROM node:20-slim AS builder
 
-# Instalar dependencias del sistema necesarias para build
-RUN apk add --no-cache python3 make g++
-
-# Crear directorio de trabajo
+# Establece el directorio de trabajo
 WORKDIR /app
 
-# Copiar archivos de dependencias
+# Copia los archivos de manifiesto del proyecto. El '*' maneja si tienes o no un lockfile.
 COPY package*.json ./
 
-# Instalar todas las dependencias (incluyendo devDependencies)
-RUN npm ci
+# Instala TODAS las dependencias, incluyendo las de desarrollo para poder construir el proyecto
+RUN npm install
 
-# Copiar código fuente
+# Copia todo el código fuente de tu aplicación al contenedor
 COPY . .
 
-# Usar build optimizado para Docker
-RUN node docker-build.js
+# Ejecuta el script de construcción estándar de tu package.json.
+# npm usará el último script "build" que encuentre: 'vite build && esbuild...'
+RUN npm run build
 
-# Verificar que los archivos se construyeron correctamente
-RUN ls -la dist/ && ls -la dist/public/ || echo "Build verification complete"
+# --- ETAPA 2: PRODUCTION ---
+# Esta es la imagen final que se ejecutará en Cloud Run. Es más pequeña y segura.
 
-# Etapa 2: Producción
-FROM node:20-alpine AS production
+FROM node:20-slim AS production
 
-# Crear usuario no-root para seguridad
-RUN addgroup -g 1001 -S nodejs
-RUN adduser -S nodejs -u 1001
+# Establece el entorno a producción
+ENV NODE_ENV=production
 
-# Crear directorio de trabajo
 WORKDIR /app
 
-# Copiar package.json para instalar solo dependencias de producción
-COPY package*.json ./
-RUN npm ci --omit=dev && npm cache clean --force
+# Copia SOLO las dependencias de producción desde la etapa 'builder'
+# Esto hace la imagen final mucho más pequeña
+COPY --from=builder /app/node_modules ./node_modules
 
-# Copiar archivos construidos desde la etapa builder
-COPY --from=builder --chown=nodejs:nodejs /app/dist ./dist
+# Copia la carpeta 'dist' construida, que contiene tu frontend y backend listos para usar
+COPY --from=builder /app/dist ./dist
 
-# Copiar archivos del frontend construido desde dist/public
-COPY --from=builder --chown=nodejs:nodejs /app/dist/public ./public
-
-# Copiar archivos necesarios para el servidor
-COPY --from=builder --chown=nodejs:nodejs /app/shared ./shared
-
-# Verificar estructura final
-RUN echo "=== Estructura final del contenedor ===" && \
-    ls -la . && \
-    echo "=== Contenido de dist/ ===" && \
-    ls -la dist/ && \
-    echo "=== Contenido de public/ ===" && \
-    ls -la public/ && \
-    echo "=== Verificación completa ==="
-
-# Cambiar a usuario no-root
-USER nodejs
-
-# Exponer puerto
+# Expone el puerto en el que la aplicación escuchará. Cloud Run te pasará el puerto exacto a través de la variable de entorno PORT.
 EXPOSE 8080
 
-# Variables de entorno
-ENV NODE_ENV=production
-ENV PORT=8080
-
-# Health check
-HEALTHCHECK --interval=30s --timeout=3s --start-period=5s --retries=3 \
-  CMD node -e "require('http').get('http://localhost:8080/api/health', (res) => { process.exit(res.statusCode === 200 ? 0 : 1); }).on('error', () => { process.exit(1); });"
-
-# Comando para iniciar
+# El comando final para iniciar tu servidor. Esto coincide con el script "start" de tu package.json.
 CMD ["node", "dist/index.js"]
