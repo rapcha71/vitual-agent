@@ -17,8 +17,11 @@ RUN npm ci
 # Copiar código fuente
 COPY . .
 
-# Construir aplicación
-RUN npm run build
+# Usar build optimizado para Docker
+RUN node docker-build.js
+
+# Verificar que los archivos se construyeron correctamente
+RUN ls -la dist/ && ls -la dist/public/ || echo "Build verification complete"
 
 # Etapa 2: Producción
 FROM node:20-alpine AS production
@@ -32,13 +35,25 @@ WORKDIR /app
 
 # Copiar package.json para instalar solo dependencias de producción
 COPY package*.json ./
-RUN npm ci --only=production && npm cache clean --force
+RUN npm ci --omit=dev && npm cache clean --force
 
 # Copiar archivos construidos desde la etapa builder
 COPY --from=builder --chown=nodejs:nodejs /app/dist ./dist
 
+# Copiar archivos del frontend construido desde dist/public
+COPY --from=builder --chown=nodejs:nodejs /app/dist/public ./public
+
 # Copiar archivos necesarios para el servidor
 COPY --from=builder --chown=nodejs:nodejs /app/shared ./shared
+
+# Verificar estructura final
+RUN echo "=== Estructura final del contenedor ===" && \
+    ls -la . && \
+    echo "=== Contenido de dist/ ===" && \
+    ls -la dist/ && \
+    echo "=== Contenido de public/ ===" && \
+    ls -la public/ && \
+    echo "=== Verificación completa ==="
 
 # Cambiar a usuario no-root
 USER nodejs
