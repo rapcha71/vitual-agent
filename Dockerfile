@@ -39,4 +39,4 @@ COPY --from=builder /app/dist ./dist
 EXPOSE 8080
 
 # El comando final para iniciar tu servidor. Esto coincide con el script "start" de tu package.json.
-CMD ["node", "dist/index.js"]
+CMD ["ls", "-R"]
