@@ -65,8 +65,6 @@ try {
         const __filename = fileURLToPath(import.meta.url);
         const __dirname = path.dirname(__filename);
         
-        // --- CAMBIO IMPORTANTE AQUÍ ---
-        // Apuntamos a la sub-carpeta 'public' que vimos en los logs
         const staticFilesPath = path.join(__dirname, 'public');
         
         app.use(express.static(staticFilesPath));
