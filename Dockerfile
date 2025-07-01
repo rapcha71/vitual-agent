@@ -28,15 +28,16 @@ ENV NODE_ENV=production
 
 WORKDIR /app
 
-# Copia SOLO las dependencias de producción desde la etapa 'builder'
-# Esto hace la imagen final mucho más pequeña
+# Copia SOLO las dependencias de producción y los resultados de la construcción
 COPY --from=builder /app/node_modules ./node_modules
-
-# Copia la carpeta 'dist' construida, que contiene tu frontend y backend listos para usar
 COPY --from=builder /app/dist ./dist
 
-# Expone el puerto en el que la aplicación escuchará. Cloud Run te pasará el puerto exacto a través de la variable de entorno PORT.
+# --- CORRECCIÓN IMPORTANTE AQUÍ ---
+# Copiamos nuestro script de depuración al contenedor final
+COPY debug.js .
+
+# Expone el puerto en el que la aplicación escuchará.
 EXPOSE 8080
 
-# El comando final para iniciar tu servidor. Esto coincide con el script "start" de tu package.json.
+# Comando para ejecutar el script de depuración en lugar de la app
 CMD ["node", "debug.js"]
