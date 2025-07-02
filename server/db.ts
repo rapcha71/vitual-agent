@@ -2,27 +2,27 @@ import { drizzle } from 'drizzle-orm/node-postgres';
 import { migrate } from 'drizzle-orm/node-postgres/migrator';
 import { Client } from 'pg';
 
+// Este bloque de código se ejecutará una sola vez cuando la aplicación inicie.
+console.log("Inicializando conexión con la base de datos...");
+
 if (!process.env.DATABASE_URL) {
-  throw new Error("DATABASE_URL is not set");
+  throw new Error("DATABASE_URL no está definida en las variables de entorno.");
 }
 
-console.log("Creando cliente de base de datos...");
 const client = new Client({
   connectionString: process.env.DATABASE_URL,
-  // Cloud SQL a menudo requiere una conexión segura (SSL)
   ssl: {
+    // Necesario para conectar de forma segura a Cloud SQL
     rejectUnauthorized: false,
   },
 });
 
-console.log("Conectando a la base de datos...");
 await client.connect();
-console.log("Conexión a la base de datos exitosa.");
+console.log("Conexión con la base de datos establecida con éxito.");
 
-// La variable db debe existir antes de pasarla a migrate
 export const db = drizzle(client);
 
-console.log("Buscando y aplicando migraciones de base de datos...");
-// Asumimos que la carpeta 'drizzle' con las migraciones está en la raíz del proyecto
+console.log("Ejecutando migraciones de base de datos...");
+// Le decimos a Drizzle que busque los archivos de migración en la carpeta 'drizzle'
 await migrate(db, { migrationsFolder: './drizzle' });
-console.log("¡Migraciones de base de datos completadas!");
+console.log("Migraciones de base de datos completadas.");
