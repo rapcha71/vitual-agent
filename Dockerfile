@@ -6,11 +6,13 @@ RUN npm install
 COPY . .
 RUN npm run build
 
-# --- ETAPA 2: PRODUCTION ---
+# --- ETAPA 2: PRODUCTION (PARA DEPURACIÓN) ---
 FROM node:20-slim AS production
-ENV NODE_ENV=production
 WORKDIR /app
 COPY --from=builder /app/node_modules ./node_modules
 COPY --from=builder /app/dist ./dist
-EXPOSE 8080
-CMD ["node", "dist/index.js"]
+COPY drizzle.config.ts ./
+COPY drizzle ./drizzle
+
+# Este comando mantendrá el contenedor vivo por 1 hora sin hacer nada, para que podamos entrar.
+CMD ["sleep", "3600"]
