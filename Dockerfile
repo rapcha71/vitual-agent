@@ -1,3 +1,5 @@
+# VERSIÓN FINAL - 16 de Julio
+
 # --- ETAPA 1: BUILDER ---
 FROM node:20-slim AS builder
 WORKDIR /app
