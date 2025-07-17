@@ -21,5 +21,6 @@ console.log("Conexión a la base de datos exitosa.");
 export const db = drizzle(client);
 
 console.log("Ejecutando migraciones de base de datos...");
+// Le decimos a Drizzle que busque los archivos de migración en la carpeta 'drizzle'
 await migrate(db, { migrationsFolder: './drizzle' });
 console.log("¡Migraciones de base de datos completadas!");
