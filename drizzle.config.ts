@@ -1,20 +1,18 @@
-import { defineConfig } from "drizzle-kit";
-import * as dotenv from "dotenv";
+import { drizzle } from 'drizzle-orm/node-postgres';
+import { Client } from 'pg';
 
-dotenv.config({ path: ".env" });
-
-// Verifica que la variable de entorno esté presente
 if (!process.env.DATABASE_URL) {
-  throw new Error("DATABASE_URL is not set in environment variables");
+  throw new Error("DATABASE_URL is not set");
 }
 
-export default defineConfig({
-  schema: "./server/db/schema.ts",
-  out: "./drizzle",
-  dialect: "postgresql", // Especificamos que usamos PostgreSQL
-  dbCredentials: {
-    url: process.env.DATABASE_URL, // Le decimos que use nuestra variable de entorno
+const client = new Client({
+  connectionString: process.env.DATABASE_URL,
+  ssl: {
+    rejectUnauthorized: false,
   },
-  verbose: true,
-  strict: true,
 });
+
+await client.connect();
+console.log("Conexión simple a la base de datos establecida.");
+
+export const db = drizzle(client);
