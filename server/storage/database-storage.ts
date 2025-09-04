@@ -1,3 +1,4 @@
+// This file is the single source of truth for database access.
 import { users, properties, messages, deletedProperties, type User, type Property, type Message, type InsertUser, type InsertProperty, type InsertMessage, type DeletedProperty, PropertyType, MarkerColors } from "@shared/schema";
 import { db } from "../db";
 import { eq, and, sql, desc } from "drizzle-orm";

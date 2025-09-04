@@ -33,5 +33,7 @@ export interface IStorage {
   permanentlyDeleteProperty(deletedPropertyId: number): Promise<void>;
 }
 
+import { DatabaseStorage } from "./storage/database-storage";
+
 // Export storage instance
-export { storage } from "./storage/hybrid-storage";
+export const storage = new DatabaseStorage();

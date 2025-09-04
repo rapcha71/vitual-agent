@@ -1,4 +1,4 @@
-import { pgTable, text, serial, integer, boolean, jsonb } from "drizzle-orm/pg-core";
+import { pgTable, text, serial, integer, boolean, jsonb, timestamp } from "drizzle-orm/pg-core";
 import { createInsertSchema } from "drizzle-zod";
 import { z } from "zod";
 import { relations } from "drizzle-orm";
@@ -26,8 +26,9 @@ export const users = pgTable("users", {
   nickname: text("nickname"),
   isAdmin: boolean("is_admin").notNull().default(false),
   isSuperAdmin: boolean("is_super_admin").notNull().default(false),
+  createdAt: timestamp("created_at").notNull().defaultNow(),
   rememberToken: text("remember_token"),
-  lastLoginAt: text("last_login_at"),
+  lastLoginAt: timestamp("last_login_at"),
   biometricCredentialId: text("biometric_credential_id"),
   biometricPublicKey: text("biometric_public_key"),
   biometricCounter: integer("biometric_counter").default(0),
@@ -38,7 +39,7 @@ export const users = pgTable("users", {
 export const messages = pgTable("messages", {
   id: serial("id").primaryKey(),
   content: text("content").notNull(),
-  createdAt: text("created_at").notNull().default(new Date().toISOString()),
+  createdAt: timestamp("created_at").notNull().defaultNow(),
   unreadByUsers: jsonb("unread_by_users").notNull().$type<number[]>(), // Array of user IDs who haven't read the message
   senderId: integer("sender_id").notNull().references(() => users.id),
 });
@@ -61,7 +62,7 @@ export const properties = pgTable("properties", {
   images: jsonb("images").notNull().$type<string[]>(),
   kmlData: text("kml_data"),
   markerColor: text("marker_color").notNull(),
-  createdAt: text("created_at").notNull().default(new Date().toISOString()),
+  createdAt: timestamp("created_at").notNull().defaultNow(),
 });
 
 // Tabla para propiedades eliminadas (backup)
@@ -77,8 +78,8 @@ export const deletedProperties = pgTable("deleted_properties", {
   images: jsonb("images").notNull().$type<string[]>(),
   kmlData: text("kml_data"),
   markerColor: text("marker_color").notNull(),
-  createdAt: text("created_at").notNull(),
-  deletedAt: text("deleted_at").notNull().default(new Date().toISOString()),
+  createdAt: timestamp("created_at").notNull(),
+  deletedAt: timestamp("deleted_at").notNull().defaultNow(),
   deletedBy: integer("deleted_by").notNull().references(() => users.id),
   deleteReason: text("delete_reason"),
 });
