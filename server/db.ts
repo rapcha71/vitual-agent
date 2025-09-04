@@ -30,6 +30,4 @@ try {
   console.log("¡Migraciones de base de datos completadas!");
 } catch (error) {
   console.error("Error durante la migración de la base de datos:", error);
-  // We don't re-throw the error here to allow the app to start even if migrations fail,
-  // but we log it prominently. In a real production scenario, you might want to handle this differently.
 }
