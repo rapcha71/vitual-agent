@@ -1,5 +1,6 @@
 import session from "express-session";
 import { User, Property, InsertUser, InsertProperty, InsertMessage, Message, DeletedProperty } from "@shared/schema";
+import { DatabaseStorage } from "./storage/database-storage";
 
 export interface IStorage {
   sessionStore: session.Store;
@@ -20,18 +21,15 @@ export interface IStorage {
     counter: number;
   }): Promise<void>;
   updateUserBiometricCounter(userId: number, counter: number): Promise<void>;
-  // New methods for messages
   createMessage(message: InsertMessage & { senderId: number }): Promise<Message>;
   getMessages(): Promise<(Message & { sender: User })[]>;
   markMessageAsRead(messageId: number, userId: number): Promise<void>;
   getUnreadMessageCount(userId: number): Promise<number>;
-  
-  // New methods for deleted properties (backup system)
   deleteProperty(propertyId: number, deletedBy: number, reason?: string): Promise<void>;
   getDeletedProperties(): Promise<(DeletedProperty & { user: User; deletedByUser: User })[]>;
   restoreProperty(deletedPropertyId: number): Promise<Property>;
   permanentlyDeleteProperty(deletedPropertyId: number): Promise<void>;
 }
 
-// Export storage instance
-export { storage } from "./storage/hybrid-storage";
+// Export a single instance of the DatabaseStorage
+export const storage = new DatabaseStorage();
