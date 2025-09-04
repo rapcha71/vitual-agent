@@ -1,27 +1,29 @@
+// This file now only runs the database migration process.
 import { drizzle } from 'drizzle-orm/node-postgres';
 import { migrate } from 'drizzle-orm/node-postgres/migrator';
-import { Client } from 'pg';
-import path from 'path';
+import { Pool } from 'pg';
 
 if (!process.env.DATABASE_URL) {
-  throw new Error("DATABASE_URL no está definida en las variables de entorno.");
+  throw new Error("DATABASE_URL must be set in environment variables.");
 }
 
-const client = new Client({
+const pool = new Pool({
   connectionString: process.env.DATABASE_URL,
   ssl: {
     rejectUnauthorized: false,
   },
 });
 
-console.log("Conectando a la base de datos...");
-await client.connect();
-console.log("Conexión a la base de datos exitosa.");
+const db = drizzle(pool);
 
-// La variable db debe existir antes de pasarla a migrate
-export const db = drizzle(client);
-
-console.log("Ejecutando migraciones de base de datos...");
-// Le decimos a Drizzle que busque los archivos de migración en la carpeta 'drizzle'
-await migrate(db, { migrationsFolder: './drizzle' });
-console.log("¡Migraciones de base de datos completadas!");
+console.log("Checking for and running database migrations...");
+try {
+  await migrate(db, { migrationsFolder: './drizzle' });
+  console.log("Database migrations completed successfully!");
+} catch (error) {
+  console.error("Error during database migration:", error);
+  process.exit(1); // Exit if migrations fail
+} finally {
+  await pool.end(); // Close the pool connection
+  console.log("Migration check complete. Pool disconnected.");
+}
