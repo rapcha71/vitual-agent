@@ -25,12 +25,28 @@ function useLoginMutation() {
 
   return useMutation({
     mutationFn: async (credentials: LoginData) => {
-      const res = await apiRequest("POST", "/api/login", credentials);
-      if (!res.ok) {
-        const error = await res.json();
-        throw new Error(error.message || "Usuario o contraseña inválidos");
+      const { username, password } = credentials;
+      const response = await fetch("/api/login", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ username, password }),
+        credentials: "include",
+      });
+
+      if (!response.ok) {
+        const errorData = await response.json().catch(() => ({ message: 'Unknown error' }));
+        throw new Error(errorData.message || `Login failed with status: ${response.status}`);
       }
-      return res.json();
+
+      const text = await response.text();
+      let data;
+      try {
+        data = JSON.parse(text);
+      } catch (error) {
+        console.error('Failed to parse login response as JSON:', text);
+        throw new Error('Invalid response format from server');
+      }
+      return data as SelectUser;
     },
     onSuccess: (user: SelectUser) => {
       queryClient.setQueryData(["/api/user"], user);
@@ -79,12 +95,27 @@ function useRegisterMutation() {
 
   return useMutation({
     mutationFn: async (credentials: InsertUser) => {
-      const res = await apiRequest("POST", "/api/register", credentials);
-      if (!res.ok) {
-        const error = await res.json();
-        throw new Error(error.message || "Error en el registro");
+      const response = await fetch("/api/register", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(credentials),
+        credentials: "include",
+      });
+
+      if (!response.ok) {
+        const errorData = await response.json().catch(() => ({ message: 'Unknown error' }));
+        throw new Error(errorData.message || `Registration failed with status: ${response.status}`);
       }
-      return res.json();
+
+      const text = await response.text();
+      let data;
+      try {
+        data = JSON.parse(text);
+      } catch (error) {
+        console.error('Failed to parse register response as JSON:', text);
+        throw new Error('Invalid response format from server');
+      }
+      return data as SelectUser;
     },
     onSuccess: (user: SelectUser) => {
       queryClient.setQueryData(["/api/user"], user);
@@ -118,11 +149,21 @@ export function AuthProvider({ children }: { children: ReactNode }) {
           if (response.status === 401) {
             return null;
           }
-          throw new Error("Error al obtener datos del usuario");
+          const errorData = await response.json().catch(() => ({ message: 'Unknown error' }));
+          throw new Error(errorData.message || `Error fetching user data: ${response.status}`);
         }
-        return response.json();
-      } catch (error) {
+        const text = await response.text();
+        let data;
+        try {
+          data = JSON.parse(text);
+        } catch (error) {
+          console.error('Failed to parse user data response as JSON:', text);
+          throw new Error('Invalid response format from server for user data');
+        }
+        return data;
+      } catch (error: any) {
         console.error("Error fetching user:", error);
+        // Ensure we return null on any error during fetch to prevent app crashes
         return null;
       }
     },
