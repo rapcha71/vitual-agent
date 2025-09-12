@@ -1,12 +1,11 @@
+
 import { createContext, ReactNode, useContext } from "react";
-import {
-  useQuery,
-  useMutation,
-} from "@tanstack/react-query";
-import { insertUserSchema, User as SelectUser, InsertUser } from "@shared/schema";
-import { apiRequest, queryClient } from "../lib/queryClient";
+import { useQuery, useMutation } from "@tanstack/react-query";
+import { User as SelectUser, InsertUser } from "@shared/schema";
+import { queryClient } from "../lib/queryClient";
 import { useToast } from "@/hooks/use-toast";
 import { useLocation } from "wouter";
+import { apiCall } from "../lib/api";
 
 type AuthContextType = {
   user: SelectUser | null;
@@ -25,28 +24,7 @@ function useLoginMutation() {
 
   return useMutation({
     mutationFn: async (credentials: LoginData) => {
-      const { username, password } = credentials;
-      const response = await fetch("/api/login", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ username, password }),
-        credentials: "include",
-      });
-
-      if (!response.ok) {
-        const errorData = await response.json().catch(() => ({ message: 'Unknown error' }));
-        throw new Error(errorData.message || `Login failed with status: ${response.status}`);
-      }
-
-      const text = await response.text();
-      let data;
-      try {
-        data = JSON.parse(text);
-      } catch (error) {
-        console.error('Failed to parse login response as JSON:', text);
-        throw new Error('Invalid response format from server');
-      }
-      return data as SelectUser;
+      return await apiCall("POST", "/api/login", credentials);
     },
     onSuccess: (user: SelectUser) => {
       queryClient.setQueryData(["/api/user"], user);
@@ -68,11 +46,7 @@ function useLogoutMutation() {
 
   return useMutation({
     mutationFn: async () => {
-      const res = await apiRequest("POST", "/api/logout");
-      if (!res.ok) {
-        const error = await res.json();
-        throw new Error(error.message || "Error al cerrar sesión");
-      }
+      return await apiCall("POST", "/api/logout");
     },
     onSuccess: () => {
       queryClient.setQueryData(["/api/user"], null);
@@ -95,27 +69,7 @@ function useRegisterMutation() {
 
   return useMutation({
     mutationFn: async (credentials: InsertUser) => {
-      const response = await fetch("/api/register", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(credentials),
-        credentials: "include",
-      });
-
-      if (!response.ok) {
-        const errorData = await response.json().catch(() => ({ message: 'Unknown error' }));
-        throw new Error(errorData.message || `Registration failed with status: ${response.status}`);
-      }
-
-      const text = await response.text();
-      let data;
-      try {
-        data = JSON.parse(text);
-      } catch (error) {
-        console.error('Failed to parse register response as JSON:', text);
-        throw new Error('Invalid response format from server');
-      }
-      return data as SelectUser;
+      return await apiCall("POST", "/api/register", credentials);
     },
     onSuccess: (user: SelectUser) => {
       queryClient.setQueryData(["/api/user"], user);
@@ -142,29 +96,13 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     queryKey: ["/api/user"],
     queryFn: async () => {
       try {
-        const response = await fetch("/api/user", {
-          credentials: "include",
-        });
-        if (!response.ok) {
-          if (response.status === 401) {
-            return null;
-          }
-          const errorData = await response.json().catch(() => ({ message: 'Unknown error' }));
-          throw new Error(errorData.message || `Error fetching user data: ${response.status}`);
-        }
-        const text = await response.text();
-        let data;
-        try {
-          data = JSON.parse(text);
-        } catch (error) {
-          console.error('Failed to parse user data response as JSON:', text);
-          throw new Error('Invalid response format from server for user data');
-        }
-        return data;
+        return await apiCall("GET", "/api/user");
       } catch (error: any) {
-        console.error("Error fetching user:", error);
-        // Ensure we return null on any error during fetch to prevent app crashes
-        return null;
+        // Return null for 401 (unauthorized) or network errors
+        if (error.message.includes('401') || error.message.includes('Network')) {
+          return null;
+        }
+        throw error;
       }
     },
     staleTime: 30000,
