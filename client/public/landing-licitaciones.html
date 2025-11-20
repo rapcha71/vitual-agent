@@ -1,0 +1,1109 @@
+<!DOCTYPE html>
+<html lang="es">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Asistente de Licitaciones | Analista de Licitaciones</title>
+    <style>
+      :root {
+        --primary: #1f6feb;
+        --secondary: #0c3b7a;
+        --accent: #2ecc71;
+        --accent-2: #f29f05;
+        --danger: #e74c3c;
+        --bg: #f5f7fb;
+        --text: #1f2937;
+        --muted: #6b7280;
+        --card: #ffffff;
+        --border: #d8e2f2;
+        --shadow: 0 18px 35px rgba(12, 59, 122, 0.14);
+      }
+
+      * {
+        box-sizing: border-box;
+      }
+
+      body {
+        margin: 0;
+        font-family: "Inter", "Segoe UI", system-ui, -apple-system, sans-serif;
+        background: radial-gradient(circle at 10% 10%, rgba(31, 111, 235, 0.04), transparent 35%),
+          radial-gradient(circle at 80% 0%, rgba(46, 204, 113, 0.04), transparent 30%),
+          var(--bg);
+        color: var(--text);
+        line-height: 1.6;
+      }
+
+      a {
+        color: inherit;
+        text-decoration: none;
+      }
+
+      header {
+        position: sticky;
+        top: 0;
+        z-index: 30;
+        background: rgba(245, 247, 251, 0.96);
+        backdrop-filter: blur(10px);
+        border-bottom: 1px solid rgba(216, 226, 242, 0.8);
+      }
+
+      .nav {
+        max-width: 1200px;
+        margin: 0 auto;
+        padding: 0.8rem 1.25rem;
+        display: flex;
+        align-items: center;
+        gap: 1rem;
+      }
+
+      .logo {
+        display: flex;
+        align-items: center;
+        gap: 0.65rem;
+        font-weight: 800;
+        font-size: 1.05rem;
+        letter-spacing: 0.01em;
+      }
+
+      .logo-mark {
+        width: 38px;
+        height: 38px;
+        border-radius: 12px;
+        background: linear-gradient(135deg, #e8f1ff, #c8ddff);
+        border: 1px solid rgba(31, 111, 235, 0.35);
+        display: grid;
+        place-items: center;
+        color: var(--primary);
+        font-weight: 800;
+        box-shadow: 0 10px 22px rgba(31, 111, 235, 0.2);
+      }
+
+      .nav-links {
+        display: flex;
+        gap: 1.25rem;
+        margin-left: auto;
+        font-size: 0.95rem;
+      }
+
+      .nav-links a {
+        color: var(--muted);
+        font-weight: 600;
+        transition: color 0.15s ease;
+      }
+
+      .nav-links a:hover {
+        color: var(--primary);
+      }
+
+      .nav-actions {
+        display: flex;
+        gap: 0.6rem;
+        margin-left: 1rem;
+      }
+
+      .btn {
+        border: none;
+        padding: 0.55rem 1.1rem;
+        border-radius: 999px;
+        font-weight: 700;
+        cursor: pointer;
+        transition: transform 0.12s ease, box-shadow 0.18s ease;
+        display: inline-flex;
+        align-items: center;
+        gap: 0.4rem;
+        letter-spacing: 0.01em;
+      }
+
+      .btn-primary {
+        background: linear-gradient(135deg, var(--primary), var(--secondary));
+        color: #fff;
+        box-shadow: 0 12px 26px rgba(12, 59, 122, 0.35);
+      }
+
+      .btn-outline {
+        border: 1px solid var(--border);
+        background: #fff;
+        color: var(--text);
+      }
+
+      .btn:hover {
+        transform: translateY(-1px);
+      }
+
+      main {
+        max-width: 1200px;
+        margin: 0 auto;
+        padding: 1.5rem 1.25rem 3rem;
+      }
+
+      section {
+        scroll-margin-top: 90px;
+      }
+
+      .hero {
+        display: grid;
+        grid-template-columns: minmax(0, 1.15fr) minmax(0, 1fr);
+        gap: 2.5rem;
+        padding: 2.2rem 0 2.6rem;
+        align-items: center;
+      }
+
+      .badge {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.35rem;
+        padding: 0.35rem 0.7rem;
+        border-radius: 999px;
+        background: rgba(46, 204, 113, 0.13);
+        color: #12884a;
+        font-weight: 700;
+        font-size: 0.8rem;
+        letter-spacing: 0.01em;
+      }
+
+      .hero h1 {
+        font-size: clamp(2.1rem, 3vw, 2.8rem);
+        margin: 0.7rem 0 0.5rem;
+        font-weight: 800;
+        letter-spacing: -0.02em;
+      }
+
+      .hero h1 span {
+        color: var(--primary);
+      }
+
+      .hero p {
+        color: var(--muted);
+        font-size: 1rem;
+        max-width: 36rem;
+      }
+
+      .hero-list {
+        list-style: none;
+        padding: 0;
+        margin: 1rem 0 1.3rem;
+        color: var(--text);
+      }
+
+      .hero-list li {
+        display: flex;
+        align-items: flex-start;
+        gap: 0.5rem;
+        margin-bottom: 0.35rem;
+        font-weight: 600;
+      }
+
+      .hero-list li span {
+        color: var(--accent);
+      }
+
+      .hero-cta {
+        display: flex;
+        gap: 0.7rem;
+        flex-wrap: wrap;
+        align-items: center;
+      }
+
+      .hero-note {
+        font-size: 0.9rem;
+        color: var(--muted);
+        margin-top: 0.4rem;
+      }
+
+      .hero-visual {
+        background: linear-gradient(135deg, #0c3b7a 0%, #103c68 50%, #0b2747 100%);
+        color: #e8f1ff;
+        padding: 1.4rem;
+        border-radius: 24px;
+        position: relative;
+        overflow: hidden;
+        box-shadow: var(--shadow);
+      }
+
+      .hero-visual:before {
+        content: "";
+        position: absolute;
+        inset: 0;
+        background: radial-gradient(circle at 15% 20%, rgba(255, 255, 255, 0.12), transparent 40%),
+          radial-gradient(circle at 80% 20%, rgba(255, 255, 255, 0.08), transparent 35%);
+      }
+
+      .blueprint-card,
+      .calc-card,
+      .ruler-card {
+        position: relative;
+        background: rgba(255, 255, 255, 0.07);
+        border: 1px solid rgba(232, 241, 255, 0.18);
+        border-radius: 14px;
+        padding: 0.85rem;
+        margin-bottom: 0.9rem;
+        backdrop-filter: blur(4px);
+      }
+
+      .blueprint-card pre {
+        margin: 0.2rem 0 0;
+        font-family: "IBM Plex Mono", "SFMono-Regular", monospace;
+        white-space: pre;
+        color: #ddecff;
+        font-size: 0.78rem;
+        line-height: 1.4;
+      }
+
+      .chip {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.3rem;
+        padding: 0.22rem 0.6rem;
+        border-radius: 999px;
+        background: rgba(31, 111, 235, 0.12);
+        color: #ddecff;
+        font-size: 0.75rem;
+        border: 1px dashed rgba(255, 255, 255, 0.25);
+      }
+
+      .section-header h2 {
+        font-size: 1.5rem;
+        margin-bottom: 0.15rem;
+      }
+
+      .section-header p {
+        margin-top: 0;
+        color: var(--muted);
+      }
+
+      .grid {
+        display: grid;
+        gap: 1.1rem;
+      }
+
+      .grid-cols-2 {
+        grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      }
+
+      .grid-cols-3 {
+        grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+      }
+
+      .grid-cols-4 {
+        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      }
+
+      .card {
+        background: var(--card);
+        border-radius: 14px;
+        padding: 1rem;
+        border: 1px solid var(--border);
+        box-shadow: var(--shadow);
+      }
+
+      .step {
+        display: flex;
+        gap: 0.7rem;
+        align-items: flex-start;
+      }
+
+      .step-number {
+        width: 26px;
+        height: 26px;
+        border-radius: 50%;
+        background: rgba(31, 111, 235, 0.12);
+        color: var(--primary);
+        display: grid;
+        place-items: center;
+        font-weight: 800;
+        flex-shrink: 0;
+      }
+
+      .benefit-list {
+        list-style: none;
+        padding: 0;
+        margin: 0.5rem 0 0;
+      }
+
+      .benefit-list li {
+        display: flex;
+        gap: 0.45rem;
+        align-items: flex-start;
+        margin-bottom: 0.35rem;
+        color: var(--muted);
+      }
+
+      .benefit-list li span {
+        color: var(--accent);
+        margin-top: 0.15rem;
+      }
+
+      .pricing-card {
+        position: relative;
+        overflow: hidden;
+      }
+
+      .pricing-card .tag {
+        position: absolute;
+        top: 0.7rem;
+        right: 0.7rem;
+        background: rgba(31, 111, 235, 0.12);
+        color: var(--secondary);
+        border-radius: 999px;
+        padding: 0.2rem 0.6rem;
+        font-size: 0.75rem;
+        font-weight: 700;
+      }
+
+      .price {
+        font-size: 1.5rem;
+        font-weight: 800;
+      }
+
+      details {
+        background: #fff;
+        border-radius: 12px;
+        padding: 0.7rem 0.85rem;
+        border: 1px solid var(--border);
+        margin-bottom: 0.55rem;
+        box-shadow: 0 10px 22px rgba(12, 59, 122, 0.06);
+      }
+
+      summary {
+        cursor: pointer;
+        font-weight: 700;
+        list-style: none;
+      }
+
+      summary::-webkit-details-marker {
+        display: none;
+      }
+
+      details p {
+        margin-top: 0.3rem;
+        color: var(--muted);
+      }
+
+      .auth-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+        gap: 1rem;
+        margin-top: 0.8rem;
+      }
+
+      .form-group {
+        margin-bottom: 0.7rem;
+      }
+
+      label {
+        display: block;
+        font-size: 0.9rem;
+        color: var(--muted);
+        margin-bottom: 0.2rem;
+      }
+
+      input,
+      textarea,
+      select {
+        width: 100%;
+        padding: 0.55rem 0.65rem;
+        border-radius: 10px;
+        border: 1px solid var(--border);
+        background: #f9fbff;
+        font-size: 0.95rem;
+        font-family: inherit;
+        outline: none;
+        transition: border 0.15s ease, box-shadow 0.15s ease;
+      }
+
+      input:focus,
+      textarea:focus,
+      select:focus {
+        border-color: var(--primary);
+        box-shadow: 0 0 0 1px rgba(31, 111, 235, 0.25);
+        background: #fff;
+      }
+
+      textarea {
+        resize: vertical;
+        min-height: 80px;
+      }
+
+      .alert {
+        border-radius: 10px;
+        padding: 0.6rem 0.75rem;
+        font-size: 0.9rem;
+        margin-bottom: 0.6rem;
+        border: 1px solid transparent;
+      }
+
+      .alert-success {
+        background: rgba(46, 204, 113, 0.1);
+        color: #12884a;
+        border-color: rgba(46, 204, 113, 0.35);
+      }
+
+      .alert-error {
+        background: rgba(231, 76, 60, 0.08);
+        color: var(--danger);
+        border-color: rgba(231, 76, 60, 0.32);
+      }
+
+      .dashboard {
+        display: none;
+        grid-template-columns: minmax(0, 1.05fr) minmax(0, 0.95fr);
+        gap: 1rem;
+        margin-top: 1rem;
+      }
+
+      .dashboard-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: flex-start;
+        gap: 0.4rem;
+        margin-bottom: 0.4rem;
+      }
+
+      .pill {
+        border-radius: 999px;
+        padding: 0.2rem 0.6rem;
+        background: rgba(31, 111, 235, 0.1);
+        color: var(--secondary);
+        font-weight: 700;
+      }
+
+      .results-box {
+        background: #fff;
+        border-radius: 12px;
+        padding: 0.75rem;
+        border: 1px solid var(--border);
+        min-height: 160px;
+        color: var(--muted);
+        white-space: pre-wrap;
+      }
+
+      .results-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 0.4rem;
+      }
+
+      .payment-block {
+        margin-top: 0.7rem;
+        padding: 0.9rem;
+        border-radius: 12px;
+        border: 1px dashed rgba(31, 111, 235, 0.35);
+        background: #fff;
+        box-shadow: 0 12px 20px rgba(12, 59, 122, 0.07);
+      }
+
+      .payment-buttons {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 0.6rem;
+        margin-top: 0.5rem;
+      }
+
+      .btn-pay {
+        border: none;
+        color: #fff;
+        padding: 0.45rem 0.85rem;
+        border-radius: 10px;
+        cursor: pointer;
+        font-weight: 700;
+        letter-spacing: 0.01em;
+      }
+
+      .btn-stripe {
+        background: linear-gradient(135deg, #635bff, #4438ca);
+      }
+
+      .btn-paypal {
+        background: linear-gradient(135deg, #253b80, #179bd7);
+      }
+
+      .btn-pay:disabled {
+        opacity: 0.55;
+        cursor: not-allowed;
+      }
+
+      footer {
+        border-top: 1px solid var(--border);
+        padding: 1.2rem 1.25rem 1.6rem;
+        background: #f9fbff;
+        margin-top: 2.5rem;
+      }
+
+      .footer-inner {
+        max-width: 1200px;
+        margin: 0 auto;
+        display: flex;
+        flex-wrap: wrap;
+        gap: 1rem;
+        justify-content: space-between;
+        align-items: center;
+        color: var(--muted);
+      }
+
+      .footer-links {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 1rem;
+      }
+
+      .footer-links a {
+        color: var(--muted);
+        text-decoration: underline;
+        text-decoration-style: dotted;
+        text-underline-offset: 3px;
+      }
+
+      @media (max-width: 960px) {
+        .nav-links {
+          display: none;
+        }
+
+        .hero {
+          grid-template-columns: minmax(0, 1fr);
+        }
+
+        .hero-visual {
+          order: -1;
+        }
+
+        .dashboard {
+          grid-template-columns: minmax(0, 1fr);
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <header>
+      <div class="nav">
+        <div class="logo">
+          <div class="logo-mark">AL</div>
+          <div>Asistente de Licitaciones</div>
+        </div>
+        <div class="nav-links">
+          <a href="#inicio">Inicio</a>
+          <a href="#como">Cómo funciona</a>
+          <a href="#beneficios">Beneficios</a>
+          <a href="#planes">Planes y precios</a>
+          <a href="#faq">Preguntas frecuentes</a>
+          <a href="#ingresar">Ingresar / Registrarse</a>
+        </div>
+        <div class="nav-actions">
+          <button class="btn btn-outline" onclick="scrollToId('ingresar')">Ingresar</button>
+          <button class="btn btn-primary" onclick="scrollToId('planes')">Comenzar ahora</button>
+        </div>
+      </div>
+    </header>
+
+    <main>
+      <section id="inicio" class="hero">
+        <div>
+          <div class="badge">15 días de prueba gratuita · sin cobro inicial</div>
+          <h1>
+            Asistente de Licitaciones:
+            <span>tu analista inteligente</span> para concursos públicos.
+          </h1>
+          <p>
+            Carga tus documentos de licitación y obtén análisis, resúmenes y recomendaciones
+            estratégicas en segundos gracias al GPT personalizado <strong>“Analista de Licitaciones”</strong>.
+          </p>
+          <ul class="hero-list">
+            <li><span>✔</span> Período de prueba de 15 días sin cobro.</li>
+            <li><span>✔</span> Luego, suscripción de <strong>US$25/mes</strong> por hasta <strong>20 análisis al mes</strong>.</li>
+            <li><span>✔</span> Detección automática de riesgos, requisitos críticos y oportunidades.</li>
+          </ul>
+          <div class="hero-cta">
+            <button class="btn btn-primary" onclick="scrollToId('ingresar')">Probar gratis 15 días</button>
+            <button class="btn btn-outline" onclick="scrollToId('como')">Ver cómo funciona</button>
+          </div>
+          <div class="hero-note">
+            No se te cobrará nada durante el periodo de prueba. Cancela en cualquier momento antes del día 16.
+          </div>
+        </div>
+        <div class="hero-visual" aria-hidden="true">
+          <div class="blueprint-card">
+            <strong>Plano heliográfico · Escala 1:100</strong>
+            <pre>
+┌─────────── Bloque A ───────────┐
+│ Ejes A-F · Niveles 1-4         │
+│ Área total: 4 250 m²           │
+│ Uso: Centro Cívico             │
+└────────────────────────────────┘
+✏️ Lápiz · Escalímetro · Regla
+            </pre>
+            <div class="chip">📑 Pliegos técnicos</div>
+            <div class="chip">🏗️ Obra pública</div>
+          </div>
+          <div class="calc-card">
+            <strong>Calculadora científica</strong>
+            <div style="color:#ddecff; font-size:0.9rem; margin-top:0.25rem;">
+              Fórmulas de ajustes, garantías y puntajes automáticos.
+            </div>
+          </div>
+          <div class="ruler-card">
+            <strong>Escalímetro &amp; lápiz</strong>
+            <div style="color:#ddecff; font-size:0.9rem; margin-top:0.25rem;">
+              Medidas, áreas y cantidades listas para la oferta económica.
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section id="como">
+        <div class="section-header">
+          <h2>Cómo funciona</h2>
+          <p>Cuatro pasos para pasar de documentos complejos a decisiones claras.</p>
+        </div>
+        <div class="grid grid-cols-4">
+          <div class="card">
+            <div class="step">
+              <div class="step-number">1</div>
+              <div>
+                <h3>Regístrate</h3>
+                <p>Activa tu prueba gratuita de 15 días sin cobro inicial.</p>
+              </div>
+            </div>
+          </div>
+          <div class="card">
+            <div class="step">
+              <div class="step-number">2</div>
+              <div>
+                <h3>Sube la licitación</h3>
+                <p>Ingresa el texto clave o resumen del pliego.</p>
+              </div>
+            </div>
+          </div>
+          <div class="card">
+            <div class="step">
+              <div class="step-number">3</div>
+              <div>
+                <h3>El GPT analiza</h3>
+                <p>Obtén hallazgos, riesgos y oportunidades en segundos.</p>
+              </div>
+            </div>
+          </div>
+          <div class="card">
+            <div class="step">
+              <div class="step-number">4</div>
+              <div>
+                <h3>Recibe tu informe</h3>
+                <p>Descarga el análisis y comparte con tu equipo.</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section id="beneficios">
+        <div class="section-header">
+          <h2>Beneficios</h2>
+          <p>Diseñado para oficinas de proyectos, consultoras y equipos legales.</p>
+        </div>
+        <div class="grid grid-cols-3">
+          <div class="card">
+            <h3>Ahorro de tiempo</h3>
+            <ul class="benefit-list">
+              <li><span>✔</span> Menos horas leyendo pliegos extensos.</li>
+              <li><span>✔</span> Resúmenes ejecutivos listos para decidir.</li>
+            </ul>
+          </div>
+          <div class="card">
+            <h3>Control de riesgos</h3>
+            <ul class="benefit-list">
+              <li><span>✔</span> Señala multas, garantías y exclusiones.</li>
+              <li><span>✔</span> Identifica requisitos críticos y plazos sensibles.</li>
+            </ul>
+          </div>
+          <div class="card">
+            <h3>Prueba gratuita</h3>
+            <ul class="benefit-list">
+              <li><span>✔</span> 15 días sin cobro inicial.</li>
+              <li><span>✔</span> Suscripción posterior de <strong>US$25/mes</strong> por 20 análisis al mes.</li>
+            </ul>
+          </div>
+        </div>
+      </section>
+
+      <section id="planes">
+        <div class="section-header">
+          <h2>Planes y precios</h2>
+          <p>Selecciona el plan que mejor se adapta a tu ritmo de licitación.</p>
+        </div>
+        <div class="grid grid-cols-3">
+          <div class="card pricing-card">
+            <div class="tag">15 días gratis</div>
+            <h3>Profesional</h3>
+            <p>Para estudios de arquitectura e ingeniería.</p>
+            <div class="price">US$25<span style="font-size:0.9rem; font-weight:600;">/mes</span></div>
+            <p style="color:var(--muted);">Hasta 20 análisis de licitación al mes.</p>
+            <ul class="benefit-list">
+              <li><span>✔</span> GPT “Analista de Licitaciones”.</li>
+              <li><span>✔</span> Exportación de resultados.</li>
+              <li><span>✔</span> Soporte prioritario por correo.</li>
+            </ul>
+            <button class="btn btn-primary" style="margin-top:0.7rem" onclick="scrollToId('ingresar')">
+              Comenzar prueba gratuita
+            </button>
+          </div>
+          <div class="card pricing-card">
+            <h3>Empresarial</h3>
+            <p>Equipos con alto volumen mensual.</p>
+            <div class="price">A medida</div>
+            <p style="color:var(--muted);">Negociamos licencias multiusuario.</p>
+            <ul class="benefit-list">
+              <li><span>✔</span> Flujos avanzados y API.</li>
+              <li><span>✔</span> Entrenamientos y soporte dedicado.</li>
+              <li><span>✔</span> Prueba gratuita de 15 días.</li>
+            </ul>
+            <button class="btn btn-outline" style="margin-top:0.7rem" onclick="alert('Un representante te contactará (simulación).')">
+              Hablar con ventas
+            </button>
+          </div>
+          <div class="card pricing-card">
+            <h3>Condiciones de cobro</h3>
+            <p style="color:var(--muted);">
+              • No se cobra durante los primeros 15 días desde el registro.<br />
+              • A partir del día 16 se activa la suscripción seleccionada.<br />
+              • Puedes cancelar antes de que termine la prueba para evitar cargos.
+            </p>
+          </div>
+        </div>
+      </section>
+
+      <section id="ingresar">
+        <div class="section-header">
+          <h2>Ingresar / Registrarse</h2>
+          <p>Simulación en el navegador con prueba gratuita de 15 días usando localStorage.</p>
+        </div>
+
+        <div class="auth-grid">
+          <div class="card">
+            <h3>Registro</h3>
+            <div id="registerAlert"></div>
+            <form id="registerForm" novalidate>
+              <div class="form-group">
+                <label for="regName">Nombre completo</label>
+                <input id="regName" type="text" required />
+              </div>
+              <div class="form-group">
+                <label for="regEmail">Correo electrónico</label>
+                <input id="regEmail" type="email" required />
+              </div>
+              <div class="form-group">
+                <label for="regPassword">Contraseña</label>
+                <input id="regPassword" type="password" required />
+              </div>
+              <div class="form-group">
+                <label for="regPassword2">Confirmar contraseña</label>
+                <input id="regPassword2" type="password" required />
+              </div>
+              <p style="color:var(--muted); font-size:0.9rem; margin-top:0.3rem;">
+                Al registrarte se guarda tu cuenta en el navegador y se inicia tu periodo de prueba.
+                <!-- Aquí se integraría la lógica real de backend para crear usuarios y almacenar contraseñas cifradas. -->
+              </p>
+              <button type="submit" class="btn btn-primary">Crear cuenta y activar prueba</button>
+            </form>
+          </div>
+
+          <div class="card">
+            <h3>Inicio de sesión</h3>
+            <div id="loginAlert"></div>
+            <form id="loginForm" novalidate>
+              <div class="form-group">
+                <label for="logEmail">Correo electrónico</label>
+                <input id="logEmail" type="email" required />
+              </div>
+              <div class="form-group">
+                <label for="logPassword">Contraseña</label>
+                <input id="logPassword" type="password" required />
+              </div>
+              <p style="color:var(--muted); font-size:0.9rem; margin-top:0.3rem;">
+                Este ejemplo valida en el navegador. <!-- Aquí se conectaría el backend real de autenticación (tokens, sesiones, etc.). -->
+              </p>
+              <button type="submit" class="btn btn-outline">Ingresar</button>
+            </form>
+          </div>
+        </div>
+
+        <div id="dashboard" class="dashboard">
+          <div class="card">
+            <div class="dashboard-header">
+              <div>
+                <div style="font-weight:800;">Panel · Analista de Licitaciones</div>
+                <div id="trialStatus" style="color:var(--muted); font-size:0.9rem;"></div>
+              </div>
+              <span id="currentUser" class="pill"></span>
+            </div>
+            <div class="form-group">
+              <label for="licitacionInput">Información de la licitación</label>
+              <textarea id="licitacionInput" placeholder="Pega aquí pliegos, requisitos o resumen del concurso"></textarea>
+            </div>
+            <button class="btn btn-primary" type="button" onclick="analizarLicitacion()">Analizar licitación</button>
+            <p style="color:var(--muted); font-size:0.9rem;">
+              <!-- Aquí se conectaría con la API real del GPT personalizado “Analista de Licitaciones”. -->
+              Esta acción simula el análisis y muestra un resultado ficticio.
+            </p>
+          </div>
+
+          <div>
+            <div class="card">
+              <div class="results-header">
+                <strong>Resultados del Analista de Licitaciones</strong>
+                <button class="btn btn-outline" type="button" onclick="exportarResultados()">Exportar resultados</button>
+              </div>
+              <div id="resultsBox" class="results-box">Aquí aparecerá el análisis.</div>
+            </div>
+
+            <div class="payment-block">
+              <strong>Suscripción mensual: US$25</strong>
+              <div style="color:var(--muted); font-size:0.9rem;">
+                Hasta 20 análisis por mes. Los primeros 15 días no se realiza ningún cobro.
+              </div>
+              <div id="paymentMessage" style="color:var(--muted); font-size:0.9rem; margin-top:0.35rem;"></div>
+              <div class="payment-buttons">
+                <button id="stripeButton" class="btn-pay btn-stripe" type="button" onclick="simularPago('Stripe')">
+                  Pagar (después de 15 días de prueba)
+                </button>
+                <button id="paypalButton" class="btn-pay btn-paypal" type="button" onclick="simularPago('PayPal')">
+                  Pagar (después de 15 días de prueba)
+                </button>
+              </div>
+              <!-- Aquí se integraría el botón de pago real (Stripe, PayPal, etc.), respetando el periodo de prueba de 15 días. -->
+              <!-- Aquí se conectaría la lógica real de facturación para no cobrar durante los primeros 15 días a nuevos usuarios. -->
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section id="faq">
+        <div class="section-header">
+          <h2>Preguntas frecuentes</h2>
+          <p>Resuelve las dudas más comunes sobre el periodo de prueba y el GPT.</p>
+        </div>
+        <details>
+          <summary>¿Qué es el Analista de Licitaciones?</summary>
+          <p>Es un GPT personalizado que resume pliegos, detecta riesgos y ofrece recomendaciones accionables.</p>
+        </details>
+        <details>
+          <summary>¿Cómo funciona la prueba gratuita de 15 días?</summary>
+          <p>Al registrarte se guarda tu fecha de alta y durante 15 días no se realiza ningún cobro. A partir del día 16 se activa la suscripción.</p>
+        </details>
+        <details>
+          <summary>¿Puedo cancelar antes de que termine la prueba?</summary>
+          <p>Sí, puedes cancelar antes de que finalice el periodo de prueba para evitar cargos.</p>
+        </details>
+        <details>
+          <summary>¿Qué tipos de licitaciones analiza?</summary>
+          <p>Analiza licitaciones públicas o privadas siempre que proporciones el texto clave de los documentos.</p>
+        </details>
+        <details>
+          <summary>¿Los datos son confidenciales?</summary>
+          <p>En una implementación real se deberían aplicar políticas de seguridad y confidencialidad estrictas. Este ejemplo es solo una demostración.</p>
+        </details>
+        <details>
+          <summary>¿Se limita el número de análisis?</summary>
+          <p>El plan profesional incluye hasta 20 análisis mensuales por US$25. En planes empresariales se ajusta según tu volumen.</p>
+        </details>
+      </section>
+    </main>
+
+    <footer>
+      <div class="footer-inner">
+        <div>© 2025 Asistente de Licitaciones. Todos los derechos reservados.</div>
+        <div class="footer-links">
+          <a href="#">Términos y condiciones</a>
+          <a href="#">Política de privacidad</a>
+          <a href="mailto:contacto@asistentedelicitaciones.com">contacto@asistentedelicitaciones.com</a>
+          <span>+506 2222 0000</span>
+        </div>
+      </div>
+    </footer>
+
+    <script>
+      const TRIAL_DAYS = 15;
+      let currentUser = null;
+
+      function scrollToId(id) {
+        const el = document.getElementById(id);
+        if (el) el.scrollIntoView({ behavior: "smooth" });
+      }
+
+      function showAlert(containerId, message, type) {
+        const container = document.getElementById(containerId);
+        if (!container) return;
+        const className = type === "error" ? "alert alert-error" : "alert alert-success";
+        container.innerHTML = `<div class="${className}">${message}</div>`;
+      }
+
+      function getUsers() {
+        try {
+          return JSON.parse(localStorage.getItem("al_users") || "[]");
+        } catch (e) {
+          return [];
+        }
+      }
+
+      function saveUsers(users) {
+        localStorage.setItem("al_users", JSON.stringify(users));
+      }
+
+      function calcTrialInfo(registeredAt) {
+        if (!registeredAt) return { inTrial: false, daysLeft: 0, daysUsed: 0 };
+        const start = new Date(registeredAt);
+        const now = new Date();
+        const diffMs = now - start;
+        const diffDays = Math.floor(diffMs / (1000 * 60 * 60 * 24));
+        const daysUsed = Math.max(diffDays, 0);
+        const daysLeft = Math.max(TRIAL_DAYS - daysUsed, 0);
+        return { inTrial: daysUsed < TRIAL_DAYS, daysLeft, daysUsed };
+      }
+
+      function updateTrialUI() {
+        const status = document.getElementById("trialStatus");
+        const paymentMessage = document.getElementById("paymentMessage");
+        const stripeBtn = document.getElementById("stripeButton");
+        const paypalBtn = document.getElementById("paypalButton");
+        if (!currentUser) return;
+        const info = calcTrialInfo(currentUser.registeredAt);
+        if (info.inTrial) {
+          status.textContent = `Estás en periodo de prueba. Días usados: ${info.daysUsed}. Días restantes: ${info.daysLeft}. No se te cobrará aún.`;
+          paymentMessage.textContent = "Durante los 15 días de prueba, los botones de pago permanecen deshabilitados.";
+          stripeBtn.disabled = true;
+          paypalBtn.disabled = true;
+        } else {
+          status.textContent = "Tu prueba gratuita ha finalizado. Activa la suscripción para continuar.";
+          paymentMessage.textContent = "Selecciona tu método preferido. El cobro mensual de US$25 se ejecutará al confirmar.";
+          stripeBtn.disabled = false;
+          paypalBtn.disabled = false;
+        }
+      }
+
+      function renderDashboard() {
+        const dash = document.getElementById("dashboard");
+        const userSpan = document.getElementById("currentUser");
+        if (!dash) return;
+        if (currentUser) {
+          dash.style.display = "grid";
+          userSpan.textContent = currentUser.name || currentUser.email;
+          updateTrialUI();
+        } else {
+          dash.style.display = "none";
+        }
+      }
+
+      document.getElementById("registerForm").addEventListener("submit", (e) => {
+        e.preventDefault();
+        const name = (document.getElementById("regName").value || "").trim();
+        const email = (document.getElementById("regEmail").value || "").trim().toLowerCase();
+        const pass1 = document.getElementById("regPassword").value;
+        const pass2 = document.getElementById("regPassword2").value;
+
+        if (!name || !email || !pass1 || !pass2) {
+          showAlert("registerAlert", "Completa todos los campos requeridos.", "error");
+          return;
+        }
+        if (pass1 !== pass2) {
+          showAlert("registerAlert", "Las contraseñas no coinciden.", "error");
+          return;
+        }
+
+        const users = getUsers();
+        if (users.some((u) => u.email === email)) {
+          showAlert("registerAlert", "Ya existe una cuenta con ese correo.", "error");
+          return;
+        }
+
+        const newUser = {
+          name,
+          email,
+          password: pass1, // En producción se debe cifrar la contraseña.
+          registeredAt: new Date().toISOString(),
+        };
+
+        users.push(newUser);
+        saveUsers(users);
+        currentUser = newUser;
+        showAlert("registerAlert", "Cuenta creada. Prueba gratuita de 15 días activada.", "success");
+        renderDashboard();
+        e.target.reset();
+      });
+
+      document.getElementById("loginForm").addEventListener("submit", (e) => {
+        e.preventDefault();
+        const email = (document.getElementById("logEmail").value || "").trim().toLowerCase();
+        const password = document.getElementById("logPassword").value;
+        if (!email || !password) {
+          showAlert("loginAlert", "Completa todos los campos para continuar.", "error");
+          return;
+        }
+        const users = getUsers();
+        const found = users.find((u) => u.email === email);
+        if (!found) {
+          showAlert("loginAlert", "No se encontró un usuario con ese correo.", "error");
+          return;
+        }
+        // Aquí se integraría la verificación real de credenciales contra el backend.
+        if (found.password !== password) {
+          showAlert("loginAlert", "Contraseña incorrecta (simulación).", "error");
+          return;
+        }
+        currentUser = found;
+        showAlert("loginAlert", "Inicio de sesión exitoso.", "success");
+        renderDashboard();
+      });
+
+      function analizarLicitacion() {
+        const input = document.getElementById("licitacionInput");
+        const resultsBox = document.getElementById("resultsBox");
+        const texto = (input.value || "").trim();
+        if (!texto) {
+          resultsBox.textContent = "Añade información de la licitación para generar un análisis (simulado).";
+          return;
+        }
+
+        // Aquí se llamaría a la API real del GPT “Analista de Licitaciones”.
+        resultsBox.textContent =
+          "Análisis simulado:\n\n" +
+          "1) Resumen: se identifican requisitos clave y entregables principales.\n" +
+          "2) Riesgos: plazos ajustados, garantías exigentes y posibles exclusiones.\n" +
+          "3) Oportunidades: buen puntaje técnico si se cumple experiencia y certificaciones.\n" +
+          "4) Recomendaciones: revisar respaldos legales, cronograma y alianzas estratégicas.\n\n" +
+          "(Aquí se mostraría la respuesta real del modelo GPT personalizado).";
+      }
+
+      function exportarResultados() {
+        const contenido = document.getElementById("resultsBox").textContent || "";
+        if (!contenido.trim()) {
+          alert("No hay resultados para exportar.");
+          return;
+        }
+        const blob = new Blob([contenido], { type: "text/plain;charset=utf-8" });
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement("a");
+        a.href = url;
+        a.download = "analisis_licitacion.txt";
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+        URL.revokeObjectURL(url);
+        // Para exportar a PDF o Word se integraría una librería o servicio correspondiente.
+      }
+
+      function simularPago(metodo) {
+        if (!currentUser) {
+          alert("Primero inicia sesión para asociar el pago a tu cuenta.");
+          return;
+        }
+        const info = calcTrialInfo(currentUser.registeredAt);
+        if (info.inTrial) {
+          alert("Estás en periodo de prueba. El cobro comenzará después del día 15.");
+          return;
+        }
+        alert(
+          `Simulando pago mensual de US$25 (hasta 20 análisis) vía ${metodo}.\n\nAquí se integraría el proveedor real respetando el periodo de prueba.`,
+        );
+        // Aquí se integraría el botón de pago real (Stripe, PayPal, etc.).
+      }
+    </script>
+  </body>
+</html>
