@@ -25,10 +25,14 @@ try {
   const isProduction = process.env.NODE_ENV === 'production';
   const allowedOrigins = isProduction 
     ? [
+        process.env.APP_URL,
         process.env.REPLIT_DEV_DOMAIN,
         process.env.REPL_SLUG ? `https://${process.env.REPL_SLUG}.${process.env.REPL_OWNER}.repl.co` : undefined,
         'https://real-estate-pro-rapcha1.replit.app',
-        /\.replit\.app$/
+        'https://vitual-agent.vercel.app',
+        /\.replit\.app$/,
+        /\.railway\.app$/,
+        /\.vercel\.app$/
       ].filter(Boolean)
     : true;
 

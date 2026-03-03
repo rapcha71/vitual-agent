@@ -33,9 +33,10 @@ export function setupAuth(app: Express) {
     throw new Error("SESSION_SECRET environment variable is required for secure sessions");
   }
 
-  // Detect Replit environment - trust proxy is already set in index.ts
-  const isReplit = !!process.env.REPL_SLUG || !!process.env.REPLIT_DB_URL;
-  console.log("Environment:", isReplit ? "Replit" : "Local");
+  // HTTPS required for secure cookies in production (Replit, Railway, Vercel)
+  const isProduction = process.env.NODE_ENV === 'production';
+  const useSecureCookie = isProduction; // Cualquier deploy en prod usa HTTPS
+  console.log("Environment:", process.env.REPL_SLUG ? "Replit" : process.env.RAILWAY_PUBLIC_DOMAIN ? "Railway" : isProduction ? "Production" : "Local");
   
   const sessionSettings: session.SessionOptions = {
     secret: process.env.SESSION_SECRET,
@@ -45,7 +46,7 @@ export function setupAuth(app: Express) {
     cookie: {
       maxAge: 24 * 60 * 60 * 1000, // 24 hours
       httpOnly: true,
-      secure: isReplit, // true on Replit (behind HTTPS proxy)
+      secure: useSecureCookie,
       sameSite: 'lax' as const, // Use 'lax' for first-party context (normal browser tabs)
       path: '/'
     },
