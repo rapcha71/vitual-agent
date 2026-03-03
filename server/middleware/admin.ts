@@ -1,13 +1,22 @@
 import { Request, Response, NextFunction } from 'express';
 
-export function requireAdmin(req: Request, res: Response, next: NextFunction) {
+export const requireAdmin = (req: Request, res: Response, next: NextFunction) => {
+  console.log("Admin middleware - Session ID:", req.sessionID);
+  console.log("Admin middleware - Is authenticated:", req.isAuthenticated());
+  console.log("Admin middleware - User:", req.user ? req.user.id : 'No user');
+  console.log("Admin middleware - Is admin:", req.user?.isAdmin);
+  console.log("Admin middleware - Is super admin:", req.user?.isSuperAdmin);
+
   if (!req.isAuthenticated()) {
-    return res.status(401).json({ message: "No autenticado" });
+    console.log("Admin middleware: Authentication failed");
+    return res.status(401).json({ message: "Authentication required" });
   }
 
-  if (!req.user?.isAdmin) {
-    return res.status(403).json({ message: "Acceso denegado. Se requieren privilegios de administrador." });
+  if (!req.user?.isAdmin && !req.user?.isSuperAdmin) {
+    console.log("Admin middleware: Admin access denied");
+    return res.status(403).json({ message: "Admin access required" });
   }
 
+  console.log("Admin middleware: Access granted");
   next();
-}
+};

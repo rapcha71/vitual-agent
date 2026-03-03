@@ -1,32 +1,37 @@
 import { ImageAnnotatorClient } from '@google-cloud/vision';
-import { promises as fs } from 'fs';
 
 export class OCRService {
-  private client: ImageAnnotatorClient;
+  private client: ImageAnnotatorClient | null = null;
 
-  constructor() {
-    try {
-      const credentials = JSON.parse(process.env.GOOGLE_VISION_CREDENTIALS || '{}');
-      console.log('Initializing Vision API with project:', credentials.project_id);
-      this.client = new ImageAnnotatorClient({
-        credentials,
-        projectId: credentials.project_id
-      });
-    } catch (error) {
-      console.error('Error initializing Vision API client:', error);
-      throw error;
+  private getClient(): ImageAnnotatorClient {
+    if (!this.client) {
+      try {
+        const credentialsJson = process.env.GOOGLE_VISION_CREDENTIALS || 
+                                process.env.GOOGLE_CLOUD_VISION_API_KEY || 
+                                '{}';
+        const credentials = JSON.parse(credentialsJson);
+        console.log('Initializing Vision API with project:', credentials.project_id);
+        this.client = new ImageAnnotatorClient({
+          credentials,
+          projectId: credentials.project_id
+        });
+      } catch (error) {
+        console.error('Error initializing Vision API client:', error);
+        throw error;
+      }
     }
+    return this.client;
   }
 
   async extractTextFromBase64Image(base64Image: string): Promise<string> {
     try {
       console.log('Starting OCR text extraction...');
-      // Remove the data:image/jpeg;base64, prefix if present
       const base64Data = base64Image.replace(/^data:image\/\w+;base64,/, '');
       const imageBuffer = Buffer.from(base64Data, 'base64');
 
       console.log('Sending image to Vision API...');
-      const [result] = await this.client.textDetection(imageBuffer);
+      const client = this.getClient();
+      const [result] = await client.textDetection(imageBuffer);
       const detections = result.textAnnotations;
 
       if (!detections || detections.length === 0) {
@@ -90,7 +95,7 @@ export class OCRService {
     );
 
     // Eliminar duplicados y ordenar
-    const uniqueNumbers = [...new Set(cleanedNumbers)].sort();
+    const uniqueNumbers = Array.from(new Set(cleanedNumbers)).sort();
 
     console.log('Found valid phone numbers:', uniqueNumbers);
     return uniqueNumbers;

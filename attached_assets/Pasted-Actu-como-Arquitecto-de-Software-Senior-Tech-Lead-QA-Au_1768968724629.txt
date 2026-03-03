@@ -1,0 +1,175 @@
+Actuá como Arquitecto de Software Senior + Tech Lead + QA Automation + Security Reviewer + Performance Engineer con experiencia en React Web, Node.js (API), y PWAs.
+
+Objetivo
+
+Hacé una revisión exhaustiva del 100% del repositorio (frontend React, backend Node, configuración PWA/service worker, build/deploy, dependencias) para:
+
+Eliminar bugs y crashes (cliente y servidor)
+
+Dejar la app estable y defensiva ante errores y edge cases
+
+Optimizar para móviles (Android gama media incluido): scroll fluido, menos re-renders, menor consumo de memoria
+
+Mejorar PWA: offline, caching correcto, actualizaciones seguras del service worker, fallback y resiliencia
+
+Dejarlo listo para producción con pruebas mínimas + checklist
+
+1) Fase A — Mapeo y diagnóstico (obligatorio)
+
+Describí la arquitectura real:
+
+rutas/páginas principales, componentes críticos
+
+estado (context/redux/zustand/etc.)
+
+flujo de auth (si existe)
+
+endpoints del backend + contratos (request/response)
+
+BD/ORM (si aplica)
+
+configuración PWA (manifest, service worker, caches)
+
+Construí una lista priorizada de problemas (con severidad):
+
+P0: crashea / pérdida de datos / seguridad crítica / bloqueos móviles
+
+P1: bugs frecuentes / fallos de red / performance grave / errores de caching
+
+P2: mejoras de calidad / refactor recomendado
+
+P3: limpieza / estilo / deuda técnica menor
+
+2) Fase B — Estabilidad “anti-crash” frontend (React) (obligatorio)
+
+Encontrá y corregí:
+
+Error Boundaries para aislar fallos de render (pantalla de error amigable + botón de recargar).
+
+Manejo consistente de loading / empty / error states en todos los fetch.
+
+Evitar errores comunes:
+
+access a propiedades de undefined/null
+
+hooks mal usados / dependencias incorrectas
+
+listeners sin cleanup (memory leaks)
+
+Promesas sin catch / async sin manejo
+
+Instrumentación: logs útiles (sin datos sensibles) y tracking de errores si existe.
+
+Performance móvil React
+
+Reducí re-renders: memo, useMemo, useCallback, selectors, evitar props inestables.
+
+Virtualizá listas largas (si aplica).
+
+Debounce/throttle en inputs, scroll, resize.
+
+Optimización de imágenes (tamaño, lazy loading, formatos, placeholders).
+
+Revisá bundle size: code splitting, remover dependencias pesadas innecesarias.
+
+3) Fase C — Backend Node (API) robusto y seguro (obligatorio)
+
+Revisá y dejá “a prueba de bala”:
+
+Middleware centralizado de error handling (nada de crashes por excepciones).
+
+Validación de inputs en cada endpoint (schema validation).
+
+Timeouts y reintentos donde aplique (DB/requests externos).
+
+Respuestas consistentes: códigos HTTP correctos + estructura uniforme de errores.
+
+Seguridad:
+
+CORS correcto
+
+rate limiting si hay endpoints públicos
+
+headers de seguridad (si aplica)
+
+sanitización contra inyección
+
+auth/authorization del lado servidor (no confiar en el cliente)
+
+Logs en server: niveles (info/warn/error), correlación por request (request id).
+
+4) Fase D — PWA / Service Worker (obligatorio y crítico)
+
+Auditá y corregí específicamente lo típico que rompe PWAs:
+
+Estrategias de caching correctas por tipo de recurso:
+
+HTML/app shell vs assets vs API
+
+Evitar “cache tóxico” o app desactualizada:
+
+actualización segura del service worker
+
+manejo de skipWaiting/clientsClaim (si aplica) sin romper sesiones
+
+Offline UX:
+
+fallback offline real (página offline / mensajes claros)
+
+manejo de requests fallidos (cola/sync si aplica)
+
+No cachear cosas sensibles (auth tokens, endpoints privados sin control).
+
+Asegurá que el manifest esté bien, íconos correctos, y que pase auditorías típicas (Lighthouse).
+
+5) Fase E — Red y resiliencia (frontend ↔ backend)
+
+Implementá (o corregí) un cliente de API sólido:
+
+Un wrapper único para fetch/axios con:
+
+timeout
+
+retries con backoff (solo para idempotentes)
+
+parsing seguro de JSON
+
+manejo centralizado de 401/403/500
+
+Cancelación de requests al desmontar componentes (evitar setState en unmounted).
+
+Caching/invalidación racional (si usan React Query/SWR u otro).
+
+6) Testing mínimo + verificación (obligatorio)
+
+Dejá listo un “mínimo aceptable”:
+
+Lint + typecheck (si TS) + tests
+
+Unit tests de funciones críticas
+
+Integración básica de endpoints principales
+
+Casos borde:
+
+offline
+
+timeout
+
+response vacía
+
+500 server
+
+Scripts para correr todo en Replit: npm run lint, npm test, npm run build etc. (según proyecto)
+
+7) Entregables exactos que quiero al final
+
+Reporte de auditoría (tabla): Problema | Severidad | Archivo | Fix aplicado | Estado
+
+Lista de commits/cambios agrupados (Estabilidad, Performance, PWA, Seguridad, UX)
+
+Checklist “listo para producción” marcado
+
+Guía corta: cómo correr + cómo probar en Replit + cómo simular móvil/offline
+
+Si algo requiere decisión de producto, proponé 2 opciones con pros/cons

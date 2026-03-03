@@ -1,0 +1,29 @@
+
+{
+  "name": "Virtual Agent - Real Estate Pro",
+  "short_name": "Virtual Agent",
+  "description": "Tu llave de ingreso a los bienes raíces",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#F05023",
+  "theme_color": "#F05023",
+  "orientation": "portrait-primary",
+  "icons": [
+    {
+      "src": "/assets/logo.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "maskable any"
+    },
+    {
+      "src": "/assets/logo.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "maskable any"
+    }
+  ],
+  "categories": ["business", "productivity"],
+  "lang": "es-ES",
+  "scope": "/",
+  "id": "virtual-agent-real-estate"
+}

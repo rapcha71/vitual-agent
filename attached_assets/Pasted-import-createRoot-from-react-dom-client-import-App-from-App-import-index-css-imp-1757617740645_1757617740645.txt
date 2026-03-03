@@ -1,0 +1,80 @@
+import { createRoot } from "react-dom/client";
+import App from "./App";
+import "./index.css";
+import { ErrorBoundary } from "react-error-boundary";
+
+// Error fallback component
+function ErrorFallback({ error, resetErrorBoundary }: { error: Error; resetErrorBoundary: () => void }) {
+  return (
+    <div style={{
+      padding: '20px',
+      textAlign: 'center',
+      display: 'flex',
+      flexDirection: 'column',
+      alignItems: 'center',
+      justifyContent: 'center',
+      minHeight: '100vh',
+      backgroundColor: '#f8f9fa'
+    }}>
+      <h2>Oops! Algo salió mal</h2>
+      <p>La aplicación encontró un error inesperado.</p>
+      <details style={{ marginTop: '10px', padding: '10px', backgroundColor: '#f1f1f1' }}>
+        <summary>Ver detalles del error</summary>
+        <pre style={{ fontSize: '12px', overflow: 'auto' }}>{error.message}</pre>
+      </details>
+      <button
+        onClick={resetErrorBoundary}
+        style={{
+          marginTop: '10px',
+          padding: '10px 20px',
+          backgroundColor: '#007bff',
+          color: 'white',
+          border: 'none',
+          borderRadius: '5px',
+          cursor: 'pointer'
+        }}
+      >
+        Reintentar
+      </button>
+      <button
+        onClick={() => window.location.reload()}
+        style={{
+          marginTop: '10px',
+          padding: '10px 20px',
+          backgroundColor: '#28a745',
+          color: 'white',
+          border: 'none',
+          borderRadius: '5px',
+          cursor: 'pointer'
+        }}
+      >
+        Recargar página
+      </button>
+    </div>
+  );
+}
+
+// Global error handlers
+window.addEventListener('unhandledrejection', (event) => {
+  console.error('Unhandled promise rejection:', event.reason);
+  event.preventDefault();
+});
+
+window.addEventListener('error', (event) => {
+  console.error('Global error:', event.error);
+});
+
+const root = createRoot(document.getElementById("root")!);
+
+root.render(
+  <ErrorBoundary
+    FallbackComponent={ErrorFallback}
+    onError={(error, errorInfo) => {
+      console.error('React Error Boundary caught an error:', error, errorInfo);
+    }}
+    onReset={() => {
+      window.location.reload();
+    }}
+  >
+    <App />
+  </ErrorBoundary>

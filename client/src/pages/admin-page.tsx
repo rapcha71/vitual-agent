@@ -6,8 +6,7 @@ import { Button } from "@/components/ui/button";
 import { ChevronLeft, LogOut, Image, MapPin } from "lucide-react";
 import { useLocation } from "wouter";
 import { Table, TableBody, TableCaption, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
-import { compressImageForThumbnail } from "@/lib/utils";
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useMemo } from "react";
 import {
   Dialog,
   DialogContent,
@@ -29,12 +28,22 @@ export default function AdminPage() {
   const [propertiesWithThumbnails, setPropertiesWithThumbnails] = useState<PropertyWithThumbnails[]>([]);
   const [map, setMap] = useState<google.maps.Map | null>(null);
   const [mapLoading, setMapLoading] = useState(true);
+  const [searchPropertyId, setSearchPropertyId] = useState('');
+  const [markers, setMarkers] = useState<google.maps.Marker[]>([]);
 
   // Obtener todas las propiedades con información de usuarios
-  const { data: properties = [], isLoading } = useQuery<PropertyWithUser[]>({
+  const { data: properties = [], isLoading, error } = useQuery<PropertyWithUser[]>({
     queryKey: ['/api/admin/properties'],
-    enabled: user?.isAdmin === true
+    enabled: user?.isAdmin === true,
+    retry: 3,
+    staleTime: 0,
+    refetchOnWindowFocus: false
   });
+
+  // Log para debugging
+  useEffect(() => {
+    console.log('Admin query state:', { properties: properties.length, isLoading, error });
+  }, [properties, isLoading, error]);
 
   useEffect(() => {
     const initMap = async () => {
@@ -52,48 +61,78 @@ export default function AdminPage() {
         });
 
         const google = await loader.load();
+
+        // Wait a bit to ensure DOM is ready
+        await new Promise(resolve => setTimeout(resolve, 100));
+
         const mapElement = document.getElementById("map");
         if (!mapElement) {
           console.error('Map element not found');
+          setMapLoading(false);
           return;
         }
 
-        const map = new google.maps.Map(mapElement, {
+        const mapInstance = new google.maps.Map(mapElement, {
           center: { lat: 9.9281, lng: -84.0907 }, // Costa Rica
           zoom: 8,
+          mapTypeControl: true,
+          streetViewControl: true,
+          fullscreenControl: true,
+          zoomControl: true
         });
 
-        setMap(map);
+        setMap(mapInstance);
         setMapLoading(false);
 
-        // Add KML and markers if there are properties
+        // Add markers with optimized rendering
         if (properties.length > 0) {
-          properties.forEach(property => {
-            if (property.kmlData) {
-              const kmlLayer = new google.maps.KmlLayer({
-                url: property.kmlData,
-                map: map,
-                preserveViewport: true
-              });
-            }
+          const newMarkers: google.maps.Marker[] = [];
 
-            // Add marker with corresponding color
-            new google.maps.Marker({
+          properties.forEach(property => {
+            // Create optimized marker
+            const marker = new google.maps.Marker({
               position: { 
                 lat: property.location.lat, 
                 lng: property.location.lng 
               },
               map,
               title: `${property.propertyId} - ${property.user.fullName || property.user.username}`,
+              optimized: true, // Enable marker optimization
               icon: {
                 path: google.maps.SymbolPath.CIRCLE,
-                fillColor: property.markerColor,
+                fillColor: property.markerColor || '#F05023',
                 fillOpacity: 0.8,
                 strokeWeight: 1,
+                strokeColor: '#FFFFFF',
                 scale: 8
               }
             });
+
+            // Add click listener for property info
+            marker.addListener('click', () => {
+              const infoWindow = new google.maps.InfoWindow({
+                content: `
+                  <div style="padding: 8px;">
+                    <h3 style="margin: 0 0 4px 0; font-size: 14px; font-weight: bold;">
+                      Propiedad ${property.propertyId}
+                    </h3>
+                    <p style="margin: 0; font-size: 12px;">
+                      Usuario: ${property.user.fullName || property.user.username}
+                    </p>
+                    <p style="margin: 0; font-size: 12px;">
+                      Tipo: ${property.propertyType === 'house' ? 'Casa' : 
+                             property.propertyType === 'land' ? 'Terreno' : 'Comercial'}
+                    </p>
+                  </div>
+                `
+              });
+              infoWindow.open(map, marker);
+            });
+
+            newMarkers.push(marker);
           });
+
+          setMarkers(newMarkers);
         }
       } catch (error) {
         console.error('Error loading Google Maps:', error);
@@ -101,56 +140,82 @@ export default function AdminPage() {
       }
     };
 
-    if (properties.length > 0) {
-      initMap();
-    }
+    initMap();
+  }, [properties]);
+
+  // Generate thumbnails for better performance with memoization
+  const propertiesWithThumbnails = useMemo(() => {
+    if (!properties.length) return [];
+
+    return properties.map(property => {
+      if (!property.images || property.images.length === 0) {
+        return { ...property, thumbnails: [] };
+      }
+
+      // Use a simple thumbnail strategy instead of heavy compression
+      const thumbnails = property.images.map(img => img);
+      return { ...property, thumbnails };
+    });
   }, [properties]);
 
   useEffect(() => {
-    console.log("Properties data:", properties);
-    const generateThumbnails = async () => {
-      if (!properties || properties.length === 0) {
-        console.log("No properties available");
-        return;
-      }
+    setPropertiesWithThumbnails(propertiesWithThumbnails);
+  }, [propertiesWithThumbnails]);
 
-      const withThumbnails = await Promise.all(
-        properties.map(async (property) => {
-          console.log("Processing property:", property.propertyId);
-          if (!property.images || property.images.length === 0) {
-            console.log("No images for property:", property.propertyId);
-            return { ...property, thumbnails: [] };
-          }
-
-          console.log("Generating thumbnails for property:", property.propertyId);
-          const thumbnails = await Promise.all(
-            property.images.map(async (img) => {
-              try {
-                return await compressImageForThumbnail(img);
-              } catch (error) {
-                console.error("Error compressing image:", error);
-                return img;
-              }
-            })
-          );
-
-          return { ...property, thumbnails };
-        })
-      );
-      console.log("Generated thumbnails:", withThumbnails);
-      setPropertiesWithThumbnails(withThumbnails);
-    };
-
-    if (properties.length > 0) {
-      generateThumbnails();
-    }
-  }, [properties]);
-
-  // Si el usuario no es administrador, redirigir al dashboard
+  // If the user is not an admin, redirect to the dashboard
   if (!user?.isAdmin) {
     setLocation("/dashboard");
     return null;
   }
+
+  // Search function for property by ID
+  const searchPropertyOnMap = () => {
+    if (!map || !searchPropertyId.trim()) return;
+
+    const property = properties.find(p => 
+      p.propertyId.toLowerCase().includes(searchPropertyId.toLowerCase())
+    );
+
+    if (property) {
+      // Center map on found property
+      map.setCenter({
+        lat: property.location.lat,
+        lng: property.location.lng
+      });
+      map.setZoom(16);
+
+      // Find and highlight the marker
+      const marker = markers.find(m => 
+        m.getTitle()?.includes(property.propertyId)
+      );
+
+      if (marker) {
+        // Create info window for found property
+        const infoWindow = new google.maps.InfoWindow({
+          content: `
+            <div style="padding: 8px;">
+              <h3 style="margin: 0 0 4px 0; font-size: 14px; font-weight: bold; color: #F05023;">
+                Propiedad Encontrada: ${property.propertyId}
+              </h3>
+              <p style="margin: 0; font-size: 12px;">
+                Usuario: ${property.user.fullName || property.user.username}
+              </p>
+              <p style="margin: 0; font-size: 12px;">
+                Tipo: ${property.propertyType === 'house' ? 'Casa' : 
+                       property.propertyType === 'land' ? 'Terreno' : 'Comercial'}
+              </p>
+              <p style="margin: 0; font-size: 12px;">
+                Teléfono: ${property.signPhoneNumber || 'No disponible'}
+              </p>
+            </div>
+          `
+        });
+        infoWindow.open(map, marker);
+      }
+    } else {
+      alert('Propiedad no encontrada');
+    }
+  };
 
   // Contar propiedades por tipo
   const propertyCounts = {
@@ -172,9 +237,9 @@ export default function AdminPage() {
         </Button>
         <div className="flex items-center gap-4">
           <img 
-            src="/assets/logo.png"
+            src="/assets/logo-full.png"
             alt="Virtual Agent"
-            className="h-10 w-auto"
+            className="h-14 w-auto max-w-[60vw] object-contain"
           />
         </div>
         <Button 
@@ -239,7 +304,25 @@ export default function AdminPage() {
 
           <TabsContent value="map">
             <Card>
-              <CardContent>
+              <CardContent className="space-y-4">
+                {/* Search by Property ID */}
+                <div className="flex gap-2">
+                  <input
+                    type="text"
+                    placeholder="Buscar por ID de propiedad..."
+                    className="flex-1 px-3 py-2 border rounded-md text-sm"
+                    value={searchPropertyId}
+                    onChange={(e) => setSearchPropertyId(e.target.value)}
+                  />
+                  <Button 
+                    onClick={searchPropertyOnMap}
+                    size="sm"
+                    disabled={!searchPropertyId.trim()}
+                  >
+                    Buscar
+                  </Button>
+                </div>
+
                 <div 
                   id="map" 
                   className="w-full h-[600px] rounded-lg relative bg-gray-100"

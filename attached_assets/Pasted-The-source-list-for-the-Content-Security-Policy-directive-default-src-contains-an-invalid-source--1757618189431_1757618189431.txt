@@ -1,0 +1,1468 @@
+The source list for the Content Security Policy directive 'default-src' contains an invalid source: ''unsafe-dynamic''. It will be ignored.
+The source list for the Content Security Policy directive 'default-src' contains an invalid source: ''unsafe-dynamic''. It will be ignored.
+The source list for the Content Security Policy directive 'default-src' contains an invalid source: ''unsafe-dynamic''. It will be ignored.
+The source list for the Content Security Policy directive 'default-src' contains an invalid source: ''unsafe-dynamic''. It will be ignored.
+The source list for the Content Security Policy directive 'default-src' contains an invalid source: ''unsafe-dynamic''. It will be ignored.
+The source list for the Content Security Policy directive 'default-src' contains an invalid source: ''unsafe-dynamic''. It will be ignored.
+The source list for the Content Security Policy directive 'default-src' contains an invalid source: ''unsafe-dynamic''. It will be ignored.
+The source list for the Content Security Policy directive 'default-src' contains an invalid source: ''unsafe-dynamic''. It will be ignored.
+The source list for the Content Security Policy directive 'default-src' contains an invalid source: ''unsafe-dynamic''. It will be ignored.
+The source list for the Content Security Policy directive 'default-src' contains an invalid source: ''unsafe-dynamic''. It will be ignored.
+The source list for the Content Security Policy directive 'default-src' contains an invalid source: ''unsafe-dynamic''. It will be ignored.
+The source list for the Content Security Policy directive 'default-src' contains an invalid source: ''unsafe-dynamic''. It will be ignored.
+The source list for the Content Security Policy directive 'default-src' contains an invalid source: ''unsafe-dynamic''. It will be ignored.
+The source list for the Content Security Policy directive 'default-src' contains an invalid source: ''unsafe-dynamic''. It will be ignored.
+The source list for the Content Security Policy directive 'default-src' contains an invalid source: ''unsafe-dynamic''. It will be ignored.
+The source list for the Content Security Policy directive 'default-src' contains an invalid source: ''unsafe-dynamic''. It will be ignored.
+The source list for the Content Security Policy directive 'default-src' contains an invalid source: ''unsafe-dynamic''. It will be ignored.
+The Content-Security-Policy directive 'default-src' contains 'report-uri' as a source expression. Did you want to add it as a directive and forget a semicolon?
+The Content-Security-Policy directive 'default-src' contains 'report-uri' as a source expression. Did you want to add it as a directive and forget a semicolon?
+The Content-Security-Policy directive 'default-src' contains 'report-uri' as a source expression. Did you want to add it as a directive and forget a semicolon?
+The Content-Security-Policy directive 'default-src' contains 'report-uri' as a source expression. Did you want to add it as a directive and forget a semicolon?
+The Content-Security-Policy directive 'default-src' contains 'report-uri' as a source expression. Did you want to add it as a directive and forget a semicolon?
+The Content-Security-Policy directive 'default-src' contains 'report-uri' as a source expression. Did you want to add it as a directive and forget a semicolon?
+The Content-Security-Policy directive 'default-src' contains 'report-uri' as a source expression. Did you want to add it as a directive and forget a semicolon?
+The Content-Security-Policy directive 'default-src' contains 'report-uri' as a source expression. Did you want to add it as a directive and forget a semicolon?
+The Content-Security-Policy directive 'default-src' contains 'report-uri' as a source expression. Did you want to add it as a directive and forget a semicolon?
+The Content-Security-Policy directive 'default-src' contains 'report-uri' as a source expression. Did you want to add it as a directive and forget a semicolon?
+The Content-Security-Policy directive 'default-src' contains 'report-uri' as a source expression. Did you want to add it as a directive and forget a semicolon?
+The Content-Security-Policy directive 'default-src' contains 'report-uri' as a source expression. Did you want to add it as a directive and forget a semicolon?
+The Content-Security-Policy directive 'default-src' contains 'report-uri' as a source expression. Did you want to add it as a directive and forget a semicolon?
+The Content-Security-Policy directive 'default-src' contains 'report-uri' as a source expression. Did you want to add it as a directive and forget a semicolon?
+The Content-Security-Policy directive 'default-src' contains 'report-uri' as a source expression. Did you want to add it as a directive and forget a semicolon?
+The Content-Security-Policy directive 'default-src' contains 'report-uri' as a source expression. Did you want to add it as a directive and forget a semicolon?
+The Content-Security-Policy directive 'default-src' contains 'report-uri' as a source expression. Did you want to add it as a directive and forget a semicolon?
+The source list for Content Security Policy directive 'default-src' contains a source with an invalid path: '/api/4509669501698048/security/?sentry_key=7eb3d90eb4660416caf507087367e67e'. The query component, including the '?', will be ignored.
+The source list for Content Security Policy directive 'default-src' contains a source with an invalid path: '/api/4509669501698048/security/?sentry_key=7eb3d90eb4660416caf507087367e67e'. The query component, including the '?', will be ignored.
+The source list for Content Security Policy directive 'default-src' contains a source with an invalid path: '/api/4509669501698048/security/?sentry_key=7eb3d90eb4660416caf507087367e67e'. The query component, including the '?', will be ignored.
+The source list for Content Security Policy directive 'default-src' contains a source with an invalid path: '/api/4509669501698048/security/?sentry_key=7eb3d90eb4660416caf507087367e67e'. The query component, including the '?', will be ignored.
+The source list for Content Security Policy directive 'default-src' contains a source with an invalid path: '/api/4509669501698048/security/?sentry_key=7eb3d90eb4660416caf507087367e67e'. The query component, including the '?', will be ignored.
+The source list for Content Security Policy directive 'default-src' contains a source with an invalid path: '/api/4509669501698048/security/?sentry_key=7eb3d90eb4660416caf507087367e67e'. The query component, including the '?', will be ignored.
+The source list for Content Security Policy directive 'default-src' contains a source with an invalid path: '/api/4509669501698048/security/?sentry_key=7eb3d90eb4660416caf507087367e67e'. The query component, including the '?', will be ignored.
+The source list for Content Security Policy directive 'default-src' contains a source with an invalid path: '/api/4509669501698048/security/?sentry_key=7eb3d90eb4660416caf507087367e67e'. The query component, including the '?', will be ignored.
+The source list for Content Security Policy directive 'default-src' contains a source with an invalid path: '/api/4509669501698048/security/?sentry_key=7eb3d90eb4660416caf507087367e67e'. The query component, including the '?', will be ignored.
+The source list for Content Security Policy directive 'default-src' contains a source with an invalid path: '/api/4509669501698048/security/?sentry_key=7eb3d90eb4660416caf507087367e67e'. The query component, including the '?', will be ignored.
+The source list for Content Security Policy directive 'default-src' contains a source with an invalid path: '/api/4509669501698048/security/?sentry_key=7eb3d90eb4660416caf507087367e67e'. The query component, including the '?', will be ignored.
+The source list for Content Security Policy directive 'default-src' contains a source with an invalid path: '/api/4509669501698048/security/?sentry_key=7eb3d90eb4660416caf507087367e67e'. The query component, including the '?', will be ignored.
+The source list for Content Security Policy directive 'default-src' contains a source with an invalid path: '/api/4509669501698048/security/?sentry_key=7eb3d90eb4660416caf507087367e67e'. The query component, including the '?', will be ignored.
+The source list for Content Security Policy directive 'default-src' contains a source with an invalid path: '/api/4509669501698048/security/?sentry_key=7eb3d90eb4660416caf507087367e67e'. The query component, including the '?', will be ignored.
+The source list for Content Security Policy directive 'default-src' contains a source with an invalid path: '/api/4509669501698048/security/?sentry_key=7eb3d90eb4660416caf507087367e67e'. The query component, including the '?', will be ignored.
+The source list for Content Security Policy directive 'default-src' contains a source with an invalid path: '/api/4509669501698048/security/?sentry_key=7eb3d90eb4660416caf507087367e67e'. The query component, including the '?', will be ignored.
+The source list for Content Security Policy directive 'default-src' contains a source with an invalid path: '/api/4509669501698048/security/?sentry_key=7eb3d90eb4660416caf507087367e67e'. The query component, including the '?', will be ignored.
+ 
+      /////////////////////
+   ///////////////////////////
+  ////////@@@@@@@//////////////
+  ////////@@@@@@@//////////////
+  ////////@@@@@@@//////////////        Curious and driven?
+  ///////////////@@@@@@@///////        Work with us!
+  ///////////////@@@@@@@///////
+  ///////////////@@@@@@@///////        https://join.replit.com/hack.with.us
+  ////////@@@@@@@//////////////
+  ////////@@@@@@@//////////////
+  ////////@@@@@@#//////////////
+   ///////////////////////////
+      /////////////////////
+      
+RealEstatePro:1 The source list for the Content Security Policy directive 'default-src' contains an invalid source: ''unsafe-dynamic''. It will be ignored.
+RealEstatePro:1 The Content-Security-Policy directive 'default-src' contains 'report-uri' as a source expression. Did you want to add it as a directive and forget a semicolon?
+RealEstatePro:1 The source list for Content Security Policy directive 'default-src' contains a source with an invalid path: '/api/4509669501698048/security/?sentry_key=7eb3d90eb4660416caf507087367e67e'. The query component, including the '?', will be ignored.
+ [LaunchDarkly] LaunchDarkly client initialized
+sp.replit.com/v1/i:1  Failed to load resource: the server responded with a status of 400 ()
+ [Violation] Permissions policy violation: unload is not allowed in this document.
+(anonymous) @ content.js:2
+ [Violation] Permissions policy violation: unload is not allowed in this document.
+(anonymous) @ content.js:2
+ [Violation] Permissions policy violation: unload is not allowed in this document.
+to @ content.js:2
+Error while parsing the 'sandbox' attribute: 'allow-downloads-without-user-activation' is an invalid sandbox flag.
+Error while parsing the 'sandbox' attribute: 'allow-downloads-without-user-activation' is an invalid sandbox flag.
+Error while parsing the 'sandbox' attribute: 'allow-downloads-without-user-activation' is an invalid sandbox flag.
+Error while parsing the 'sandbox' attribute: 'allow-downloads-without-user-activation' is an invalid sandbox flag.
+Error while parsing the 'sandbox' attribute: 'allow-downloads-without-user-activation' is an invalid sandbox flag.
+Error while parsing the 'sandbox' attribute: 'allow-downloads-without-user-activation' is an invalid sandbox flag.
+Error while parsing the 'sandbox' attribute: 'allow-downloads-without-user-activation' is an invalid sandbox flag.
+Error while parsing the 'sandbox' attribute: 'allow-downloads-without-user-activation' is an invalid sandbox flag.
+Error while parsing the 'sandbox' attribute: 'allow-downloads-without-user-activation' is an invalid sandbox flag.
+Error while parsing the 'sandbox' attribute: 'allow-downloads-without-user-activation' is an invalid sandbox flag.
+Error while parsing the 'sandbox' attribute: 'allow-downloads-without-user-activation' is an invalid sandbox flag.
+Error while parsing the 'sandbox' attribute: 'allow-downloads-without-user-activation' is an invalid sandbox flag.
+ Unrecognized feature: 'ambient-light-sensor'.
+_ @ framework-1079f23839fe5506.js:1
+ Unrecognized feature: 'battery'.
+_ @ framework-1079f23839fe5506.js:1
+ Unrecognized feature: 'execution-while-not-rendered'.
+_ @ framework-1079f23839fe5506.js:1
+ Unrecognized feature: 'execution-while-out-of-viewport'.
+_ @ framework-1079f23839fe5506.js:1
+ Unrecognized feature: 'layout-animations'.
+_ @ framework-1079f23839fe5506.js:1
+ Unrecognized feature: 'legacy-image-formats'.
+_ @ framework-1079f23839fe5506.js:1
+ Unrecognized feature: 'navigation-override'.
+_ @ framework-1079f23839fe5506.js:1
+ Unrecognized feature: 'oversized-images'.
+_ @ framework-1079f23839fe5506.js:1
+ Unrecognized feature: 'publickey-credentials'.
+_ @ framework-1079f23839fe5506.js:1
+ Unrecognized feature: 'speaker-selection'.
+_ @ framework-1079f23839fe5506.js:1
+ Unrecognized feature: 'unoptimized-images'.
+_ @ framework-1079f23839fe5506.js:1
+ Unrecognized feature: 'unsized-media'.
+_ @ framework-1079f23839fe5506.js:1
+ Unrecognized feature: 'pointer-lock'.
+_ @ framework-1079f23839fe5506.js:1
+ Allow attribute will take precedence over 'allowfullscreen'.
+_ @ framework-1079f23839fe5506.js:1
+ Allow attribute will take precedence over 'allowpaymentrequest'.
+_ @ framework-1079f23839fe5506.js:1
+ stallwart: failed ping 1
+ 
+(anonymous) @ _app-be486374b1abdca5.js:38
+ 
+(anonymous) @ _app-be486374b1abdca5.js:38
+ 
+(anonymous) @ _app-be486374b1abdca5.js:38
+ 
+(anonymous) @ _app-be486374b1abdca5.js:38
+ 
+(anonymous) @ _app-be486374b1abdca5.js:38
+ 
+(anonymous) @ _app-be486374b1abdca5.js:38
+ 
+(anonymous) @ _app-be486374b1abdca5.js:38
+ 
+(anonymous) @ _app-be486374b1abdca5.js:38
+ 
+(anonymous) @ _app-be486374b1abdca5.js:38
+ 
+(anonymous) @ _app-be486374b1abdca5.js:38
+ 
+(anonymous) @ _app-be486374b1abdca5.js:38
+ 
+(anonymous) @ _app-be486374b1abdca5.js:38
+ 
+(anonymous) @ _app-be486374b1abdca5.js:38
+ 
+(anonymous) @ _app-be486374b1abdca5.js:38
+ 
+(anonymous) @ _app-be486374b1abdca5.js:38
+ 
+(anonymous) @ _app-be486374b1abdca5.js:38
+ 
+(anonymous) @ _app-be486374b1abdca5.js:38
+ 
+(anonymous) @ _app-be486374b1abdca5.js:38
+ 
+(anonymous) @ _app-be486374b1abdca5.js:38
+ 
+(anonymous) @ _app-be486374b1abdca5.js:38
+ 
+(anonymous) @ _app-be486374b1abdca5.js:38
+ 
+(anonymous) @ _app-be486374b1abdca5.js:38
+ 
+(anonymous) @ _app-be486374b1abdca5.js:38
+ 
+(anonymous) @ _app-be486374b1abdca5.js:38
+ 
+(anonymous) @ _app-be486374b1abdca5.js:38
+ 
+(anonymous) @ _app-be486374b1abdca5.js:38
+ 
+(anonymous) @ _app-be486374b1abdca5.js:38
+ 
+(anonymous) @ _app-be486374b1abdca5.js:38
+ 
+(anonymous) @ _app-be486374b1abdca5.js:38
+ 
+(anonymous) @ _app-be486374b1abdca5.js:38
+ 
+(anonymous) @ _app-be486374b1abdca5.js:38
+ 
+(anonymous) @ _app-be486374b1abdca5.js:38
+ 
+(anonymous) @ _app-be486374b1abdca5.js:38
+ 
+(anonymous) @ _app-be486374b1abdca5.js:38
+ 
+(anonymous) @ _app-be486374b1abdca5.js:38
+ 
+(anonymous) @ _app-be486374b1abdca5.js:38
+ 
+(anonymous) @ _app-be486374b1abdca5.js:38
+ 
+(anonymous) @ _app-be486374b1abdca5.js:38
+ 
+(anonymous) @ _app-be486374b1abdca5.js:38
+ 
+(anonymous) @ _app-be486374b1abdca5.js:38
+ 
+(anonymous) @ _app-be486374b1abdca5.js:38
+ 
+(anonymous) @ _app-be486374b1abdca5.js:38
+ 
+(anonymous) @ _app-be486374b1abdca5.js:38
+ 
+(anonymous) @ _app-be486374b1abdca5.js:38
+ 
+(anonymous) @ _app-be486374b1abdca5.js:38
+ 
+(anonymous) @ _app-be486374b1abdca5.js:38
+ 
+(anonymous) @ _app-be486374b1abdca5.js:38
+ 
+(anonymous) @ _app-be486374b1abdca5.js:38
+ 
+(anonymous) @ _app-be486374b1abdca5.js:38
+ 
+(anonymous) @ _app-be486374b1abdca5.js:38
+ 
+(anonymous) @ _app-be486374b1abdca5.js:38
+ 
+(anonymous) @ _app-be486374b1abdca5.js:38
+ 
+(anonymous) @ _app-be486374b1abdca5.js:38
+ 
+(anonymous) @ _app-be486374b1abdca5.js:38
+ 
+(anonymous) @ _app-be486374b1abdca5.js:38
+ 
+(anonymous) @ _app-be486374b1abdca5.js:38
+ 
+(anonymous) @ _app-be486374b1abdca5.js:38
+ 
+(anonymous) @ _app-be486374b1abdca5.js:38
+ 
+(anonymous) @ _app-be486374b1abdca5.js:38
+ 
+(anonymous) @ _app-be486374b1abdca5.js:38
+ 
+(anonymous) @ _app-be486374b1abdca5.js:38
+ 
+(anonymous) @ _app-be486374b1abdca5.js:38
+ 
+(anonymous) @ _app-be486374b1abdca5.js:38
+ 
+(anonymous) @ _app-be486374b1abdca5.js:38
+ 
+(anonymous) @ _app-be486374b1abdca5.js:38
+ 
+(anonymous) @ _app-be486374b1abdca5.js:38
+ 
+(anonymous) @ _app-be486374b1abdca5.js:38
+ 
+(anonymous) @ _app-be486374b1abdca5.js:38
+ 
+(anonymous) @ _app-be486374b1abdca5.js:38
+ 
+(anonymous) @ _app-be486374b1abdca5.js:38
+ 
+(anonymous) @ _app-be486374b1abdca5.js:38
+ 
+(anonymous) @ _app-be486374b1abdca5.js:38
+ 
+(anonymous) @ _app-be486374b1abdca5.js:38
+ 
+(anonymous) @ _app-be486374b1abdca5.js:38
+ 
+(anonymous) @ _app-be486374b1abdca5.js:38
+ 
+(anonymous) @ _app-be486374b1abdca5.js:38
+ 
+(anonymous) @ _app-be486374b1abdca5.js:38
+ 
+(anonymous) @ _app-be486374b1abdca5.js:38
+ 
+(anonymous) @ _app-be486374b1abdca5.js:38
+ 
+(anonymous) @ _app-be486374b1abdca5.js:38
+ 
+(anonymous) @ _app-be486374b1abdca5.js:38
+ 
+(anonymous) @ _app-be486374b1abdca5.js:38
+ 
+(anonymous) @ _app-be486374b1abdca5.js:38
+ 
+(anonymous) @ _app-be486374b1abdca5.js:38
+ 
+(anonymous) @ _app-be486374b1abdca5.js:38
+ 
+(anonymous) @ _app-be486374b1abdca5.js:38
+ 
+(anonymous) @ _app-be486374b1abdca5.js:38
+ 
+(anonymous) @ _app-be486374b1abdca5.js:38
+ 
+(anonymous) @ _app-be486374b1abdca5.js:38
+ 
+(anonymous) @ _app-be486374b1abdca5.js:38
+ 
+(anonymous) @ _app-be486374b1abdca5.js:38
+ 
+(anonymous) @ _app-be486374b1abdca5.js:38
+ 
+(anonymous) @ _app-be486374b1abdca5.js:38
+ 
+(anonymous) @ _app-be486374b1abdca5.js:38
+ stallwart: failed ping 2
+ stallwart: failed ping 3
+ stallwart: failed ping 4
+ stallwart: failed ping 5
+ stallwart: session stalled
+WARNING: Too many active WebGL contexts. Oldest context will be lost.
+WARNING: Too many active WebGL contexts. Oldest context will be lost.
+WARNING: Too many active WebGL contexts. Oldest context will be lost.
+WARNING: Too many active WebGL contexts. Oldest context will be lost.
+WARNING: Too many active WebGL contexts. Oldest context will be lost.
+WARNING: Too many active WebGL contexts. Oldest context will be lost.
+WARNING: Too many active WebGL contexts. Oldest context will be lost.
+WARNING: Too many active WebGL contexts. Oldest context will be lost.
+WARNING: Too many active WebGL contexts. Oldest context will be lost.
+WARNING: Too many active WebGL contexts. Oldest context will be lost.
+WARNING: Too many active WebGL contexts. Oldest context will be lost.
+WARNING: Too many active WebGL contexts. Oldest context will be lost.
+WARNING: Too many active WebGL contexts. Oldest context will be lost.
+WARNING: Too many active WebGL contexts. Oldest context will be lost.
+WARNING: Too many active WebGL contexts. Oldest context will be lost.
+WARNING: Too many active WebGL contexts. Oldest context will be lost.
+WARNING: Too many active WebGL contexts. Oldest context will be lost.
+WARNING: Too many active WebGL contexts. Oldest context will be lost.
+WARNING: Too many active WebGL contexts. Oldest context will be lost.
+WARNING: Too many active WebGL contexts. Oldest context will be lost.
+ webglcontextlost event received
+ webglcontextlost event received
+ webglcontextlost event received
+ webglcontextlost event received
+ webglcontextlost event received
+ webglcontextlost event received
+ webglcontextlost event received
+ webglcontextlost event received
+ webglcontextlost event received
+ webglcontextlost event received
+ webglcontextlost event received
+ webglcontextrestored event received
+(anonymous) @ _app-be486374b1abdca5.js:38
+WebGL: INVALID_OPERATION: delete: object does not belong to this context
+WebGL: INVALID_OPERATION: delete: object does not belong to this context
+WebGL: INVALID_OPERATION: delete: object does not belong to this context
+WebGL: INVALID_OPERATION: delete: object does not belong to this context
+WebGL: INVALID_OPERATION: delete: object does not belong to this context
+WebGL: INVALID_OPERATION: delete: object does not belong to this context
+WebGL: INVALID_OPERATION: delete: object does not belong to this context
+WebGL: INVALID_OPERATION: delete: object does not belong to this context
+WebGL: INVALID_OPERATION: delete: object does not belong to this context
+WebGL: INVALID_OPERATION: delete: object does not belong to this context
+WebGL: INVALID_OPERATION: delete: object does not belong to this context
+WebGL: INVALID_OPERATION: delete: object does not belong to this context
+WebGL: INVALID_OPERATION: delete: object does not belong to this context
+WebGL: INVALID_OPERATION: delete: object does not belong to this context
+WebGL: INVALID_OPERATION: delete: object does not belong to this context
+WebGL: INVALID_OPERATION: delete: object does not belong to this context
+WebGL: INVALID_OPERATION: delete: object does not belong to this context
+WebGL: INVALID_OPERATION: delete: object does not belong to this context
+WebGL: INVALID_OPERATION: delete: object does not belong to this context
+WebGL: INVALID_OPERATION: delete: object does not belong to this context
+WebGL: INVALID_OPERATION: delete: object does not belong to this context
+WebGL: INVALID_OPERATION: delete: object does not belong to this context
+WebGL: INVALID_OPERATION: delete: object does not belong to this context
+WebGL: INVALID_OPERATION: delete: object does not belong to this context
+WebGL: INVALID_OPERATION: delete: object does not belong to this context
+WebGL: INVALID_OPERATION: delete: object does not belong to this context
+WebGL: INVALID_OPERATION: delete: object does not belong to this context
+WebGL: INVALID_OPERATION: delete: object does not belong to this context
+WebGL: INVALID_OPERATION: delete: object does not belong to this context
+WebGL: INVALID_OPERATION: delete: object does not belong to this context
+WebGL: INVALID_OPERATION: delete: object does not belong to this context
+WebGL: INVALID_OPERATION: delete: object does not belong to this context
+WebGL: INVALID_OPERATION: delete: object does not belong to this context
+WebGL: INVALID_OPERATION: delete: object does not belong to this context
+WebGL: INVALID_OPERATION: delete: object does not belong to this context
+WebGL: INVALID_OPERATION: delete: object does not belong to this context
+WebGL: INVALID_OPERATION: delete: object does not belong to this context
+WebGL: INVALID_OPERATION: delete: object does not belong to this context
+WebGL: INVALID_OPERATION: delete: object does not belong to this context
+WebGL: INVALID_OPERATION: delete: object does not belong to this context
+WebGL: INVALID_OPERATION: delete: object does not belong to this context
+WebGL: INVALID_OPERATION: delete: object does not belong to this context
+WebGL: INVALID_OPERATION: delete: object does not belong to this context
+WebGL: INVALID_OPERATION: delete: object does not belong to this context
+WebGL: INVALID_OPERATION: delete: object does not belong to this context
+WebGL: INVALID_OPERATION: delete: object does not belong to this context
+WebGL: INVALID_OPERATION: delete: object does not belong to this context
+WebGL: INVALID_OPERATION: delete: object does not belong to this context
+WebGL: INVALID_OPERATION: delete: object does not belong to this context
+WebGL: INVALID_OPERATION: delete: object does not belong to this context
+WebGL: INVALID_OPERATION: delete: object does not belong to this context
+WebGL: INVALID_OPERATION: delete: object does not belong to this context
+WebGL: INVALID_OPERATION: delete: object does not belong to this context
+WebGL: INVALID_OPERATION: delete: object does not belong to this context
+WebGL: INVALID_OPERATION: delete: object does not belong to this context
+WebGL: INVALID_OPERATION: delete: object does not belong to this context
+WebGL: INVALID_OPERATION: delete: object does not belong to this context
+WebGL: INVALID_OPERATION: delete: object does not belong to this context
+WebGL: INVALID_OPERATION: delete: object does not belong to this context
+WebGL: INVALID_OPERATION: delete: object does not belong to this context
+WebGL: INVALID_OPERATION: delete: object does not belong to this context
+WebGL: INVALID_OPERATION: delete: object does not belong to this context
+WebGL: INVALID_OPERATION: delete: object does not belong to this context
+WebGL: INVALID_OPERATION: delete: object does not belong to this context
+WebGL: INVALID_OPERATION: delete: object does not belong to this context
+WebGL: INVALID_OPERATION: delete: object does not belong to this context
+WebGL: INVALID_OPERATION: delete: object does not belong to this context
+WebGL: INVALID_OPERATION: delete: object does not belong to this context
+WebGL: INVALID_OPERATION: delete: object does not belong to this context
+WebGL: INVALID_OPERATION: delete: object does not belong to this context
+WebGL: INVALID_OPERATION: delete: object does not belong to this context
+WebGL: INVALID_OPERATION: delete: object does not belong to this context
+WebGL: INVALID_OPERATION: delete: object does not belong to this context
+WebGL: INVALID_OPERATION: delete: object does not belong to this context
+WebGL: INVALID_OPERATION: delete: object does not belong to this context
+WebGL: INVALID_OPERATION: delete: object does not belong to this context
+WebGL: INVALID_OPERATION: delete: object does not belong to this context
+WebGL: INVALID_OPERATION: delete: object does not belong to this context
+WebGL: INVALID_OPERATION: delete: object does not belong to this context
+WebGL: INVALID_OPERATION: delete: object does not belong to this context
+WebGL: INVALID_OPERATION: delete: object does not belong to this context
+WebGL: INVALID_OPERATION: delete: object does not belong to this context
+WebGL: INVALID_OPERATION: delete: object does not belong to this context
+WebGL: INVALID_OPERATION: delete: object does not belong to this context
+WebGL: INVALID_OPERATION: delete: object does not belong to this context
+WebGL: INVALID_OPERATION: delete: object does not belong to this context
+WebGL: INVALID_OPERATION: delete: object does not belong to this context
+WebGL: INVALID_OPERATION: delete: object does not belong to this context
+WebGL: INVALID_OPERATION: delete: object does not belong to this context
+WebGL: INVALID_OPERATION: delete: object does not belong to this context
+WebGL: INVALID_OPERATION: delete: object does not belong to this context
+WebGL: INVALID_OPERATION: delete: object does not belong to this context
+WebGL: INVALID_OPERATION: delete: object does not belong to this context
+WebGL: INVALID_OPERATION: delete: object does not belong to this context
+WebGL: INVALID_OPERATION: delete: object does not belong to this context
+WebGL: INVALID_OPERATION: delete: object does not belong to this context
+WebGL: INVALID_OPERATION: delete: object does not belong to this context
+WebGL: INVALID_OPERATION: delete: object does not belong to this context
+WebGL: INVALID_OPERATION: delete: object does not belong to this context
+WebGL: INVALID_OPERATION: delete: object does not belong to this context
+WebGL: INVALID_OPERATION: delete: object does not belong to this context
+WebGL: INVALID_OPERATION: delete: object does not belong to this context
+WebGL: INVALID_OPERATION: delete: object does not belong to this context
+WebGL: INVALID_OPERATION: delete: object does not belong to this context
+WebGL: INVALID_OPERATION: delete: object does not belong to this context
+WebGL: INVALID_OPERATION: delete: object does not belong to this context
+WebGL: INVALID_OPERATION: delete: object does not belong to this context
+WebGL: INVALID_OPERATION: delete: object does not belong to this context
+WebGL: INVALID_OPERATION: delete: object does not belong to this context
+WebGL: INVALID_OPERATION: delete: object does not belong to this context
+WebGL: INVALID_OPERATION: delete: object does not belong to this context
+WebGL: INVALID_OPERATION: delete: object does not belong to this context
+WebGL: INVALID_OPERATION: delete: object does not belong to this context
+WebGL: INVALID_OPERATION: delete: object does not belong to this context
+WebGL: INVALID_OPERATION: delete: object does not belong to this context
+WebGL: INVALID_OPERATION: delete: object does not belong to this context
+WebGL: INVALID_OPERATION: delete: object does not belong to this context
+WebGL: INVALID_OPERATION: delete: object does not belong to this context
+WebGL: INVALID_OPERATION: delete: object does not belong to this context
+WebGL: INVALID_OPERATION: delete: object does not belong to this context
+WebGL: INVALID_OPERATION: delete: object does not belong to this context
+WebGL: INVALID_OPERATION: delete: object does not belong to this context
+WebGL: INVALID_OPERATION: delete: object does not belong to this context
+WebGL: INVALID_OPERATION: delete: object does not belong to this context
+WebGL: INVALID_OPERATION: delete: object does not belong to this context
+WebGL: INVALID_OPERATION: delete: object does not belong to this context
+WebGL: INVALID_OPERATION: delete: object does not belong to this context
+WebGL: INVALID_OPERATION: delete: object does not belong to this context
+WebGL: INVALID_OPERATION: delete: object does not belong to this context
+WebGL: INVALID_OPERATION: delete: object does not belong to this context
+WebGL: INVALID_OPERATION: delete: object does not belong to this context
+WebGL: INVALID_OPERATION: delete: object does not belong to this context
+WebGL: INVALID_OPERATION: delete: object does not belong to this context
+WebGL: INVALID_OPERATION: delete: object does not belong to this context
+WebGL: INVALID_OPERATION: delete: object does not belong to this context
+WebGL: INVALID_OPERATION: delete: object does not belong to this context
+WebGL: INVALID_OPERATION: delete: object does not belong to this context
+WebGL: INVALID_OPERATION: delete: object does not belong to this context
+WebGL: INVALID_OPERATION: delete: object does not belong to this context
+WebGL: INVALID_OPERATION: delete: object does not belong to this context
+WebGL: INVALID_OPERATION: delete: object does not belong to this context
+WebGL: INVALID_OPERATION: delete: object does not belong to this context
+WebGL: INVALID_OPERATION: delete: object does not belong to this context
+WebGL: INVALID_OPERATION: delete: object does not belong to this context
+WebGL: INVALID_OPERATION: delete: object does not belong to this context
+WebGL: INVALID_OPERATION: delete: object does not belong to this context
+WebGL: INVALID_OPERATION: delete: object does not belong to this context
+WebGL: INVALID_OPERATION: delete: object does not belong to this context
+WebGL: INVALID_OPERATION: delete: object does not belong to this context
+WebGL: INVALID_OPERATION: delete: object does not belong to this context
+WebGL: INVALID_OPERATION: delete: object does not belong to this context
+WebGL: INVALID_OPERATION: delete: object does not belong to this context
+WebGL: INVALID_OPERATION: delete: object does not belong to this context
+WebGL: INVALID_OPERATION: delete: object does not belong to this context
+WebGL: INVALID_OPERATION: delete: object does not belong to this context
+WebGL: INVALID_OPERATION: delete: object does not belong to this context
+WebGL: INVALID_OPERATION: delete: object does not belong to this context
+WebGL: INVALID_OPERATION: delete: object does not belong to this context
+WebGL: INVALID_OPERATION: delete: object does not belong to this context
+WebGL: INVALID_OPERATION: delete: object does not belong to this context
+WebGL: INVALID_OPERATION: delete: object does not belong to this context
+WebGL: INVALID_OPERATION: delete: object does not belong to this context
+WebGL: INVALID_OPERATION: delete: object does not belong to this context
+WebGL: INVALID_OPERATION: delete: object does not belong to this context
+WebGL: INVALID_OPERATION: delete: object does not belong to this context
+WebGL: INVALID_OPERATION: delete: object does not belong to this context
+WebGL: INVALID_OPERATION: delete: object does not belong to this context
+WebGL: INVALID_OPERATION: delete: object does not belong to this context
+WebGL: INVALID_OPERATION: delete: object does not belong to this context
+WebGL: INVALID_OPERATION: delete: object does not belong to this context
+WebGL: INVALID_OPERATION: delete: object does not belong to this context
+WebGL: INVALID_OPERATION: delete: object does not belong to this context
+WebGL: INVALID_OPERATION: delete: object does not belong to this context
+WebGL: INVALID_OPERATION: delete: object does not belong to this context
+WebGL: INVALID_OPERATION: delete: object does not belong to this context
+WebGL: INVALID_OPERATION: delete: object does not belong to this context
+WebGL: INVALID_OPERATION: delete: object does not belong to this context
+WebGL: INVALID_OPERATION: delete: object does not belong to this context
+WebGL: INVALID_OPERATION: delete: object does not belong to this context
+WebGL: INVALID_OPERATION: delete: object does not belong to this context
+WebGL: INVALID_OPERATION: delete: object does not belong to this context
+WebGL: INVALID_OPERATION: delete: object does not belong to this context
+WebGL: INVALID_OPERATION: delete: object does not belong to this context
+WebGL: INVALID_OPERATION: delete: object does not belong to this context
+WebGL: INVALID_OPERATION: delete: object does not belong to this context
+WebGL: INVALID_OPERATION: delete: object does not belong to this context
+WebGL: INVALID_OPERATION: delete: object does not belong to this context
+WebGL: INVALID_OPERATION: delete: object does not belong to this context
+WebGL: INVALID_OPERATION: delete: object does not belong to this context
+WebGL: INVALID_OPERATION: delete: object does not belong to this context
+WebGL: INVALID_OPERATION: delete: object does not belong to this context
+WebGL: INVALID_OPERATION: delete: object does not belong to this context
+ webglcontextrestored event received
+(anonymous) @ _app-be486374b1abdca5.js:38
+ webglcontextrestored event received
+(anonymous) @ _app-be486374b1abdca5.js:38
+ webglcontextrestored event received
+(anonymous) @ _app-be486374b1abdca5.js:38
+ webglcontextrestored event received
+(anonymous) @ _app-be486374b1abdca5.js:38
+ webglcontextrestored event received
+(anonymous) @ _app-be486374b1abdca5.js:38
+ webglcontextrestored event received
+(anonymous) @ _app-be486374b1abdca5.js:38
+ webglcontextrestored event received
+(anonymous) @ _app-be486374b1abdca5.js:38
+ webgl context not restored; firing onContextLoss
+(anonymous) @ _app-be486374b1abdca5.js:38
+ webgl context not restored; firing onContextLoss
+(anonymous) @ _app-be486374b1abdca5.js:38
+ webgl context not restored; firing onContextLoss
+(anonymous) @ _app-be486374b1abdca5.js:38
+anchor?ar=1&k=6Ldqhw…jQ0Mw..&hl=es-41…:1 Uncaught (in promise) 
+m.stripe.network/inn…_[version]=acacia:1 Uncaught (in promise) 
+js.stripe.com/v3/con…ipeController4941:1 Uncaught (in promise) 
+js.stripe.com/v3/m-o…_[version]=acacia:1 Uncaught (in promise) 
+sw_iframe.html?origi…A%2F%2Freplit.com:1 Uncaught (in promise) 
+RealEstatePro:1 Uncaught (in promise) 
+anchor?ar=1&k=6Ldqhw…jQ0Mw..&hl=es-41…:1 Uncaught (in promise) 
+m.stripe.network/inn…_[version]=acacia:1 Uncaught (in promise) 
+sw_iframe.html?origi…A%2F%2Freplit.com:1 Uncaught (in promise) 
+js.stripe.com/v3/con…ipeController4941:1 Uncaught (in promise) 
+js.stripe.com/v3/m-o…_[version]=acacia:1 Uncaught (in promise) 
+RealEstatePro:1 Uncaught (in promise) 
+anchor?ar=1&k=6Ldqhw…jQ0Mw..&hl=es-41…:1 Uncaught (in promise) 
+m.stripe.network/inn…_[version]=acacia:1 Uncaught (in promise) 
+sw_iframe.html?origi…A%2F%2Freplit.com:1 Uncaught (in promise) 
+js.stripe.com/v3/con…ipeController4941:1 Uncaught (in promise) 
+js.stripe.com/v3/m-o…_[version]=acacia:1 Uncaught (in promise) 
+RealEstatePro#client/src/main.tsx:1 Uncaught (in promise) 
+anchor?ar=1&k=6Ldqhw…jQ0Mw..&hl=es-41…:1 Uncaught (in promise) 
+m.stripe.network/inn…_[version]=acacia:1 Uncaught (in promise) 
+sw_iframe.html?origi…A%2F%2Freplit.com:1 Uncaught (in promise) 
+js.stripe.com/v3/con…ipeController4941:1 Uncaught (in promise) 
+js.stripe.com/v3/m-o…_[version]=acacia:1 Uncaught (in promise) 
+RealEstatePro#client/src/main.tsx:1 Uncaught (in promise) 
+ 
+(anonymous) @ _app-be486374b1abdca5.js:38
+ 
+(anonymous) @ _app-be486374b1abdca5.js:38
+ 
+(anonymous) @ _app-be486374b1abdca5.js:38
+ 
+(anonymous) @ _app-be486374b1abdca5.js:38
+ 
+(anonymous) @ _app-be486374b1abdca5.js:38
+ 
+(anonymous) @ _app-be486374b1abdca5.js:38
+ 
+(anonymous) @ _app-be486374b1abdca5.js:38
+ 
+(anonymous) @ _app-be486374b1abdca5.js:38
+ 
+(anonymous) @ _app-be486374b1abdca5.js:38
+ 
+(anonymous) @ _app-be486374b1abdca5.js:38
+ 
+(anonymous) @ _app-be486374b1abdca5.js:38
+ 
+(anonymous) @ _app-be486374b1abdca5.js:38
+ 
+(anonymous) @ _app-be486374b1abdca5.js:38
+ 
+(anonymous) @ _app-be486374b1abdca5.js:38
+ 
+(anonymous) @ _app-be486374b1abdca5.js:38
+ 
+(anonymous) @ _app-be486374b1abdca5.js:38
+ 
+(anonymous) @ _app-be486374b1abdca5.js:38
+ 
+(anonymous) @ _app-be486374b1abdca5.js:38
+ 
+(anonymous) @ _app-be486374b1abdca5.js:38
+ 
+(anonymous) @ _app-be486374b1abdca5.js:38
+ 
+(anonymous) @ _app-be486374b1abdca5.js:38
+ 
+(anonymous) @ _app-be486374b1abdca5.js:38
+ 
+(anonymous) @ _app-be486374b1abdca5.js:38
+ 
+(anonymous) @ _app-be486374b1abdca5.js:38
+ 
+(anonymous) @ _app-be486374b1abdca5.js:38
+ 
+(anonymous) @ _app-be486374b1abdca5.js:38
+ 
+(anonymous) @ _app-be486374b1abdca5.js:38
+ 
+(anonymous) @ _app-be486374b1abdca5.js:38
+ 
+(anonymous) @ _app-be486374b1abdca5.js:38
+ 
+(anonymous) @ _app-be486374b1abdca5.js:38
+ 
+(anonymous) @ _app-be486374b1abdca5.js:38
+ 
+(anonymous) @ _app-be486374b1abdca5.js:38
+ 
+(anonymous) @ _app-be486374b1abdca5.js:38
+ 
+(anonymous) @ _app-be486374b1abdca5.js:38
+ 
+(anonymous) @ _app-be486374b1abdca5.js:38
+ 
+(anonymous) @ _app-be486374b1abdca5.js:38
+ 
+(anonymous) @ _app-be486374b1abdca5.js:38
+ 
+(anonymous) @ _app-be486374b1abdca5.js:38
+ 
+(anonymous) @ _app-be486374b1abdca5.js:38
+ 
+(anonymous) @ _app-be486374b1abdca5.js:38
+ 
+(anonymous) @ _app-be486374b1abdca5.js:38
+ 
+(anonymous) @ _app-be486374b1abdca5.js:38
+ 
+(anonymous) @ _app-be486374b1abdca5.js:38
+ 
+(anonymous) @ _app-be486374b1abdca5.js:38
+ 
+(anonymous) @ _app-be486374b1abdca5.js:38
+ 
+(anonymous) @ _app-be486374b1abdca5.js:38
+ 
+(anonymous) @ _app-be486374b1abdca5.js:38
+ 
+(anonymous) @ _app-be486374b1abdca5.js:38
+ 
+(anonymous) @ _app-be486374b1abdca5.js:38
+ 
+(anonymous) @ _app-be486374b1abdca5.js:38
+ 
+(anonymous) @ _app-be486374b1abdca5.js:38
+ 
+(anonymous) @ _app-be486374b1abdca5.js:38
+ 
+(anonymous) @ _app-be486374b1abdca5.js:38
+ 
+(anonymous) @ _app-be486374b1abdca5.js:38
+ 
+(anonymous) @ _app-be486374b1abdca5.js:38
+ 
+(anonymous) @ _app-be486374b1abdca5.js:38
+ 
+(anonymous) @ _app-be486374b1abdca5.js:38
+ 
+(anonymous) @ _app-be486374b1abdca5.js:38
+ 
+(anonymous) @ _app-be486374b1abdca5.js:38
+ 
+(anonymous) @ _app-be486374b1abdca5.js:38
+ 
+(anonymous) @ _app-be486374b1abdca5.js:38
+ 
+(anonymous) @ _app-be486374b1abdca5.js:38
+ 
+(anonymous) @ _app-be486374b1abdca5.js:38
+ 
+(anonymous) @ _app-be486374b1abdca5.js:38
+_app-be486374b1abdca5.js:38 MaxListenersExceededWarning: Possible EventEmitter memory leak detected. 11 changes listeners added. Use emitter.setMaxListeners() to increase limit
+    at l (2255-f53e90f499c10a88.js:1:63056)
+    at f.addListener (2255-f53e90f499c10a88.js:1:65942)
+    at h (7276-6555ca29df541412.js:1:46586)
+    at Object.watchTextFile (7276-6555ca29df541412.js:1:47534)
+    at 7361-bccd1e3b68402347.js:1:1192523
+    at Array.map (<anonymous>)
+    at 7361-bccd1e3b68402347.js:1:1192498
+    at oO (framework-1079f23839fe5506.js:1:125387)
+    at uB (framework-1079f23839fe5506.js:1:154382)
+    at framework-1079f23839fe5506.js:1:152768
+    at uO (framework-1079f23839fe5506.js:1:152834)
+    at u_ (framework-1079f23839fe5506.js:1:137498)
+    at r6 (framework-1079f23839fe5506.js:1:86196)
+    at framework-1079f23839fe5506.js:1:134876
+(anonymous) @ _app-be486374b1abdca5.js:38
+_app-be486374b1abdca5.js:38 MaxListenersExceededWarning: Possible EventEmitter memory leak detected. 11 commitComplete listeners added. Use emitter.setMaxListeners() to increase limit
+    at l (2255-f53e90f499c10a88.js:1:63056)
+    at f.addListener (2255-f53e90f499c10a88.js:1:65942)
+    at h (7276-6555ca29df541412.js:1:41756)
+    at Object.watchTextFile (7276-6555ca29df541412.js:1:47534)
+    at 7361-bccd1e3b68402347.js:1:1192523
+    at Array.map (<anonymous>)
+    at 7361-bccd1e3b68402347.js:1:1192498
+    at oO (framework-1079f23839fe5506.js:1:125387)
+    at uB (framework-1079f23839fe5506.js:1:154382)
+    at framework-1079f23839fe5506.js:1:152768
+    at uO (framework-1079f23839fe5506.js:1:152834)
+    at u_ (framework-1079f23839fe5506.js:1:137498)
+    at r6 (framework-1079f23839fe5506.js:1:86196)
+    at framework-1079f23839fe5506.js:1:134876
+(anonymous) @ _app-be486374b1abdca5.js:38
+_app-be486374b1abdca5.js:38 MaxListenersExceededWarning: Possible EventEmitter memory leak detected. 11 fileDirty listeners added. Use emitter.setMaxListeners() to increase limit
+    at l (2255-f53e90f499c10a88.js:1:63056)
+    at f.addListener (2255-f53e90f499c10a88.js:1:65942)
+    at h (7276-6555ca29df541412.js:1:41876)
+    at Object.watchTextFile (7276-6555ca29df541412.js:1:47534)
+    at 7361-bccd1e3b68402347.js:1:1192523
+    at Array.map (<anonymous>)
+    at 7361-bccd1e3b68402347.js:1:1192498
+    at oO (framework-1079f23839fe5506.js:1:125387)
+    at uB (framework-1079f23839fe5506.js:1:154382)
+    at framework-1079f23839fe5506.js:1:152768
+    at uO (framework-1079f23839fe5506.js:1:152834)
+    at u_ (framework-1079f23839fe5506.js:1:137498)
+    at r6 (framework-1079f23839fe5506.js:1:86196)
+    at framework-1079f23839fe5506.js:1:134876
+(anonymous) @ _app-be486374b1abdca5.js:38
+_app-be486374b1abdca5.js:38 MaxListenersExceededWarning: Possible EventEmitter memory leak detected. 11 fileClean listeners added. Use emitter.setMaxListeners() to increase limit
+    at l (2255-f53e90f499c10a88.js:1:63056)
+    at f.addListener (2255-f53e90f499c10a88.js:1:65942)
+    at h (7276-6555ca29df541412.js:1:41991)
+    at Object.watchTextFile (7276-6555ca29df541412.js:1:47534)
+    at 7361-bccd1e3b68402347.js:1:1192523
+    at Array.map (<anonymous>)
+    at 7361-bccd1e3b68402347.js:1:1192498
+    at oO (framework-1079f23839fe5506.js:1:125387)
+    at uB (framework-1079f23839fe5506.js:1:154382)
+    at framework-1079f23839fe5506.js:1:152768
+    at uO (framework-1079f23839fe5506.js:1:152834)
+    at u_ (framework-1079f23839fe5506.js:1:137498)
+    at r6 (framework-1079f23839fe5506.js:1:86196)
+    at framework-1079f23839fe5506.js:1:134876
+(anonymous) @ _app-be486374b1abdca5.js:38
+_app-be486374b1abdca5.js:38 MaxListenersExceededWarning: Possible EventEmitter memory leak detected. 11 commitStart listeners added. Use emitter.setMaxListeners() to increase limit
+    at l (2255-f53e90f499c10a88.js:1:63056)
+    at f.addListener (2255-f53e90f499c10a88.js:1:65942)
+    at h (7276-6555ca29df541412.js:1:42108)
+    at Object.watchTextFile (7276-6555ca29df541412.js:1:47534)
+    at 7361-bccd1e3b68402347.js:1:1192523
+    at Array.map (<anonymous>)
+    at 7361-bccd1e3b68402347.js:1:1192498
+    at oO (framework-1079f23839fe5506.js:1:125387)
+    at uB (framework-1079f23839fe5506.js:1:154382)
+    at framework-1079f23839fe5506.js:1:152768
+    at uO (framework-1079f23839fe5506.js:1:152834)
+    at u_ (framework-1079f23839fe5506.js:1:137498)
+    at r6 (framework-1079f23839fe5506.js:1:86196)
+    at framework-1079f23839fe5506.js:1:134876
+(anonymous) @ _app-be486374b1abdca5.js:38
+_app-be486374b1abdca5.js:38 MaxListenersExceededWarning: Possible EventEmitter memory leak detected. 11 promptUserReconnect listeners added. Use emitter.setMaxListeners() to increase limit
+    at l (2255-f53e90f499c10a88.js:1:63056)
+    at f.addListener (2255-f53e90f499c10a88.js:1:65942)
+    at h (7276-6555ca29df541412.js:1:43382)
+    at Object.watchTextFile (7276-6555ca29df541412.js:1:47534)
+    at 7361-bccd1e3b68402347.js:1:1192523
+    at Array.map (<anonymous>)
+    at 7361-bccd1e3b68402347.js:1:1192498
+    at oO (framework-1079f23839fe5506.js:1:125387)
+    at uB (framework-1079f23839fe5506.js:1:154382)
+    at framework-1079f23839fe5506.js:1:152768
+    at uO (framework-1079f23839fe5506.js:1:152834)
+    at u_ (framework-1079f23839fe5506.js:1:137498)
+    at r6 (framework-1079f23839fe5506.js:1:86196)
+    at framework-1079f23839fe5506.js:1:134876
+(anonymous) @ _app-be486374b1abdca5.js:38
+_app-be486374b1abdca5.js:38 MaxListenersExceededWarning: Possible EventEmitter memory leak detected. 11 cursor listeners added. Use emitter.setMaxListeners() to increase limit
+    at l (2255-f53e90f499c10a88.js:1:63056)
+    at f.addListener (2255-f53e90f499c10a88.js:1:65942)
+    at h (7276-6555ca29df541412.js:1:42211)
+    at Object.watchTextFile (7276-6555ca29df541412.js:1:47534)
+    at 7361-bccd1e3b68402347.js:1:1192523
+    at Array.map (<anonymous>)
+    at 7361-bccd1e3b68402347.js:1:1192498
+    at oO (framework-1079f23839fe5506.js:1:125387)
+    at uB (framework-1079f23839fe5506.js:1:154382)
+    at framework-1079f23839fe5506.js:1:152768
+    at uO (framework-1079f23839fe5506.js:1:152834)
+    at u_ (framework-1079f23839fe5506.js:1:137498)
+    at r6 (framework-1079f23839fe5506.js:1:86196)
+    at framework-1079f23839fe5506.js:1:134876
+(anonymous) @ _app-be486374b1abdca5.js:38
+_app-be486374b1abdca5.js:38 MaxListenersExceededWarning: Possible EventEmitter memory leak detected. 11 removeCursor listeners added. Use emitter.setMaxListeners() to increase limit
+    at l (2255-f53e90f499c10a88.js:1:63056)
+    at f.addListener (2255-f53e90f499c10a88.js:1:65942)
+    at h (7276-6555ca29df541412.js:1:42315)
+    at Object.watchTextFile (7276-6555ca29df541412.js:1:47534)
+    at 7361-bccd1e3b68402347.js:1:1192523
+    at Array.map (<anonymous>)
+    at 7361-bccd1e3b68402347.js:1:1192498
+    at oO (framework-1079f23839fe5506.js:1:125387)
+    at uB (framework-1079f23839fe5506.js:1:154382)
+    at framework-1079f23839fe5506.js:1:152768
+    at uO (framework-1079f23839fe5506.js:1:152834)
+    at u_ (framework-1079f23839fe5506.js:1:137498)
+    at r6 (framework-1079f23839fe5506.js:1:86196)
+    at framework-1079f23839fe5506.js:1:134876
+(anonymous) @ _app-be486374b1abdca5.js:38
+_app-be486374b1abdca5.js:38 MaxListenersExceededWarning: Possible EventEmitter memory leak detected. 11 fileSavedChanged listeners added. Use emitter.setMaxListeners() to increase limit
+    at l (2255-f53e90f499c10a88.js:1:63056)
+    at f.addListener (2255-f53e90f499c10a88.js:1:65942)
+    at h (7276-6555ca29df541412.js:1:42429)
+    at Object.watchTextFile (7276-6555ca29df541412.js:1:47534)
+    at 7361-bccd1e3b68402347.js:1:1192523
+    at Array.map (<anonymous>)
+    at 7361-bccd1e3b68402347.js:1:1192498
+    at oO (framework-1079f23839fe5506.js:1:125387)
+    at uB (framework-1079f23839fe5506.js:1:154382)
+    at framework-1079f23839fe5506.js:1:152768
+    at uO (framework-1079f23839fe5506.js:1:152834)
+    at u_ (framework-1079f23839fe5506.js:1:137498)
+    at r6 (framework-1079f23839fe5506.js:1:86196)
+    at framework-1079f23839fe5506.js:1:134876
+(anonymous) @ _app-be486374b1abdca5.js:38
+_app-be486374b1abdca5.js:38 MaxListenersExceededWarning: Possible EventEmitter memory leak detected. 11 error listeners added. Use emitter.setMaxListeners() to increase limit
+    at l (2255-f53e90f499c10a88.js:1:63056)
+    at f.addListener (2255-f53e90f499c10a88.js:1:65942)
+    at h (7276-6555ca29df541412.js:1:43679)
+    at Object.watchTextFile (7276-6555ca29df541412.js:1:47534)
+    at 7361-bccd1e3b68402347.js:1:1192523
+    at Array.map (<anonymous>)
+    at 7361-bccd1e3b68402347.js:1:1192498
+    at oO (framework-1079f23839fe5506.js:1:125387)
+    at uB (framework-1079f23839fe5506.js:1:154382)
+    at framework-1079f23839fe5506.js:1:152768
+    at uO (framework-1079f23839fe5506.js:1:152834)
+    at u_ (framework-1079f23839fe5506.js:1:137498)
+    at r6 (framework-1079f23839fe5506.js:1:86196)
+    at framework-1079f23839fe5506.js:1:134876
+(anonymous) @ _app-be486374b1abdca5.js:38
+_app-be486374b1abdca5.js:38 MaxListenersExceededWarning: Possible EventEmitter memory leak detected. 11 fsError listeners added. Use emitter.setMaxListeners() to increase limit
+    at l (2255-f53e90f499c10a88.js:1:63056)
+    at f.addListener (2255-f53e90f499c10a88.js:1:65942)
+    at h (7276-6555ca29df541412.js:1:43865)
+    at Object.watchTextFile (7276-6555ca29df541412.js:1:47534)
+    at 7361-bccd1e3b68402347.js:1:1192523
+    at Array.map (<anonymous>)
+    at 7361-bccd1e3b68402347.js:1:1192498
+    at oO (framework-1079f23839fe5506.js:1:125387)
+    at uB (framework-1079f23839fe5506.js:1:154382)
+    at framework-1079f23839fe5506.js:1:152768
+    at uO (framework-1079f23839fe5506.js:1:152834)
+    at u_ (framework-1079f23839fe5506.js:1:137498)
+    at r6 (framework-1079f23839fe5506.js:1:86196)
+    at framework-1079f23839fe5506.js:1:134876
+(anonymous) @ _app-be486374b1abdca5.js:38
+_app-be486374b1abdca5.js:38 MaxListenersExceededWarning: Possible EventEmitter memory leak detected. 11 transparentReconnect listeners added. Use emitter.setMaxListeners() to increase limit
+    at l (2255-f53e90f499c10a88.js:1:63056)
+    at f.addListener (2255-f53e90f499c10a88.js:1:65942)
+    at h (7276-6555ca29df541412.js:1:44700)
+    at Object.watchTextFile (7276-6555ca29df541412.js:1:47534)
+    at 7361-bccd1e3b68402347.js:1:1192523
+    at Array.map (<anonymous>)
+    at 7361-bccd1e3b68402347.js:1:1192498
+    at oO (framework-1079f23839fe5506.js:1:125387)
+    at uB (framework-1079f23839fe5506.js:1:154382)
+    at framework-1079f23839fe5506.js:1:152768
+    at uO (framework-1079f23839fe5506.js:1:152834)
+    at u_ (framework-1079f23839fe5506.js:1:137498)
+    at r6 (framework-1079f23839fe5506.js:1:86196)
+    at framework-1079f23839fe5506.js:1:134876
+(anonymous) @ _app-be486374b1abdca5.js:38
+_app-be486374b1abdca5.js:38 MaxListenersExceededWarning: Possible EventEmitter memory leak detected. 11 changes listeners added. Use emitter.setMaxListeners() to increase limit
+    at l (2255-f53e90f499c10a88.js:1:63056)
+    at f.addListener (2255-f53e90f499c10a88.js:1:65942)
+    at h (7276-6555ca29df541412.js:1:46586)
+    at Object.watchTextFile (7276-6555ca29df541412.js:1:47534)
+    at 7361-bccd1e3b68402347.js:1:1192523
+    at Array.map (<anonymous>)
+    at 7361-bccd1e3b68402347.js:1:1192498
+    at oO (framework-1079f23839fe5506.js:1:125387)
+    at uB (framework-1079f23839fe5506.js:1:154382)
+    at framework-1079f23839fe5506.js:1:152768
+    at uO (framework-1079f23839fe5506.js:1:152834)
+    at u_ (framework-1079f23839fe5506.js:1:137498)
+    at r6 (framework-1079f23839fe5506.js:1:86196)
+    at framework-1079f23839fe5506.js:1:134876
+(anonymous) @ _app-be486374b1abdca5.js:38
+_app-be486374b1abdca5.js:38 MaxListenersExceededWarning: Possible EventEmitter memory leak detected. 11 commitComplete listeners added. Use emitter.setMaxListeners() to increase limit
+    at l (2255-f53e90f499c10a88.js:1:63056)
+    at f.addListener (2255-f53e90f499c10a88.js:1:65942)
+    at h (7276-6555ca29df541412.js:1:41756)
+    at Object.watchTextFile (7276-6555ca29df541412.js:1:47534)
+    at 7361-bccd1e3b68402347.js:1:1192523
+    at Array.map (<anonymous>)
+    at 7361-bccd1e3b68402347.js:1:1192498
+    at oO (framework-1079f23839fe5506.js:1:125387)
+    at uB (framework-1079f23839fe5506.js:1:154382)
+    at framework-1079f23839fe5506.js:1:152768
+    at uO (framework-1079f23839fe5506.js:1:152834)
+    at u_ (framework-1079f23839fe5506.js:1:137498)
+    at r6 (framework-1079f23839fe5506.js:1:86196)
+    at framework-1079f23839fe5506.js:1:134876
+(anonymous) @ _app-be486374b1abdca5.js:38
+_app-be486374b1abdca5.js:38 MaxListenersExceededWarning: Possible EventEmitter memory leak detected. 11 fileDirty listeners added. Use emitter.setMaxListeners() to increase limit
+    at l (2255-f53e90f499c10a88.js:1:63056)
+    at f.addListener (2255-f53e90f499c10a88.js:1:65942)
+    at h (7276-6555ca29df541412.js:1:41876)
+    at Object.watchTextFile (7276-6555ca29df541412.js:1:47534)
+    at 7361-bccd1e3b68402347.js:1:1192523
+    at Array.map (<anonymous>)
+    at 7361-bccd1e3b68402347.js:1:1192498
+    at oO (framework-1079f23839fe5506.js:1:125387)
+    at uB (framework-1079f23839fe5506.js:1:154382)
+    at framework-1079f23839fe5506.js:1:152768
+    at uO (framework-1079f23839fe5506.js:1:152834)
+    at u_ (framework-1079f23839fe5506.js:1:137498)
+    at r6 (framework-1079f23839fe5506.js:1:86196)
+    at framework-1079f23839fe5506.js:1:134876
+(anonymous) @ _app-be486374b1abdca5.js:38
+_app-be486374b1abdca5.js:38 MaxListenersExceededWarning: Possible EventEmitter memory leak detected. 11 fileClean listeners added. Use emitter.setMaxListeners() to increase limit
+    at l (2255-f53e90f499c10a88.js:1:63056)
+    at f.addListener (2255-f53e90f499c10a88.js:1:65942)
+    at h (7276-6555ca29df541412.js:1:41991)
+    at Object.watchTextFile (7276-6555ca29df541412.js:1:47534)
+    at 7361-bccd1e3b68402347.js:1:1192523
+    at Array.map (<anonymous>)
+    at 7361-bccd1e3b68402347.js:1:1192498
+    at oO (framework-1079f23839fe5506.js:1:125387)
+    at uB (framework-1079f23839fe5506.js:1:154382)
+    at framework-1079f23839fe5506.js:1:152768
+    at uO (framework-1079f23839fe5506.js:1:152834)
+    at u_ (framework-1079f23839fe5506.js:1:137498)
+    at r6 (framework-1079f23839fe5506.js:1:86196)
+    at framework-1079f23839fe5506.js:1:134876
+(anonymous) @ _app-be486374b1abdca5.js:38
+_app-be486374b1abdca5.js:38 MaxListenersExceededWarning: Possible EventEmitter memory leak detected. 11 commitStart listeners added. Use emitter.setMaxListeners() to increase limit
+    at l (2255-f53e90f499c10a88.js:1:63056)
+    at f.addListener (2255-f53e90f499c10a88.js:1:65942)
+    at h (7276-6555ca29df541412.js:1:42108)
+    at Object.watchTextFile (7276-6555ca29df541412.js:1:47534)
+    at 7361-bccd1e3b68402347.js:1:1192523
+    at Array.map (<anonymous>)
+    at 7361-bccd1e3b68402347.js:1:1192498
+    at oO (framework-1079f23839fe5506.js:1:125387)
+    at uB (framework-1079f23839fe5506.js:1:154382)
+    at framework-1079f23839fe5506.js:1:152768
+    at uO (framework-1079f23839fe5506.js:1:152834)
+    at u_ (framework-1079f23839fe5506.js:1:137498)
+    at r6 (framework-1079f23839fe5506.js:1:86196)
+    at framework-1079f23839fe5506.js:1:134876
+(anonymous) @ _app-be486374b1abdca5.js:38
+_app-be486374b1abdca5.js:38 MaxListenersExceededWarning: Possible EventEmitter memory leak detected. 11 promptUserReconnect listeners added. Use emitter.setMaxListeners() to increase limit
+    at l (2255-f53e90f499c10a88.js:1:63056)
+    at f.addListener (2255-f53e90f499c10a88.js:1:65942)
+    at h (7276-6555ca29df541412.js:1:43382)
+    at Object.watchTextFile (7276-6555ca29df541412.js:1:47534)
+    at 7361-bccd1e3b68402347.js:1:1192523
+    at Array.map (<anonymous>)
+    at 7361-bccd1e3b68402347.js:1:1192498
+    at oO (framework-1079f23839fe5506.js:1:125387)
+    at uB (framework-1079f23839fe5506.js:1:154382)
+    at framework-1079f23839fe5506.js:1:152768
+    at uO (framework-1079f23839fe5506.js:1:152834)
+    at u_ (framework-1079f23839fe5506.js:1:137498)
+    at r6 (framework-1079f23839fe5506.js:1:86196)
+    at framework-1079f23839fe5506.js:1:134876
+(anonymous) @ _app-be486374b1abdca5.js:38
+_app-be486374b1abdca5.js:38 MaxListenersExceededWarning: Possible EventEmitter memory leak detected. 11 cursor listeners added. Use emitter.setMaxListeners() to increase limit
+    at l (2255-f53e90f499c10a88.js:1:63056)
+    at f.addListener (2255-f53e90f499c10a88.js:1:65942)
+    at h (7276-6555ca29df541412.js:1:42211)
+    at Object.watchTextFile (7276-6555ca29df541412.js:1:47534)
+    at 7361-bccd1e3b68402347.js:1:1192523
+    at Array.map (<anonymous>)
+    at 7361-bccd1e3b68402347.js:1:1192498
+    at oO (framework-1079f23839fe5506.js:1:125387)
+    at uB (framework-1079f23839fe5506.js:1:154382)
+    at framework-1079f23839fe5506.js:1:152768
+    at uO (framework-1079f23839fe5506.js:1:152834)
+    at u_ (framework-1079f23839fe5506.js:1:137498)
+    at r6 (framework-1079f23839fe5506.js:1:86196)
+    at framework-1079f23839fe5506.js:1:134876
+(anonymous) @ _app-be486374b1abdca5.js:38
+_app-be486374b1abdca5.js:38 MaxListenersExceededWarning: Possible EventEmitter memory leak detected. 11 removeCursor listeners added. Use emitter.setMaxListeners() to increase limit
+    at l (2255-f53e90f499c10a88.js:1:63056)
+    at f.addListener (2255-f53e90f499c10a88.js:1:65942)
+    at h (7276-6555ca29df541412.js:1:42315)
+    at Object.watchTextFile (7276-6555ca29df541412.js:1:47534)
+    at 7361-bccd1e3b68402347.js:1:1192523
+    at Array.map (<anonymous>)
+    at 7361-bccd1e3b68402347.js:1:1192498
+    at oO (framework-1079f23839fe5506.js:1:125387)
+    at uB (framework-1079f23839fe5506.js:1:154382)
+    at framework-1079f23839fe5506.js:1:152768
+    at uO (framework-1079f23839fe5506.js:1:152834)
+    at u_ (framework-1079f23839fe5506.js:1:137498)
+    at r6 (framework-1079f23839fe5506.js:1:86196)
+    at framework-1079f23839fe5506.js:1:134876
+(anonymous) @ _app-be486374b1abdca5.js:38
+_app-be486374b1abdca5.js:38 MaxListenersExceededWarning: Possible EventEmitter memory leak detected. 11 fileSavedChanged listeners added. Use emitter.setMaxListeners() to increase limit
+    at l (2255-f53e90f499c10a88.js:1:63056)
+    at f.addListener (2255-f53e90f499c10a88.js:1:65942)
+    at h (7276-6555ca29df541412.js:1:42429)
+    at Object.watchTextFile (7276-6555ca29df541412.js:1:47534)
+    at 7361-bccd1e3b68402347.js:1:1192523
+    at Array.map (<anonymous>)
+    at 7361-bccd1e3b68402347.js:1:1192498
+    at oO (framework-1079f23839fe5506.js:1:125387)
+    at uB (framework-1079f23839fe5506.js:1:154382)
+    at framework-1079f23839fe5506.js:1:152768
+    at uO (framework-1079f23839fe5506.js:1:152834)
+    at u_ (framework-1079f23839fe5506.js:1:137498)
+    at r6 (framework-1079f23839fe5506.js:1:86196)
+    at framework-1079f23839fe5506.js:1:134876
+(anonymous) @ _app-be486374b1abdca5.js:38
+_app-be486374b1abdca5.js:38 MaxListenersExceededWarning: Possible EventEmitter memory leak detected. 11 error listeners added. Use emitter.setMaxListeners() to increase limit
+    at l (2255-f53e90f499c10a88.js:1:63056)
+    at f.addListener (2255-f53e90f499c10a88.js:1:65942)
+    at h (7276-6555ca29df541412.js:1:43679)
+    at Object.watchTextFile (7276-6555ca29df541412.js:1:47534)
+    at 7361-bccd1e3b68402347.js:1:1192523
+    at Array.map (<anonymous>)
+    at 7361-bccd1e3b68402347.js:1:1192498
+    at oO (framework-1079f23839fe5506.js:1:125387)
+    at uB (framework-1079f23839fe5506.js:1:154382)
+    at framework-1079f23839fe5506.js:1:152768
+    at uO (framework-1079f23839fe5506.js:1:152834)
+    at u_ (framework-1079f23839fe5506.js:1:137498)
+    at r6 (framework-1079f23839fe5506.js:1:86196)
+    at framework-1079f23839fe5506.js:1:134876
+(anonymous) @ _app-be486374b1abdca5.js:38
+_app-be486374b1abdca5.js:38 MaxListenersExceededWarning: Possible EventEmitter memory leak detected. 11 fsError listeners added. Use emitter.setMaxListeners() to increase limit
+    at l (2255-f53e90f499c10a88.js:1:63056)
+    at f.addListener (2255-f53e90f499c10a88.js:1:65942)
+    at h (7276-6555ca29df541412.js:1:43865)
+    at Object.watchTextFile (7276-6555ca29df541412.js:1:47534)
+    at 7361-bccd1e3b68402347.js:1:1192523
+    at Array.map (<anonymous>)
+    at 7361-bccd1e3b68402347.js:1:1192498
+    at oO (framework-1079f23839fe5506.js:1:125387)
+    at uB (framework-1079f23839fe5506.js:1:154382)
+    at framework-1079f23839fe5506.js:1:152768
+    at uO (framework-1079f23839fe5506.js:1:152834)
+    at u_ (framework-1079f23839fe5506.js:1:137498)
+    at r6 (framework-1079f23839fe5506.js:1:86196)
+    at framework-1079f23839fe5506.js:1:134876
+(anonymous) @ _app-be486374b1abdca5.js:38
+_app-be486374b1abdca5.js:38 MaxListenersExceededWarning: Possible EventEmitter memory leak detected. 11 transparentReconnect listeners added. Use emitter.setMaxListeners() to increase limit
+    at l (2255-f53e90f499c10a88.js:1:63056)
+    at f.addListener (2255-f53e90f499c10a88.js:1:65942)
+    at h (7276-6555ca29df541412.js:1:44700)
+    at Object.watchTextFile (7276-6555ca29df541412.js:1:47534)
+    at 7361-bccd1e3b68402347.js:1:1192523
+    at Array.map (<anonymous>)
+    at 7361-bccd1e3b68402347.js:1:1192498
+    at oO (framework-1079f23839fe5506.js:1:125387)
+    at uB (framework-1079f23839fe5506.js:1:154382)
+    at framework-1079f23839fe5506.js:1:152768
+    at uO (framework-1079f23839fe5506.js:1:152834)
+    at u_ (framework-1079f23839fe5506.js:1:137498)
+    at r6 (framework-1079f23839fe5506.js:1:86196)
+    at framework-1079f23839fe5506.js:1:134876
+(anonymous) @ _app-be486374b1abdca5.js:38
+_app-be486374b1abdca5.js:38 MaxListenersExceededWarning: Possible EventEmitter memory leak detected. 11 changes listeners added. Use emitter.setMaxListeners() to increase limit
+    at l (2255-f53e90f499c10a88.js:1:63056)
+    at f.addListener (2255-f53e90f499c10a88.js:1:65942)
+    at h (7276-6555ca29df541412.js:1:46586)
+    at Object.watchTextFile (7276-6555ca29df541412.js:1:47534)
+    at 7361-bccd1e3b68402347.js:1:1192523
+    at Array.map (<anonymous>)
+    at 7361-bccd1e3b68402347.js:1:1192498
+    at oO (framework-1079f23839fe5506.js:1:125387)
+    at uB (framework-1079f23839fe5506.js:1:154382)
+    at framework-1079f23839fe5506.js:1:152768
+    at uO (framework-1079f23839fe5506.js:1:152834)
+    at u_ (framework-1079f23839fe5506.js:1:137498)
+    at r6 (framework-1079f23839fe5506.js:1:86196)
+    at framework-1079f23839fe5506.js:1:134876
+(anonymous) @ _app-be486374b1abdca5.js:38
+_app-be486374b1abdca5.js:38 MaxListenersExceededWarning: Possible EventEmitter memory leak detected. 11 commitComplete listeners added. Use emitter.setMaxListeners() to increase limit
+    at l (2255-f53e90f499c10a88.js:1:63056)
+    at f.addListener (2255-f53e90f499c10a88.js:1:65942)
+    at h (7276-6555ca29df541412.js:1:41756)
+    at Object.watchTextFile (7276-6555ca29df541412.js:1:47534)
+    at 7361-bccd1e3b68402347.js:1:1192523
+    at Array.map (<anonymous>)
+    at 7361-bccd1e3b68402347.js:1:1192498
+    at oO (framework-1079f23839fe5506.js:1:125387)
+    at uB (framework-1079f23839fe5506.js:1:154382)
+    at framework-1079f23839fe5506.js:1:152768
+    at uO (framework-1079f23839fe5506.js:1:152834)
+    at u_ (framework-1079f23839fe5506.js:1:137498)
+    at r6 (framework-1079f23839fe5506.js:1:86196)
+    at framework-1079f23839fe5506.js:1:134876
+(anonymous) @ _app-be486374b1abdca5.js:38
+_app-be486374b1abdca5.js:38 MaxListenersExceededWarning: Possible EventEmitter memory leak detected. 11 fileDirty listeners added. Use emitter.setMaxListeners() to increase limit
+    at l (2255-f53e90f499c10a88.js:1:63056)
+    at f.addListener (2255-f53e90f499c10a88.js:1:65942)
+    at h (7276-6555ca29df541412.js:1:41876)
+    at Object.watchTextFile (7276-6555ca29df541412.js:1:47534)
+    at 7361-bccd1e3b68402347.js:1:1192523
+    at Array.map (<anonymous>)
+    at 7361-bccd1e3b68402347.js:1:1192498
+    at oO (framework-1079f23839fe5506.js:1:125387)
+    at uB (framework-1079f23839fe5506.js:1:154382)
+    at framework-1079f23839fe5506.js:1:152768
+    at uO (framework-1079f23839fe5506.js:1:152834)
+    at u_ (framework-1079f23839fe5506.js:1:137498)
+    at r6 (framework-1079f23839fe5506.js:1:86196)
+    at framework-1079f23839fe5506.js:1:134876
+(anonymous) @ _app-be486374b1abdca5.js:38
+_app-be486374b1abdca5.js:38 MaxListenersExceededWarning: Possible EventEmitter memory leak detected. 11 fileClean listeners added. Use emitter.setMaxListeners() to increase limit
+    at l (2255-f53e90f499c10a88.js:1:63056)
+    at f.addListener (2255-f53e90f499c10a88.js:1:65942)
+    at h (7276-6555ca29df541412.js:1:41991)
+    at Object.watchTextFile (7276-6555ca29df541412.js:1:47534)
+    at 7361-bccd1e3b68402347.js:1:1192523
+    at Array.map (<anonymous>)
+    at 7361-bccd1e3b68402347.js:1:1192498
+    at oO (framework-1079f23839fe5506.js:1:125387)
+    at uB (framework-1079f23839fe5506.js:1:154382)
+    at framework-1079f23839fe5506.js:1:152768
+    at uO (framework-1079f23839fe5506.js:1:152834)
+    at u_ (framework-1079f23839fe5506.js:1:137498)
+    at r6 (framework-1079f23839fe5506.js:1:86196)
+    at framework-1079f23839fe5506.js:1:134876
+(anonymous) @ _app-be486374b1abdca5.js:38
+_app-be486374b1abdca5.js:38 MaxListenersExceededWarning: Possible EventEmitter memory leak detected. 11 commitStart listeners added. Use emitter.setMaxListeners() to increase limit
+    at l (2255-f53e90f499c10a88.js:1:63056)
+    at f.addListener (2255-f53e90f499c10a88.js:1:65942)
+    at h (7276-6555ca29df541412.js:1:42108)
+    at Object.watchTextFile (7276-6555ca29df541412.js:1:47534)
+    at 7361-bccd1e3b68402347.js:1:1192523
+    at Array.map (<anonymous>)
+    at 7361-bccd1e3b68402347.js:1:1192498
+    at oO (framework-1079f23839fe5506.js:1:125387)
+    at uB (framework-1079f23839fe5506.js:1:154382)
+    at framework-1079f23839fe5506.js:1:152768
+    at uO (framework-1079f23839fe5506.js:1:152834)
+    at u_ (framework-1079f23839fe5506.js:1:137498)
+    at r6 (framework-1079f23839fe5506.js:1:86196)
+    at framework-1079f23839fe5506.js:1:134876
+(anonymous) @ _app-be486374b1abdca5.js:38
+_app-be486374b1abdca5.js:38 MaxListenersExceededWarning: Possible EventEmitter memory leak detected. 11 promptUserReconnect listeners added. Use emitter.setMaxListeners() to increase limit
+    at l (2255-f53e90f499c10a88.js:1:63056)
+    at f.addListener (2255-f53e90f499c10a88.js:1:65942)
+    at h (7276-6555ca29df541412.js:1:43382)
+    at Object.watchTextFile (7276-6555ca29df541412.js:1:47534)
+    at 7361-bccd1e3b68402347.js:1:1192523
+    at Array.map (<anonymous>)
+    at 7361-bccd1e3b68402347.js:1:1192498
+    at oO (framework-1079f23839fe5506.js:1:125387)
+    at uB (framework-1079f23839fe5506.js:1:154382)
+    at framework-1079f23839fe5506.js:1:152768
+    at uO (framework-1079f23839fe5506.js:1:152834)
+    at u_ (framework-1079f23839fe5506.js:1:137498)
+    at r6 (framework-1079f23839fe5506.js:1:86196)
+    at framework-1079f23839fe5506.js:1:134876
+(anonymous) @ _app-be486374b1abdca5.js:38
+sw.js:64 SW: Serving from cache: https://c2729e48-2fb9-4518-8d14-3149229b69cf-00-vi9rmtkaqn4n.kirk.replit.dev/
+sw.js:64 SW: Serving from cache: https://c2729e48-2fb9-4518-8d14-3149229b69cf-00-vi9rmtkaqn4n.kirk.replit.dev/
+sw.js:64 SW: Serving from cache: https://c2729e48-2fb9-4518-8d14-3149229b69cf-00-vi9rmtkaqn4n.kirk.replit.dev/
+sw.js:64 SW: Serving from cache: https://c2729e48-2fb9-4518-8d14-3149229b69cf-00-vi9rmtkaqn4n.kirk.replit.dev/
+anchor?ar=1&k=6Ldqhw…jQ0Mw..&hl=es-41…:1 Uncaught (in promise) SyntaxError: "[object Object]" is not valid JSON
+    at JSON.parse (<anonymous>)
+    at l._storageChangeDispatcher (content.js:2:898238)
+    at _storageChangeDispatcherCallback (content.js:2:897686)
+m.stripe.network/inn…_[version]=acacia:1 Uncaught (in promise) SyntaxError: "[object Object]" is not valid JSON
+    at JSON.parse (<anonymous>)
+    at l._storageChangeDispatcher (content.js:2:898238)
+    at _storageChangeDispatcherCallback (content.js:2:897686)
+sw_iframe.html?origi…A%2F%2Freplit.com:1 Uncaught (in promise) SyntaxError: "[object Object]" is not valid JSON
+    at JSON.parse (<anonymous>)
+    at l._storageChangeDispatcher (content.js:2:898238)
+    at _storageChangeDispatcherCallback (content.js:2:897686)
+js.stripe.com/v3/con…ipeController4941:1 Uncaught (in promise) SyntaxError: "[object Object]" is not valid JSON
+    at JSON.parse (<anonymous>)
+    at l._storageChangeDispatcher (content.js:2:898238)
+    at _storageChangeDispatcherCallback (content.js:2:897686)
+js.stripe.com/v3/m-o…_[version]=acacia:1 Uncaught (in promise) SyntaxError: "[object Object]" is not valid JSON
+    at JSON.parse (<anonymous>)
+    at l._storageChangeDispatcher (content.js:2:898238)
+    at _storageChangeDispatcherCallback (content.js:2:897686)
+anchor?ar=1&k=6Ldqhw…jQ0Mw..&hl=es-41…:1 Uncaught (in promise) SyntaxError: "[object Object]" is not valid JSON
+    at JSON.parse (<anonymous>)
+    at l._storageChangeDispatcher (content.js:2:898238)
+    at _storageChangeDispatcherCallback (content.js:2:897686)
+m.stripe.network/inn…_[version]=acacia:1 Uncaught (in promise) SyntaxError: "[object Object]" is not valid JSON
+    at JSON.parse (<anonymous>)
+    at l._storageChangeDispatcher (content.js:2:898238)
+    at _storageChangeDispatcherCallback (content.js:2:897686)
+sw_iframe.html?origi…A%2F%2Freplit.com:1 Uncaught (in promise) SyntaxError: "[object Object]" is not valid JSON
+    at JSON.parse (<anonymous>)
+    at l._storageChangeDispatcher (content.js:2:898238)
+    at _storageChangeDispatcherCallback (content.js:2:897686)
+js.stripe.com/v3/con…ipeController4941:1 Uncaught (in promise) SyntaxError: "[object Object]" is not valid JSON
+    at JSON.parse (<anonymous>)
+    at l._storageChangeDispatcher (content.js:2:898238)
+    at _storageChangeDispatcherCallback (content.js:2:897686)
+js.stripe.com/v3/m-o…_[version]=acacia:1 Uncaught (in promise) SyntaxError: "[object Object]" is not valid JSON
+    at JSON.parse (<anonymous>)
+    at l._storageChangeDispatcher (content.js:2:898238)
+    at _storageChangeDispatcherCallback (content.js:2:897686)
+RealEstatePro:1 Uncaught (in promise) SyntaxError: "[object Object]" is not valid JSON
+    at JSON.parse (<anonymous>)
+    at l._storageChangeDispatcher (content.js:2:898238)
+    at _storageChangeDispatcherCallback (content.js:2:897686)
+RealEstatePro:1 Uncaught (in promise) SyntaxError: "[object Object]" is not valid JSON
+    at JSON.parse (<anonymous>)
+    at l._storageChangeDispatcher (content.js:2:898238)
+    at _storageChangeDispatcherCallback (content.js:2:897686)
+workspace_iframe.html?initialPath=%2F&id=%3Ar2di%3A:32 Unrecognized feature: 'ambient-light-sensor'.
+workspace_iframe.html?initialPath=%2F&id=%3Ar2di%3A:32 Unrecognized feature: 'ambient-light-sensor'.
+workspace_iframe.html?initialPath=%2F&id=%3Ar2di%3A:32 Unrecognized feature: 'battery'.
+workspace_iframe.html?initialPath=%2F&id=%3Ar2di%3A:32 Unrecognized feature: 'battery'.
+workspace_iframe.html?initialPath=%2F&id=%3Ar2di%3A:32 Unrecognized feature: 'execution-while-not-rendered'.
+workspace_iframe.html?initialPath=%2F&id=%3Ar2di%3A:32 Unrecognized feature: 'execution-while-not-rendered'.
+workspace_iframe.html?initialPath=%2F&id=%3Ar2di%3A:32 Unrecognized feature: 'execution-while-out-of-viewport'.
+workspace_iframe.html?initialPath=%2F&id=%3Ar2di%3A:32 Unrecognized feature: 'execution-while-out-of-viewport'.
+workspace_iframe.html?initialPath=%2F&id=%3Ar2di%3A:32 Unrecognized feature: 'layout-animations'.
+workspace_iframe.html?initialPath=%2F&id=%3Ar2di%3A:32 Unrecognized feature: 'layout-animations'.
+workspace_iframe.html?initialPath=%2F&id=%3Ar2di%3A:32 Unrecognized feature: 'legacy-image-formats'.
+workspace_iframe.html?initialPath=%2F&id=%3Ar2di%3A:32 Unrecognized feature: 'legacy-image-formats'.
+workspace_iframe.html?initialPath=%2F&id=%3Ar2di%3A:32 Unrecognized feature: 'navigation-override'.
+workspace_iframe.html?initialPath=%2F&id=%3Ar2di%3A:32 Unrecognized feature: 'navigation-override'.
+workspace_iframe.html?initialPath=%2F&id=%3Ar2di%3A:32 Unrecognized feature: 'oversized-images'.
+workspace_iframe.html?initialPath=%2F&id=%3Ar2di%3A:32 Unrecognized feature: 'oversized-images'.
+workspace_iframe.html?initialPath=%2F&id=%3Ar2di%3A:32 Unrecognized feature: 'publickey-credentials'.
+workspace_iframe.html?initialPath=%2F&id=%3Ar2di%3A:32 Unrecognized feature: 'publickey-credentials'.
+workspace_iframe.html?initialPath=%2F&id=%3Ar2di%3A:32 Unrecognized feature: 'speaker-selection'.
+workspace_iframe.html?initialPath=%2F&id=%3Ar2di%3A:32 Unrecognized feature: 'speaker-selection'.
+workspace_iframe.html?initialPath=%2F&id=%3Ar2di%3A:32 Unrecognized feature: 'unoptimized-images'.
+workspace_iframe.html?initialPath=%2F&id=%3Ar2di%3A:32 Unrecognized feature: 'unoptimized-images'.
+workspace_iframe.html?initialPath=%2F&id=%3Ar2di%3A:32 Unrecognized feature: 'unsized-media'.
+workspace_iframe.html?initialPath=%2F&id=%3Ar2di%3A:32 Unrecognized feature: 'unsized-media'.
+workspace_iframe.html?initialPath=%2F&id=%3Ar2di%3A:32 Allow attribute will take precedence over 'allowfullscreen'.
+workspace_iframe.html?initialPath=%2F&id=%3Ar2di%3A:32 Allow attribute will take precedence over 'allowfullscreen'.
+workspace_iframe.html?initialPath=%2F&id=%3Ar2di%3A:32 Allow attribute will take precedence over 'allowpaymentrequest'.
+workspace_iframe.html?initialPath=%2F&id=%3Ar2di%3A:32 Allow attribute will take precedence over 'allowpaymentrequest'.
+sw.js:64 SW: Serving from cache: https://c2729e48-2fb9-4518-8d14-3149229b69cf-00-vi9rmtkaqn4n.kirk.replit.dev/
+sw.js:64 SW: Serving from cache: https://c2729e48-2fb9-4518-8d14-3149229b69cf-00-vi9rmtkaqn4n.kirk.replit.dev/
+ AuthProvider initializing...
+ Warning: Invalid hook call. Hooks can only be called inside of the body of a function component. This could happen for one of the following reasons:
+1. You might have mismatching versions of React and the renderer (such as React DOM)
+2. You might be breaking the Rules of Hooks
+3. You might have more than one copy of React in the same app
+See https://reactjs.org/link/invalid-hook-call for tips about how to debug and fix this problem.
+printWarning @ chunk-QCHXOAYK.js?v=2c9b99ea:136
+ AuthProvider initializing...
+ Warning: Invalid hook call. Hooks can only be called inside of the body of a function component. This could happen for one of the following reasons:
+1. You might have mismatching versions of React and the renderer (such as React DOM)
+2. You might be breaking the Rules of Hooks
+3. You might have more than one copy of React in the same app
+See https://reactjs.org/link/invalid-hook-call for tips about how to debug and fix this problem.
+printWarning @ chunk-QCHXOAYK.js?v=2c9b99ea:136
+ Global error: TypeError: Cannot read properties of null (reading 'useContext')
+    at Object.useContext (chunk-QCHXOAYK.js?v=2c9b99ea:1062:29)
+    at useIsRestoring (@tanstack_react-query.js?v=2c9b99ea:3039:35)
+    at useBaseQuery (@tanstack_react-query.js?v=2c9b99ea:3210:23)
+    at useQuery (@tanstack_react-query.js?v=2c9b99ea:3288:10)
+    at AuthProvider (use-auth.tsx:121:7)
+    at renderWithHooks (chunk-RPCDYKBN.js?v=0b3a07a3:11548:26)
+    at mountIndeterminateComponent (chunk-RPCDYKBN.js?v=0b3a07a3:14926:21)
+    at beginWork (chunk-RPCDYKBN.js?v=0b3a07a3:15914:22)
+    at HTMLUnknownElement.callCallback2 (chunk-RPCDYKBN.js?v=0b3a07a3:3674:22)
+    at Object.invokeGuardedCallbackDev (chunk-RPCDYKBN.js?v=0b3a07a3:3699:24)
+(anonymous) @ main.tsx?v=7dWhW5dqbZ1mgcEBMwz7b:102
+chunk-QCHXOAYK.js?v=2c9b99ea:1062 Uncaught TypeError: Cannot read properties of null (reading 'useContext')
+    at Object.useContext (chunk-QCHXOAYK.js?v=2c9b99ea:1062:29)
+    at useIsRestoring (@tanstack_react-query.js?v=2c9b99ea:3039:35)
+    at useBaseQuery (@tanstack_react-query.js?v=2c9b99ea:3210:23)
+    at useQuery (@tanstack_react-query.js?v=2c9b99ea:3288:10)
+    at AuthProvider (use-auth.tsx:121:7)
+    at renderWithHooks (chunk-RPCDYKBN.js?v=0b3a07a3:11548:26)
+    at mountIndeterminateComponent (chunk-RPCDYKBN.js?v=0b3a07a3:14926:21)
+    at beginWork (chunk-RPCDYKBN.js?v=0b3a07a3:15914:22)
+    at HTMLUnknownElement.callCallback2 (chunk-RPCDYKBN.js?v=0b3a07a3:3674:22)
+    at Object.invokeGuardedCallbackDev (chunk-RPCDYKBN.js?v=0b3a07a3:3699:24)
+ AuthProvider initializing...
+ Warning: Invalid hook call. Hooks can only be called inside of the body of a function component. This could happen for one of the following reasons:
+1. You might have mismatching versions of React and the renderer (such as React DOM)
+2. You might be breaking the Rules of Hooks
+3. You might have more than one copy of React in the same app
+See https://reactjs.org/link/invalid-hook-call for tips about how to debug and fix this problem.
+printWarning @ chunk-QCHXOAYK.js?v=2c9b99ea:136
+ AuthProvider initializing...
+ Warning: Invalid hook call. Hooks can only be called inside of the body of a function component. This could happen for one of the following reasons:
+1. You might have mismatching versions of React and the renderer (such as React DOM)
+2. You might be breaking the Rules of Hooks
+3. You might have more than one copy of React in the same app
+See https://reactjs.org/link/invalid-hook-call for tips about how to debug and fix this problem.
+printWarning @ chunk-QCHXOAYK.js?v=2c9b99ea:136
+ Global error: TypeError: Cannot read properties of null (reading 'useContext')
+    at Object.useContext (chunk-QCHXOAYK.js?v=2c9b99ea:1062:29)
+    at useIsRestoring (@tanstack_react-query.js?v=2c9b99ea:3039:35)
+    at useBaseQuery (@tanstack_react-query.js?v=2c9b99ea:3210:23)
+    at useQuery (@tanstack_react-query.js?v=2c9b99ea:3288:10)
+    at AuthProvider (use-auth.tsx:121:7)
+    at renderWithHooks (chunk-RPCDYKBN.js?v=0b3a07a3:11548:26)
+    at mountIndeterminateComponent (chunk-RPCDYKBN.js?v=0b3a07a3:14926:21)
+    at beginWork (chunk-RPCDYKBN.js?v=0b3a07a3:15914:22)
+    at HTMLUnknownElement.callCallback2 (chunk-RPCDYKBN.js?v=0b3a07a3:3674:22)
+    at Object.invokeGuardedCallbackDev (chunk-RPCDYKBN.js?v=0b3a07a3:3699:24)
+(anonymous) @ main.tsx?v=7dWhW5dqbZ1mgcEBMwz7b:102
+chunk-QCHXOAYK.js?v=2c9b99ea:1062 Uncaught TypeError: Cannot read properties of null (reading 'useContext')
+    at Object.useContext (chunk-QCHXOAYK.js?v=2c9b99ea:1062:29)
+    at useIsRestoring (@tanstack_react-query.js?v=2c9b99ea:3039:35)
+    at useBaseQuery (@tanstack_react-query.js?v=2c9b99ea:3210:23)
+    at useQuery (@tanstack_react-query.js?v=2c9b99ea:3288:10)
+    at AuthProvider (use-auth.tsx:121:7)
+    at renderWithHooks (chunk-RPCDYKBN.js?v=0b3a07a3:11548:26)
+    at mountIndeterminateComponent (chunk-RPCDYKBN.js?v=0b3a07a3:14926:21)
+    at beginWork (chunk-RPCDYKBN.js?v=0b3a07a3:15914:22)
+    at HTMLUnknownElement.callCallback2 (chunk-RPCDYKBN.js?v=0b3a07a3:3674:22)
+    at Object.invokeGuardedCallbackDev (chunk-RPCDYKBN.js?v=0b3a07a3:3699:24)
+ The above error occurred in the <AuthProvider> component:
+
+    at AuthProvider (https://c2729e48-2fb9-4518-8d14-3149229b69cf-00-vi9rmtkaqn4n.kirk.replit.dev/src/hooks/use-auth.tsx:114:32)
+    at QueryClientProvider (https://c2729e48-2fb9-4518-8d14-3149229b69cf-00-vi9rmtkaqn4n.kirk.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/@tanstack_react-query.js?v=595272f4:3024:3)
+    at App
+    at ErrorBoundary (https://c2729e48-2fb9-4518-8d14-3149229b69cf-00-vi9rmtkaqn4n.kirk.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/react-error-boundary.js?v=9a3115f6:18:5)
+
+React will try to recreate this component tree from scratch using the error boundary you provided, ErrorBoundary.
+logCapturedError @ chunk-RPCDYKBN.js?v=0b3a07a3:14032
+ React Error Boundary caught an error: TypeError: Cannot read properties of null (reading 'useContext')
+    at Object.useContext (chunk-QCHXOAYK.js?v=2c9b99ea:1062:29)
+    at useIsRestoring (@tanstack_react-query.js?v=2c9b99ea:3039:35)
+    at useBaseQuery (@tanstack_react-query.js?v=2c9b99ea:3210:23)
+    at useQuery (@tanstack_react-query.js?v=2c9b99ea:3288:10)
+    at AuthProvider (use-auth.tsx:121:7)
+    at renderWithHooks (chunk-RPCDYKBN.js?v=0b3a07a3:11548:26)
+    at mountIndeterminateComponent (chunk-RPCDYKBN.js?v=0b3a07a3:14926:21)
+    at beginWork (chunk-RPCDYKBN.js?v=0b3a07a3:15914:22)
+    at beginWork$1 (chunk-RPCDYKBN.js?v=0b3a07a3:19753:22)
+    at performUnitOfWork (chunk-RPCDYKBN.js?v=0b3a07a3:19198:20) Object
+onError @ main.tsx?v=7dWhW5dqbZ1mgcEBMwz7b:119
+ ServiceWorker registration successful
+use-auth.tsx:106 AuthProvider initializing...
+chunk-QCHXOAYK.js?v=2c9b99ea:136 Warning: Invalid hook call. Hooks can only be called inside of the body of a function component. This could happen for one of the following reasons:
+1. You might have mismatching versions of React and the renderer (such as React DOM)
+2. You might be breaking the Rules of Hooks
+3. You might have more than one copy of React in the same app
+See https://reactjs.org/link/invalid-hook-call for tips about how to debug and fix this problem.
+printWarning @ chunk-QCHXOAYK.js?v=2c9b99ea:136
+use-auth.tsx:106 AuthProvider initializing...
+chunk-QCHXOAYK.js?v=2c9b99ea:136 Warning: Invalid hook call. Hooks can only be called inside of the body of a function component. This could happen for one of the following reasons:
+1. You might have mismatching versions of React and the renderer (such as React DOM)
+2. You might be breaking the Rules of Hooks
+3. You might have more than one copy of React in the same app
+See https://reactjs.org/link/invalid-hook-call for tips about how to debug and fix this problem.
+printWarning @ chunk-QCHXOAYK.js?v=2c9b99ea:136
+main.tsx:62 Global error: TypeError: Cannot read properties of null (reading 'useContext')
+    at Object.useContext (chunk-QCHXOAYK.js?v=2c9b99ea:1062:29)
+    at useIsRestoring (@tanstack_react-query.js?v=2c9b99ea:3039:35)
+    at useBaseQuery (@tanstack_react-query.js?v=2c9b99ea:3210:23)
+    at useQuery (@tanstack_react-query.js?v=2c9b99ea:3288:10)
+    at AuthProvider (use-auth.tsx:111:7)
+    at renderWithHooks (chunk-RPCDYKBN.js?v=0b3a07a3:11548:26)
+    at mountIndeterminateComponent (chunk-RPCDYKBN.js?v=0b3a07a3:14926:21)
+    at beginWork (chunk-RPCDYKBN.js?v=0b3a07a3:15914:22)
+    at HTMLUnknownElement.callCallback2 (chunk-RPCDYKBN.js?v=0b3a07a3:3674:22)
+    at Object.invokeGuardedCallbackDev (chunk-RPCDYKBN.js?v=0b3a07a3:3699:24)
+(anonymous) @ main.tsx:62
+chunk-QCHXOAYK.js?v=2c9b99ea:1062 Uncaught TypeError: Cannot read properties of null (reading 'useContext')
+    at Object.useContext (chunk-QCHXOAYK.js?v=2c9b99ea:1062:29)
+    at useIsRestoring (@tanstack_react-query.js?v=2c9b99ea:3039:35)
+    at useBaseQuery (@tanstack_react-query.js?v=2c9b99ea:3210:23)
+    at useQuery (@tanstack_react-query.js?v=2c9b99ea:3288:10)
+    at AuthProvider (use-auth.tsx:111:7)
+    at renderWithHooks (chunk-RPCDYKBN.js?v=0b3a07a3:11548:26)
+    at mountIndeterminateComponent (chunk-RPCDYKBN.js?v=0b3a07a3:14926:21)
+    at beginWork (chunk-RPCDYKBN.js?v=0b3a07a3:15914:22)
+    at HTMLUnknownElement.callCallback2 (chunk-RPCDYKBN.js?v=0b3a07a3:3674:22)
+    at Object.invokeGuardedCallbackDev (chunk-RPCDYKBN.js?v=0b3a07a3:3699:24)
+use-auth.tsx:106 AuthProvider initializing...
+chunk-QCHXOAYK.js?v=2c9b99ea:136 Warning: Invalid hook call. Hooks can only be called inside of the body of a function component. This could happen for one of the following reasons:
+1. You might have mismatching versions of React and the renderer (such as React DOM)
+2. You might be breaking the Rules of Hooks
+3. You might have more than one copy of React in the same app
+See https://reactjs.org/link/invalid-hook-call for tips about how to debug and fix this problem.
+printWarning @ chunk-QCHXOAYK.js?v=2c9b99ea:136
+use-auth.tsx:106 AuthProvider initializing...
+chunk-QCHXOAYK.js?v=2c9b99ea:136 Warning: Invalid hook call. Hooks can only be called inside of the body of a function component. This could happen for one of the following reasons:
+1. You might have mismatching versions of React and the renderer (such as React DOM)
+2. You might be breaking the Rules of Hooks
+3. You might have more than one copy of React in the same app
+See https://reactjs.org/link/invalid-hook-call for tips about how to debug and fix this problem.
+printWarning @ chunk-QCHXOAYK.js?v=2c9b99ea:136
+main.tsx:62 Global error: TypeError: Cannot read properties of null (reading 'useContext')
+    at Object.useContext (chunk-QCHXOAYK.js?v=2c9b99ea:1062:29)
+    at useIsRestoring (@tanstack_react-query.js?v=2c9b99ea:3039:35)
+    at useBaseQuery (@tanstack_react-query.js?v=2c9b99ea:3210:23)
+    at useQuery (@tanstack_react-query.js?v=2c9b99ea:3288:10)
+    at AuthProvider (use-auth.tsx:111:7)
+    at renderWithHooks (chunk-RPCDYKBN.js?v=0b3a07a3:11548:26)
+    at mountIndeterminateComponent (chunk-RPCDYKBN.js?v=0b3a07a3:14926:21)
+    at beginWork (chunk-RPCDYKBN.js?v=0b3a07a3:15914:22)
+    at HTMLUnknownElement.callCallback2 (chunk-RPCDYKBN.js?v=0b3a07a3:3674:22)
+    at Object.invokeGuardedCallbackDev (chunk-RPCDYKBN.js?v=0b3a07a3:3699:24)
+(anonymous) @ main.tsx:62
+chunk-QCHXOAYK.js?v=2c9b99ea:1062 Uncaught TypeError: Cannot read properties of null (reading 'useContext')
+    at Object.useContext (chunk-QCHXOAYK.js?v=2c9b99ea:1062:29)
+    at useIsRestoring (@tanstack_react-query.js?v=2c9b99ea:3039:35)
+    at useBaseQuery (@tanstack_react-query.js?v=2c9b99ea:3210:23)
+    at useQuery (@tanstack_react-query.js?v=2c9b99ea:3288:10)
+    at AuthProvider (use-auth.tsx:111:7)
+    at renderWithHooks (chunk-RPCDYKBN.js?v=0b3a07a3:11548:26)
+    at mountIndeterminateComponent (chunk-RPCDYKBN.js?v=0b3a07a3:14926:21)
+    at beginWork (chunk-RPCDYKBN.js?v=0b3a07a3:15914:22)
+    at HTMLUnknownElement.callCallback2 (chunk-RPCDYKBN.js?v=0b3a07a3:3674:22)
+    at Object.invokeGuardedCallbackDev (chunk-RPCDYKBN.js?v=0b3a07a3:3699:24)
+chunk-RPCDYKBN.js?v=0b3a07a3:14032 The above error occurred in the <AuthProvider> component:
+
+    at AuthProvider (https://c2729e48-2fb9-4518-8d14-3149229b69cf-00-vi9rmtkaqn4n.kirk.replit.dev/src/hooks/use-auth.tsx:114:32)
+    at QueryClientProvider (https://c2729e48-2fb9-4518-8d14-3149229b69cf-00-vi9rmtkaqn4n.kirk.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/@tanstack_react-query.js?v=595272f4:3024:3)
+    at App
+    at ErrorBoundary (https://c2729e48-2fb9-4518-8d14-3149229b69cf-00-vi9rmtkaqn4n.kirk.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/react-error-boundary.js?v=9a3115f6:18:5)
+
+React will try to recreate this component tree from scratch using the error boundary you provided, ErrorBoundary.
+logCapturedError @ chunk-RPCDYKBN.js?v=0b3a07a3:14032
+main.tsx:83 React Error Boundary caught an error: TypeError: Cannot read properties of null (reading 'useContext')
+    at Object.useContext (chunk-QCHXOAYK.js?v=2c9b99ea:1062:29)
+    at useIsRestoring (@tanstack_react-query.js?v=2c9b99ea:3039:35)
+    at useBaseQuery (@tanstack_react-query.js?v=2c9b99ea:3210:23)
+    at useQuery (@tanstack_react-query.js?v=2c9b99ea:3288:10)
+    at AuthProvider (use-auth.tsx:111:7)
+    at renderWithHooks (chunk-RPCDYKBN.js?v=0b3a07a3:11548:26)
+    at mountIndeterminateComponent (chunk-RPCDYKBN.js?v=0b3a07a3:14926:21)
+    at beginWork (chunk-RPCDYKBN.js?v=0b3a07a3:15914:22)
+    at beginWork$1 (chunk-RPCDYKBN.js?v=0b3a07a3:19753:22)
+    at performUnitOfWork (chunk-RPCDYKBN.js?v=0b3a07a3:19198:20) Object
+onError @ main.tsx:83
+(index):216 ServiceWorker registration successful
+sw.js:64 SW: Serving from cache: https://c2729e48-2fb9-4518-8d14-3149229b69cf-00-vi9rmtkaqn4n.kirk.replit.dev/
+sw.js:64 SW: Serving from cache: https://c2729e48-2fb9-4518-8d14-3149229b69cf-00-vi9rmtkaqn4n.kirk.replit.dev/manifest.json
+sw.js:64 SW: Serving from cache: https://c2729e48-2fb9-4518-8d14-3149229b69cf-00-vi9rmtkaqn4n.kirk.replit.dev/
+sw.js:64 SW: Serving from cache: https://c2729e48-2fb9-4518-8d14-3149229b69cf-00-vi9rmtkaqn4n.kirk.replit.dev/manifest.json

@@ -3,12 +3,46 @@
 <html lang="es">
   <head>
     <meta charset="UTF-8" />
-    <link rel="icon" type="image/x-icon" href="/favicon.ico" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Virtual Agent - Real Estate Platform</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+    <title>Virtual Agent - Real Estate Pro</title>
+    
+    <!-- PWA Meta Tags -->
+    <meta name="description" content="Tu llave de ingreso a los bienes raíces" />
+    <meta name="theme-color" content="#F05023" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="default" />
+    <meta name="apple-mobile-web-app-title" content="Virtual Agent" />
+    <meta name="mobile-web-app-capable" content="yes" />
+    
+    <!-- PWA Manifest -->
+    <link rel="manifest" href="/manifest.json" />
+    
+    <!-- Apple Touch Icons -->
+    <link rel="apple-touch-icon" href="/assets/logo.png" />
+    <link rel="apple-touch-icon" sizes="152x152" href="/assets/logo.png" />
+    <link rel="apple-touch-icon" sizes="180x180" href="/assets/logo.png" />
+    <link rel="apple-touch-icon" sizes="167x167" href="/assets/logo.png" />
+    
+    <!-- Favicon -->
+    <link rel="icon" type="image/png" href="/assets/logo.png" />
   </head>
   <body>
     <div id="root"></div>
     <script type="module" src="/src/main.tsx"></script>
+    
+    <!-- PWA Service Worker Registration -->
+    <script>
+      if ('serviceWorker' in navigator) {
+        window.addEventListener('load', function() {
+          navigator.serviceWorker.register('/sw.js')
+            .then(function(registration) {
+              console.log('ServiceWorker registration successful');
+            })
+            .catch(function(err) {
+              console.log('ServiceWorker registration failed: ', err);
+            });
+        });
+      }
+    </script>
   </body>
 </html>

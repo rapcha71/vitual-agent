@@ -1,0 +1,1 @@
+ALTER TABLE "properties" ALTER COLUMN "created_at" SET DEFAULT '2025-10-13T18:40:36.160Z';

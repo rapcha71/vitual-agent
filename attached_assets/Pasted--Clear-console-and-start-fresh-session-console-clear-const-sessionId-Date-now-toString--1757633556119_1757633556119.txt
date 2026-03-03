@@ -1,0 +1,60 @@
+
+// Clear console and start fresh session
+console.clear();
+const sessionId = Date.now().toString();
+sessionStorage.setItem('debug-session', sessionId);
+console.log(`🚀 NEW SESSION STARTED: ${sessionId.slice(-6)} at ${new Date().toLocaleTimeString()}`);
+
+// Filter out known external errors
+const originalError = console.error;
+console.error = (...args) => {
+  const message = args.join(' ');
+  // Skip known external library errors
+  if (
+    message.includes('_storageChangeDispatcher') ||
+    message.includes('anchor?ar=1&k=6Ldqhw') ||
+    message.includes('m.stripe.network') ||
+    message.includes('content.js:2')
+  ) {
+    return; // Don't log these external errors
+  }
+  originalError.apply(console, [`🔴 [${new Date().toLocaleTimeString()}]`, ...args]);
+};
+
+try {
+  const root = createRoot(document.getElementById("root")!);
+  root.render(
+    <React.StrictMode>
+      <ErrorBoundary>
+        <App />
+      </ErrorBoundary>
+    </React.StrictMode>
+  );
+  
+  console.log("✅ App rendered successfully");
+} catch (error) {
+  console.error("❌ Failed to render app:", error);
+  
+  // Fallback render
+  document.getElementById("root")!.innerHTML = `
+    <div style="min-height: 100vh; display: flex; align-items: center; justify-content: center; background: #f3f4f6; padding: 1rem;">
+      <div style="background: white; border-radius: 0.5rem; box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1); padding: 2rem; max-width: 28rem; width: 100%; text-align: center;">
+        <div style="color: #ef4444; font-size: 3rem; margin-bottom: 1rem;">⚠️</div>
+        <h1 style="font-size: 1.25rem; font-weight: bold; color: #111827; margin-bottom: 0.5rem;">
+          Error Crítico
+        </h1>
+        <p style="color: #6b7280; margin-bottom: 1rem;">
+          No se pudo cargar la aplicación. Por favor, recarga la página.
+        </p>
+        <button 
+          onclick="window.location.reload()" 
+          style="background: #3b82f6; color: white; padding: 0.5rem 1rem; border-radius: 0.25rem; border: none; cursor: pointer; transition: background 0.2s;"
+          onmouseover="this.style.background='#2563eb'"
+          onmouseout="this.style.background='#3b82f6'"
+        >
+          Recargar Página
+        </button>
+      </div>
+    </div>
+  `;
+}

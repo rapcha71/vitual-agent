@@ -1,0 +1,2 @@
+ALTER TABLE "messages" ALTER COLUMN "created_at" SET DEFAULT '2025-10-13T18:20:31.003Z';--> statement-breakpoint
+ALTER TABLE "properties" ALTER COLUMN "created_at" SET DEFAULT '2025-10-13T18:20:31.004Z';

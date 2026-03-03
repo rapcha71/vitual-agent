@@ -1,12 +1,14 @@
 import { Button } from "@/components/ui/button";
+import { PWAInstallButton } from "@/components/ui/pwa-install-button";
 import { useAuth } from "@/hooks/use-auth";
 import { Link, useLocation } from "wouter";
-import { Plus, LogOut, ChevronLeft, Shield, User, Building } from "lucide-react";
+import { Plus, LogOut, ChevronLeft, Shield, User, Building, Share2, MessageCircle } from "lucide-react";
 import { useQuery } from "@tanstack/react-query";
 import { Property } from "@shared/schema";
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
 import { PhonePreview } from "@/components/ui/phone-preview";
 import { RegulationsDialog } from "@/components/ui/regulations-dialog";
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { useState } from "react";
 import { Loader2 } from "lucide-react";
 
@@ -23,20 +25,27 @@ export default function HomePage() {
     refetchOnWindowFocus: false,
   });
 
+  const { data: unreadData } = useQuery<{ count: number }>({
+    queryKey: ['/api/messages/unread/count'],
+    enabled: !!user,
+    refetchInterval: 30000,
+  });
+  const unreadCount = unreadData?.count || 0;
+
   const paginatedProperties = properties.slice(0, page * ITEMS_PER_PAGE);
   const hasMore = properties.length > paginatedProperties.length;
 
   if (!user) {
     return (
       <div className="flex items-center justify-center min-h-screen bg-gray-100">
-        <PhonePreview>
-          <div className="flex flex-col h-full bg-white">
+        {/* Removed PhonePreview from here */}
+        <div className="flex flex-col h-full bg-white w-full max-w-md mx-auto">
             <header className="bg-[#F05023] px-4 py-3 flex-none">
               <div className="flex items-center justify-center">
-                <img 
-                  src="/assets/logo.png"
+                <img
+                  src="/assets/logo-full.png"
                   alt="Virtual Agent"
-                  className="h-10 w-auto"
+                  className="h-[96px] w-auto object-contain" style={{ maxWidth: 'none' }}
                 />
               </div>
             </header>
@@ -49,7 +58,7 @@ export default function HomePage() {
               </p>
               <div className="w-full max-w-sm">
                 <Link href="/auth">
-                  <Button 
+                  <Button
                     className="w-full transform transition-all duration-200 hover:scale-[1.02] active:scale-[0.98] shadow-[4px_4px_10px_rgba(240,80,35,0.3)] hover:shadow-[6px_6px_15px_rgba(240,80,35,0.4)]"
                   >
                     Iniciar Sesión
@@ -58,51 +67,52 @@ export default function HomePage() {
               </div>
             </main>
           </div>
-        </PhonePreview>
       </div>
     );
   }
 
   return (
-    <div className="flex items-center justify-center min-h-screen bg-gray-100">
-      <PhonePreview className="h-full">
-        <div className="flex flex-col h-full">
+    <div className="full-screen-layout bg-gray-100">
+      <div className="flex flex-col h-full w-full">
           <header className="bg-[#F05023] px-4 py-3 flex-none">
             <div className="flex items-center justify-between">
-              <Button 
-                variant="ghost" 
+              <Button
+                variant="ghost"
                 className="text-white hover:text-white/80 p-0"
                 onClick={() => window.history.back()}
               >
                 <ChevronLeft className="h-5 w-5" />
               </Button>
               <div className="flex items-center">
-                <img 
-                  src="/assets/logo.png"
+                <img
+                  src="/assets/logo-full.png"
                   alt="Virtual Agent"
-                  className="h-10 w-auto"
+                  className="h-14 w-auto max-w-[60vw] object-contain"
                   loading="eager"
                 />
               </div>
-              <Button 
-                variant="ghost" 
-                size="sm" 
-                className="text-white hover:text-white/80 p-0"
-                onClick={() => logoutMutation.mutate()}
-              >
-                <LogOut className="h-5 w-5" />
-              </Button>
+              <div className="flex items-center gap-3">
+                <PWAInstallButton />
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  className="text-white hover:text-white/80 p-0"
+                  onClick={() => logoutMutation.mutate()}
+                >
+                  <LogOut className="h-5 w-5" />
+                </Button>
+              </div>
             </div>
           </header>
 
-          <main 
+          <main
             className="flex-1 overflow-y-auto bg-cover bg-center bg-fixed"
             style={{
               backgroundImage: 'url("/assets/ciudad.jpeg")',
               minHeight: 'calc(100vh - 64px)'
             }}
           >
-            <div className="min-h-full p-4 space-y-4 backdrop-blur-[2px]">
+            <div className="min-h-full p-4 space-y-4 backdrop-blur-[2px] content-wrapper">
               {/* Welcome Section */}
               <div className="space-y-2 bg-white/90 backdrop-blur-sm p-4 rounded-lg shadow-sm">
                 <h1 className="text-xl font-bold">
@@ -131,10 +141,10 @@ export default function HomePage() {
               </div>
 
               {/* Navigation Menu */}
-              <div className="grid grid-cols-3 gap-3">
+              <div className="grid grid-cols-2 gap-3">
                 <Link href="/properties">
-                  <Button 
-                    variant="outline" 
+                  <Button
+                    variant="outline"
                     className="w-full h-full flex flex-col items-center justify-center py-4 px-2 gap-1 text-sm bg-white/90 backdrop-blur-sm"
                   >
                     <Building className="h-4 w-4" />
@@ -142,8 +152,8 @@ export default function HomePage() {
                   </Button>
                 </Link>
                 <Link href="/profile">
-                  <Button 
-                    variant="outline" 
+                  <Button
+                    variant="outline"
                     className="w-full h-full flex flex-col items-center justify-center py-4 px-2 gap-1 text-sm bg-white/90 backdrop-blur-sm"
                   >
                     <User className="h-4 w-4" />
@@ -151,14 +161,65 @@ export default function HomePage() {
                   </Button>
                 </Link>
                 <Link href="/dashboard">
-                  <Button 
-                    variant="outline" 
+                  <Button
+                    variant="outline"
                     className="w-full h-full flex flex-col items-center justify-center py-4 px-2 gap-1 text-sm bg-white/90 backdrop-blur-sm"
                   >
                     <Building className="h-4 w-4" />
                     <span>Dashboard</span>
                   </Button>
                 </Link>
+                <Link href="/messages">
+                  <Button
+                    variant="outline"
+                    className="w-full h-full flex flex-col items-center justify-center py-4 px-2 gap-1 text-sm bg-white/90 backdrop-blur-sm relative"
+                  >
+                    <MessageCircle className="h-4 w-4" />
+                    <span>Mensajes</span>
+                    {unreadCount > 0 && (
+                      <span className="absolute top-1 right-1 bg-red-500 text-white text-xs font-bold rounded-full h-5 w-5 flex items-center justify-center">
+                        {unreadCount > 9 ? '9+' : unreadCount}
+                      </span>
+                    )}
+                  </Button>
+                </Link>
+                <Dialog>
+                  <DialogTrigger asChild>
+                    <Button
+                      variant="outline"
+                      className="w-full h-full flex flex-col items-center justify-center py-4 px-2 gap-1 text-sm bg-white/90 backdrop-blur-sm"
+                    >
+                      <Share2 className="h-4 w-4" />
+                      <span>Compartir App</span>
+                    </Button>
+                  </DialogTrigger>
+                  <DialogContent className="sm:max-w-md">
+                    <DialogHeader>
+                      <DialogTitle>Compartir Virtual Agent</DialogTitle>
+                    </DialogHeader>
+                    <div className="flex flex-col items-center space-y-4 p-4">
+                      <img 
+                        src={`https://api.qrserver.com/v1/create-qr-code/?size=250x250&data=${encodeURIComponent(window.location.origin)}`}
+                        alt="Código QR de Virtual Agent"
+                        className="w-64 h-64"
+                      />
+                      <p className="text-sm text-center text-muted-foreground">
+                        Escanea este código QR para acceder a Virtual Agent
+                      </p>
+                      <Button
+                        onClick={() => {
+                          navigator.clipboard.writeText(window.location.origin).then(() => {
+                            alert('Enlace copiado al portapapeles');
+                          });
+                        }}
+                        variant="outline"
+                        className="w-full"
+                      >
+                        Copiar Enlace
+                      </Button>
+                    </div>
+                  </DialogContent>
+                </Dialog>
               </div>
 
               {/* Properties List */}
@@ -176,8 +237,8 @@ export default function HomePage() {
                       <Card key={property.id} className="bg-white/90 backdrop-blur-sm shadow-sm">
                         <CardHeader className="p-3">
                           <CardTitle className="text-base">
-                            {property.propertyType === 'house' ? 'Casa' : 
-                             property.propertyType === 'land' ? 'Terreno' : 
+                            {property.propertyType === 'house' ? 'Casa' :
+                             property.propertyType === 'land' ? 'Terreno' :
                              'Local Comercial'}
                           </CardTitle>
                         </CardHeader>
@@ -217,7 +278,6 @@ export default function HomePage() {
             </div>
           </main>
         </div>
-      </PhonePreview>
     </div>
   );
 }

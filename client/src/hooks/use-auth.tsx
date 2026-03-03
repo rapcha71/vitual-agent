@@ -1,11 +1,12 @@
-
-import { createContext, ReactNode, useContext } from "react";
-import { useQuery, useMutation } from "@tanstack/react-query";
-import { User as SelectUser, InsertUser } from "@shared/schema";
-import { queryClient } from "../lib/queryClient";
+import { createContext, ReactNode, useContext, useEffect } from "react";
+import {
+  useQuery,
+  useMutation,
+} from "@tanstack/react-query";
+import { insertUserSchema, User as SelectUser, InsertUser } from "@shared/schema";
+import { apiRequest, queryClient } from "../lib/queryClient";
 import { useToast } from "@/hooks/use-toast";
 import { useLocation } from "wouter";
-import { apiCall } from "../lib/api";
 
 type AuthContextType = {
   user: SelectUser | null;
@@ -24,7 +25,12 @@ function useLoginMutation() {
 
   return useMutation({
     mutationFn: async (credentials: LoginData) => {
-      return await apiCall("POST", "/api/login", credentials);
+      const res = await apiRequest("POST", "/api/login", credentials);
+      if (!res.ok) {
+        const error = await res.json();
+        throw new Error(error.message || "Usuario o contraseña inválidos");
+      }
+      return res.json();
     },
     onSuccess: (user: SelectUser) => {
       queryClient.setQueryData(["/api/user"], user);
@@ -46,11 +52,14 @@ function useLogoutMutation() {
 
   return useMutation({
     mutationFn: async () => {
-      return await apiCall("POST", "/api/logout");
+      const res = await apiRequest("POST", "/api/logout");
+      if (!res.ok) {
+        const error = await res.json();
+        throw new Error(error.message || "Error al cerrar sesión");
+      }
     },
     onSuccess: () => {
       queryClient.setQueryData(["/api/user"], null);
-      queryClient.clear();
       setLocation("/auth");
     },
     onError: (error: Error) => {
@@ -69,7 +78,12 @@ function useRegisterMutation() {
 
   return useMutation({
     mutationFn: async (credentials: InsertUser) => {
-      return await apiCall("POST", "/api/register", credentials);
+      const res = await apiRequest("POST", "/api/register", credentials);
+      if (!res.ok) {
+        const error = await res.json();
+        throw new Error(error.message || "Error en el registro");
+      }
+      return res.json();
     },
     onSuccess: (user: SelectUser) => {
       queryClient.setQueryData(["/api/user"], user);
@@ -88,6 +102,8 @@ function useRegisterMutation() {
 export const AuthContext = createContext<AuthContextType | null>(null);
 
 export function AuthProvider({ children }: { children: ReactNode }) {
+  const [, setLocation] = useLocation();
+  
   const {
     data: user,
     error,
@@ -96,20 +112,38 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     queryKey: ["/api/user"],
     queryFn: async () => {
       try {
-        return await apiCall("GET", "/api/user");
-      } catch (error: any) {
-        // Return null for 401 (unauthorized) or network errors
-        if (error.message.includes('401') || error.message.includes('Network')) {
-          return null;
+        const response = await fetch("/api/user", {
+          credentials: "include",
+        });
+        if (!response.ok) {
+          if (response.status === 401) {
+            return null;
+          }
+          throw new Error("Error al obtener datos del usuario");
         }
-        throw error;
+        return response.json();
+      } catch (error) {
+        console.error("Error fetching user:", error);
+        return null;
       }
     },
     staleTime: 30000,
     retry: false,
-    refetchOnWindowFocus: false,
+    refetchOnWindowFocus: true,
     refetchOnMount: true,
+    refetchInterval: 60000,
   });
+
+  useEffect(() => {
+    const handleVisibilityChange = () => {
+      if (document.visibilityState === 'visible') {
+        queryClient.invalidateQueries({ queryKey: ["/api/user"] });
+      }
+    };
+    
+    document.addEventListener('visibilitychange', handleVisibilityChange);
+    return () => document.removeEventListener('visibilitychange', handleVisibilityChange);
+  }, []);
 
   const loginMutation = useLoginMutation();
   const logoutMutation = useLogoutMutation();

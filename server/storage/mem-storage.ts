@@ -20,6 +20,7 @@ export class MemStorage implements IStorage {
   public sessionStore: session.Store;
   private currentUserId: number;
   private currentPropertyId: number;
+  private passwordResetCodes: Map<number, { code: string; expireTime: number }> = new Map();
 
   constructor() {
     // Use the singleton instance
@@ -115,7 +116,8 @@ export class MemStorage implements IStorage {
       id,
       signPhoneNumber: insertProperty.signPhoneNumber ?? null,
       kmlData: insertProperty.kmlData ?? null,
-      markerColor
+      markerColor,
+      createdAt: new Date().toISOString()
     };
 
     this.properties.set(id, property);
@@ -127,5 +129,160 @@ export class MemStorage implements IStorage {
     return Array.from(this.properties.values()).filter(
       (property) => property.userId === userId
     );
+  }
+
+  async updateUserBiometricCounter(userId: number, counter: number): Promise<void> {
+    const user = this.users.get(userId);
+    if (user) {
+      user.biometricCounter = counter;
+    }
+  }
+
+  async storePasswordResetCode(userId: number, code: string, expireTime: number): Promise<void> {
+    this.passwordResetCodes.set(userId, { code, expireTime });
+  }
+
+  async verifyPasswordResetCode(userId: number, code: string): Promise<boolean> {
+    const resetData = this.passwordResetCodes.get(userId);
+    if (!resetData) {
+      return false;
+    }
+
+    if (Date.now() > resetData.expireTime) {
+      this.passwordResetCodes.delete(userId);
+      return false;
+    }
+
+    return resetData.code === code;
+  }
+
+  async updateUserPassword(userId: number, hashedPassword: string): Promise<void> {
+    const user = this.users.get(userId);
+    if (user) {
+      user.password = hashedPassword;
+    }
+  }
+
+  async clearPasswordResetCode(userId: number): Promise<void> {
+    this.passwordResetCodes.delete(userId);
+  }
+
+  // Payment calculation methods implementation
+  async getWeeklyPayments(): Promise<Array<{ 
+    userId: number; 
+    user: User; 
+    propertiesCount: number; 
+    totalPayment: number; 
+    weekStart: string; 
+    weekEnd: string; 
+  }>> {
+    const paymentRate = 250; // 250 colones per property
+    const currentDate = new Date();
+    
+    // Get start of current week (Monday)
+    const weekStart = new Date(currentDate);
+    weekStart.setDate(currentDate.getDate() - currentDate.getDay() + 1);
+    weekStart.setHours(0, 0, 0, 0);
+    
+    // Get end of current week (Sunday)
+    const weekEnd = new Date(weekStart);
+    weekEnd.setDate(weekStart.getDate() + 6);
+    weekEnd.setHours(23, 59, 59, 999);
+
+    // Count properties registered this week by user
+    const userPayments = new Map<number, { user: User; count: number }>();
+
+    // Iterate through all properties
+    for (const [, property] of this.properties) {
+      const propertyDate = new Date(property.createdAt);
+      
+      if (propertyDate >= weekStart && propertyDate <= weekEnd) {
+        const user = this.users.get(property.userId);
+        if (user && !user.isAdmin && !user.isSuperAdmin) {
+          if (userPayments.has(property.userId)) {
+            userPayments.get(property.userId)!.count++;
+          } else {
+            userPayments.set(property.userId, { user, count: 1 });
+          }
+        }
+      }
+    }
+
+    // Convert to result format
+    const results = Array.from(userPayments.entries())
+      .filter(([, data]) => data.count > 0)
+      .map(([userId, data]) => ({
+        userId,
+        user: data.user,
+        propertiesCount: data.count,
+        totalPayment: data.count * paymentRate,
+        weekStart: weekStart.toISOString(),
+        weekEnd: weekEnd.toISOString()
+      }));
+
+    return results;
+  }
+
+  async getUserPaymentHistory(userId: number): Promise<Array<{ 
+    weekStart: string; 
+    weekEnd: string; 
+    propertiesCount: number; 
+    totalPayment: number; 
+  }>> {
+    const paymentRate = 250;
+    const userProperties = Array.from(this.properties.values())
+      .filter(p => p.userId === userId);
+
+    // Group properties by week
+    const weeklyGroups = new Map<string, number>();
+    
+    userProperties.forEach(property => {
+      const propertyDate = new Date(property.createdAt);
+      const weekStart = new Date(propertyDate);
+      weekStart.setDate(propertyDate.getDate() - propertyDate.getDay() + 1);
+      weekStart.setHours(0, 0, 0, 0);
+      
+      const weekKey = weekStart.toISOString().split('T')[0];
+      weeklyGroups.set(weekKey, (weeklyGroups.get(weekKey) || 0) + 1);
+    });
+
+    return Array.from(weeklyGroups.entries()).map(([weekKey, count]) => {
+      const weekStart = new Date(weekKey);
+      const weekEnd = new Date(weekStart);
+      weekEnd.setDate(weekStart.getDate() + 6);
+      weekEnd.setHours(23, 59, 59, 999);
+
+      return {
+        weekStart: weekStart.toISOString(),
+        weekEnd: weekEnd.toISOString(),
+        propertiesCount: count,
+        totalPayment: count * paymentRate
+      };
+    }).filter(entry => entry.propertiesCount > 0);
+  }
+
+  // Message methods - need to implement these as they're missing
+  async createMessage(message: InsertMessage & { senderId: number }): Promise<Message> {
+    // For now, return a mock implementation
+    throw new Error('Messages not implemented in MemStorage');
+  }
+
+  async getMessages(): Promise<(Message & { sender: User })[]> {
+    // For now, return empty array
+    return [];
+  }
+
+  async markMessageAsRead(messageId: number, userId: number): Promise<void> {
+    // For now, do nothing
+  }
+
+  async getUnreadMessageCount(userId: number): Promise<number> {
+    // For now, return 0
+    return 0;
+  }
+
+  async deleteOldMessages(daysOld: number): Promise<number> {
+    // For now, return 0
+    return 0;
   }
 }

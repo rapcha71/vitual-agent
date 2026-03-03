@@ -33,6 +33,10 @@ export function setupAuth(app: Express) {
     throw new Error("SESSION_SECRET environment variable is required for secure sessions");
   }
 
+  // Detect Replit environment - trust proxy is already set in index.ts
+  const isReplit = !!process.env.REPL_SLUG || !!process.env.REPLIT_DB_URL;
+  console.log("Environment:", isReplit ? "Replit" : "Local");
+  
   const sessionSettings: session.SessionOptions = {
     secret: process.env.SESSION_SECRET,
     resave: false,
@@ -41,13 +45,14 @@ export function setupAuth(app: Express) {
     cookie: {
       maxAge: 24 * 60 * 60 * 1000, // 24 hours
       httpOnly: true,
-      secure: process.env.NODE_ENV === 'production',
-      sameSite: 'lax'
+      secure: isReplit, // true on Replit (behind HTTPS proxy)
+      sameSite: 'lax' as const, // Use 'lax' for first-party context (normal browser tabs)
+      path: '/'
     },
-    name: 'session'
+    name: 'connect.sid',
+    rolling: true
   };
 
-  app.set("trust proxy", 1);
   app.use(session(sessionSettings));
   app.use(passport.initialize());
   app.use(passport.session());
@@ -139,8 +144,18 @@ export function setupAuth(app: Express) {
           console.error("Session creation error:", err);
           return res.status(500).json({ message: "Error al crear la sesión" });
         }
-        console.log("Login successful, sending user data");
-        res.json(user);
+        // Return the full user object (without password) for the frontend
+        const userResponse = {
+          id: user.id,
+          username: user.username,
+          fullName: user.fullName,
+          nickname: user.nickname,
+          isAdmin: user.isAdmin,
+          isSuperAdmin: user.isSuperAdmin,
+          phoneNumber: user.phoneNumber,
+          lastLoginAt: user.lastLoginAt
+        };
+        res.json(userResponse);
       });
     })(req, res, next);
   });
@@ -148,13 +163,21 @@ export function setupAuth(app: Express) {
   app.post("/api/logout", (req, res) => {
     req.logout((err) => {
       if (err) {
+        console.error("Logout error:", err);
         return res.status(500).json({ message: "Error al cerrar sesión" });
       }
       req.session.destroy((err) => {
         if (err) {
+          console.error("Session destroy error:", err);
           return res.status(500).json({ message: "Error al destruir la sesión" });
         }
-        res.clearCookie('session');
+        res.clearCookie('connect.sid', {
+          path: '/',
+          httpOnly: true,
+          secure: true,
+          sameSite: 'none'
+        });
+        console.log("Logout successful, session destroyed");
         res.sendStatus(200);
       });
     });
@@ -165,5 +188,69 @@ export function setupAuth(app: Express) {
       return res.status(401).json({ message: "No autenticado" });
     }
     res.json(req.user);
+  });
+
+  // Password reset request
+  app.post("/api/forgot-password", async (req, res) => {
+    try {
+      const { username } = req.body;
+
+      if (!username) {
+        return res.status(400).json({ message: "El correo electrónico es requerido" });
+      }
+
+      const user = await storage.getUserByUsername(username);
+      if (!user) {
+        // Don't reveal if user exists or not for security
+        return res.json({ message: "Si el correo existe, recibirás un código de recuperación" });
+      }
+
+      // Generate a 6-digit reset code
+      const resetCode = Math.floor(100000 + Math.random() * 900000).toString();
+      const expireTime = Date.now() + (15 * 60 * 1000); // 15 minutes
+
+      // Store reset code (in a real app, you'd send this via email)
+      await storage.storePasswordResetCode(user.id, resetCode, expireTime);
+
+      res.json({ 
+        message: "Si el correo existe, recibirás un código de recuperación"
+      });
+    } catch (error: any) {
+      console.error("Password reset request error:", error);
+      res.status(500).json({ message: "Error interno del servidor" });
+    }
+  });
+
+  // Verify reset code and reset password
+  app.post("/api/reset-password", async (req, res) => {
+    try {
+      const { username, resetCode, newPassword } = req.body;
+
+      if (!username || !resetCode || !newPassword) {
+        return res.status(400).json({ message: "Todos los campos son requeridos" });
+      }
+
+      const user = await storage.getUserByUsername(username);
+      if (!user) {
+        return res.status(400).json({ message: "Código de recuperación inválido" });
+      }
+
+      const isValidCode = await storage.verifyPasswordResetCode(user.id, resetCode);
+      if (!isValidCode) {
+        return res.status(400).json({ message: "Código de recuperación inválido o expirado" });
+      }
+
+      // Hash new password and update
+      const hashedPassword = await hashPassword(newPassword);
+      await storage.updateUserPassword(user.id, hashedPassword);
+
+      // Clear the reset code
+      await storage.clearPasswordResetCode(user.id);
+
+      res.json({ message: "Contraseña actualizada exitosamente" });
+    } catch (error: any) {
+      console.error("Password reset error:", error);
+      res.status(500).json({ message: "Error interno del servidor" });
+    }
   });
 }

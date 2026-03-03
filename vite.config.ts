@@ -21,6 +21,10 @@ export default defineConfig({
         ]
       : []),
   ],
+  optimizeDeps: {
+    exclude: ["qrcode.react", "@radix-ui/react-dialog", "@radix-ui/react-popover", "@radix-ui/react-select"],
+    include: ["react", "react-dom", "lucide-react", "wouter"]
+  },
   resolve: {
     alias: {
       "@": path.resolve(__dirname, "client", "src"),

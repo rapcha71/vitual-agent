@@ -2,12 +2,14 @@ import express, { type Request, Response, NextFunction } from "express";
 import { registerRoutes } from "./routes";
 import { setupVite, serveStatic, log } from "./vite";
 import cors from "cors";
+import helmet from "helmet";
+import rateLimit from "express-rate-limit";
 import { setupAuth } from "./auth";
 import cookieParser from "cookie-parser";
+import { storage } from "./storage";
 
 const app = express();
 
-// Enhanced logging for debugging
 const debugLog = (message: string) => {
   console.log(`[${new Date().toISOString()}] ${message}`);
 };
@@ -15,34 +17,80 @@ const debugLog = (message: string) => {
 try {
   debugLog("Starting server initialization...");
 
-  // Simplified CORS configuration for development
+  app.use(helmet({
+    contentSecurityPolicy: false,
+    crossOriginEmbedderPolicy: false,
+  }));
+
+  const isProduction = process.env.NODE_ENV === 'production';
+  const allowedOrigins = isProduction 
+    ? [
+        process.env.REPLIT_DEV_DOMAIN,
+        process.env.REPL_SLUG ? `https://${process.env.REPL_SLUG}.${process.env.REPL_OWNER}.repl.co` : undefined,
+        'https://real-estate-pro-rapcha1.replit.app',
+        /\.replit\.app$/
+      ].filter(Boolean)
+    : true;
+
   app.use(cors({
-    origin: true, // Allow all origins in development
+    origin: allowedOrigins,
     credentials: true
   }));
   debugLog("CORS configured");
+
+  const generalLimiter = rateLimit({
+    windowMs: 15 * 60 * 1000,
+    max: 500,
+    message: { message: 'Demasiadas solicitudes, intenta más tarde' },
+    standardHeaders: true,
+    legacyHeaders: false,
+  });
+
+  const authLimiter = rateLimit({
+    windowMs: 15 * 60 * 1000,
+    max: 10,
+    message: { message: 'Demasiados intentos de inicio de sesión' },
+    standardHeaders: true,
+    legacyHeaders: false,
+  });
+
+  app.use('/api/', generalLimiter);
+  app.use('/api/login', authLimiter);
+  app.use('/api/register', authLimiter);
+  app.use('/api/forgot-password', authLimiter);
+
+  // Configure trust proxy BEFORE session middleware
+  app.set('trust proxy', 1);
 
   // Cookie parser middleware - must be before session
   app.use(cookieParser());
   debugLog("Cookie parser configured");
 
-  // Body parsing middleware with increased limits
-  app.use(express.json({ limit: '50mb' }));
-  app.use(express.urlencoded({ extended: false, limit: '50mb' }));
+  // Body parsing middleware with reasonable limits
+  app.use(express.json({ limit: '10mb' }));
+  app.use(express.urlencoded({ extended: false, limit: '10mb' }));
   debugLog("Body parsing middleware configured");
 
   // Setup authentication
   setupAuth(app);
   debugLog("Authentication setup complete");
 
-  // Logging middleware
+  // Production optimized logging middleware
   app.use((req, res, next) => {
     const start = Date.now();
-    debugLog(`Incoming ${req.method} request to ${req.path}`);
 
     res.on("finish", () => {
       const duration = Date.now() - start;
-      debugLog(`${req.method} ${req.path} ${res.statusCode} completed in ${duration}ms`);
+      // Only log errors in production, all requests in development
+      if (app.get("env") === "production") {
+        if (res.statusCode >= 400) {
+          debugLog(`${req.method} ${req.path} ${res.statusCode} completed in ${duration}ms`);
+        }
+      } else {
+        if (duration > 1000 || res.statusCode >= 400) {
+          debugLog(`${req.method} ${req.path} ${res.statusCode} completed in ${duration}ms`);
+        }
+      }
     });
 
     next();
@@ -53,6 +101,15 @@ try {
     try {
       debugLog("Starting route registration...");
       const server = await registerRoutes(app);
+
+      // Health check endpoint for production
+      app.get('/health', (_req: Request, res: Response) => {
+        res.status(200).json({ 
+          status: 'ok', 
+          timestamp: new Date().toISOString(),
+          uptime: process.uptime()
+        });
+      });
 
       // Error handling middleware
       app.use((err: any, _req: Request, res: Response, _next: NextFunction) => {
@@ -73,8 +130,8 @@ try {
         serveStatic(app);
       }
 
-      const PORT = process.env.PORT || 5000;
-      server.listen(PORT, "0.0.0.0", () => {
+      const PORT = parseInt(process.env.PORT || "5000", 10);
+      server.listen(PORT, "0.0.0.0", async () => {
         debugLog(`Server is running on port ${PORT}`);
         console.log(`
         🚀 Server is running!
@@ -82,6 +139,28 @@ try {
            - Network: http://0.0.0.0:${PORT}
            - Environment: ${app.get("env")}
         `);
+        
+        // Clean up old messages (older than 7 days) on startup
+        try {
+          const deletedCount = await storage.deleteOldMessages(7);
+          if (deletedCount > 0) {
+            console.log(`Cleaned up ${deletedCount} messages older than 7 days`);
+          }
+        } catch (error) {
+          console.error('Error cleaning up old messages:', error);
+        }
+        
+        // Schedule daily cleanup of old messages (every 24 hours)
+        setInterval(async () => {
+          try {
+            const deletedCount = await storage.deleteOldMessages(7);
+            if (deletedCount > 0) {
+              console.log(`Scheduled cleanup: deleted ${deletedCount} old messages`);
+            }
+          } catch (error) {
+            console.error('Error in scheduled message cleanup:', error);
+          }
+        }, 24 * 60 * 60 * 1000); // 24 hours
       });
     } catch (error) {
       console.error('Failed to start server:', error);

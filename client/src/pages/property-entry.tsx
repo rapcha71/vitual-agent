@@ -14,6 +14,8 @@ import imageCompression from "browser-image-compression";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { nanoid } from "nanoid";
 import { Button } from "@/components/ui/button";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+
 
 export default function PropertyEntry() {
   const [, setLocation] = useLocation();
@@ -510,6 +512,14 @@ export default function PropertyEntry() {
         return;
       }
 
+      const markerColorMap: Record<string, string> = {
+        house: "blue",
+        land: "green",
+        commercial: "yellow"
+      };
+      data.markerColor = markerColorMap[data.propertyType] || "blue";
+      data.createdAt = new Date().toISOString();
+
       console.log("All validations passed, calling mutation");
       await createPropertyMutation.mutateAsync(data);
 
@@ -532,146 +542,170 @@ export default function PropertyEntry() {
   });
 
   return (
-    <div className="flex items-center justify-center min-h-screen bg-gray-100">
-      <PhonePreview>
-        <header className="bg-[#F05023] px-4 py-3">
-          <div className="flex items-center justify-between">
-            <Button
-              variant="ghost"
-              className="text-white hover:text-white/80 p-0"
-              onClick={() => setLocation("/")}
-            >
-              <ChevronLeft className="h-5 w-5" />
-            </Button>
-            <div className="flex items-center">
-              <img
-                src="/assets/logo.png"
-                alt="Virtual Agent"
-                className="h-10 w-auto"
-              />
-            </div>
-            <Button
-              variant="ghost"
-              size="sm"
-              className="text-white hover:text-white/80 p-0"
-              onClick={() => logoutMutation.mutate()}
-            >
-              <LogOut className="h-5 w-5" />
-            </Button>
+    <div className="full-screen-layout bg-gray-100">
+      <header className="page-header">
+        <div className="flex items-center justify-between content-wrapper">
+          <Button
+            variant="ghost"
+            className="text-white hover:text-white/80 p-0"
+            onClick={() => setLocation("/")}
+          >
+            <ChevronLeft className="h-5 w-5" />
+          </Button>
+          <div className="flex items-center">
+            <img
+              src="/assets/logo-full.png"
+              alt="Virtual Agent"
+              className="h-14 w-auto max-w-[60vw] object-contain"
+            />
           </div>
-        </header>
+          <Button
+            variant="ghost"
+            size="sm"
+            className="text-white hover:text-white/80 p-0"
+            onClick={() => logoutMutation.mutate()}
+          >
+            <LogOut className="h-5 w-5" />
+          </Button>
+        </div>
+      </header>
 
-        <div className="p-4 bg-cover bg-center bg-no-repeat overflow-y-auto" style={{ backgroundImage: 'url("/assets/ciudad.jpeg")' }}>
-          <Form {...form}>
-            <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
-              <FormField
-                control={form.control}
-                name="propertyType"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel className="text-lg">Tipo de Propiedad</FormLabel>
-                    <Select onValueChange={field.onChange} defaultValue={field.value}>
-                      <FormControl>
-                        <SelectTrigger>
-                          <SelectValue placeholder="Seleccione tipo de propiedad" />
-                        </SelectTrigger>
-                      </FormControl>
-                      <SelectContent>
-                        <SelectItem value="house">Casa</SelectItem>
-                        <SelectItem value="land">Terreno</SelectItem>
-                        <SelectItem value="commercial">Local Comercial</SelectItem>
-                      </SelectContent>
-                    </Select>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-
-              <FormField
-                control={form.control}
-                name="signPhoneNumber"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel className="text-lg">Número de Teléfono del Rótulo (Opcional)</FormLabel>
-                    <FormControl>
-                      <Input {...field} />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-
-              <div className="space-y-4">
-                <h3 className="text-lg font-medium">Fotos de la Propiedad</h3>
-                <div className="grid gap-4">
-                  <button
-                    type="button"
-                    className="h-32 flex flex-col items-center justify-center relative border-2 border-gray-300 rounded-lg hover:border-[#F05023] transition-colors bg-white/95 backdrop-blur-sm"
-                    onClick={() => startCamera("sign")}
-                    disabled={isCompressing}
-                  >
-                    <Camera className="h-8 w-8 mb-2" />
-                    <span>Foto del Rótulo</span>
-                    {form.watch("images.sign") && (
-                      <>
-                        <img
-                          src={form.watch("images.sign")}
-                          alt="Sign Preview"
-                          className="absolute inset-0 w-full h-full object-cover rounded-lg opacity-50"
-                        />
-                        <button
-                          type="button"
-                          onClick={testOCR}
-                          className="absolute bottom-2 left-1/2 -translate-x-1/2 bg-white text-[#F05023] px-4 py-1 rounded-full text-sm shadow-md hover:bg-gray-50"
-                        >
-                          Verificar OCR
-                        </button>
-                      </>
-                    )}
-                  </button>
-
-                  <button
-                    type="button"
-                    className="h-32 flex flex-col items-center justify-center relative border-2 border-gray-300 rounded-lg hover:border-[#F05023] transition-colors bg-white/95 backdrop-blur-sm"
-                    onClick={() => startCamera("property")}
-                    disabled={isCompressing}
-                  >
-                    <Camera className="h-8 w-8 mb-2" />
-                    <span>Foto de la Propiedad</span>
-                    {form.watch("images.property") && (
-                      <img
-                        src={form.watch("images.property")}
-                        alt="Property Preview"
-                        className="absolute inset-0 w-full h-full object-cover rounded-lg opacity-50"
+      <div className="page-content bg-cover bg-center bg-no-repeat content-wrapper" style={{backgroundImage: 'url("/assets/ciudad.jpeg")'}}>
+        <div className="max-w-4xl mx-auto space-y-6">
+          <div className="flex-1 overflow-y-auto">
+            <div className="max-w-2xl mx-auto">
+              <Card className="bg-white/90 backdrop-blur-sm">
+                <CardHeader>
+                  <CardTitle className="text-center text-xl">
+                    Registrar Propiedad
+                  </CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <Form {...form}>
+                    <form onSubmit={form.handleSubmit(onSubmit, (errors) => {
+                      console.error("Form validation errors:", errors);
+                      const errorMessages: string[] = [];
+                      if (errors.propertyType) errorMessages.push("Seleccione tipo de propiedad");
+                      if (errors.images) errorMessages.push("Capture las fotos requeridas");
+                      if (errors.location) errorMessages.push("Capture la ubicación");
+                      toast({
+                        title: "Formulario incompleto",
+                        description: errorMessages.length > 0 ? errorMessages.join(", ") : "Por favor, revise los campos del formulario",
+                        variant: "destructive"
+                      });
+                    })} className="space-y-6">
+                      <FormField
+                        control={form.control}
+                        name="propertyType"
+                        render={({ field }) => (
+                          <FormItem>
+                            <FormLabel className="text-lg">Tipo de Propiedad</FormLabel>
+                            <Select onValueChange={field.onChange} defaultValue={field.value}>
+                              <FormControl>
+                                <SelectTrigger>
+                                  <SelectValue placeholder="Seleccione tipo de propiedad" />
+                                </SelectTrigger>
+                              </FormControl>
+                              <SelectContent>
+                                <SelectItem value="house">Casa</SelectItem>
+                                <SelectItem value="land">Terreno</SelectItem>
+                                <SelectItem value="commercial">Local Comercial</SelectItem>
+                              </SelectContent>
+                            </Select>
+                            <FormMessage />
+                          </FormItem>
+                        )}
                       />
-                    )}
-                  </button>
-                </div>
-              </div>
 
-              <button
-                type="button"
-                className="w-full h-32 flex flex-col items-center justify-center border-2 border-gray-300 rounded-lg hover:border-[#F05023] transition-colors bg-white/95 backdrop-blur-sm"
-                onClick={captureLocation}
-              >
-                <MapPin className="h-8 w-8 mb-2" />
-                <span>Capturar Ubicación</span>
-                {form.watch("location.lat") !== 0 && (
-                  <span className="text-sm text-gray-600 mt-2">
-                    Ubicación: {form.watch("location.lat").toFixed(6)}, {form.watch("location.lng").toFixed(6)}
-                  </span>
-                )}
-              </button>
+                      <FormField
+                        control={form.control}
+                        name="signPhoneNumber"
+                        render={({ field }) => (
+                          <FormItem>
+                            <FormLabel className="text-lg">Número de Teléfono del Rótulo (Opcional)</FormLabel>
+                            <FormControl>
+                              <Input {...field} />
+                            </FormControl>
+                            <FormMessage />
+                          </FormItem>
+                        )}
+                      />
 
-              <button
-                type="submit"
-                className="w-full bg-[#F05023] text-white py-3 rounded-md font-semibold disabled:opacity-50"
-                disabled={isCompressing || createPropertyMutation.isPending}
-              >
-                {createPropertyMutation.isPending ? "Enviando..." : "Enviar Propiedad"}
-              </button>
-            </form>
-          </Form>
+                      <div className="space-y-4">
+                        <h3 className="text-lg font-medium">Fotos de la Propiedad</h3>
+                        <div className="grid gap-4">
+                          <button
+                            type="button"
+                            className="h-32 flex flex-col items-center justify-center relative border-2 border-gray-300 rounded-lg hover:border-[#F05023] transition-colors bg-white/95 backdrop-blur-sm"
+                            onClick={() => startCamera("sign")}
+                            disabled={isCompressing}
+                          >
+                            <Camera className="h-8 w-8 mb-2" />
+                            <span>Foto del Rótulo</span>
+                            {form.watch("images.sign") && (
+                              <>
+                                <img
+                                  src={form.watch("images.sign")}
+                                  alt="Sign Preview"
+                                  className="absolute inset-0 w-full h-full object-cover rounded-lg opacity-50"
+                                />
+                                <button
+                                  type="button"
+                                  onClick={testOCR}
+                                  className="absolute bottom-2 left-1/2 -translate-x-1/2 bg-white text-[#F05023] px-4 py-1 rounded-full text-sm shadow-md hover:bg-gray-50"
+                                >
+                                  Verificar OCR
+                                </button>
+                              </>
+                            )}
+                          </button>
+
+                          <button
+                            type="button"
+                            className="h-32 flex flex-col items-center justify-center relative border-2 border-gray-300 rounded-lg hover:border-[#F05023] transition-colors bg-white/95 backdrop-blur-sm"
+                            onClick={() => startCamera("property")}
+                            disabled={isCompressing}
+                          >
+                            <Camera className="h-8 w-8 mb-2" />
+                            <span>Foto de la Propiedad</span>
+                            {form.watch("images.property") && (
+                              <img
+                                src={form.watch("images.property")}
+                                alt="Property Preview"
+                                className="absolute inset-0 w-full h-full object-cover rounded-lg opacity-50"
+                              />
+                            )}
+                          </button>
+                        </div>
+                      </div>
+
+                      <button
+                        type="button"
+                        className="w-full h-32 flex flex-col items-center justify-center border-2 border-gray-300 rounded-lg hover:border-[#F05023] transition-colors bg-white/95 backdrop-blur-sm"
+                        onClick={captureLocation}
+                      >
+                        <MapPin className="h-8 w-8 mb-2" />
+                        <span>Capturar Ubicación</span>
+                        {form.watch("location.lat") !== 0 && (
+                          <span className="text-sm text-gray-600 mt-2">
+                            Ubicación: {form.watch("location.lat").toFixed(6)}, {form.watch("location.lng").toFixed(6)}
+                          </span>
+                        )}
+                      </button>
+
+                      <button
+                        type="submit"
+                        className="w-full bg-[#F05023] text-white py-3 rounded-md font-semibold disabled:opacity-50"
+                        disabled={isCompressing || createPropertyMutation.isPending}
+                      >
+                        {createPropertyMutation.isPending ? "Enviando..." : "Enviar Propiedad"}
+                      </button>
+                    </form>
+                  </Form>
+                </CardContent>
+              </Card>
+            </div>
+          </div>
         </div>
 
         {showDuplicateError && (
@@ -702,7 +736,7 @@ export default function PropertyEntry() {
             </div>
           </div>
         )}
-      </PhonePreview>
+      </div>
 
       {isCapturing && (
         <Dialog

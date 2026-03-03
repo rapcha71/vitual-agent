@@ -1,3 +1,4 @@
+
 import session from "express-session";
 import { User, Property, InsertUser, InsertProperty, InsertMessage, Message } from "@shared/schema";
 
@@ -8,6 +9,7 @@ export interface IStorage {
   getUserByRememberToken(token: string): Promise<User | undefined>;
   createUser(user: InsertUser): Promise<User>;
   getAllUsers(): Promise<User[]>;
+  deleteUser(userId: number): Promise<void>;
   createProperty(property: InsertProperty & { userId: number }): Promise<Property>;
   getPropertiesByUserId(userId: number): Promise<Property[]>;
   getAllPropertiesWithUsers(): Promise<(Property & { user: User })[]>;
@@ -15,17 +17,43 @@ export interface IStorage {
   updateLastLogin(userId: number): Promise<void>;
   updateUserRole(userId: number, isAdmin: boolean): Promise<User>;
   updateUserBiometricCredentials(userId: number, credentials: {
-    credentialID: Buffer;
-    publicKey: Buffer;
+    credentialID: Uint8Array;
+    publicKey: Uint8Array;
     counter: number;
   }): Promise<void>;
   updateUserBiometricCounter(userId: number, counter: number): Promise<void>;
+  storePasswordResetCode(userId: number, code: string, expireTime: number): Promise<void>;
+  verifyPasswordResetCode(userId: number, code: string): Promise<boolean>;
+  updateUserPassword(userId: number, hashedPassword: string): Promise<void>;
+  clearPasswordResetCode(userId: number): Promise<void>;
   // New methods for messages
   createMessage(message: InsertMessage & { senderId: number }): Promise<Message>;
   getMessages(): Promise<(Message & { sender: User })[]>;
   markMessageAsRead(messageId: number, userId: number): Promise<void>;
   getUnreadMessageCount(userId: number): Promise<number>;
+  deleteOldMessages(daysOld: number): Promise<number>;
+  // Payment calculation methods
+  getWeeklyPayments(): Promise<Array<{
+    userId: number;
+    user: User;
+    propertiesCount: number;
+    totalPayment: number;
+    weekStart: string;
+    weekEnd: string;
+  }>>;
+  getUserPaymentHistory(userId: number): Promise<Array<{
+    weekStart: string;
+    weekEnd: string;
+    propertiesCount: number;
+    totalPayment: number;
+  }>>;
+  // Property notification methods for admin
+  getUnviewedPropertiesCount(): Promise<number>;
+  markPropertiesAsViewed(propertyIds: number[]): Promise<void>;
+  getSuperAdminEmails(): Promise<string[]>;
+  getPropertyByPropertyId(propertyId: string): Promise<Property | undefined>;
 }
 
-// Export storage instance
-export { storage } from "./storage/hybrid-storage";
+// Import and re-export the storage instance
+import { storage } from "./storage/database-storage";
+export { storage };

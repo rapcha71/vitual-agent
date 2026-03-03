@@ -1,0 +1,41 @@
+{
+  "version": "7",
+  "dialect": "postgresql",
+  "entries": [
+    {
+      "idx": 0,
+      "version": "7",
+      "when": 1760378771825,
+      "tag": "0000_overjoyed_random",
+      "breakpoints": true
+    },
+    {
+      "idx": 1,
+      "version": "7",
+      "when": 1760379631023,
+      "tag": "0001_special_king_bedlam",
+      "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "7",
+      "when": 1760380641427,
+      "tag": "0002_real_victor_mancha",
+      "breakpoints": true
+    },
+    {
+      "idx": 3,
+      "version": "7",
+      "when": 1760380723544,
+      "tag": "0003_sudden_the_santerians",
+      "breakpoints": true
+    },
+    {
+      "idx": 4,
+      "version": "7",
+      "when": 1760380836183,
+      "tag": "0004_brief_thaddeus_ross",
+      "breakpoints": true
+    }
+  ]
+}

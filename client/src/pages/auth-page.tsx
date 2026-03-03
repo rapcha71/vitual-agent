@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { PhonePreview } from "@/components/ui/phone-preview";
 import { Button } from "@/components/ui/button";
+import { PasswordReset } from "@/components/ui/password-reset";
 import {
   Form,
   FormControl,
@@ -18,12 +19,14 @@ import { insertUserSchema } from "@shared/schema";
 import { Redirect, useLocation } from "wouter";
 import { useToast } from "@/hooks/use-toast";
 import { Loader2 } from "lucide-react";
+import { PWAInstallButton } from "@/components/ui/pwa-install-button"; // Import PWAInstallButton
 
 export default function AuthPage() {
   const { user, loginMutation, registerMutation } = useAuth();
   const { toast } = useToast();
   const [, setLocation] = useLocation();
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [showPasswordReset, setShowPasswordReset] = useState(false);
 
   const loginForm = useForm({
     resolver: zodResolver(insertUserSchema.pick({ username: true, password: true })),
@@ -87,29 +90,32 @@ export default function AuthPage() {
   const isLoading = isSubmitting || loginMutation.isPending || registerMutation.isPending;
 
   return (
-    <div className="flex items-center justify-center min-h-screen bg-gray-100">
-      <PhonePreview>
+    <div className="full-screen-layout bg-gray-100">
         <div className="flex flex-col h-full bg-white overflow-hidden">
-          <header className="bg-[#F05023] px-4 py-3">
-            <div className="flex flex-col items-center">
+          <header className="page-header">
+            <div className="flex flex-col items-center content-wrapper">
               <img 
-                src="/assets/logo.png"
-                alt="Virtual Agent"
-                className="h-10 w-auto"
+                src="/assets/logo-full.png"
+                alt="Virtual Agent - Tu llave de ingreso a los bienes raíces"
+                className="h-[96px] md:h-[160px] w-auto object-contain" style={{ maxWidth: 'none' }}
               />
-              <div className="text-white text-xs mt-1">
-                TU LLAVE DE INGRESO A LOS BIENES RAICES
-              </div>
+            </div>
+            {/* Add PWA Install Button */}
+            <div className="absolute top-4 right-4">
+              <PWAInstallButton />
             </div>
           </header>
 
           <div className="flex-1 bg-cover bg-center bg-no-repeat" style={{backgroundImage: 'url("/assets/ciudad.jpeg")'}}>
-            <div className="min-h-full p-4">
-              <Tabs defaultValue="login" className="w-full">
-                <TabsList className="grid w-full grid-cols-2 mb-4 bg-white/80 backdrop-blur-sm">
-                  <TabsTrigger value="login">Iniciar Sesión</TabsTrigger>
-                  <TabsTrigger value="register">Registrarse</TabsTrigger>
-                </TabsList>
+            <div className="min-h-full p-4 content-wrapper max-w-2xl mx-auto">
+              {showPasswordReset ? (
+                <PasswordReset onBackToLogin={() => setShowPasswordReset(false)} />
+              ) : (
+                <Tabs defaultValue="login" className="w-full">
+                  <TabsList className="grid w-full grid-cols-2 mb-4 bg-white/80 backdrop-blur-sm">
+                    <TabsTrigger value="login">Iniciar Sesión</TabsTrigger>
+                    <TabsTrigger value="register">Registrarse</TabsTrigger>
+                  </TabsList>
 
                 <TabsContent value="login">
                   <Form {...loginForm}>
@@ -168,6 +174,17 @@ export default function AuthPage() {
                           "Iniciar Sesión"
                         )}
                       </Button>
+
+                      <div className="text-center mt-4">
+                        <button
+                          type="button"
+                          className="text-sm text-[#F05023] hover:text-[#E04015] hover:underline transition-colors"
+                          onClick={() => setShowPasswordReset(true)}
+                          disabled={isLoading}
+                        >
+                          ¿Olvidaste tu contraseña?
+                        </button>
+                      </div>
                     </form>
                   </Form>
                 </TabsContent>
@@ -296,10 +313,10 @@ export default function AuthPage() {
                   </Form>
                 </TabsContent>
               </Tabs>
+              )}
             </div>
           </div>
         </div>
-      </PhonePreview>
     </div>
   );
 }

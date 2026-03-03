@@ -7,7 +7,7 @@ import { ChevronLeft, LogOut, Image } from "lucide-react";
 import { useLocation } from "wouter";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
-import { PhonePreview } from "@/components/ui/phone-preview";
+// Removed PhonePreview import
 import { Loader2 } from "lucide-react";
 
 export default function PropertiesPage() {
@@ -21,11 +21,9 @@ export default function PropertiesPage() {
   });
 
   return (
-    <div className="h-screen flex items-center justify-center bg-gray-100">
-      <PhonePreview>
-        <div className="flex flex-col h-full bg-white">
-          <header className="bg-[#F05023] px-4 py-3 flex-none">
-            <div className="flex items-center justify-between">
+    <div className="full-screen-layout bg-gray-100">
+      <header className="page-header">
+        <div className="flex items-center justify-between content-wrapper">
               <Button 
                 variant="ghost" 
                 className="text-white hover:text-white/80 p-0"
@@ -35,9 +33,9 @@ export default function PropertiesPage() {
               </Button>
               <div className="flex items-center">
                 <img 
-                  src="/assets/logo.png"
+                  src="/assets/logo-full.png"
                   alt="Virtual Agent"
-                  className="h-10 w-auto"
+                  className="h-14 w-auto max-w-[60vw] object-contain"
                 />
               </div>
               <Button 
@@ -51,8 +49,8 @@ export default function PropertiesPage() {
             </div>
           </header>
 
-          <main className="flex-1 overflow-y-auto">
-            <div className="p-4 space-y-4">
+          <main className="page-content bg-cover bg-center bg-no-repeat content-wrapper" style={{backgroundImage: 'url("/assets/ciudad.jpeg")'}}>
+            <div className="space-y-4">
               <h1 className="text-xl font-bold">
                 Mis Propiedades
               </h1>
@@ -130,7 +128,5 @@ export default function PropertiesPage() {
             </div>
           </main>
         </div>
-      </PhonePreview>
-    </div>
   );
 }

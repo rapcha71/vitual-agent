@@ -1,3 +1,4 @@
+
 import { users, properties, messages, type User, type Property, type Message, type InsertUser, type InsertProperty, type InsertMessage, PropertyType, MarkerColors } from "@shared/schema";
 import { db } from "../db";
 import { eq, and, sql } from "drizzle-orm";
@@ -56,9 +57,17 @@ export class DatabaseStorage implements IStorage {
 
   async getAllUsers(): Promise<User[]> {
     console.log("Getting all users");
-    const allUsers = await db.select().from(users);
+    const allUsers = await db.select().from(users).where(eq(users.isDeleted, false));
     console.log("Found users count:", allUsers.length);
     return allUsers;
+  }
+
+  async deleteUser(userId: number): Promise<void> {
+    console.log("Soft deleting user:", userId);
+    await db.update(users)
+      .set({ isDeleted: true })
+      .where(eq(users.id, userId));
+    console.log("User soft deleted successfully");
   }
 
   async updateUserRole(userId: number, isAdmin: boolean): Promise<User> {
@@ -156,8 +165,17 @@ export class DatabaseStorage implements IStorage {
 
   async createMessage(message: InsertMessage & { senderId: number }): Promise<Message> {
     console.log("Creating new message:", message.content);
-    const allUsers = await this.getAllUsers();
-    const unreadByUsers = allUsers.map(user => user.id).filter(id => id !== message.senderId);
+    
+    let unreadByUsers: number[];
+    
+    if (message.recipientId) {
+      // Message to specific user - only that user should see it as unread
+      unreadByUsers = [message.recipientId];
+    } else {
+      // Broadcast message - all users except sender should see it as unread
+      const allUsers = await this.getAllUsers();
+      unreadByUsers = allUsers.map(user => user.id).filter(id => id !== message.senderId);
+    }
 
     const [createdMessage] = await db
       .insert(messages)
@@ -207,8 +225,215 @@ export class DatabaseStorage implements IStorage {
   async getUnreadMessageCount(userId: number): Promise<number> {
     console.log("Getting unread message count for user:", userId);
     const allMessages = await db.select().from(messages);
-    const unreadCount = allMessages.filter(msg => msg.unreadByUsers.includes(userId)).length;
+    
+    // Debug: Log first message to check array type
+    if (allMessages.length > 0) {
+      const firstMsg = allMessages[0];
+      console.log("First message unreadByUsers:", firstMsg.unreadByUsers, "type:", typeof firstMsg.unreadByUsers, "Array.isArray:", Array.isArray(firstMsg.unreadByUsers));
+    }
+    
+    const unreadCount = allMessages.filter(msg => {
+      // Ensure unreadByUsers is an array before using includes
+      const unreadList = Array.isArray(msg.unreadByUsers) ? msg.unreadByUsers : [];
+      const isUnread = unreadList.includes(userId);
+      if (msg.recipientId === userId || (msg.recipientId === null && msg.senderId !== userId)) {
+        console.log(`Message ${msg.id} - recipientId: ${msg.recipientId}, userId: ${userId}, unreadByUsers: [${unreadList.join(',')}], isUnread: ${isUnread}`);
+      }
+      return isUnread;
+    }).length;
     console.log("Unread message count:", unreadCount);
     return unreadCount;
   }
+
+  async deleteOldMessages(daysOld: number): Promise<number> {
+    const cutoffDate = new Date();
+    cutoffDate.setDate(cutoffDate.getDate() - daysOld);
+    
+    console.log(`Deleting messages older than ${daysOld} days (before ${cutoffDate.toISOString()})`);
+    
+    const oldMessages = await db.select({ id: messages.id })
+      .from(messages)
+      .where(sql`${messages.createdAt} < ${cutoffDate}`);
+    
+    if (oldMessages.length > 0) {
+      await db.delete(messages)
+        .where(sql`${messages.createdAt} < ${cutoffDate}`);
+      console.log(`Deleted ${oldMessages.length} old messages`);
+    } else {
+      console.log("No old messages to delete");
+    }
+    
+    return oldMessages.length;
+  }
+
+  // Password reset methods
+  private passwordResetCodes = new Map<number, { code: string; expireTime: number }>();
+
+  async storePasswordResetCode(userId: number, code: string, expireTime: number): Promise<void> {
+    this.passwordResetCodes.set(userId, { code, expireTime });
+  }
+
+  async verifyPasswordResetCode(userId: number, code: string): Promise<boolean> {
+    const resetData = this.passwordResetCodes.get(userId);
+    if (!resetData) {
+      return false;
+    }
+
+    if (Date.now() > resetData.expireTime) {
+      this.passwordResetCodes.delete(userId);
+      return false;
+    }
+
+    return resetData.code === code;
+  }
+
+  async updateUserPassword(userId: number, hashedPassword: string): Promise<void> {
+    console.log("Updating password for user:", userId);
+    await db
+      .update(users)
+      .set({ password: hashedPassword })
+      .where(eq(users.id, userId));
+    console.log("Password updated successfully");
+  }
+
+  async clearPasswordResetCode(userId: number): Promise<void> {
+    this.passwordResetCodes.delete(userId);
+  }
+
+  // Payment calculation methods
+  async getWeeklyPayments(): Promise<Array<{ 
+    userId: number; 
+    user: User; 
+    propertiesCount: number; 
+    totalPayment: number; 
+    weekStart: string; 
+    weekEnd: string; 
+  }>> {
+    const paymentRate = 250; // 250 colones per property
+    const currentDate = new Date();
+    
+    // Get start of current week (Monday)
+    const weekStart = new Date(currentDate);
+    weekStart.setDate(currentDate.getDate() - currentDate.getDay() + 1);
+    weekStart.setHours(0, 0, 0, 0);
+    
+    // Get end of current week (Sunday)
+    const weekEnd = new Date(weekStart);
+    weekEnd.setDate(weekStart.getDate() + 6);
+    weekEnd.setHours(23, 59, 59, 999);
+
+    // Get properties registered this week with users
+    const weeklyProperties = await db.select({
+      property: properties,
+      user: users
+    }).from(properties)
+      .leftJoin(users, eq(properties.userId, users.id))
+      .where(and(
+        sql`${properties.createdAt} >= ${weekStart.toISOString()}`,
+        sql`${properties.createdAt} <= ${weekEnd.toISOString()}`
+      ));
+
+    // Group by user and count properties
+    const userPayments = new Map<number, { user: User; count: number }>();
+
+    weeklyProperties.forEach(({ property, user }) => {
+      if (user && !user.isAdmin && !user.isSuperAdmin) {
+        if (userPayments.has(property.userId)) {
+          userPayments.get(property.userId)!.count++;
+        } else {
+          userPayments.set(property.userId, { user, count: 1 });
+        }
+      }
+    });
+
+    // Convert to result format
+    return Array.from(userPayments.entries())
+      .filter(([, data]) => data.count > 0)
+      .map(([userId, data]) => ({
+        userId,
+        user: data.user,
+        propertiesCount: data.count,
+        totalPayment: data.count * paymentRate,
+        weekStart: weekStart.toISOString(),
+        weekEnd: weekEnd.toISOString()
+      }));
+  }
+
+  async getUserPaymentHistory(userId: number): Promise<Array<{ 
+    weekStart: string; 
+    weekEnd: string; 
+    propertiesCount: number; 
+    totalPayment: number; 
+  }>> {
+    const paymentRate = 250;
+    
+    // Get all properties for this user
+    const userProperties = await db.select().from(properties)
+      .where(eq(properties.userId, userId));
+
+    // Group properties by week
+    const weeklyGroups = new Map<string, number>();
+    
+    userProperties.forEach(property => {
+      const propertyDate = new Date(property.createdAt);
+      const weekStart = new Date(propertyDate);
+      weekStart.setDate(propertyDate.getDate() - propertyDate.getDay() + 1);
+      weekStart.setHours(0, 0, 0, 0);
+      
+      const weekKey = weekStart.toISOString().split('T')[0];
+      weeklyGroups.set(weekKey, (weeklyGroups.get(weekKey) || 0) + 1);
+    });
+
+    return Array.from(weeklyGroups.entries()).map(([weekKey, count]) => {
+      const weekStart = new Date(weekKey);
+      const weekEnd = new Date(weekStart);
+      weekEnd.setDate(weekStart.getDate() + 6);
+      weekEnd.setHours(23, 59, 59, 999);
+
+      return {
+        weekStart: weekStart.toISOString(),
+        weekEnd: weekEnd.toISOString(),
+        propertiesCount: count,
+        totalPayment: count * paymentRate
+      };
+    }).filter(entry => entry.propertiesCount > 0);
+  }
+
+  async getUnviewedPropertiesCount(): Promise<number> {
+    const result = await db
+      .select({ count: sql<number>`count(*)` })
+      .from(properties)
+      .where(eq(properties.viewedByAdmin, false));
+    return Number(result[0]?.count || 0);
+  }
+
+  async markPropertiesAsViewed(propertyIds: number[]): Promise<void> {
+    if (propertyIds.length === 0) return;
+    await db
+      .update(properties)
+      .set({ viewedByAdmin: true })
+      .where(sql`${properties.id} = ANY(${propertyIds})`);
+  }
+
+  async getSuperAdminEmails(): Promise<string[]> {
+    const superAdmins = await db
+      .select({ email: users.email })
+      .from(users)
+      .where(and(eq(users.isSuperAdmin, true), eq(users.isDeleted, false)));
+    return superAdmins
+      .filter(u => u.email)
+      .map(u => u.email as string);
+  }
+
+  async getPropertyByPropertyId(propertyId: string): Promise<Property | undefined> {
+    const [property] = await db
+      .select()
+      .from(properties)
+      .where(eq(properties.propertyId, propertyId))
+      .limit(1);
+    return property;
+  }
 }
+
+// Export a singleton instance
+export const storage = new DatabaseStorage();

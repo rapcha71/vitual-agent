@@ -1,0 +1,3388 @@
+anchor?ar=1&k=6Ldqhw…jQ0Mw..&hl=es-41…:1 Uncaught (in promise) SyntaxError: "[object Object]" is not valid JSON
+    at JSON.parse (<anonymous>)
+    at l._storageChangeDispatcher (content.js:2:898238)
+    at _storageChangeDispatcherCallback (content.js:2:897686)
+_storageChangeDispatcher @ content.js:2
+_storageChangeDispatcherCallback @ content.js:2
+RealEstatePro:1 Uncaught (in promise) SyntaxError: "[object Object]" is not valid JSON
+    at JSON.parse (<anonymous>)
+    at l._storageChangeDispatcher (content.js:2:898238)
+    at _storageChangeDispatcherCallback (content.js:2:897686)
+_storageChangeDispatcher @ content.js:2
+_storageChangeDispatcherCallback @ content.js:2
+m.stripe.network/inn…_[version]=acacia:1 Uncaught (in promise) SyntaxError: "[object Object]" is not valid JSON
+    at JSON.parse (<anonymous>)
+    at l._storageChangeDispatcher (content.js:2:898238)
+    at _storageChangeDispatcherCallback (content.js:2:897686)
+_storageChangeDispatcher @ content.js:2
+_storageChangeDispatcherCallback @ content.js:2
+sw_iframe.html?origi…A%2F%2Freplit.com:1 Uncaught (in promise) SyntaxError: "[object Object]" is not valid JSON
+    at JSON.parse (<anonymous>)
+    at l._storageChangeDispatcher (content.js:2:898238)
+    at _storageChangeDispatcherCallback (content.js:2:897686)
+_storageChangeDispatcher @ content.js:2
+_storageChangeDispatcherCallback @ content.js:2
+js.stripe.com/v3/con…ipeController4941:1 Uncaught (in promise) SyntaxError: "[object Object]" is not valid JSON
+    at JSON.parse (<anonymous>)
+    at l._storageChangeDispatcher (content.js:2:898238)
+    at _storageChangeDispatcherCallback (content.js:2:897686)
+_storageChangeDispatcher @ content.js:2
+_storageChangeDispatcherCallback @ content.js:2
+js.stripe.com/v3/m-o…_[version]=acacia:1 Uncaught (in promise) SyntaxError: "[object Object]" is not valid JSON
+    at JSON.parse (<anonymous>)
+    at l._storageChangeDispatcher (content.js:2:898238)
+    at _storageChangeDispatcherCallback (content.js:2:897686)
+_storageChangeDispatcher @ content.js:2
+_storageChangeDispatcherCallback @ content.js:2
+anchor?ar=1&k=6Ldqhw…jQ0Mw..&hl=es-41…:1 Uncaught (in promise) SyntaxError: "[object Object]" is not valid JSON
+    at JSON.parse (<anonymous>)
+    at l._storageChangeDispatcher (content.js:2:898238)
+    at _storageChangeDispatcherCallback (content.js:2:897686)
+_storageChangeDispatcher @ content.js:2
+_storageChangeDispatcherCallback @ content.js:2
+m.stripe.network/inn…_[version]=acacia:1 Uncaught (in promise) SyntaxError: "[object Object]" is not valid JSON
+    at JSON.parse (<anonymous>)
+    at l._storageChangeDispatcher (content.js:2:898238)
+    at _storageChangeDispatcherCallback (content.js:2:897686)
+_storageChangeDispatcher @ content.js:2
+_storageChangeDispatcherCallback @ content.js:2
+RealEstatePro:1 Uncaught (in promise) SyntaxError: "[object Object]" is not valid JSON
+    at JSON.parse (<anonymous>)
+    at l._storageChangeDispatcher (content.js:2:898238)
+    at _storageChangeDispatcherCallback (content.js:2:897686)
+_storageChangeDispatcher @ content.js:2
+_storageChangeDispatcherCallback @ content.js:2
+sw_iframe.html?origi…A%2F%2Freplit.com:1 Uncaught (in promise) SyntaxError: "[object Object]" is not valid JSON
+    at JSON.parse (<anonymous>)
+    at l._storageChangeDispatcher (content.js:2:898238)
+    at _storageChangeDispatcherCallback (content.js:2:897686)
+_storageChangeDispatcher @ content.js:2
+_storageChangeDispatcherCallback @ content.js:2
+js.stripe.com/v3/con…ipeController4941:1 Uncaught (in promise) SyntaxError: "[object Object]" is not valid JSON
+    at JSON.parse (<anonymous>)
+    at l._storageChangeDispatcher (content.js:2:898238)
+    at _storageChangeDispatcherCallback (content.js:2:897686)
+_storageChangeDispatcher @ content.js:2
+_storageChangeDispatcherCallback @ content.js:2
+js.stripe.com/v3/m-o…_[version]=acacia:1 Uncaught (in promise) SyntaxError: "[object Object]" is not valid JSON
+    at JSON.parse (<anonymous>)
+    at l._storageChangeDispatcher (content.js:2:898238)
+    at _storageChangeDispatcherCallback (content.js:2:897686)
+_storageChangeDispatcher @ content.js:2
+_storageChangeDispatcherCallback @ content.js:2
+Error while parsing the 'sandbox' attribute: 'allow-downloads-without-user-activation' is an invalid sandbox flag.
+Error while parsing the 'sandbox' attribute: 'allow-downloads-without-user-activation' is an invalid sandbox flag.
+Error while parsing the 'sandbox' attribute: 'allow-downloads-without-user-activation' is an invalid sandbox flag.
+Error while parsing the 'sandbox' attribute: 'allow-downloads-without-user-activation' is an invalid sandbox flag.
+Error while parsing the 'sandbox' attribute: 'allow-downloads-without-user-activation' is an invalid sandbox flag.
+Error while parsing the 'sandbox' attribute: 'allow-downloads-without-user-activation' is an invalid sandbox flag.
+Error while parsing the 'sandbox' attribute: 'allow-downloads-without-user-activation' is an invalid sandbox flag.
+Error while parsing the 'sandbox' attribute: 'allow-downloads-without-user-activation' is an invalid sandbox flag.
+Error while parsing the 'sandbox' attribute: 'allow-downloads-without-user-activation' is an invalid sandbox flag.
+Error while parsing the 'sandbox' attribute: 'allow-downloads-without-user-activation' is an invalid sandbox flag.
+Error while parsing the 'sandbox' attribute: 'allow-downloads-without-user-activation' is an invalid sandbox flag.
+Error while parsing the 'sandbox' attribute: 'allow-downloads-without-user-activation' is an invalid sandbox flag.
+Error while parsing the 'sandbox' attribute: 'allow-downloads-without-user-activation' is an invalid sandbox flag.
+Error while parsing the 'sandbox' attribute: 'allow-downloads-without-user-activation' is an invalid sandbox flag.
+Error while parsing the 'sandbox' attribute: 'allow-downloads-without-user-activation' is an invalid sandbox flag.
+Error while parsing the 'sandbox' attribute: 'allow-downloads-without-user-activation' is an invalid sandbox flag.
+Error while parsing the 'sandbox' attribute: 'allow-downloads-without-user-activation' is an invalid sandbox flag.
+Error while parsing the 'sandbox' attribute: 'allow-downloads-without-user-activation' is an invalid sandbox flag.
+Error while parsing the 'sandbox' attribute: 'allow-downloads-without-user-activation' is an invalid sandbox flag.
+Error while parsing the 'sandbox' attribute: 'allow-downloads-without-user-activation' is an invalid sandbox flag.
+Error while parsing the 'sandbox' attribute: 'allow-downloads-without-user-activation' is an invalid sandbox flag.
+Error while parsing the 'sandbox' attribute: 'allow-downloads-without-user-activation' is an invalid sandbox flag.
+Error while parsing the 'sandbox' attribute: 'allow-downloads-without-user-activation' is an invalid sandbox flag.
+Error while parsing the 'sandbox' attribute: 'allow-downloads-without-user-activation' is an invalid sandbox flag.
+Error while parsing the 'sandbox' attribute: 'allow-downloads-without-user-activation' is an invalid sandbox flag.
+Error while parsing the 'sandbox' attribute: 'allow-downloads-without-user-activation' is an invalid sandbox flag.
+Error while parsing the 'sandbox' attribute: 'allow-downloads-without-user-activation' is an invalid sandbox flag.
+Error while parsing the 'sandbox' attribute: 'allow-downloads-without-user-activation' is an invalid sandbox flag.
+Error while parsing the 'sandbox' attribute: 'allow-downloads-without-user-activation' is an invalid sandbox flag.
+Error while parsing the 'sandbox' attribute: 'allow-downloads-without-user-activation' is an invalid sandbox flag.
+Error while parsing the 'sandbox' attribute: 'allow-downloads-without-user-activation' is an invalid sandbox flag.
+Error while parsing the 'sandbox' attribute: 'allow-downloads-without-user-activation' is an invalid sandbox flag.
+Error while parsing the 'sandbox' attribute: 'allow-downloads-without-user-activation' is an invalid sandbox flag.
+Error while parsing the 'sandbox' attribute: 'allow-downloads-without-user-activation' is an invalid sandbox flag.
+Error while parsing the 'sandbox' attribute: 'allow-downloads-without-user-activation' is an invalid sandbox flag.
+Error while parsing the 'sandbox' attribute: 'allow-downloads-without-user-activation' is an invalid sandbox flag.
+Error while parsing the 'sandbox' attribute: 'allow-downloads-without-user-activation' is an invalid sandbox flag.
+Error while parsing the 'sandbox' attribute: 'allow-downloads-without-user-activation' is an invalid sandbox flag.
+Error while parsing the 'sandbox' attribute: 'allow-downloads-without-user-activation' is an invalid sandbox flag.
+Error while parsing the 'sandbox' attribute: 'allow-downloads-without-user-activation' is an invalid sandbox flag.
+Error while parsing the 'sandbox' attribute: 'allow-downloads-without-user-activation' is an invalid sandbox flag.
+anchor?ar=1&k=6Ldqhw…jQ0Mw..&hl=es-41…:1 Uncaught (in promise) SyntaxError: "[object Object]" is not valid JSON
+    at JSON.parse (<anonymous>)
+    at l._storageChangeDispatcher (content.js:2:898238)
+    at _storageChangeDispatcherCallback (content.js:2:897686)
+_storageChangeDispatcher @ content.js:2
+_storageChangeDispatcherCallback @ content.js:2
+RealEstatePro:1 Uncaught (in promise) SyntaxError: "[object Object]" is not valid JSON
+    at JSON.parse (<anonymous>)
+    at l._storageChangeDispatcher (content.js:2:898238)
+    at _storageChangeDispatcherCallback (content.js:2:897686)
+_storageChangeDispatcher @ content.js:2
+_storageChangeDispatcherCallback @ content.js:2
+m.stripe.network/inn…_[version]=acacia:1 Uncaught (in promise) SyntaxError: "[object Object]" is not valid JSON
+    at JSON.parse (<anonymous>)
+    at l._storageChangeDispatcher (content.js:2:898238)
+    at _storageChangeDispatcherCallback (content.js:2:897686)
+_storageChangeDispatcher @ content.js:2
+_storageChangeDispatcherCallback @ content.js:2
+sw_iframe.html?origi…A%2F%2Freplit.com:1 Uncaught (in promise) SyntaxError: "[object Object]" is not valid JSON
+    at JSON.parse (<anonymous>)
+    at l._storageChangeDispatcher (content.js:2:898238)
+    at _storageChangeDispatcherCallback (content.js:2:897686)
+_storageChangeDispatcher @ content.js:2
+_storageChangeDispatcherCallback @ content.js:2
+js.stripe.com/v3/con…ipeController4941:1 Uncaught (in promise) SyntaxError: "[object Object]" is not valid JSON
+    at JSON.parse (<anonymous>)
+    at l._storageChangeDispatcher (content.js:2:898238)
+    at _storageChangeDispatcherCallback (content.js:2:897686)
+_storageChangeDispatcher @ content.js:2
+_storageChangeDispatcherCallback @ content.js:2
+js.stripe.com/v3/m-o…_[version]=acacia:1 Uncaught (in promise) SyntaxError: "[object Object]" is not valid JSON
+    at JSON.parse (<anonymous>)
+    at l._storageChangeDispatcher (content.js:2:898238)
+    at _storageChangeDispatcherCallback (content.js:2:897686)
+_storageChangeDispatcher @ content.js:2
+_storageChangeDispatcherCallback @ content.js:2
+anchor?ar=1&k=6Ldqhw…jQ0Mw..&hl=es-41…:1 Uncaught (in promise) SyntaxError: "[object Object]" is not valid JSON
+    at JSON.parse (<anonymous>)
+    at l._storageChangeDispatcher (content.js:2:898238)
+    at _storageChangeDispatcherCallback (content.js:2:897686)
+_storageChangeDispatcher @ content.js:2
+_storageChangeDispatcherCallback @ content.js:2
+RealEstatePro:1 Uncaught (in promise) SyntaxError: "[object Object]" is not valid JSON
+    at JSON.parse (<anonymous>)
+    at l._storageChangeDispatcher (content.js:2:898238)
+    at _storageChangeDispatcherCallback (content.js:2:897686)
+_storageChangeDispatcher @ content.js:2
+_storageChangeDispatcherCallback @ content.js:2
+m.stripe.network/inn…_[version]=acacia:1 Uncaught (in promise) SyntaxError: "[object Object]" is not valid JSON
+    at JSON.parse (<anonymous>)
+    at l._storageChangeDispatcher (content.js:2:898238)
+    at _storageChangeDispatcherCallback (content.js:2:897686)
+_storageChangeDispatcher @ content.js:2
+_storageChangeDispatcherCallback @ content.js:2
+sw_iframe.html?origi…A%2F%2Freplit.com:1 Uncaught (in promise) SyntaxError: "[object Object]" is not valid JSON
+    at JSON.parse (<anonymous>)
+    at l._storageChangeDispatcher (content.js:2:898238)
+    at _storageChangeDispatcherCallback (content.js:2:897686)
+_storageChangeDispatcher @ content.js:2
+_storageChangeDispatcherCallback @ content.js:2
+js.stripe.com/v3/con…ipeController4941:1 Uncaught (in promise) SyntaxError: "[object Object]" is not valid JSON
+    at JSON.parse (<anonymous>)
+    at l._storageChangeDispatcher (content.js:2:898238)
+    at _storageChangeDispatcherCallback (content.js:2:897686)
+_storageChangeDispatcher @ content.js:2
+_storageChangeDispatcherCallback @ content.js:2
+js.stripe.com/v3/m-o…_[version]=acacia:1 Uncaught (in promise) SyntaxError: "[object Object]" is not valid JSON
+    at JSON.parse (<anonymous>)
+    at l._storageChangeDispatcher (content.js:2:898238)
+    at _storageChangeDispatcherCallback (content.js:2:897686)
+_storageChangeDispatcher @ content.js:2
+_storageChangeDispatcherCallback @ content.js:2
+anchor?ar=1&k=6Ldqhw…jQ0Mw..&hl=es-41…:1 Uncaught (in promise) SyntaxError: "[object Object]" is not valid JSON
+    at JSON.parse (<anonymous>)
+    at l._storageChangeDispatcher (content.js:2:898238)
+    at _storageChangeDispatcherCallback (content.js:2:897686)
+_storageChangeDispatcher @ content.js:2
+_storageChangeDispatcherCallback @ content.js:2
+m.stripe.network/inn…_[version]=acacia:1 Uncaught (in promise) SyntaxError: "[object Object]" is not valid JSON
+    at JSON.parse (<anonymous>)
+    at l._storageChangeDispatcher (content.js:2:898238)
+    at _storageChangeDispatcherCallback (content.js:2:897686)
+_storageChangeDispatcher @ content.js:2
+_storageChangeDispatcherCallback @ content.js:2
+sw_iframe.html?origi…A%2F%2Freplit.com:1 Uncaught (in promise) SyntaxError: "[object Object]" is not valid JSON
+    at JSON.parse (<anonymous>)
+    at l._storageChangeDispatcher (content.js:2:898238)
+    at _storageChangeDispatcherCallback (content.js:2:897686)
+_storageChangeDispatcher @ content.js:2
+_storageChangeDispatcherCallback @ content.js:2
+js.stripe.com/v3/con…ipeController4941:1 Uncaught (in promise) SyntaxError: "[object Object]" is not valid JSON
+    at JSON.parse (<anonymous>)
+    at l._storageChangeDispatcher (content.js:2:898238)
+    at _storageChangeDispatcherCallback (content.js:2:897686)
+_storageChangeDispatcher @ content.js:2
+_storageChangeDispatcherCallback @ content.js:2
+js.stripe.com/v3/m-o…_[version]=acacia:1 Uncaught (in promise) SyntaxError: "[object Object]" is not valid JSON
+    at JSON.parse (<anonymous>)
+    at l._storageChangeDispatcher (content.js:2:898238)
+    at _storageChangeDispatcherCallback (content.js:2:897686)
+_storageChangeDispatcher @ content.js:2
+_storageChangeDispatcherCallback @ content.js:2
+RealEstatePro:1 Uncaught (in promise) SyntaxError: "[object Object]" is not valid JSON
+    at JSON.parse (<anonymous>)
+    at l._storageChangeDispatcher (content.js:2:898238)
+    at _storageChangeDispatcherCallback (content.js:2:897686)
+_storageChangeDispatcher @ content.js:2
+_storageChangeDispatcherCallback @ content.js:2
+anchor?ar=1&k=6Ldqhw…jQ0Mw..&hl=es-41…:1 Uncaught (in promise) SyntaxError: "[object Object]" is not valid JSON
+    at JSON.parse (<anonymous>)
+    at l._storageChangeDispatcher (content.js:2:898238)
+    at _storageChangeDispatcherCallback (content.js:2:897686)
+_storageChangeDispatcher @ content.js:2
+_storageChangeDispatcherCallback @ content.js:2
+m.stripe.network/inn…_[version]=acacia:1 Uncaught (in promise) SyntaxError: "[object Object]" is not valid JSON
+    at JSON.parse (<anonymous>)
+    at l._storageChangeDispatcher (content.js:2:898238)
+    at _storageChangeDispatcherCallback (content.js:2:897686)
+_storageChangeDispatcher @ content.js:2
+_storageChangeDispatcherCallback @ content.js:2
+sw_iframe.html?origi…A%2F%2Freplit.com:1 Uncaught (in promise) SyntaxError: "[object Object]" is not valid JSON
+    at JSON.parse (<anonymous>)
+    at l._storageChangeDispatcher (content.js:2:898238)
+    at _storageChangeDispatcherCallback (content.js:2:897686)
+_storageChangeDispatcher @ content.js:2
+_storageChangeDispatcherCallback @ content.js:2
+js.stripe.com/v3/con…ipeController4941:1 Uncaught (in promise) SyntaxError: "[object Object]" is not valid JSON
+    at JSON.parse (<anonymous>)
+    at l._storageChangeDispatcher (content.js:2:898238)
+    at _storageChangeDispatcherCallback (content.js:2:897686)
+_storageChangeDispatcher @ content.js:2
+_storageChangeDispatcherCallback @ content.js:2
+js.stripe.com/v3/m-o…_[version]=acacia:1 Uncaught (in promise) SyntaxError: "[object Object]" is not valid JSON
+    at JSON.parse (<anonymous>)
+    at l._storageChangeDispatcher (content.js:2:898238)
+    at _storageChangeDispatcherCallback (content.js:2:897686)
+_storageChangeDispatcher @ content.js:2
+_storageChangeDispatcherCallback @ content.js:2
+RealEstatePro:1 Uncaught (in promise) SyntaxError: "[object Object]" is not valid JSON
+    at JSON.parse (<anonymous>)
+    at l._storageChangeDispatcher (content.js:2:898238)
+    at _storageChangeDispatcherCallback (content.js:2:897686)
+_storageChangeDispatcher @ content.js:2
+_storageChangeDispatcherCallback @ content.js:2
+anchor?ar=1&k=6Ldqhw…jQ0Mw..&hl=es-41…:1 Uncaught (in promise) SyntaxError: "[object Object]" is not valid JSON
+    at JSON.parse (<anonymous>)
+    at l._storageChangeDispatcher (content.js:2:898238)
+    at _storageChangeDispatcherCallback (content.js:2:897686)
+_storageChangeDispatcher @ content.js:2
+_storageChangeDispatcherCallback @ content.js:2
+m.stripe.network/inn…_[version]=acacia:1 Uncaught (in promise) SyntaxError: "[object Object]" is not valid JSON
+    at JSON.parse (<anonymous>)
+    at l._storageChangeDispatcher (content.js:2:898238)
+    at _storageChangeDispatcherCallback (content.js:2:897686)
+_storageChangeDispatcher @ content.js:2
+_storageChangeDispatcherCallback @ content.js:2
+sw_iframe.html?origi…A%2F%2Freplit.com:1 Uncaught (in promise) SyntaxError: "[object Object]" is not valid JSON
+    at JSON.parse (<anonymous>)
+    at l._storageChangeDispatcher (content.js:2:898238)
+    at _storageChangeDispatcherCallback (content.js:2:897686)
+_storageChangeDispatcher @ content.js:2
+_storageChangeDispatcherCallback @ content.js:2
+js.stripe.com/v3/con…ipeController4941:1 Uncaught (in promise) SyntaxError: "[object Object]" is not valid JSON
+    at JSON.parse (<anonymous>)
+    at l._storageChangeDispatcher (content.js:2:898238)
+    at _storageChangeDispatcherCallback (content.js:2:897686)
+_storageChangeDispatcher @ content.js:2
+_storageChangeDispatcherCallback @ content.js:2
+js.stripe.com/v3/m-o…_[version]=acacia:1 Uncaught (in promise) SyntaxError: "[object Object]" is not valid JSON
+    at JSON.parse (<anonymous>)
+    at l._storageChangeDispatcher (content.js:2:898238)
+    at _storageChangeDispatcherCallback (content.js:2:897686)
+_storageChangeDispatcher @ content.js:2
+_storageChangeDispatcherCallback @ content.js:2
+RealEstatePro:1 Uncaught (in promise) SyntaxError: "[object Object]" is not valid JSON
+    at JSON.parse (<anonymous>)
+    at l._storageChangeDispatcher (content.js:2:898238)
+    at _storageChangeDispatcherCallback (content.js:2:897686)
+_storageChangeDispatcher @ content.js:2
+_storageChangeDispatcherCallback @ content.js:2
+anchor?ar=1&k=6Ldqhw…jQ0Mw..&hl=es-41…:1 Uncaught (in promise) SyntaxError: "[object Object]" is not valid JSON
+    at JSON.parse (<anonymous>)
+    at l._storageChangeDispatcher (content.js:2:898238)
+    at _storageChangeDispatcherCallback (content.js:2:897686)
+_storageChangeDispatcher @ content.js:2
+_storageChangeDispatcherCallback @ content.js:2
+m.stripe.network/inn…_[version]=acacia:1 Uncaught (in promise) SyntaxError: "[object Object]" is not valid JSON
+    at JSON.parse (<anonymous>)
+    at l._storageChangeDispatcher (content.js:2:898238)
+    at _storageChangeDispatcherCallback (content.js:2:897686)
+_storageChangeDispatcher @ content.js:2
+_storageChangeDispatcherCallback @ content.js:2
+sw_iframe.html?origi…A%2F%2Freplit.com:1 Uncaught (in promise) SyntaxError: "[object Object]" is not valid JSON
+    at JSON.parse (<anonymous>)
+    at l._storageChangeDispatcher (content.js:2:898238)
+    at _storageChangeDispatcherCallback (content.js:2:897686)
+_storageChangeDispatcher @ content.js:2
+_storageChangeDispatcherCallback @ content.js:2
+js.stripe.com/v3/con…ipeController4941:1 Uncaught (in promise) SyntaxError: "[object Object]" is not valid JSON
+    at JSON.parse (<anonymous>)
+    at l._storageChangeDispatcher (content.js:2:898238)
+    at _storageChangeDispatcherCallback (content.js:2:897686)
+_storageChangeDispatcher @ content.js:2
+_storageChangeDispatcherCallback @ content.js:2
+js.stripe.com/v3/m-o…_[version]=acacia:1 Uncaught (in promise) SyntaxError: "[object Object]" is not valid JSON
+    at JSON.parse (<anonymous>)
+    at l._storageChangeDispatcher (content.js:2:898238)
+    at _storageChangeDispatcherCallback (content.js:2:897686)
+_storageChangeDispatcher @ content.js:2
+_storageChangeDispatcherCallback @ content.js:2
+RealEstatePro:1 Uncaught (in promise) SyntaxError: "[object Object]" is not valid JSON
+    at JSON.parse (<anonymous>)
+    at l._storageChangeDispatcher (content.js:2:898238)
+    at _storageChangeDispatcherCallback (content.js:2:897686)
+_storageChangeDispatcher @ content.js:2
+_storageChangeDispatcherCallback @ content.js:2
+7276-6555ca29df541412.js:1 Uncaught (in promise) Error: Committing while reconnecting
+    at r.p [as debounceCommit] (7276-6555ca29df541412.js:1:17093)
+    at f.handlePacket (7276-6555ca29df541412.js:1:6708)
+    at 7276-6555ca29df541412.js:1:13179
+    at Object.next (main-c68511811312a741.js:1:192963)
+    at n (main-c68511811312a741.js:1:59305)
+    at u (main-c68511811312a741.js:1:59502)
+p @ 7276-6555ca29df541412.js:1
+f.handlePacket @ 7276-6555ca29df541412.js:1
+(anónimas) @ 7276-6555ca29df541412.js:1
+(anónimas) @ main-c68511811312a741.js:1
+n @ main-c68511811312a741.js:1
+u @ main-c68511811312a741.js:1
+anchor?ar=1&k=6Ldqhw…jQ0Mw..&hl=es-41…:1 Uncaught (in promise) SyntaxError: "[object Object]" is not valid JSON
+    at JSON.parse (<anonymous>)
+    at l._storageChangeDispatcher (content.js:2:898238)
+    at _storageChangeDispatcherCallback (content.js:2:897686)
+_storageChangeDispatcher @ content.js:2
+_storageChangeDispatcherCallback @ content.js:2
+m.stripe.network/inn…_[version]=acacia:1 Uncaught (in promise) SyntaxError: "[object Object]" is not valid JSON
+    at JSON.parse (<anonymous>)
+    at l._storageChangeDispatcher (content.js:2:898238)
+    at _storageChangeDispatcherCallback (content.js:2:897686)
+_storageChangeDispatcher @ content.js:2
+_storageChangeDispatcherCallback @ content.js:2
+RealEstatePro:1 Uncaught (in promise) SyntaxError: "[object Object]" is not valid JSON
+    at JSON.parse (<anonymous>)
+    at l._storageChangeDispatcher (content.js:2:898238)
+    at _storageChangeDispatcherCallback (content.js:2:897686)
+_storageChangeDispatcher @ content.js:2
+_storageChangeDispatcherCallback @ content.js:2
+js.stripe.com/v3/con…ipeController4941:1 Uncaught (in promise) SyntaxError: "[object Object]" is not valid JSON
+    at JSON.parse (<anonymous>)
+    at l._storageChangeDispatcher (content.js:2:898238)
+    at _storageChangeDispatcherCallback (content.js:2:897686)
+_storageChangeDispatcher @ content.js:2
+_storageChangeDispatcherCallback @ content.js:2
+js.stripe.com/v3/m-o…_[version]=acacia:1 Uncaught (in promise) SyntaxError: "[object Object]" is not valid JSON
+    at JSON.parse (<anonymous>)
+    at l._storageChangeDispatcher (content.js:2:898238)
+    at _storageChangeDispatcherCallback (content.js:2:897686)
+_storageChangeDispatcher @ content.js:2
+_storageChangeDispatcherCallback @ content.js:2
+sw_iframe.html?origi…A%2F%2Freplit.com:1 Uncaught (in promise) SyntaxError: "[object Object]" is not valid JSON
+    at JSON.parse (<anonymous>)
+    at l._storageChangeDispatcher (content.js:2:898238)
+    at _storageChangeDispatcherCallback (content.js:2:897686)
+_storageChangeDispatcher @ content.js:2
+_storageChangeDispatcherCallback @ content.js:2
+anchor?ar=1&k=6Ldqhw…jQ0Mw..&hl=es-41…:1 Uncaught (in promise) SyntaxError: "[object Object]" is not valid JSON
+    at JSON.parse (<anonymous>)
+    at l._storageChangeDispatcher (content.js:2:898238)
+    at _storageChangeDispatcherCallback (content.js:2:897686)
+_storageChangeDispatcher @ content.js:2
+_storageChangeDispatcherCallback @ content.js:2
+RealEstatePro:1 Uncaught (in promise) SyntaxError: "[object Object]" is not valid JSON
+    at JSON.parse (<anonymous>)
+    at l._storageChangeDispatcher (content.js:2:898238)
+    at _storageChangeDispatcherCallback (content.js:2:897686)
+_storageChangeDispatcher @ content.js:2
+_storageChangeDispatcherCallback @ content.js:2
+m.stripe.network/inn…_[version]=acacia:1 Uncaught (in promise) SyntaxError: "[object Object]" is not valid JSON
+    at JSON.parse (<anonymous>)
+    at l._storageChangeDispatcher (content.js:2:898238)
+    at _storageChangeDispatcherCallback (content.js:2:897686)
+_storageChangeDispatcher @ content.js:2
+_storageChangeDispatcherCallback @ content.js:2
+sw_iframe.html?origi…A%2F%2Freplit.com:1 Uncaught (in promise) SyntaxError: "[object Object]" is not valid JSON
+    at JSON.parse (<anonymous>)
+    at l._storageChangeDispatcher (content.js:2:898238)
+    at _storageChangeDispatcherCallback (content.js:2:897686)
+_storageChangeDispatcher @ content.js:2
+_storageChangeDispatcherCallback @ content.js:2
+js.stripe.com/v3/con…ipeController4941:1 Uncaught (in promise) SyntaxError: "[object Object]" is not valid JSON
+    at JSON.parse (<anonymous>)
+    at l._storageChangeDispatcher (content.js:2:898238)
+    at _storageChangeDispatcherCallback (content.js:2:897686)
+_storageChangeDispatcher @ content.js:2
+_storageChangeDispatcherCallback @ content.js:2
+js.stripe.com/v3/m-o…_[version]=acacia:1 Uncaught (in promise) SyntaxError: "[object Object]" is not valid JSON
+    at JSON.parse (<anonymous>)
+    at l._storageChangeDispatcher (content.js:2:898238)
+    at _storageChangeDispatcherCallback (content.js:2:897686)
+_storageChangeDispatcher @ content.js:2
+_storageChangeDispatcherCallback @ content.js:2
+anchor?ar=1&k=6Ldqhw…jQ0Mw..&hl=es-41…:1 Uncaught (in promise) SyntaxError: "[object Object]" is not valid JSON
+    at JSON.parse (<anonymous>)
+    at l._storageChangeDispatcher (content.js:2:898238)
+    at _storageChangeDispatcherCallback (content.js:2:897686)
+_storageChangeDispatcher @ content.js:2
+_storageChangeDispatcherCallback @ content.js:2
+m.stripe.network/inn…_[version]=acacia:1 Uncaught (in promise) SyntaxError: "[object Object]" is not valid JSON
+    at JSON.parse (<anonymous>)
+    at l._storageChangeDispatcher (content.js:2:898238)
+    at _storageChangeDispatcherCallback (content.js:2:897686)
+_storageChangeDispatcher @ content.js:2
+_storageChangeDispatcherCallback @ content.js:2
+sw_iframe.html?origi…A%2F%2Freplit.com:1 Uncaught (in promise) SyntaxError: "[object Object]" is not valid JSON
+    at JSON.parse (<anonymous>)
+    at l._storageChangeDispatcher (content.js:2:898238)
+    at _storageChangeDispatcherCallback (content.js:2:897686)
+_storageChangeDispatcher @ content.js:2
+_storageChangeDispatcherCallback @ content.js:2
+js.stripe.com/v3/con…ipeController4941:1 Uncaught (in promise) SyntaxError: "[object Object]" is not valid JSON
+    at JSON.parse (<anonymous>)
+    at l._storageChangeDispatcher (content.js:2:898238)
+    at _storageChangeDispatcherCallback (content.js:2:897686)
+_storageChangeDispatcher @ content.js:2
+_storageChangeDispatcherCallback @ content.js:2
+js.stripe.com/v3/m-o…_[version]=acacia:1 Uncaught (in promise) SyntaxError: "[object Object]" is not valid JSON
+    at JSON.parse (<anonymous>)
+    at l._storageChangeDispatcher (content.js:2:898238)
+    at _storageChangeDispatcherCallback (content.js:2:897686)
+_storageChangeDispatcher @ content.js:2
+_storageChangeDispatcherCallback @ content.js:2
+anchor?ar=1&k=6Ldqhw…jQ0Mw..&hl=es-41…:1 Uncaught (in promise) SyntaxError: "[object Object]" is not valid JSON
+    at JSON.parse (<anonymous>)
+    at l._storageChangeDispatcher (content.js:2:898238)
+    at _storageChangeDispatcherCallback (content.js:2:897686)
+_storageChangeDispatcher @ content.js:2
+_storageChangeDispatcherCallback @ content.js:2
+m.stripe.network/inn…_[version]=acacia:1 Uncaught (in promise) SyntaxError: "[object Object]" is not valid JSON
+    at JSON.parse (<anonymous>)
+    at l._storageChangeDispatcher (content.js:2:898238)
+    at _storageChangeDispatcherCallback (content.js:2:897686)
+_storageChangeDispatcher @ content.js:2
+_storageChangeDispatcherCallback @ content.js:2
+sw_iframe.html?origi…A%2F%2Freplit.com:1 Uncaught (in promise) SyntaxError: "[object Object]" is not valid JSON
+    at JSON.parse (<anonymous>)
+    at l._storageChangeDispatcher (content.js:2:898238)
+    at _storageChangeDispatcherCallback (content.js:2:897686)
+_storageChangeDispatcher @ content.js:2
+_storageChangeDispatcherCallback @ content.js:2
+js.stripe.com/v3/con…ipeController4941:1 Uncaught (in promise) SyntaxError: "[object Object]" is not valid JSON
+    at JSON.parse (<anonymous>)
+    at l._storageChangeDispatcher (content.js:2:898238)
+    at _storageChangeDispatcherCallback (content.js:2:897686)
+_storageChangeDispatcher @ content.js:2
+_storageChangeDispatcherCallback @ content.js:2
+js.stripe.com/v3/m-o…_[version]=acacia:1 Uncaught (in promise) SyntaxError: "[object Object]" is not valid JSON
+    at JSON.parse (<anonymous>)
+    at l._storageChangeDispatcher (content.js:2:898238)
+    at _storageChangeDispatcherCallback (content.js:2:897686)
+_storageChangeDispatcher @ content.js:2
+_storageChangeDispatcherCallback @ content.js:2
+RealEstatePro:1 Uncaught (in promise) SyntaxError: "[object Object]" is not valid JSON
+    at JSON.parse (<anonymous>)
+    at l._storageChangeDispatcher (content.js:2:898238)
+    at _storageChangeDispatcherCallback (content.js:2:897686)
+_storageChangeDispatcher @ content.js:2
+_storageChangeDispatcherCallback @ content.js:2
+RealEstatePro:1 Uncaught (in promise) SyntaxError: "[object Object]" is not valid JSON
+    at JSON.parse (<anonymous>)
+    at l._storageChangeDispatcher (content.js:2:898238)
+    at _storageChangeDispatcherCallback (content.js:2:897686)
+_storageChangeDispatcher @ content.js:2
+_storageChangeDispatcherCallback @ content.js:2
+anchor?ar=1&k=6Ldqhw…jQ0Mw..&hl=es-41…:1 Uncaught (in promise) SyntaxError: "[object Object]" is not valid JSON
+    at JSON.parse (<anonymous>)
+    at l._storageChangeDispatcher (content.js:2:898238)
+    at _storageChangeDispatcherCallback (content.js:2:897686)
+_storageChangeDispatcher @ content.js:2
+_storageChangeDispatcherCallback @ content.js:2
+m.stripe.network/inn…_[version]=acacia:1 Uncaught (in promise) SyntaxError: "[object Object]" is not valid JSON
+    at JSON.parse (<anonymous>)
+    at l._storageChangeDispatcher (content.js:2:898238)
+    at _storageChangeDispatcherCallback (content.js:2:897686)
+_storageChangeDispatcher @ content.js:2
+_storageChangeDispatcherCallback @ content.js:2
+sw_iframe.html?origi…A%2F%2Freplit.com:1 Uncaught (in promise) SyntaxError: "[object Object]" is not valid JSON
+    at JSON.parse (<anonymous>)
+    at l._storageChangeDispatcher (content.js:2:898238)
+    at _storageChangeDispatcherCallback (content.js:2:897686)
+_storageChangeDispatcher @ content.js:2
+_storageChangeDispatcherCallback @ content.js:2
+js.stripe.com/v3/con…ipeController4941:1 Uncaught (in promise) SyntaxError: "[object Object]" is not valid JSON
+    at JSON.parse (<anonymous>)
+    at l._storageChangeDispatcher (content.js:2:898238)
+    at _storageChangeDispatcherCallback (content.js:2:897686)
+_storageChangeDispatcher @ content.js:2
+_storageChangeDispatcherCallback @ content.js:2
+js.stripe.com/v3/m-o…_[version]=acacia:1 Uncaught (in promise) SyntaxError: "[object Object]" is not valid JSON
+    at JSON.parse (<anonymous>)
+    at l._storageChangeDispatcher (content.js:2:898238)
+    at _storageChangeDispatcherCallback (content.js:2:897686)
+_storageChangeDispatcher @ content.js:2
+_storageChangeDispatcherCallback @ content.js:2
+RealEstatePro:1 Uncaught (in promise) SyntaxError: "[object Object]" is not valid JSON
+    at JSON.parse (<anonymous>)
+    at l._storageChangeDispatcher (content.js:2:898238)
+    at _storageChangeDispatcherCallback (content.js:2:897686)
+_storageChangeDispatcher @ content.js:2
+_storageChangeDispatcherCallback @ content.js:2
+anchor?ar=1&k=6Ldqhw…jQ0Mw..&hl=es-41…:1 Uncaught (in promise) SyntaxError: "[object Object]" is not valid JSON
+    at JSON.parse (<anonymous>)
+    at l._storageChangeDispatcher (content.js:2:898238)
+    at _storageChangeDispatcherCallback (content.js:2:897686)
+_storageChangeDispatcher @ content.js:2
+_storageChangeDispatcherCallback @ content.js:2
+m.stripe.network/inn…_[version]=acacia:1 Uncaught (in promise) SyntaxError: "[object Object]" is not valid JSON
+    at JSON.parse (<anonymous>)
+    at l._storageChangeDispatcher (content.js:2:898238)
+    at _storageChangeDispatcherCallback (content.js:2:897686)
+_storageChangeDispatcher @ content.js:2
+_storageChangeDispatcherCallback @ content.js:2
+sw_iframe.html?origi…A%2F%2Freplit.com:1 Uncaught (in promise) SyntaxError: "[object Object]" is not valid JSON
+    at JSON.parse (<anonymous>)
+    at l._storageChangeDispatcher (content.js:2:898238)
+    at _storageChangeDispatcherCallback (content.js:2:897686)
+_storageChangeDispatcher @ content.js:2
+_storageChangeDispatcherCallback @ content.js:2
+js.stripe.com/v3/con…ipeController4941:1 Uncaught (in promise) SyntaxError: "[object Object]" is not valid JSON
+    at JSON.parse (<anonymous>)
+    at l._storageChangeDispatcher (content.js:2:898238)
+    at _storageChangeDispatcherCallback (content.js:2:897686)
+_storageChangeDispatcher @ content.js:2
+_storageChangeDispatcherCallback @ content.js:2
+js.stripe.com/v3/m-o…_[version]=acacia:1 Uncaught (in promise) SyntaxError: "[object Object]" is not valid JSON
+    at JSON.parse (<anonymous>)
+    at l._storageChangeDispatcher (content.js:2:898238)
+    at _storageChangeDispatcherCallback (content.js:2:897686)
+_storageChangeDispatcher @ content.js:2
+_storageChangeDispatcherCallback @ content.js:2
+RealEstatePro:1 Uncaught (in promise) SyntaxError: "[object Object]" is not valid JSON
+    at JSON.parse (<anonymous>)
+    at l._storageChangeDispatcher (content.js:2:898238)
+    at _storageChangeDispatcherCallback (content.js:2:897686)
+_storageChangeDispatcher @ content.js:2
+_storageChangeDispatcherCallback @ content.js:2
+anchor?ar=1&k=6Ldqhw…jQ0Mw..&hl=es-41…:1 Uncaught (in promise) SyntaxError: "[object Object]" is not valid JSON
+    at JSON.parse (<anonymous>)
+    at l._storageChangeDispatcher (content.js:2:898238)
+    at _storageChangeDispatcherCallback (content.js:2:897686)
+_storageChangeDispatcher @ content.js:2
+_storageChangeDispatcherCallback @ content.js:2
+m.stripe.network/inn…_[version]=acacia:1 Uncaught (in promise) SyntaxError: "[object Object]" is not valid JSON
+    at JSON.parse (<anonymous>)
+    at l._storageChangeDispatcher (content.js:2:898238)
+    at _storageChangeDispatcherCallback (content.js:2:897686)
+_storageChangeDispatcher @ content.js:2
+_storageChangeDispatcherCallback @ content.js:2
+sw_iframe.html?origi…A%2F%2Freplit.com:1 Uncaught (in promise) SyntaxError: "[object Object]" is not valid JSON
+    at JSON.parse (<anonymous>)
+    at l._storageChangeDispatcher (content.js:2:898238)
+    at _storageChangeDispatcherCallback (content.js:2:897686)
+_storageChangeDispatcher @ content.js:2
+_storageChangeDispatcherCallback @ content.js:2
+js.stripe.com/v3/con…ipeController4941:1 Uncaught (in promise) SyntaxError: "[object Object]" is not valid JSON
+    at JSON.parse (<anonymous>)
+    at l._storageChangeDispatcher (content.js:2:898238)
+    at _storageChangeDispatcherCallback (content.js:2:897686)
+_storageChangeDispatcher @ content.js:2
+_storageChangeDispatcherCallback @ content.js:2
+js.stripe.com/v3/m-o…_[version]=acacia:1 Uncaught (in promise) SyntaxError: "[object Object]" is not valid JSON
+    at JSON.parse (<anonymous>)
+    at l._storageChangeDispatcher (content.js:2:898238)
+    at _storageChangeDispatcherCallback (content.js:2:897686)
+_storageChangeDispatcher @ content.js:2
+_storageChangeDispatcherCallback @ content.js:2
+anchor?ar=1&k=6Ldqhw…jQ0Mw..&hl=es-41…:1 Uncaught (in promise) SyntaxError: "[object Object]" is not valid JSON
+    at JSON.parse (<anonymous>)
+    at l._storageChangeDispatcher (content.js:2:898238)
+    at _storageChangeDispatcherCallback (content.js:2:897686)
+_storageChangeDispatcher @ content.js:2
+_storageChangeDispatcherCallback @ content.js:2
+m.stripe.network/inn…_[version]=acacia:1 Uncaught (in promise) SyntaxError: "[object Object]" is not valid JSON
+    at JSON.parse (<anonymous>)
+    at l._storageChangeDispatcher (content.js:2:898238)
+    at _storageChangeDispatcherCallback (content.js:2:897686)
+_storageChangeDispatcher @ content.js:2
+_storageChangeDispatcherCallback @ content.js:2
+sw_iframe.html?origi…A%2F%2Freplit.com:1 Uncaught (in promise) SyntaxError: "[object Object]" is not valid JSON
+    at JSON.parse (<anonymous>)
+    at l._storageChangeDispatcher (content.js:2:898238)
+    at _storageChangeDispatcherCallback (content.js:2:897686)
+_storageChangeDispatcher @ content.js:2
+_storageChangeDispatcherCallback @ content.js:2
+js.stripe.com/v3/con…ipeController4941:1 Uncaught (in promise) SyntaxError: "[object Object]" is not valid JSON
+    at JSON.parse (<anonymous>)
+    at l._storageChangeDispatcher (content.js:2:898238)
+    at _storageChangeDispatcherCallback (content.js:2:897686)
+_storageChangeDispatcher @ content.js:2
+_storageChangeDispatcherCallback @ content.js:2
+js.stripe.com/v3/m-o…_[version]=acacia:1 Uncaught (in promise) SyntaxError: "[object Object]" is not valid JSON
+    at JSON.parse (<anonymous>)
+    at l._storageChangeDispatcher (content.js:2:898238)
+    at _storageChangeDispatcherCallback (content.js:2:897686)
+_storageChangeDispatcher @ content.js:2
+_storageChangeDispatcherCallback @ content.js:2
+RealEstatePro:1 Uncaught (in promise) SyntaxError: "[object Object]" is not valid JSON
+    at JSON.parse (<anonymous>)
+    at l._storageChangeDispatcher (content.js:2:898238)
+    at _storageChangeDispatcherCallback (content.js:2:897686)
+_storageChangeDispatcher @ content.js:2
+_storageChangeDispatcherCallback @ content.js:2
+RealEstatePro:1 Uncaught (in promise) SyntaxError: "[object Object]" is not valid JSON
+    at JSON.parse (<anonymous>)
+    at l._storageChangeDispatcher (content.js:2:898238)
+    at _storageChangeDispatcherCallback (content.js:2:897686)
+_storageChangeDispatcher @ content.js:2
+_storageChangeDispatcherCallback @ content.js:2
+7276-6555ca29df541412.js:1 Uncaught (in promise) Error: Committing while reconnecting
+    at r.p [as debounceCommit] (7276-6555ca29df541412.js:1:17093)
+    at f.handlePacket (7276-6555ca29df541412.js:1:6708)
+    at 7276-6555ca29df541412.js:1:13179
+    at Object.next (main-c68511811312a741.js:1:192963)
+    at n (main-c68511811312a741.js:1:59305)
+    at u (main-c68511811312a741.js:1:59502)
+p @ 7276-6555ca29df541412.js:1
+f.handlePacket @ 7276-6555ca29df541412.js:1
+(anónimas) @ 7276-6555ca29df541412.js:1
+(anónimas) @ main-c68511811312a741.js:1
+n @ main-c68511811312a741.js:1
+u @ main-c68511811312a741.js:1
+RealEstatePro:1 Uncaught (in promise) Error: A listener indicated an asynchronous response by returning true, but the message channel closed before a response was received
+RealEstatePro:1 Uncaught (in promise) Error: A listener indicated an asynchronous response by returning true, but the message channel closed before a response was received
+RealEstatePro:1 Uncaught (in promise) Error: A listener indicated an asynchronous response by returning true, but the message channel closed before a response was received
+RealEstatePro:1 Uncaught (in promise) Error: A listener indicated an asynchronous response by returning true, but the message channel closed before a response was received
+RealEstatePro:1 Uncaught (in promise) Error: A listener indicated an asynchronous response by returning true, but the message channel closed before a response was received
+RealEstatePro:1 Uncaught (in promise) Error: A listener indicated an asynchronous response by returning true, but the message channel closed before a response was received
+RealEstatePro:1 Uncaught (in promise) Error: A listener indicated an asynchronous response by returning true, but the message channel closed before a response was received
+RealEstatePro:1 Uncaught (in promise) Error: A listener indicated an asynchronous response by returning true, but the message channel closed before a response was received
+anchor?ar=1&k=6Ldqhw…jQ0Mw..&hl=es-41…:1 Uncaught (in promise) SyntaxError: "[object Object]" is not valid JSON
+    at JSON.parse (<anonymous>)
+    at l._storageChangeDispatcher (content.js:2:898238)
+    at _storageChangeDispatcherCallback (content.js:2:897686)
+m.stripe.network/inn…_[version]=acacia:1 Uncaught (in promise) SyntaxError: "[object Object]" is not valid JSON
+    at JSON.parse (<anonymous>)
+    at l._storageChangeDispatcher (content.js:2:898238)
+    at _storageChangeDispatcherCallback (content.js:2:897686)
+sw_iframe.html?origi…A%2F%2Freplit.com:1 Uncaught (in promise) SyntaxError: "[object Object]" is not valid JSON
+    at JSON.parse (<anonymous>)
+    at l._storageChangeDispatcher (content.js:2:898238)
+    at _storageChangeDispatcherCallback (content.js:2:897686)
+js.stripe.com/v3/con…ipeController4941:1 Uncaught (in promise) SyntaxError: "[object Object]" is not valid JSON
+    at JSON.parse (<anonymous>)
+    at l._storageChangeDispatcher (content.js:2:898238)
+    at _storageChangeDispatcherCallback (content.js:2:897686)
+js.stripe.com/v3/m-o…_[version]=acacia:1 Uncaught (in promise) SyntaxError: "[object Object]" is not valid JSON
+    at JSON.parse (<anonymous>)
+    at l._storageChangeDispatcher (content.js:2:898238)
+    at _storageChangeDispatcherCallback (content.js:2:897686)
+RealEstatePro:1 Uncaught (in promise) SyntaxError: "[object Object]" is not valid JSON
+    at JSON.parse (<anonymous>)
+    at l._storageChangeDispatcher (content.js:2:898238)
+    at _storageChangeDispatcherCallback (content.js:2:897686)
+anchor?ar=1&k=6Ldqhw…jQ0Mw..&hl=es-41…:1 Uncaught (in promise) SyntaxError: "[object Object]" is not valid JSON
+    at JSON.parse (<anonymous>)
+    at l._storageChangeDispatcher (content.js:2:898238)
+    at _storageChangeDispatcherCallback (content.js:2:897686)
+m.stripe.network/inn…_[version]=acacia:1 Uncaught (in promise) SyntaxError: "[object Object]" is not valid JSON
+    at JSON.parse (<anonymous>)
+    at l._storageChangeDispatcher (content.js:2:898238)
+    at _storageChangeDispatcherCallback (content.js:2:897686)
+sw_iframe.html?origi…A%2F%2Freplit.com:1 Uncaught (in promise) SyntaxError: "[object Object]" is not valid JSON
+    at JSON.parse (<anonymous>)
+    at l._storageChangeDispatcher (content.js:2:898238)
+    at _storageChangeDispatcherCallback (content.js:2:897686)
+RealEstatePro:1 Uncaught (in promise) SyntaxError: "[object Object]" is not valid JSON
+    at JSON.parse (<anonymous>)
+    at l._storageChangeDispatcher (content.js:2:898238)
+    at _storageChangeDispatcherCallback (content.js:2:897686)
+js.stripe.com/v3/con…ipeController4941:1 Uncaught (in promise) SyntaxError: "[object Object]" is not valid JSON
+    at JSON.parse (<anonymous>)
+    at l._storageChangeDispatcher (content.js:2:898238)
+    at _storageChangeDispatcherCallback (content.js:2:897686)
+js.stripe.com/v3/m-o…_[version]=acacia:1 Uncaught (in promise) SyntaxError: "[object Object]" is not valid JSON
+    at JSON.parse (<anonymous>)
+    at l._storageChangeDispatcher (content.js:2:898238)
+    at _storageChangeDispatcherCallback (content.js:2:897686)
+anchor?ar=1&k=6Ldqhw…jQ0Mw..&hl=es-41…:1 Uncaught (in promise) SyntaxError: "[object Object]" is not valid JSON
+    at JSON.parse (<anonymous>)
+    at l._storageChangeDispatcher (content.js:2:898238)
+    at _storageChangeDispatcherCallback (content.js:2:897686)
+sw_iframe.html?origi…A%2F%2Freplit.com:1 Uncaught (in promise) SyntaxError: "[object Object]" is not valid JSON
+    at JSON.parse (<anonymous>)
+    at l._storageChangeDispatcher (content.js:2:898238)
+    at _storageChangeDispatcherCallback (content.js:2:897686)
+m.stripe.network/inn…_[version]=acacia:1 Uncaught (in promise) SyntaxError: "[object Object]" is not valid JSON
+    at JSON.parse (<anonymous>)
+    at l._storageChangeDispatcher (content.js:2:898238)
+    at _storageChangeDispatcherCallback (content.js:2:897686)
+js.stripe.com/v3/con…ipeController4941:1 Uncaught (in promise) SyntaxError: "[object Object]" is not valid JSON
+    at JSON.parse (<anonymous>)
+    at l._storageChangeDispatcher (content.js:2:898238)
+    at _storageChangeDispatcherCallback (content.js:2:897686)
+js.stripe.com/v3/m-o…_[version]=acacia:1 Uncaught (in promise) SyntaxError: "[object Object]" is not valid JSON
+    at JSON.parse (<anonymous>)
+    at l._storageChangeDispatcher (content.js:2:898238)
+    at _storageChangeDispatcherCallback (content.js:2:897686)
+RealEstatePro:1 Uncaught (in promise) SyntaxError: "[object Object]" is not valid JSON
+    at JSON.parse (<anonymous>)
+    at l._storageChangeDispatcher (content.js:2:898238)
+    at _storageChangeDispatcherCallback (content.js:2:897686)
+anchor?ar=1&k=6Ldqhw…jQ0Mw..&hl=es-41…:1 Uncaught (in promise) SyntaxError: "[object Object]" is not valid JSON
+    at JSON.parse (<anonymous>)
+    at l._storageChangeDispatcher (content.js:2:898238)
+    at _storageChangeDispatcherCallback (content.js:2:897686)
+m.stripe.network/inn…_[version]=acacia:1 Uncaught (in promise) SyntaxError: "[object Object]" is not valid JSON
+    at JSON.parse (<anonymous>)
+    at l._storageChangeDispatcher (content.js:2:898238)
+    at _storageChangeDispatcherCallback (content.js:2:897686)
+sw_iframe.html?origi…A%2F%2Freplit.com:1 Uncaught (in promise) SyntaxError: "[object Object]" is not valid JSON
+    at JSON.parse (<anonymous>)
+    at l._storageChangeDispatcher (content.js:2:898238)
+    at _storageChangeDispatcherCallback (content.js:2:897686)
+RealEstatePro:1 Uncaught (in promise) SyntaxError: "[object Object]" is not valid JSON
+    at JSON.parse (<anonymous>)
+    at l._storageChangeDispatcher (content.js:2:898238)
+    at _storageChangeDispatcherCallback (content.js:2:897686)
+js.stripe.com/v3/con…ipeController4941:1 Uncaught (in promise) SyntaxError: "[object Object]" is not valid JSON
+    at JSON.parse (<anonymous>)
+    at l._storageChangeDispatcher (content.js:2:898238)
+    at _storageChangeDispatcherCallback (content.js:2:897686)
+js.stripe.com/v3/m-o…_[version]=acacia:1 Uncaught (in promise) SyntaxError: "[object Object]" is not valid JSON
+    at JSON.parse (<anonymous>)
+    at l._storageChangeDispatcher (content.js:2:898238)
+    at _storageChangeDispatcherCallback (content.js:2:897686)
+anchor?ar=1&k=6Ldqhw…jQ0Mw..&hl=es-41…:1 Uncaught (in promise) SyntaxError: "[object Object]" is not valid JSON
+    at JSON.parse (<anonymous>)
+    at l._storageChangeDispatcher (content.js:2:898238)
+    at _storageChangeDispatcherCallback (content.js:2:897686)
+RealEstatePro:1 Uncaught (in promise) SyntaxError: "[object Object]" is not valid JSON
+    at JSON.parse (<anonymous>)
+    at l._storageChangeDispatcher (content.js:2:898238)
+    at _storageChangeDispatcherCallback (content.js:2:897686)
+m.stripe.network/inn…_[version]=acacia:1 Uncaught (in promise) SyntaxError: "[object Object]" is not valid JSON
+    at JSON.parse (<anonymous>)
+    at l._storageChangeDispatcher (content.js:2:898238)
+    at _storageChangeDispatcherCallback (content.js:2:897686)
+sw_iframe.html?origi…A%2F%2Freplit.com:1 Uncaught (in promise) SyntaxError: "[object Object]" is not valid JSON
+    at JSON.parse (<anonymous>)
+    at l._storageChangeDispatcher (content.js:2:898238)
+    at _storageChangeDispatcherCallback (content.js:2:897686)
+js.stripe.com/v3/con…ipeController4941:1 Uncaught (in promise) SyntaxError: "[object Object]" is not valid JSON
+    at JSON.parse (<anonymous>)
+    at l._storageChangeDispatcher (content.js:2:898238)
+    at _storageChangeDispatcherCallback (content.js:2:897686)
+js.stripe.com/v3/m-o…_[version]=acacia:1 Uncaught (in promise) SyntaxError: "[object Object]" is not valid JSON
+    at JSON.parse (<anonymous>)
+    at l._storageChangeDispatcher (content.js:2:898238)
+    at _storageChangeDispatcherCallback (content.js:2:897686)
+anchor?ar=1&k=6Ldqhw…jQ0Mw..&hl=es-41…:1 Uncaught (in promise) SyntaxError: "[object Object]" is not valid JSON
+    at JSON.parse (<anonymous>)
+    at l._storageChangeDispatcher (content.js:2:898238)
+    at _storageChangeDispatcherCallback (content.js:2:897686)
+m.stripe.network/inn…_[version]=acacia:1 Uncaught (in promise) SyntaxError: "[object Object]" is not valid JSON
+    at JSON.parse (<anonymous>)
+    at l._storageChangeDispatcher (content.js:2:898238)
+    at _storageChangeDispatcherCallback (content.js:2:897686)
+RealEstatePro:1 Uncaught (in promise) SyntaxError: "[object Object]" is not valid JSON
+    at JSON.parse (<anonymous>)
+    at l._storageChangeDispatcher (content.js:2:898238)
+    at _storageChangeDispatcherCallback (content.js:2:897686)
+sw_iframe.html?origi…A%2F%2Freplit.com:1 Uncaught (in promise) SyntaxError: "[object Object]" is not valid JSON
+    at JSON.parse (<anonymous>)
+    at l._storageChangeDispatcher (content.js:2:898238)
+    at _storageChangeDispatcherCallback (content.js:2:897686)
+js.stripe.com/v3/con…ipeController4941:1 Uncaught (in promise) SyntaxError: "[object Object]" is not valid JSON
+    at JSON.parse (<anonymous>)
+    at l._storageChangeDispatcher (content.js:2:898238)
+    at _storageChangeDispatcherCallback (content.js:2:897686)
+js.stripe.com/v3/m-o…_[version]=acacia:1 Uncaught (in promise) SyntaxError: "[object Object]" is not valid JSON
+    at JSON.parse (<anonymous>)
+    at l._storageChangeDispatcher (content.js:2:898238)
+    at _storageChangeDispatcherCallback (content.js:2:897686)
+anchor?ar=1&k=6Ldqhw…jQ0Mw..&hl=es-41…:1 Uncaught (in promise) SyntaxError: "[object Object]" is not valid JSON
+    at JSON.parse (<anonymous>)
+    at l._storageChangeDispatcher (content.js:2:898238)
+    at _storageChangeDispatcherCallback (content.js:2:897686)
+m.stripe.network/inn…_[version]=acacia:1 Uncaught (in promise) SyntaxError: "[object Object]" is not valid JSON
+    at JSON.parse (<anonymous>)
+    at l._storageChangeDispatcher (content.js:2:898238)
+    at _storageChangeDispatcherCallback (content.js:2:897686)
+sw_iframe.html?origi…A%2F%2Freplit.com:1 Uncaught (in promise) SyntaxError: "[object Object]" is not valid JSON
+    at JSON.parse (<anonymous>)
+    at l._storageChangeDispatcher (content.js:2:898238)
+    at _storageChangeDispatcherCallback (content.js:2:897686)
+js.stripe.com/v3/con…ipeController4941:1 Uncaught (in promise) SyntaxError: "[object Object]" is not valid JSON
+    at JSON.parse (<anonymous>)
+    at l._storageChangeDispatcher (content.js:2:898238)
+    at _storageChangeDispatcherCallback (content.js:2:897686)
+js.stripe.com/v3/m-o…_[version]=acacia:1 Uncaught (in promise) SyntaxError: "[object Object]" is not valid JSON
+    at JSON.parse (<anonymous>)
+    at l._storageChangeDispatcher (content.js:2:898238)
+    at _storageChangeDispatcherCallback (content.js:2:897686)
+RealEstatePro#client/src/main.tsx:1 Uncaught (in promise) SyntaxError: "[object Object]" is not valid JSON
+    at JSON.parse (<anonymous>)
+    at l._storageChangeDispatcher (content.js:2:898238)
+    at _storageChangeDispatcherCallback (content.js:2:897686)
+anchor?ar=1&k=6Ldqhw…jQ0Mw..&hl=es-41…:1 Uncaught (in promise) SyntaxError: "[object Object]" is not valid JSON
+    at JSON.parse (<anonymous>)
+    at l._storageChangeDispatcher (content.js:2:898238)
+    at _storageChangeDispatcherCallback (content.js:2:897686)
+RealEstatePro#client/src/main.tsx:1 Uncaught (in promise) SyntaxError: "[object Object]" is not valid JSON
+    at JSON.parse (<anonymous>)
+    at l._storageChangeDispatcher (content.js:2:898238)
+    at _storageChangeDispatcherCallback (content.js:2:897686)
+sw_iframe.html?origi…A%2F%2Freplit.com:1 Uncaught (in promise) SyntaxError: "[object Object]" is not valid JSON
+    at JSON.parse (<anonymous>)
+    at l._storageChangeDispatcher (content.js:2:898238)
+    at _storageChangeDispatcherCallback (content.js:2:897686)
+m.stripe.network/inn…_[version]=acacia:1 Uncaught (in promise) SyntaxError: "[object Object]" is not valid JSON
+    at JSON.parse (<anonymous>)
+    at l._storageChangeDispatcher (content.js:2:898238)
+    at _storageChangeDispatcherCallback (content.js:2:897686)
+js.stripe.com/v3/con…ipeController4941:1 Uncaught (in promise) SyntaxError: "[object Object]" is not valid JSON
+    at JSON.parse (<anonymous>)
+    at l._storageChangeDispatcher (content.js:2:898238)
+    at _storageChangeDispatcherCallback (content.js:2:897686)
+js.stripe.com/v3/m-o…_[version]=acacia:1 Uncaught (in promise) SyntaxError: "[object Object]" is not valid JSON
+    at JSON.parse (<anonymous>)
+    at l._storageChangeDispatcher (content.js:2:898238)
+    at _storageChangeDispatcherCallback (content.js:2:897686)
+anchor?ar=1&k=6Ldqhw…jQ0Mw..&hl=es-41…:1 Uncaught (in promise) SyntaxError: "[object Object]" is not valid JSON
+    at JSON.parse (<anonymous>)
+    at l._storageChangeDispatcher (content.js:2:898238)
+    at _storageChangeDispatcherCallback (content.js:2:897686)
+RealEstatePro:1 Uncaught (in promise) SyntaxError: "[object Object]" is not valid JSON
+    at JSON.parse (<anonymous>)
+    at l._storageChangeDispatcher (content.js:2:898238)
+    at _storageChangeDispatcherCallback (content.js:2:897686)
+m.stripe.network/inn…_[version]=acacia:1 Uncaught (in promise) SyntaxError: "[object Object]" is not valid JSON
+    at JSON.parse (<anonymous>)
+    at l._storageChangeDispatcher (content.js:2:898238)
+    at _storageChangeDispatcherCallback (content.js:2:897686)
+sw_iframe.html?origi…A%2F%2Freplit.com:1 Uncaught (in promise) SyntaxError: "[object Object]" is not valid JSON
+    at JSON.parse (<anonymous>)
+    at l._storageChangeDispatcher (content.js:2:898238)
+    at _storageChangeDispatcherCallback (content.js:2:897686)
+js.stripe.com/v3/con…ipeController4941:1 Uncaught (in promise) SyntaxError: "[object Object]" is not valid JSON
+    at JSON.parse (<anonymous>)
+    at l._storageChangeDispatcher (content.js:2:898238)
+    at _storageChangeDispatcherCallback (content.js:2:897686)
+js.stripe.com/v3/m-o…_[version]=acacia:1 Uncaught (in promise) SyntaxError: "[object Object]" is not valid JSON
+    at JSON.parse (<anonymous>)
+    at l._storageChangeDispatcher (content.js:2:898238)
+    at _storageChangeDispatcherCallback (content.js:2:897686)
+m.stripe.network/inn…_[version]=acacia:1 Uncaught (in promise) SyntaxError: "[object Object]" is not valid JSON
+    at JSON.parse (<anonymous>)
+    at l._storageChangeDispatcher (content.js:2:898238)
+    at _storageChangeDispatcherCallback (content.js:2:897686)
+sw_iframe.html?origi…A%2F%2Freplit.com:1 Uncaught (in promise) SyntaxError: "[object Object]" is not valid JSON
+    at JSON.parse (<anonymous>)
+    at l._storageChangeDispatcher (content.js:2:898238)
+    at _storageChangeDispatcherCallback (content.js:2:897686)
+anchor?ar=1&k=6Ldqhw…jQ0Mw..&hl=es-41…:1 Uncaught (in promise) SyntaxError: "[object Object]" is not valid JSON
+    at JSON.parse (<anonymous>)
+    at l._storageChangeDispatcher (content.js:2:898238)
+    at _storageChangeDispatcherCallback (content.js:2:897686)
+js.stripe.com/v3/con…ipeController4941:1 Uncaught (in promise) SyntaxError: "[object Object]" is not valid JSON
+    at JSON.parse (<anonymous>)
+    at l._storageChangeDispatcher (content.js:2:898238)
+    at _storageChangeDispatcherCallback (content.js:2:897686)
+js.stripe.com/v3/m-o…_[version]=acacia:1 Uncaught (in promise) SyntaxError: "[object Object]" is not valid JSON
+    at JSON.parse (<anonymous>)
+    at l._storageChangeDispatcher (content.js:2:898238)
+    at _storageChangeDispatcherCallback (content.js:2:897686)
+RealEstatePro:1 Uncaught (in promise) SyntaxError: "[object Object]" is not valid JSON
+    at JSON.parse (<anonymous>)
+    at l._storageChangeDispatcher (content.js:2:898238)
+    at _storageChangeDispatcherCallback (content.js:2:897686)
+anchor?ar=1&k=6Ldqhw…jQ0Mw..&hl=es-41…:1 Uncaught (in promise) SyntaxError: "[object Object]" is not valid JSON
+    at JSON.parse (<anonymous>)
+    at l._storageChangeDispatcher (content.js:2:898238)
+    at _storageChangeDispatcherCallback (content.js:2:897686)
+RealEstatePro:1 Uncaught (in promise) SyntaxError: "[object Object]" is not valid JSON
+    at JSON.parse (<anonymous>)
+    at l._storageChangeDispatcher (content.js:2:898238)
+    at _storageChangeDispatcherCallback (content.js:2:897686)
+m.stripe.network/inn…_[version]=acacia:1 Uncaught (in promise) SyntaxError: "[object Object]" is not valid JSON
+    at JSON.parse (<anonymous>)
+    at l._storageChangeDispatcher (content.js:2:898238)
+    at _storageChangeDispatcherCallback (content.js:2:897686)
+sw_iframe.html?origi…A%2F%2Freplit.com:1 Uncaught (in promise) SyntaxError: "[object Object]" is not valid JSON
+    at JSON.parse (<anonymous>)
+    at l._storageChangeDispatcher (content.js:2:898238)
+    at _storageChangeDispatcherCallback (content.js:2:897686)
+js.stripe.com/v3/con…ipeController4941:1 Uncaught (in promise) SyntaxError: "[object Object]" is not valid JSON
+    at JSON.parse (<anonymous>)
+    at l._storageChangeDispatcher (content.js:2:898238)
+    at _storageChangeDispatcherCallback (content.js:2:897686)
+js.stripe.com/v3/m-o…_[version]=acacia:1 Uncaught (in promise) SyntaxError: "[object Object]" is not valid JSON
+    at JSON.parse (<anonymous>)
+    at l._storageChangeDispatcher (content.js:2:898238)
+    at _storageChangeDispatcherCallback (content.js:2:897686)
+anchor?ar=1&k=6Ldqhw…jQ0Mw..&hl=es-41…:1 Uncaught (in promise) SyntaxError: "[object Object]" is not valid JSON
+    at JSON.parse (<anonymous>)
+    at l._storageChangeDispatcher (content.js:2:898238)
+    at _storageChangeDispatcherCallback (content.js:2:897686)
+RealEstatePro:1 Uncaught (in promise) SyntaxError: "[object Object]" is not valid JSON
+    at JSON.parse (<anonymous>)
+    at l._storageChangeDispatcher (content.js:2:898238)
+    at _storageChangeDispatcherCallback (content.js:2:897686)
+m.stripe.network/inn…_[version]=acacia:1 Uncaught (in promise) SyntaxError: "[object Object]" is not valid JSON
+    at JSON.parse (<anonymous>)
+    at l._storageChangeDispatcher (content.js:2:898238)
+    at _storageChangeDispatcherCallback (content.js:2:897686)
+sw_iframe.html?origi…A%2F%2Freplit.com:1 Uncaught (in promise) SyntaxError: "[object Object]" is not valid JSON
+    at JSON.parse (<anonymous>)
+    at l._storageChangeDispatcher (content.js:2:898238)
+    at _storageChangeDispatcherCallback (content.js:2:897686)
+js.stripe.com/v3/con…ipeController4941:1 Uncaught (in promise) SyntaxError: "[object Object]" is not valid JSON
+    at JSON.parse (<anonymous>)
+    at l._storageChangeDispatcher (content.js:2:898238)
+    at _storageChangeDispatcherCallback (content.js:2:897686)
+js.stripe.com/v3/m-o…_[version]=acacia:1 Uncaught (in promise) SyntaxError: "[object Object]" is not valid JSON
+    at JSON.parse (<anonymous>)
+    at l._storageChangeDispatcher (content.js:2:898238)
+    at _storageChangeDispatcherCallback (content.js:2:897686)
+anchor?ar=1&k=6Ldqhw…jQ0Mw..&hl=es-41…:1 Uncaught (in promise) SyntaxError: "[object Object]" is not valid JSON
+    at JSON.parse (<anonymous>)
+    at l._storageChangeDispatcher (content.js:2:898238)
+    at _storageChangeDispatcherCallback (content.js:2:897686)
+RealEstatePro:1 Uncaught (in promise) SyntaxError: "[object Object]" is not valid JSON
+    at JSON.parse (<anonymous>)
+    at l._storageChangeDispatcher (content.js:2:898238)
+    at _storageChangeDispatcherCallback (content.js:2:897686)
+m.stripe.network/inn…_[version]=acacia:1 Uncaught (in promise) SyntaxError: "[object Object]" is not valid JSON
+    at JSON.parse (<anonymous>)
+    at l._storageChangeDispatcher (content.js:2:898238)
+    at _storageChangeDispatcherCallback (content.js:2:897686)
+sw_iframe.html?origi…A%2F%2Freplit.com:1 Uncaught (in promise) SyntaxError: "[object Object]" is not valid JSON
+    at JSON.parse (<anonymous>)
+    at l._storageChangeDispatcher (content.js:2:898238)
+    at _storageChangeDispatcherCallback (content.js:2:897686)
+js.stripe.com/v3/con…ipeController4941:1 Uncaught (in promise) SyntaxError: "[object Object]" is not valid JSON
+    at JSON.parse (<anonymous>)
+    at l._storageChangeDispatcher (content.js:2:898238)
+    at _storageChangeDispatcherCallback (content.js:2:897686)
+js.stripe.com/v3/m-o…_[version]=acacia:1 Uncaught (in promise) SyntaxError: "[object Object]" is not valid JSON
+    at JSON.parse (<anonymous>)
+    at l._storageChangeDispatcher (content.js:2:898238)
+    at _storageChangeDispatcherCallback (content.js:2:897686)
+anchor?ar=1&k=6Ldqhw…jQ0Mw..&hl=es-41…:1 Uncaught (in promise) SyntaxError: "[object Object]" is not valid JSON
+    at JSON.parse (<anonymous>)
+    at l._storageChangeDispatcher (content.js:2:898238)
+    at _storageChangeDispatcherCallback (content.js:2:897686)
+m.stripe.network/inn…_[version]=acacia:1 Uncaught (in promise) SyntaxError: "[object Object]" is not valid JSON
+    at JSON.parse (<anonymous>)
+    at l._storageChangeDispatcher (content.js:2:898238)
+    at _storageChangeDispatcherCallback (content.js:2:897686)
+sw_iframe.html?origi…A%2F%2Freplit.com:1 Uncaught (in promise) SyntaxError: "[object Object]" is not valid JSON
+    at JSON.parse (<anonymous>)
+    at l._storageChangeDispatcher (content.js:2:898238)
+    at _storageChangeDispatcherCallback (content.js:2:897686)
+js.stripe.com/v3/con…ipeController4941:1 Uncaught (in promise) SyntaxError: "[object Object]" is not valid JSON
+    at JSON.parse (<anonymous>)
+    at l._storageChangeDispatcher (content.js:2:898238)
+    at _storageChangeDispatcherCallback (content.js:2:897686)
+js.stripe.com/v3/m-o…_[version]=acacia:1 Uncaught (in promise) SyntaxError: "[object Object]" is not valid JSON
+    at JSON.parse (<anonymous>)
+    at l._storageChangeDispatcher (content.js:2:898238)
+    at _storageChangeDispatcherCallback (content.js:2:897686)
+RealEstatePro:1 Uncaught (in promise) SyntaxError: "[object Object]" is not valid JSON
+    at JSON.parse (<anonymous>)
+    at l._storageChangeDispatcher (content.js:2:898238)
+    at _storageChangeDispatcherCallback (content.js:2:897686)
+anchor?ar=1&k=6Ldqhw…jQ0Mw..&hl=es-41…:1 Uncaught (in promise) SyntaxError: "[object Object]" is not valid JSON
+    at JSON.parse (<anonymous>)
+    at l._storageChangeDispatcher (content.js:2:898238)
+    at _storageChangeDispatcherCallback (content.js:2:897686)
+m.stripe.network/inn…_[version]=acacia:1 Uncaught (in promise) SyntaxError: "[object Object]" is not valid JSON
+    at JSON.parse (<anonymous>)
+    at l._storageChangeDispatcher (content.js:2:898238)
+    at _storageChangeDispatcherCallback (content.js:2:897686)
+sw_iframe.html?origi…A%2F%2Freplit.com:1 Uncaught (in promise) SyntaxError: "[object Object]" is not valid JSON
+    at JSON.parse (<anonymous>)
+    at l._storageChangeDispatcher (content.js:2:898238)
+    at _storageChangeDispatcherCallback (content.js:2:897686)
+RealEstatePro:1 Uncaught (in promise) SyntaxError: "[object Object]" is not valid JSON
+    at JSON.parse (<anonymous>)
+    at l._storageChangeDispatcher (content.js:2:898238)
+    at _storageChangeDispatcherCallback (content.js:2:897686)
+js.stripe.com/v3/con…ipeController4941:1 Uncaught (in promise) SyntaxError: "[object Object]" is not valid JSON
+    at JSON.parse (<anonymous>)
+    at l._storageChangeDispatcher (content.js:2:898238)
+    at _storageChangeDispatcherCallback (content.js:2:897686)
+js.stripe.com/v3/m-o…_[version]=acacia:1 Uncaught (in promise) SyntaxError: "[object Object]" is not valid JSON
+    at JSON.parse (<anonymous>)
+    at l._storageChangeDispatcher (content.js:2:898238)
+    at _storageChangeDispatcherCallback (content.js:2:897686)
+anchor?ar=1&k=6Ldqhw…jQ0Mw..&hl=es-41…:1 Uncaught (in promise) SyntaxError: "[object Object]" is not valid JSON
+    at JSON.parse (<anonymous>)
+    at l._storageChangeDispatcher (content.js:2:898238)
+    at _storageChangeDispatcherCallback (content.js:2:897686)
+RealEstatePro:1 Uncaught (in promise) SyntaxError: "[object Object]" is not valid JSON
+    at JSON.parse (<anonymous>)
+    at l._storageChangeDispatcher (content.js:2:898238)
+    at _storageChangeDispatcherCallback (content.js:2:897686)
+m.stripe.network/inn…_[version]=acacia:1 Uncaught (in promise) SyntaxError: "[object Object]" is not valid JSON
+    at JSON.parse (<anonymous>)
+    at l._storageChangeDispatcher (content.js:2:898238)
+    at _storageChangeDispatcherCallback (content.js:2:897686)
+js.stripe.com/v3/con…ipeController4941:1 Uncaught (in promise) SyntaxError: "[object Object]" is not valid JSON
+    at JSON.parse (<anonymous>)
+    at l._storageChangeDispatcher (content.js:2:898238)
+    at _storageChangeDispatcherCallback (content.js:2:897686)
+js.stripe.com/v3/m-o…_[version]=acacia:1 Uncaught (in promise) SyntaxError: "[object Object]" is not valid JSON
+    at JSON.parse (<anonymous>)
+    at l._storageChangeDispatcher (content.js:2:898238)
+    at _storageChangeDispatcherCallback (content.js:2:897686)
+sw_iframe.html?origi…A%2F%2Freplit.com:1 Uncaught (in promise) SyntaxError: "[object Object]" is not valid JSON
+    at JSON.parse (<anonymous>)
+    at l._storageChangeDispatcher (content.js:2:898238)
+    at _storageChangeDispatcherCallback (content.js:2:897686)
+7276-6555ca29df541412.js:1 Uncaught (in promise) Error: Committing while reconnecting
+    at r.p [as debounceCommit] (7276-6555ca29df541412.js:1:17093)
+    at f.handlePacket (7276-6555ca29df541412.js:1:6708)
+    at 7276-6555ca29df541412.js:1:13179
+    at Object.next (main-c68511811312a741.js:1:192963)
+    at n (main-c68511811312a741.js:1:59305)
+    at u (main-c68511811312a741.js:1:59502)
+7276-6555ca29df541412.js:1 Uncaught (in promise) Error: Fetch ops returned an error: versionFrom can't be lower than 1
+    at 7276-6555ca29df541412.js:1:14680
+    at Object.next (main-c68511811312a741.js:1:192963)
+    at n (main-c68511811312a741.js:1:59305)
+    at u (main-c68511811312a741.js:1:59502)
+anchor?ar=1&k=6Ldqhw…jQ0Mw..&hl=es-41…:1 Uncaught (in promise) SyntaxError: "[object Object]" is not valid JSON
+    at JSON.parse (<anonymous>)
+    at l._storageChangeDispatcher (content.js:2:898238)
+    at _storageChangeDispatcherCallback (content.js:2:897686)
+m.stripe.network/inn…_[version]=acacia:1 Uncaught (in promise) SyntaxError: "[object Object]" is not valid JSON
+    at JSON.parse (<anonymous>)
+    at l._storageChangeDispatcher (content.js:2:898238)
+    at _storageChangeDispatcherCallback (content.js:2:897686)
+sw_iframe.html?origi…A%2F%2Freplit.com:1 Uncaught (in promise) SyntaxError: "[object Object]" is not valid JSON
+    at JSON.parse (<anonymous>)
+    at l._storageChangeDispatcher (content.js:2:898238)
+    at _storageChangeDispatcherCallback (content.js:2:897686)
+js.stripe.com/v3/con…ipeController4941:1 Uncaught (in promise) SyntaxError: "[object Object]" is not valid JSON
+    at JSON.parse (<anonymous>)
+    at l._storageChangeDispatcher (content.js:2:898238)
+    at _storageChangeDispatcherCallback (content.js:2:897686)
+js.stripe.com/v3/m-o…_[version]=acacia:1 Uncaught (in promise) SyntaxError: "[object Object]" is not valid JSON
+    at JSON.parse (<anonymous>)
+    at l._storageChangeDispatcher (content.js:2:898238)
+    at _storageChangeDispatcherCallback (content.js:2:897686)
+RealEstatePro:1 Uncaught (in promise) SyntaxError: "[object Object]" is not valid JSON
+    at JSON.parse (<anonymous>)
+    at l._storageChangeDispatcher (content.js:2:898238)
+    at _storageChangeDispatcherCallback (content.js:2:897686)
+anchor?ar=1&k=6Ldqhw…jQ0Mw..&hl=es-41…:1 Uncaught (in promise) SyntaxError: "[object Object]" is not valid JSON
+    at JSON.parse (<anonymous>)
+    at l._storageChangeDispatcher (content.js:2:898238)
+    at _storageChangeDispatcherCallback (content.js:2:897686)
+RealEstatePro:1 Uncaught (in promise) SyntaxError: "[object Object]" is not valid JSON
+    at JSON.parse (<anonymous>)
+    at l._storageChangeDispatcher (content.js:2:898238)
+    at _storageChangeDispatcherCallback (content.js:2:897686)
+m.stripe.network/inn…_[version]=acacia:1 Uncaught (in promise) SyntaxError: "[object Object]" is not valid JSON
+    at JSON.parse (<anonymous>)
+    at l._storageChangeDispatcher (content.js:2:898238)
+    at _storageChangeDispatcherCallback (content.js:2:897686)
+sw_iframe.html?origi…A%2F%2Freplit.com:1 Uncaught (in promise) SyntaxError: "[object Object]" is not valid JSON
+    at JSON.parse (<anonymous>)
+    at l._storageChangeDispatcher (content.js:2:898238)
+    at _storageChangeDispatcherCallback (content.js:2:897686)
+js.stripe.com/v3/con…ipeController4941:1 Uncaught (in promise) SyntaxError: "[object Object]" is not valid JSON
+    at JSON.parse (<anonymous>)
+    at l._storageChangeDispatcher (content.js:2:898238)
+    at _storageChangeDispatcherCallback (content.js:2:897686)
+js.stripe.com/v3/m-o…_[version]=acacia:1 Uncaught (in promise) SyntaxError: "[object Object]" is not valid JSON
+    at JSON.parse (<anonymous>)
+    at l._storageChangeDispatcher (content.js:2:898238)
+    at _storageChangeDispatcherCallback (content.js:2:897686)
+chunk-4RFDBWQV.js?v=4125b99b:1062 Uncaught TypeError: Cannot read properties of null (reading 'useContext')
+    at Object.useContext (chunk-4RFDBWQV.js?v=4125b99b:1062:29)
+    at useIsRestoring (@tanstack_react-query.js?v=4125b99b:3039:35)
+    at useBaseQuery (@tanstack_react-query.js?v=4125b99b:3210:23)
+    at useQuery (@tanstack_react-query.js?v=4125b99b:3288:10)
+    at AuthProvider (use-auth.tsx:123:7)
+    at renderWithHooks (chunk-C43VWYGG.js?v=ac1a0e8c:12151:26)
+    at mountIndeterminateComponent (chunk-C43VWYGG.js?v=ac1a0e8c:14901:21)
+    at beginWork (chunk-C43VWYGG.js?v=ac1a0e8c:15882:22)
+    at HTMLUnknownElement.callCallback2 (chunk-C43VWYGG.js?v=ac1a0e8c:3674:22)
+    at Object.invokeGuardedCallbackDev (chunk-C43VWYGG.js?v=ac1a0e8c:3699:24)
+chunk-4RFDBWQV.js?v=4125b99b:1062 Uncaught TypeError: Cannot read properties of null (reading 'useContext')
+    at Object.useContext (chunk-4RFDBWQV.js?v=4125b99b:1062:29)
+    at useIsRestoring (@tanstack_react-query.js?v=4125b99b:3039:35)
+    at useBaseQuery (@tanstack_react-query.js?v=4125b99b:3210:23)
+    at useQuery (@tanstack_react-query.js?v=4125b99b:3288:10)
+    at AuthProvider (use-auth.tsx:123:7)
+    at renderWithHooks (chunk-C43VWYGG.js?v=ac1a0e8c:12151:26)
+    at mountIndeterminateComponent (chunk-C43VWYGG.js?v=ac1a0e8c:14901:21)
+    at beginWork (chunk-C43VWYGG.js?v=ac1a0e8c:15882:22)
+    at HTMLUnknownElement.callCallback2 (chunk-C43VWYGG.js?v=ac1a0e8c:3674:22)
+    at Object.invokeGuardedCallbackDev (chunk-C43VWYGG.js?v=ac1a0e8c:3699:24)
+chunk-C43VWYGG.js?v=ac1a0e8c:14016 The above error occurred in the <AuthProvider> component:
+
+    at AuthProvider (https://c2729e48-2fb9-4518-8d14-3149229b69cf-00-vi9rmtkaqn4n.kirk.replit.dev/src/hooks/use-auth.tsx:117:32)
+    at QueryClientProvider (https://c2729e48-2fb9-4518-8d14-3149229b69cf-00-vi9rmtkaqn4n.kirk.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/@tanstack_react-query.js?v=1f7aa03f:3024:3)
+    at App
+
+Consider adding an error boundary to your tree to customize error handling behavior.
+Visit https://reactjs.org/link/error-boundaries to learn more about error boundaries.
+logCapturedError @ chunk-C43VWYGG.js?v=ac1a0e8c:14016
+chunk-C43VWYGG.js?v=ac1a0e8c:19381 Uncaught TypeError: Cannot read properties of null (reading 'useContext')
+    at Object.useContext (chunk-4RFDBWQV.js?v=4125b99b:1062:29)
+    at useIsRestoring (@tanstack_react-query.js?v=4125b99b:3039:35)
+    at useBaseQuery (@tanstack_react-query.js?v=4125b99b:3210:23)
+    at useQuery (@tanstack_react-query.js?v=4125b99b:3288:10)
+    at AuthProvider (use-auth.tsx:123:7)
+    at renderWithHooks (chunk-C43VWYGG.js?v=ac1a0e8c:12151:26)
+    at mountIndeterminateComponent (chunk-C43VWYGG.js?v=ac1a0e8c:14901:21)
+    at beginWork (chunk-C43VWYGG.js?v=ac1a0e8c:15882:22)
+    at beginWork$1 (chunk-C43VWYGG.js?v=ac1a0e8c:19721:22)
+    at performUnitOfWork (chunk-C43VWYGG.js?v=ac1a0e8c:19166:20)
+chunk-4RFDBWQV.js:1062 Uncaught TypeError: Cannot read properties of null (reading 'useContext')
+    at Object.useContext (chunk-4RFDBWQV.js?v=4125b99b:1062:29)
+    at useIsRestoring (@tanstack_react-query.js?v=4125b99b:3039:35)
+    at useBaseQuery (@tanstack_react-query.js?v=4125b99b:3210:23)
+    at useQuery (@tanstack_react-query.js?v=4125b99b:3288:10)
+    at AuthProvider (use-auth.tsx:123:7)
+    at renderWithHooks (chunk-C43VWYGG.js?v=ac1a0e8c:12151:26)
+    at mountIndeterminateComponent (chunk-C43VWYGG.js?v=ac1a0e8c:14901:21)
+    at beginWork (chunk-C43VWYGG.js?v=ac1a0e8c:15882:22)
+    at HTMLUnknownElement.callCallback2 (chunk-C43VWYGG.js?v=ac1a0e8c:3674:22)
+    at Object.invokeGuardedCallbackDev (chunk-C43VWYGG.js?v=ac1a0e8c:3699:24)
+chunk-4RFDBWQV.js:1062 Uncaught TypeError: Cannot read properties of null (reading 'useContext')
+    at Object.useContext (chunk-4RFDBWQV.js?v=4125b99b:1062:29)
+    at useIsRestoring (@tanstack_react-query.js?v=4125b99b:3039:35)
+    at useBaseQuery (@tanstack_react-query.js?v=4125b99b:3210:23)
+    at useQuery (@tanstack_react-query.js?v=4125b99b:3288:10)
+    at AuthProvider (use-auth.tsx:123:7)
+    at renderWithHooks (chunk-C43VWYGG.js?v=ac1a0e8c:12151:26)
+    at mountIndeterminateComponent (chunk-C43VWYGG.js?v=ac1a0e8c:14901:21)
+    at beginWork (chunk-C43VWYGG.js?v=ac1a0e8c:15882:22)
+    at HTMLUnknownElement.callCallback2 (chunk-C43VWYGG.js?v=ac1a0e8c:3674:22)
+    at Object.invokeGuardedCallbackDev (chunk-C43VWYGG.js?v=ac1a0e8c:3699:24)
+chunk-C43VWYGG.js:14016 The above error occurred in the <AuthProvider> component:
+
+    at AuthProvider (https://c2729e48-2fb9-4518-8d14-3149229b69cf-00-vi9rmtkaqn4n.kirk.replit.dev/src/hooks/use-auth.tsx:117:32)
+    at QueryClientProvider (https://c2729e48-2fb9-4518-8d14-3149229b69cf-00-vi9rmtkaqn4n.kirk.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/@tanstack_react-query.js?v=1f7aa03f:3024:3)
+    at App
+
+Consider adding an error boundary to your tree to customize error handling behavior.
+Visit https://reactjs.org/link/error-boundaries to learn more about error boundaries.
+logCapturedError @ VM2794 chunk-C43VWYGG.js:14016
+chunk-C43VWYGG.js:19381 Uncaught TypeError: Cannot read properties of null (reading 'useContext')
+    at Object.useContext (chunk-4RFDBWQV.js?v=4125b99b:1062:29)
+    at useIsRestoring (@tanstack_react-query.js?v=4125b99b:3039:35)
+    at useBaseQuery (@tanstack_react-query.js?v=4125b99b:3210:23)
+    at useQuery (@tanstack_react-query.js?v=4125b99b:3288:10)
+    at AuthProvider (use-auth.tsx:123:7)
+    at renderWithHooks (chunk-C43VWYGG.js?v=ac1a0e8c:12151:26)
+    at mountIndeterminateComponent (chunk-C43VWYGG.js?v=ac1a0e8c:14901:21)
+    at beginWork (chunk-C43VWYGG.js?v=ac1a0e8c:15882:22)
+    at beginWork$1 (chunk-C43VWYGG.js?v=ac1a0e8c:19721:22)
+    at performUnitOfWork (chunk-C43VWYGG.js?v=ac1a0e8c:19166:20)
+(índice):1 Unchecked runtime.lastError: Could not establish connection. Receiving end does not exist.
+VM57:1 Uncaught (in promise) SyntaxError: "[object Object]" is not valid JSON
+    at JSON.parse (<anonymous>)
+    at l._storageChangeDispatcher (content.js:2:898238)
+    at _storageChangeDispatcherCallback (content.js:2:897686)
+_storageChangeDispatcher @ content.js:2
+_storageChangeDispatcherCallback @ content.js:2
+VM53:1 Uncaught (in promise) SyntaxError: "[object Object]" is not valid JSON
+    at JSON.parse (<anonymous>)
+    at l._storageChangeDispatcher (content.js:2:898238)
+    at _storageChangeDispatcherCallback (content.js:2:897686)
+_storageChangeDispatcher @ content.js:2
+_storageChangeDispatcherCallback @ content.js:2
+VM71:1 Uncaught (in promise) SyntaxError: "[object Object]" is not valid JSON
+    at JSON.parse (<anonymous>)
+    at l._storageChangeDispatcher (content.js:2:898238)
+    at _storageChangeDispatcherCallback (content.js:2:897686)
+_storageChangeDispatcher @ content.js:2
+_storageChangeDispatcherCallback @ content.js:2
+VM98:1 Uncaught (in promise) SyntaxError: "[object Object]" is not valid JSON
+    at JSON.parse (<anonymous>)
+    at l._storageChangeDispatcher (content.js:2:898238)
+    at _storageChangeDispatcherCallback (content.js:2:897686)
+_storageChangeDispatcher @ content.js:2
+_storageChangeDispatcherCallback @ content.js:2
+VM99:1 Uncaught (in promise) SyntaxError: "[object Object]" is not valid JSON
+    at JSON.parse (<anonymous>)
+    at l._storageChangeDispatcher (content.js:2:898238)
+    at _storageChangeDispatcherCallback (content.js:2:897686)
+_storageChangeDispatcher @ content.js:2
+_storageChangeDispatcherCallback @ content.js:2
+workspace_iframe.html?initialPath=%2F&id=%3Ar3nh%3A:1 Uncaught (in promise) SyntaxError: "[object Object]" is not valid JSON
+    at JSON.parse (<anonymous>)
+    at l._storageChangeDispatcher (content.js:2:898238)
+    at _storageChangeDispatcherCallback (content.js:2:897686)
+_storageChangeDispatcher @ VM2652 content.js:2
+_storageChangeDispatcherCallback @ VM2652 content.js:2
+(índice):1 Uncaught (in promise) SyntaxError: "[object Object]" is not valid JSON
+    at JSON.parse (<anonymous>)
+    at l._storageChangeDispatcher (content.js:2:898238)
+    at _storageChangeDispatcherCallback (content.js:2:897686)
+_storageChangeDispatcher @ VM3557 content.js:2
+_storageChangeDispatcherCallback @ VM3557 content.js:2
+(índice):1 Uncaught (in promise) SyntaxError: "[object Object]" is not valid JSON
+    at JSON.parse (<anonymous>)
+    at l._storageChangeDispatcher (content.js:2:898238)
+    at _storageChangeDispatcherCallback (content.js:2:897686)
+_storageChangeDispatcher @ VM3553 content.js:2
+_storageChangeDispatcherCallback @ VM3553 content.js:2
+workspace_iframe.html?initialPath=%2F&id=%3Ar3ni%3A:1 Uncaught (in promise) SyntaxError: "[object Object]" is not valid JSON
+    at JSON.parse (<anonymous>)
+    at l._storageChangeDispatcher (content.js:2:898238)
+    at _storageChangeDispatcherCallback (content.js:2:897686)
+_storageChangeDispatcher @ content.js:2
+_storageChangeDispatcherCallback @ content.js:2
+VM32719:1 Uncaught (in promise) SyntaxError: "[object Object]" is not valid JSON
+    at JSON.parse (<anonymous>)
+    at l._storageChangeDispatcher (content.js:2:898238)
+    at _storageChangeDispatcherCallback (content.js:2:897686)
+_storageChangeDispatcher @ content.js:2
+_storageChangeDispatcherCallback @ content.js:2
+VM58:1 Uncaught (in promise) SyntaxError: "[object Object]" is not valid JSON
+    at JSON.parse (<anonymous>)
+    at l._storageChangeDispatcher (content.js:2:898238)
+    at _storageChangeDispatcherCallback (content.js:2:897686)
+_storageChangeDispatcher @ content.js:2
+_storageChangeDispatcherCallback @ content.js:2
+VM54:1 Uncaught (in promise) SyntaxError: "[object Object]" is not valid JSON
+    at JSON.parse (<anonymous>)
+    at l._storageChangeDispatcher (content.js:2:898238)
+    at _storageChangeDispatcherCallback (content.js:2:897686)
+_storageChangeDispatcher @ content.js:2
+_storageChangeDispatcherCallback @ content.js:2
+VM72:1 Uncaught (in promise) SyntaxError: "[object Object]" is not valid JSON
+    at JSON.parse (<anonymous>)
+    at l._storageChangeDispatcher (content.js:2:898238)
+    at _storageChangeDispatcherCallback (content.js:2:897686)
+_storageChangeDispatcher @ content.js:2
+_storageChangeDispatcherCallback @ content.js:2
+VM100:1 Uncaught (in promise) SyntaxError: "[object Object]" is not valid JSON
+    at JSON.parse (<anonymous>)
+    at l._storageChangeDispatcher (content.js:2:898238)
+    at _storageChangeDispatcherCallback (content.js:2:897686)
+_storageChangeDispatcher @ content.js:2
+_storageChangeDispatcherCallback @ content.js:2
+VM101:1 Uncaught (in promise) SyntaxError: "[object Object]" is not valid JSON
+    at JSON.parse (<anonymous>)
+    at l._storageChangeDispatcher (content.js:2:898238)
+    at _storageChangeDispatcherCallback (content.js:2:897686)
+_storageChangeDispatcher @ content.js:2
+_storageChangeDispatcherCallback @ content.js:2
+VM32724:1 Uncaught (in promise) SyntaxError: "[object Object]" is not valid JSON
+    at JSON.parse (<anonymous>)
+    at l._storageChangeDispatcher (content.js:2:898238)
+    at _storageChangeDispatcherCallback (content.js:2:897686)
+_storageChangeDispatcher @ content.js:2
+_storageChangeDispatcherCallback @ content.js:2
+VM55:1 Uncaught (in promise) SyntaxError: "[object Object]" is not valid JSON
+    at JSON.parse (<anonymous>)
+    at l._storageChangeDispatcher (content.js:2:898238)
+    at _storageChangeDispatcherCallback (content.js:2:897686)
+_storageChangeDispatcher @ content.js:2
+_storageChangeDispatcherCallback @ content.js:2
+VM59:1 Uncaught (in promise) SyntaxError: "[object Object]" is not valid JSON
+    at JSON.parse (<anonymous>)
+    at l._storageChangeDispatcher (content.js:2:898238)
+    at _storageChangeDispatcherCallback (content.js:2:897686)
+_storageChangeDispatcher @ content.js:2
+_storageChangeDispatcherCallback @ content.js:2
+VM73:1 Uncaught (in promise) SyntaxError: "[object Object]" is not valid JSON
+    at JSON.parse (<anonymous>)
+    at l._storageChangeDispatcher (content.js:2:898238)
+    at _storageChangeDispatcherCallback (content.js:2:897686)
+_storageChangeDispatcher @ content.js:2
+_storageChangeDispatcherCallback @ content.js:2
+VM102:1 Uncaught (in promise) SyntaxError: "[object Object]" is not valid JSON
+    at JSON.parse (<anonymous>)
+    at l._storageChangeDispatcher (content.js:2:898238)
+    at _storageChangeDispatcherCallback (content.js:2:897686)
+_storageChangeDispatcher @ content.js:2
+_storageChangeDispatcherCallback @ content.js:2
+VM103:1 Uncaught (in promise) SyntaxError: "[object Object]" is not valid JSON
+    at JSON.parse (<anonymous>)
+    at l._storageChangeDispatcher (content.js:2:898238)
+    at _storageChangeDispatcherCallback (content.js:2:897686)
+_storageChangeDispatcher @ content.js:2
+_storageChangeDispatcherCallback @ content.js:2
+VM60:1 Uncaught (in promise) SyntaxError: "[object Object]" is not valid JSON
+    at JSON.parse (<anonymous>)
+    at l._storageChangeDispatcher (content.js:2:898238)
+    at _storageChangeDispatcherCallback (content.js:2:897686)
+_storageChangeDispatcher @ content.js:2
+_storageChangeDispatcherCallback @ content.js:2
+VM74:1 Uncaught (in promise) SyntaxError: "[object Object]" is not valid JSON
+    at JSON.parse (<anonymous>)
+    at l._storageChangeDispatcher (content.js:2:898238)
+    at _storageChangeDispatcherCallback (content.js:2:897686)
+_storageChangeDispatcher @ content.js:2
+_storageChangeDispatcherCallback @ content.js:2
+VM56:1 Uncaught (in promise) SyntaxError: "[object Object]" is not valid JSON
+    at JSON.parse (<anonymous>)
+    at l._storageChangeDispatcher (content.js:2:898238)
+    at _storageChangeDispatcherCallback (content.js:2:897686)
+_storageChangeDispatcher @ content.js:2
+_storageChangeDispatcherCallback @ content.js:2
+VM104:1 Uncaught (in promise) SyntaxError: "[object Object]" is not valid JSON
+    at JSON.parse (<anonymous>)
+    at l._storageChangeDispatcher (content.js:2:898238)
+    at _storageChangeDispatcherCallback (content.js:2:897686)
+_storageChangeDispatcher @ content.js:2
+_storageChangeDispatcherCallback @ content.js:2
+VM105:1 Uncaught (in promise) SyntaxError: "[object Object]" is not valid JSON
+    at JSON.parse (<anonymous>)
+    at l._storageChangeDispatcher (content.js:2:898238)
+    at _storageChangeDispatcherCallback (content.js:2:897686)
+_storageChangeDispatcher @ content.js:2
+_storageChangeDispatcherCallback @ content.js:2
+VM32829:1 Uncaught (in promise) SyntaxError: "[object Object]" is not valid JSON
+    at JSON.parse (<anonymous>)
+    at l._storageChangeDispatcher (content.js:2:898238)
+    at _storageChangeDispatcherCallback (content.js:2:897686)
+_storageChangeDispatcher @ content.js:2
+_storageChangeDispatcherCallback @ content.js:2
+VM32831:1 Uncaught (in promise) SyntaxError: "[object Object]" is not valid JSON
+    at JSON.parse (<anonymous>)
+    at l._storageChangeDispatcher (content.js:2:898238)
+    at _storageChangeDispatcherCallback (content.js:2:897686)
+_storageChangeDispatcher @ content.js:2
+_storageChangeDispatcherCallback @ content.js:2
+7276-6555ca29df541412.js:1 Uncaught (in promise) Error: Channel closed while requesting
+    at 7276-6555ca29df541412.js:1:14622
+    at Object.next (main-c68511811312a741.js:1:192963)
+    at n (main-c68511811312a741.js:1:59305)
+    at u (main-c68511811312a741.js:1:59502)
+(anónimas) @ 7276-6555ca29df541412.js:1
+(anónimas) @ main-c68511811312a741.js:1
+n @ main-c68511811312a741.js:1
+u @ main-c68511811312a741.js:1
+Promise.then
+n @ main-c68511811312a741.js:1
+u @ main-c68511811312a741.js:1
+(anónimas) @ main-c68511811312a741.js:1
+(anónimas) @ main-c68511811312a741.js:1
+f.fetchOps @ 7276-6555ca29df541412.js:1
+(anónimas) @ 7276-6555ca29df541412.js:1
+(anónimas) @ main-c68511811312a741.js:1
+n @ main-c68511811312a741.js:1
+u @ main-c68511811312a741.js:1
+(anónimas) @ main-c68511811312a741.js:1
+(anónimas) @ main-c68511811312a741.js:1
+f.handleReconnect @ 7276-6555ca29df541412.js:1
+(anónimas) @ 7276-6555ca29df541412.js:1
+(anónimas) @ main-c68511811312a741.js:1
+n @ main-c68511811312a741.js:1
+u @ main-c68511811312a741.js:1
+(anónimas) @ main-c68511811312a741.js:1
+(anónimas) @ main-c68511811312a741.js:1
+f.handleStatus @ 7276-6555ca29df541412.js:1
+(anónimas) @ 7276-6555ca29df541412.js:1
+(anónimas) @ 6504-95aa0a82fdfa17e0.js:1
+handleCommand @ 6504-95aa0a82fdfa17e0.js:1
+onSocketMessage @ 6504-95aa0a82fdfa17e0.js:1
+VM61:1 Uncaught (in promise) SyntaxError: "[object Object]" is not valid JSON
+    at JSON.parse (<anonymous>)
+    at l._storageChangeDispatcher (content.js:2:898238)
+    at _storageChangeDispatcherCallback (content.js:2:897686)
+_storageChangeDispatcher @ content.js:2
+_storageChangeDispatcherCallback @ content.js:2
+VM57:1 Uncaught (in promise) SyntaxError: "[object Object]" is not valid JSON
+    at JSON.parse (<anonymous>)
+    at l._storageChangeDispatcher (content.js:2:898238)
+    at _storageChangeDispatcherCallback (content.js:2:897686)
+_storageChangeDispatcher @ content.js:2
+_storageChangeDispatcherCallback @ content.js:2
+VM75:1 Uncaught (in promise) SyntaxError: "[object Object]" is not valid JSON
+    at JSON.parse (<anonymous>)
+    at l._storageChangeDispatcher (content.js:2:898238)
+    at _storageChangeDispatcherCallback (content.js:2:897686)
+_storageChangeDispatcher @ content.js:2
+_storageChangeDispatcherCallback @ content.js:2
+VM106:1 Uncaught (in promise) SyntaxError: "[object Object]" is not valid JSON
+    at JSON.parse (<anonymous>)
+    at l._storageChangeDispatcher (content.js:2:898238)
+    at _storageChangeDispatcherCallback (content.js:2:897686)
+_storageChangeDispatcher @ content.js:2
+_storageChangeDispatcherCallback @ content.js:2
+VM107:1 Uncaught (in promise) SyntaxError: "[object Object]" is not valid JSON
+    at JSON.parse (<anonymous>)
+    at l._storageChangeDispatcher (content.js:2:898238)
+    at _storageChangeDispatcherCallback (content.js:2:897686)
+_storageChangeDispatcher @ content.js:2
+_storageChangeDispatcherCallback @ content.js:2
+VM62:1 Uncaught (in promise) SyntaxError: "[object Object]" is not valid JSON
+    at JSON.parse (<anonymous>)
+    at l._storageChangeDispatcher (content.js:2:898238)
+    at _storageChangeDispatcherCallback (content.js:2:897686)
+_storageChangeDispatcher @ content.js:2
+_storageChangeDispatcherCallback @ content.js:2
+VM58:1 Uncaught (in promise) SyntaxError: "[object Object]" is not valid JSON
+    at JSON.parse (<anonymous>)
+    at l._storageChangeDispatcher (content.js:2:898238)
+    at _storageChangeDispatcherCallback (content.js:2:897686)
+_storageChangeDispatcher @ content.js:2
+_storageChangeDispatcherCallback @ content.js:2
+workspace_iframe.html?initialPath=%2F&id=%3Ar3sj%3A:1 Uncaught (in promise) SyntaxError: "[object Object]" is not valid JSON
+    at JSON.parse (<anonymous>)
+    at l._storageChangeDispatcher (content.js:2:898238)
+    at _storageChangeDispatcherCallback (content.js:2:897686)
+_storageChangeDispatcher @ content.js:2
+_storageChangeDispatcherCallback @ content.js:2
+VM76:1 Uncaught (in promise) SyntaxError: "[object Object]" is not valid JSON
+    at JSON.parse (<anonymous>)
+    at l._storageChangeDispatcher (content.js:2:898238)
+    at _storageChangeDispatcherCallback (content.js:2:897686)
+_storageChangeDispatcher @ content.js:2
+_storageChangeDispatcherCallback @ content.js:2
+workspace_iframe.html?initialPath=%2F&id=%3Ar3sk%3A:1 Uncaught (in promise) SyntaxError: "[object Object]" is not valid JSON
+    at JSON.parse (<anonymous>)
+    at l._storageChangeDispatcher (content.js:2:898238)
+    at _storageChangeDispatcherCallback (content.js:2:897686)
+_storageChangeDispatcher @ content.js:2
+_storageChangeDispatcherCallback @ content.js:2
+VM108:1 Uncaught (in promise) SyntaxError: "[object Object]" is not valid JSON
+    at JSON.parse (<anonymous>)
+    at l._storageChangeDispatcher (content.js:2:898238)
+    at _storageChangeDispatcherCallback (content.js:2:897686)
+_storageChangeDispatcher @ content.js:2
+_storageChangeDispatcherCallback @ content.js:2
+VM109:1 Uncaught (in promise) SyntaxError: "[object Object]" is not valid JSON
+    at JSON.parse (<anonymous>)
+    at l._storageChangeDispatcher (content.js:2:898238)
+    at _storageChangeDispatcherCallback (content.js:2:897686)
+_storageChangeDispatcher @ content.js:2
+_storageChangeDispatcherCallback @ content.js:2
+VM32967:1 Uncaught (in promise) SyntaxError: "[object Object]" is not valid JSON
+    at JSON.parse (<anonymous>)
+    at l._storageChangeDispatcher (content.js:2:898238)
+    at _storageChangeDispatcherCallback (content.js:2:897686)
+_storageChangeDispatcher @ content.js:2
+_storageChangeDispatcherCallback @ content.js:2
+RealEstatePro:1 Uncaught (in promise) Error: A listener indicated an asynchronous response by returning true, but the message channel closed before a response was received
+RealEstatePro:1 Uncaught (in promise) Error: A listener indicated an asynchronous response by returning true, but the message channel closed before a response was received
+RealEstatePro:1 Uncaught (in promise) Error: A listener indicated an asynchronous response by returning true, but the message channel closed before a response was received
+RealEstatePro:1 Uncaught (in promise) Error: A listener indicated an asynchronous response by returning true, but the message channel closed before a response was received
+VM32969:1 Uncaught (in promise) SyntaxError: "[object Object]" is not valid JSON
+    at JSON.parse (<anonymous>)
+    at l._storageChangeDispatcher (content.js:2:898238)
+    at _storageChangeDispatcherCallback (content.js:2:897686)
+_storageChangeDispatcher @ content.js:2
+_storageChangeDispatcherCallback @ content.js:2
+chunk-4RFDBWQV.js?v=4125b99b:136 Warning: Invalid hook call. Hooks can only be called inside of the body of a function component. This could happen for one of the following reasons:
+1. You might have mismatching versions of React and the renderer (such as React DOM)
+2. You might be breaking the Rules of Hooks
+3. You might have more than one copy of React in the same app
+See https://reactjs.org/link/invalid-hook-call for tips about how to debug and fix this problem.
+printWarning @ VM3606 chunk-4RFDBWQV.js:136
+error @ VM3606 chunk-4RFDBWQV.js:120
+resolveDispatcher @ VM3606 chunk-4RFDBWQV.js:1045
+useContext @ VM3606 chunk-4RFDBWQV.js:1051
+useIsRestoring @ VM3604 @tanstack_react-query.js:3039
+useBaseQuery @ VM3604 @tanstack_react-query.js:3210
+useQuery @ VM3604 @tanstack_react-query.js:3288
+AuthProvider @ VM3608 use-auth.tsx:123
+renderWithHooks @ VM3585 chunk-C43VWYGG.js:12151
+mountIndeterminateComponent @ VM3585 chunk-C43VWYGG.js:14901
+beginWork @ VM3585 chunk-C43VWYGG.js:15882
+beginWork$1 @ VM3585 chunk-C43VWYGG.js:19721
+performUnitOfWork @ VM3585 chunk-C43VWYGG.js:19166
+workLoopSync @ VM3585 chunk-C43VWYGG.js:19105
+renderRootSync @ VM3585 chunk-C43VWYGG.js:19084
+performConcurrentWorkOnRoot @ VM3585 chunk-C43VWYGG.js:18646
+workLoop @ VM3585 chunk-C43VWYGG.js:197
+flushWork @ VM3585 chunk-C43VWYGG.js:176
+performWorkUntilDeadline @ VM3585 chunk-C43VWYGG.js:384
+chunk-4RFDBWQV.js?v=4125b99b:136 Warning: Invalid hook call. Hooks can only be called inside of the body of a function component. This could happen for one of the following reasons:
+1. You might have mismatching versions of React and the renderer (such as React DOM)
+2. You might be breaking the Rules of Hooks
+3. You might have more than one copy of React in the same app
+See https://reactjs.org/link/invalid-hook-call for tips about how to debug and fix this problem.
+printWarning @ VM3606 chunk-4RFDBWQV.js:136
+error @ VM3606 chunk-4RFDBWQV.js:120
+resolveDispatcher @ VM3606 chunk-4RFDBWQV.js:1045
+useContext @ VM3606 chunk-4RFDBWQV.js:1051
+useIsRestoring @ VM3604 @tanstack_react-query.js:3039
+useBaseQuery @ VM3604 @tanstack_react-query.js:3210
+useQuery @ VM3604 @tanstack_react-query.js:3288
+AuthProvider @ VM3608 use-auth.tsx:123
+renderWithHooks @ VM3585 chunk-C43VWYGG.js:12151
+mountIndeterminateComponent @ VM3585 chunk-C43VWYGG.js:14901
+beginWork @ VM3585 chunk-C43VWYGG.js:15882
+callCallback2 @ VM3585 chunk-C43VWYGG.js:3674
+invokeGuardedCallbackDev @ VM3585 chunk-C43VWYGG.js:3699
+invokeGuardedCallback @ VM3585 chunk-C43VWYGG.js:3733
+beginWork$1 @ VM3585 chunk-C43VWYGG.js:19733
+performUnitOfWork @ VM3585 chunk-C43VWYGG.js:19166
+workLoopSync @ VM3585 chunk-C43VWYGG.js:19105
+renderRootSync @ VM3585 chunk-C43VWYGG.js:19084
+performConcurrentWorkOnRoot @ VM3585 chunk-C43VWYGG.js:18646
+workLoop @ VM3585 chunk-C43VWYGG.js:197
+flushWork @ VM3585 chunk-C43VWYGG.js:176
+performWorkUntilDeadline @ VM3585 chunk-C43VWYGG.js:384
+chunk-4RFDBWQV.js?v=4125b99b:1062 Uncaught TypeError: Cannot read properties of null (reading 'useContext')
+    at Object.useContext (chunk-4RFDBWQV.js?v=4125b99b:1062:29)
+    at useIsRestoring (@tanstack_react-query.js?v=4125b99b:3039:35)
+    at useBaseQuery (@tanstack_react-query.js?v=4125b99b:3210:23)
+    at useQuery (@tanstack_react-query.js?v=4125b99b:3288:10)
+    at AuthProvider (use-auth.tsx:123:7)
+    at renderWithHooks (chunk-C43VWYGG.js?v=ac1a0e8c:12151:26)
+    at mountIndeterminateComponent (chunk-C43VWYGG.js?v=ac1a0e8c:14901:21)
+    at beginWork (chunk-C43VWYGG.js?v=ac1a0e8c:15882:22)
+    at HTMLUnknownElement.callCallback2 (chunk-C43VWYGG.js?v=ac1a0e8c:3674:22)
+    at Object.invokeGuardedCallbackDev (chunk-C43VWYGG.js?v=ac1a0e8c:3699:24)
+useContext @ VM3606 chunk-4RFDBWQV.js:1062
+useIsRestoring @ VM3604 @tanstack_react-query.js:3039
+useBaseQuery @ VM3604 @tanstack_react-query.js:3210
+useQuery @ VM3604 @tanstack_react-query.js:3288
+AuthProvider @ VM3608 use-auth.tsx:123
+renderWithHooks @ VM3585 chunk-C43VWYGG.js:12151
+mountIndeterminateComponent @ VM3585 chunk-C43VWYGG.js:14901
+beginWork @ VM3585 chunk-C43VWYGG.js:15882
+callCallback2 @ VM3585 chunk-C43VWYGG.js:3674
+invokeGuardedCallbackDev @ VM3585 chunk-C43VWYGG.js:3699
+invokeGuardedCallback @ VM3585 chunk-C43VWYGG.js:3733
+beginWork$1 @ VM3585 chunk-C43VWYGG.js:19733
+performUnitOfWork @ VM3585 chunk-C43VWYGG.js:19166
+workLoopSync @ VM3585 chunk-C43VWYGG.js:19105
+renderRootSync @ VM3585 chunk-C43VWYGG.js:19084
+performConcurrentWorkOnRoot @ VM3585 chunk-C43VWYGG.js:18646
+workLoop @ VM3585 chunk-C43VWYGG.js:197
+flushWork @ VM3585 chunk-C43VWYGG.js:176
+performWorkUntilDeadline @ VM3585 chunk-C43VWYGG.js:384
+chunk-4RFDBWQV.js?v=4125b99b:136 Warning: Invalid hook call. Hooks can only be called inside of the body of a function component. This could happen for one of the following reasons:
+1. You might have mismatching versions of React and the renderer (such as React DOM)
+2. You might be breaking the Rules of Hooks
+3. You might have more than one copy of React in the same app
+See https://reactjs.org/link/invalid-hook-call for tips about how to debug and fix this problem.
+printWarning @ VM3606 chunk-4RFDBWQV.js:136
+error @ VM3606 chunk-4RFDBWQV.js:120
+resolveDispatcher @ VM3606 chunk-4RFDBWQV.js:1045
+useContext @ VM3606 chunk-4RFDBWQV.js:1051
+useIsRestoring @ VM3604 @tanstack_react-query.js:3039
+useBaseQuery @ VM3604 @tanstack_react-query.js:3210
+useQuery @ VM3604 @tanstack_react-query.js:3288
+AuthProvider @ VM3608 use-auth.tsx:123
+renderWithHooks @ VM3585 chunk-C43VWYGG.js:12151
+mountIndeterminateComponent @ VM3585 chunk-C43VWYGG.js:14901
+beginWork @ VM3585 chunk-C43VWYGG.js:15882
+beginWork$1 @ VM3585 chunk-C43VWYGG.js:19721
+performUnitOfWork @ VM3585 chunk-C43VWYGG.js:19166
+workLoopSync @ VM3585 chunk-C43VWYGG.js:19105
+renderRootSync @ VM3585 chunk-C43VWYGG.js:19084
+recoverFromConcurrentError @ VM3585 chunk-C43VWYGG.js:18704
+performConcurrentWorkOnRoot @ VM3585 chunk-C43VWYGG.js:18652
+workLoop @ VM3585 chunk-C43VWYGG.js:197
+flushWork @ VM3585 chunk-C43VWYGG.js:176
+performWorkUntilDeadline @ VM3585 chunk-C43VWYGG.js:384
+chunk-4RFDBWQV.js?v=4125b99b:136 Warning: Invalid hook call. Hooks can only be called inside of the body of a function component. This could happen for one of the following reasons:
+1. You might have mismatching versions of React and the renderer (such as React DOM)
+2. You might be breaking the Rules of Hooks
+3. You might have more than one copy of React in the same app
+See https://reactjs.org/link/invalid-hook-call for tips about how to debug and fix this problem.
+printWarning @ VM3606 chunk-4RFDBWQV.js:136
+error @ VM3606 chunk-4RFDBWQV.js:120
+resolveDispatcher @ VM3606 chunk-4RFDBWQV.js:1045
+useContext @ VM3606 chunk-4RFDBWQV.js:1051
+useIsRestoring @ VM3604 @tanstack_react-query.js:3039
+useBaseQuery @ VM3604 @tanstack_react-query.js:3210
+useQuery @ VM3604 @tanstack_react-query.js:3288
+AuthProvider @ VM3608 use-auth.tsx:123
+renderWithHooks @ VM3585 chunk-C43VWYGG.js:12151
+mountIndeterminateComponent @ VM3585 chunk-C43VWYGG.js:14901
+beginWork @ VM3585 chunk-C43VWYGG.js:15882
+callCallback2 @ VM3585 chunk-C43VWYGG.js:3674
+invokeGuardedCallbackDev @ VM3585 chunk-C43VWYGG.js:3699
+invokeGuardedCallback @ VM3585 chunk-C43VWYGG.js:3733
+beginWork$1 @ VM3585 chunk-C43VWYGG.js:19733
+performUnitOfWork @ VM3585 chunk-C43VWYGG.js:19166
+workLoopSync @ VM3585 chunk-C43VWYGG.js:19105
+renderRootSync @ VM3585 chunk-C43VWYGG.js:19084
+recoverFromConcurrentError @ VM3585 chunk-C43VWYGG.js:18704
+performConcurrentWorkOnRoot @ VM3585 chunk-C43VWYGG.js:18652
+workLoop @ VM3585 chunk-C43VWYGG.js:197
+flushWork @ VM3585 chunk-C43VWYGG.js:176
+performWorkUntilDeadline @ VM3585 chunk-C43VWYGG.js:384
+chunk-4RFDBWQV.js?v=4125b99b:1062 Uncaught TypeError: Cannot read properties of null (reading 'useContext')
+    at Object.useContext (chunk-4RFDBWQV.js?v=4125b99b:1062:29)
+    at useIsRestoring (@tanstack_react-query.js?v=4125b99b:3039:35)
+    at useBaseQuery (@tanstack_react-query.js?v=4125b99b:3210:23)
+    at useQuery (@tanstack_react-query.js?v=4125b99b:3288:10)
+    at AuthProvider (use-auth.tsx:123:7)
+    at renderWithHooks (chunk-C43VWYGG.js?v=ac1a0e8c:12151:26)
+    at mountIndeterminateComponent (chunk-C43VWYGG.js?v=ac1a0e8c:14901:21)
+    at beginWork (chunk-C43VWYGG.js?v=ac1a0e8c:15882:22)
+    at HTMLUnknownElement.callCallback2 (chunk-C43VWYGG.js?v=ac1a0e8c:3674:22)
+    at Object.invokeGuardedCallbackDev (chunk-C43VWYGG.js?v=ac1a0e8c:3699:24)
+useContext @ VM3606 chunk-4RFDBWQV.js:1062
+useIsRestoring @ VM3604 @tanstack_react-query.js:3039
+useBaseQuery @ VM3604 @tanstack_react-query.js:3210
+useQuery @ VM3604 @tanstack_react-query.js:3288
+AuthProvider @ VM3608 use-auth.tsx:123
+renderWithHooks @ VM3585 chunk-C43VWYGG.js:12151
+mountIndeterminateComponent @ VM3585 chunk-C43VWYGG.js:14901
+beginWork @ VM3585 chunk-C43VWYGG.js:15882
+callCallback2 @ VM3585 chunk-C43VWYGG.js:3674
+invokeGuardedCallbackDev @ VM3585 chunk-C43VWYGG.js:3699
+invokeGuardedCallback @ VM3585 chunk-C43VWYGG.js:3733
+beginWork$1 @ VM3585 chunk-C43VWYGG.js:19733
+performUnitOfWork @ VM3585 chunk-C43VWYGG.js:19166
+workLoopSync @ VM3585 chunk-C43VWYGG.js:19105
+renderRootSync @ VM3585 chunk-C43VWYGG.js:19084
+recoverFromConcurrentError @ VM3585 chunk-C43VWYGG.js:18704
+performConcurrentWorkOnRoot @ VM3585 chunk-C43VWYGG.js:18652
+workLoop @ VM3585 chunk-C43VWYGG.js:197
+flushWork @ VM3585 chunk-C43VWYGG.js:176
+performWorkUntilDeadline @ VM3585 chunk-C43VWYGG.js:384
+chunk-C43VWYGG.js?v=ac1a0e8c:14016 The above error occurred in the <AuthProvider> component:
+
+    at AuthProvider (https://c2729e48-2fb9-4518-8d14-3149229b69cf-00-vi9rmtkaqn4n.kirk.replit.dev/src/hooks/use-auth.tsx:117:32)
+    at QueryClientProvider (https://c2729e48-2fb9-4518-8d14-3149229b69cf-00-vi9rmtkaqn4n.kirk.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/@tanstack_react-query.js?v=1f7aa03f:3024:3)
+    at App
+
+Consider adding an error boundary to your tree to customize error handling behavior.
+Visit https://reactjs.org/link/error-boundaries to learn more about error boundaries.
+logCapturedError @ VM3585 chunk-C43VWYGG.js:14016
+update.callback @ VM3585 chunk-C43VWYGG.js:14036
+callCallback @ VM3585 chunk-C43VWYGG.js:10491
+commitUpdateQueue @ VM3585 chunk-C43VWYGG.js:10508
+commitLayoutEffectOnFiber @ VM3585 chunk-C43VWYGG.js:17061
+commitLayoutMountEffects_complete @ VM3585 chunk-C43VWYGG.js:17948
+commitLayoutEffects_begin @ VM3585 chunk-C43VWYGG.js:17937
+commitLayoutEffects @ VM3585 chunk-C43VWYGG.js:17888
+commitRootImpl @ VM3585 chunk-C43VWYGG.js:19321
+commitRoot @ VM3585 chunk-C43VWYGG.js:19245
+finishConcurrentRender @ VM3585 chunk-C43VWYGG.js:18728
+performConcurrentWorkOnRoot @ VM3585 chunk-C43VWYGG.js:18686
+workLoop @ VM3585 chunk-C43VWYGG.js:197
+flushWork @ VM3585 chunk-C43VWYGG.js:176
+performWorkUntilDeadline @ VM3585 chunk-C43VWYGG.js:384
+chunk-C43VWYGG.js?v=ac1a0e8c:19381 Uncaught TypeError: Cannot read properties of null (reading 'useContext')
+    at Object.useContext (chunk-4RFDBWQV.js?v=4125b99b:1062:29)
+    at useIsRestoring (@tanstack_react-query.js?v=4125b99b:3039:35)
+    at useBaseQuery (@tanstack_react-query.js?v=4125b99b:3210:23)
+    at useQuery (@tanstack_react-query.js?v=4125b99b:3288:10)
+    at AuthProvider (use-auth.tsx:123:7)
+    at renderWithHooks (chunk-C43VWYGG.js?v=ac1a0e8c:12151:26)
+    at mountIndeterminateComponent (chunk-C43VWYGG.js?v=ac1a0e8c:14901:21)
+    at beginWork (chunk-C43VWYGG.js?v=ac1a0e8c:15882:22)
+    at beginWork$1 (chunk-C43VWYGG.js?v=ac1a0e8c:19721:22)
+    at performUnitOfWork (chunk-C43VWYGG.js?v=ac1a0e8c:19166:20)
+useContext @ VM3606 chunk-4RFDBWQV.js:1062
+useIsRestoring @ VM3604 @tanstack_react-query.js:3039
+useBaseQuery @ VM3604 @tanstack_react-query.js:3210
+useQuery @ VM3604 @tanstack_react-query.js:3288
+AuthProvider @ VM3608 use-auth.tsx:123
+renderWithHooks @ VM3585 chunk-C43VWYGG.js:12151
+mountIndeterminateComponent @ VM3585 chunk-C43VWYGG.js:14901
+beginWork @ VM3585 chunk-C43VWYGG.js:15882
+beginWork$1 @ VM3585 chunk-C43VWYGG.js:19721
+performUnitOfWork @ VM3585 chunk-C43VWYGG.js:19166
+workLoopSync @ VM3585 chunk-C43VWYGG.js:19105
+renderRootSync @ VM3585 chunk-C43VWYGG.js:19084
+recoverFromConcurrentError @ VM3585 chunk-C43VWYGG.js:18704
+performConcurrentWorkOnRoot @ VM3585 chunk-C43VWYGG.js:18652
+workLoop @ VM3585 chunk-C43VWYGG.js:197
+flushWork @ VM3585 chunk-C43VWYGG.js:176
+performWorkUntilDeadline @ VM3585 chunk-C43VWYGG.js:384
+chunk-4RFDBWQV.js?v=4125b99b:136 Warning: Invalid hook call. Hooks can only be called inside of the body of a function component. This could happen for one of the following reasons:
+1. You might have mismatching versions of React and the renderer (such as React DOM)
+2. You might be breaking the Rules of Hooks
+3. You might have more than one copy of React in the same app
+See https://reactjs.org/link/invalid-hook-call for tips about how to debug and fix this problem.
+printWarning @ VM3636 chunk-4RFDBWQV.js:136
+error @ VM3636 chunk-4RFDBWQV.js:120
+resolveDispatcher @ VM3636 chunk-4RFDBWQV.js:1045
+useContext @ VM3636 chunk-4RFDBWQV.js:1051
+useIsRestoring @ VM3634 @tanstack_react-query.js:3039
+useBaseQuery @ VM3634 @tanstack_react-query.js:3210
+useQuery @ VM3634 @tanstack_react-query.js:3288
+AuthProvider @ VM3638 use-auth.tsx:123
+renderWithHooks @ VM3595 chunk-C43VWYGG.js:12151
+mountIndeterminateComponent @ VM3595 chunk-C43VWYGG.js:14901
+beginWork @ VM3595 chunk-C43VWYGG.js:15882
+beginWork$1 @ VM3595 chunk-C43VWYGG.js:19721
+performUnitOfWork @ VM3595 chunk-C43VWYGG.js:19166
+workLoopSync @ VM3595 chunk-C43VWYGG.js:19105
+renderRootSync @ VM3595 chunk-C43VWYGG.js:19084
+performConcurrentWorkOnRoot @ VM3595 chunk-C43VWYGG.js:18646
+workLoop @ VM3595 chunk-C43VWYGG.js:197
+flushWork @ VM3595 chunk-C43VWYGG.js:176
+performWorkUntilDeadline @ VM3595 chunk-C43VWYGG.js:384
+chunk-4RFDBWQV.js?v=4125b99b:136 Warning: Invalid hook call. Hooks can only be called inside of the body of a function component. This could happen for one of the following reasons:
+1. You might have mismatching versions of React and the renderer (such as React DOM)
+2. You might be breaking the Rules of Hooks
+3. You might have more than one copy of React in the same app
+See https://reactjs.org/link/invalid-hook-call for tips about how to debug and fix this problem.
+printWarning @ VM3636 chunk-4RFDBWQV.js:136
+error @ VM3636 chunk-4RFDBWQV.js:120
+resolveDispatcher @ VM3636 chunk-4RFDBWQV.js:1045
+useContext @ VM3636 chunk-4RFDBWQV.js:1051
+useIsRestoring @ VM3634 @tanstack_react-query.js:3039
+useBaseQuery @ VM3634 @tanstack_react-query.js:3210
+useQuery @ VM3634 @tanstack_react-query.js:3288
+AuthProvider @ VM3638 use-auth.tsx:123
+renderWithHooks @ VM3595 chunk-C43VWYGG.js:12151
+mountIndeterminateComponent @ VM3595 chunk-C43VWYGG.js:14901
+beginWork @ VM3595 chunk-C43VWYGG.js:15882
+callCallback2 @ VM3595 chunk-C43VWYGG.js:3674
+invokeGuardedCallbackDev @ VM3595 chunk-C43VWYGG.js:3699
+invokeGuardedCallback @ VM3595 chunk-C43VWYGG.js:3733
+beginWork$1 @ VM3595 chunk-C43VWYGG.js:19733
+performUnitOfWork @ VM3595 chunk-C43VWYGG.js:19166
+workLoopSync @ VM3595 chunk-C43VWYGG.js:19105
+renderRootSync @ VM3595 chunk-C43VWYGG.js:19084
+performConcurrentWorkOnRoot @ VM3595 chunk-C43VWYGG.js:18646
+workLoop @ VM3595 chunk-C43VWYGG.js:197
+flushWork @ VM3595 chunk-C43VWYGG.js:176
+performWorkUntilDeadline @ VM3595 chunk-C43VWYGG.js:384
+chunk-4RFDBWQV.js?v=4125b99b:1062 Uncaught TypeError: Cannot read properties of null (reading 'useContext')
+    at Object.useContext (chunk-4RFDBWQV.js?v=4125b99b:1062:29)
+    at useIsRestoring (@tanstack_react-query.js?v=4125b99b:3039:35)
+    at useBaseQuery (@tanstack_react-query.js?v=4125b99b:3210:23)
+    at useQuery (@tanstack_react-query.js?v=4125b99b:3288:10)
+    at AuthProvider (use-auth.tsx:123:7)
+    at renderWithHooks (chunk-C43VWYGG.js?v=ac1a0e8c:12151:26)
+    at mountIndeterminateComponent (chunk-C43VWYGG.js?v=ac1a0e8c:14901:21)
+    at beginWork (chunk-C43VWYGG.js?v=ac1a0e8c:15882:22)
+    at HTMLUnknownElement.callCallback2 (chunk-C43VWYGG.js?v=ac1a0e8c:3674:22)
+    at Object.invokeGuardedCallbackDev (chunk-C43VWYGG.js?v=ac1a0e8c:3699:24)
+useContext @ VM3636 chunk-4RFDBWQV.js:1062
+useIsRestoring @ VM3634 @tanstack_react-query.js:3039
+useBaseQuery @ VM3634 @tanstack_react-query.js:3210
+useQuery @ VM3634 @tanstack_react-query.js:3288
+AuthProvider @ VM3638 use-auth.tsx:123
+renderWithHooks @ VM3595 chunk-C43VWYGG.js:12151
+mountIndeterminateComponent @ VM3595 chunk-C43VWYGG.js:14901
+beginWork @ VM3595 chunk-C43VWYGG.js:15882
+callCallback2 @ VM3595 chunk-C43VWYGG.js:3674
+invokeGuardedCallbackDev @ VM3595 chunk-C43VWYGG.js:3699
+invokeGuardedCallback @ VM3595 chunk-C43VWYGG.js:3733
+beginWork$1 @ VM3595 chunk-C43VWYGG.js:19733
+performUnitOfWork @ VM3595 chunk-C43VWYGG.js:19166
+workLoopSync @ VM3595 chunk-C43VWYGG.js:19105
+renderRootSync @ VM3595 chunk-C43VWYGG.js:19084
+performConcurrentWorkOnRoot @ VM3595 chunk-C43VWYGG.js:18646
+workLoop @ VM3595 chunk-C43VWYGG.js:197
+flushWork @ VM3595 chunk-C43VWYGG.js:176
+performWorkUntilDeadline @ VM3595 chunk-C43VWYGG.js:384
+chunk-4RFDBWQV.js?v=4125b99b:136 Warning: Invalid hook call. Hooks can only be called inside of the body of a function component. This could happen for one of the following reasons:
+1. You might have mismatching versions of React and the renderer (such as React DOM)
+2. You might be breaking the Rules of Hooks
+3. You might have more than one copy of React in the same app
+See https://reactjs.org/link/invalid-hook-call for tips about how to debug and fix this problem.
+printWarning @ VM3636 chunk-4RFDBWQV.js:136
+error @ VM3636 chunk-4RFDBWQV.js:120
+resolveDispatcher @ VM3636 chunk-4RFDBWQV.js:1045
+useContext @ VM3636 chunk-4RFDBWQV.js:1051
+useIsRestoring @ VM3634 @tanstack_react-query.js:3039
+useBaseQuery @ VM3634 @tanstack_react-query.js:3210
+useQuery @ VM3634 @tanstack_react-query.js:3288
+AuthProvider @ VM3638 use-auth.tsx:123
+renderWithHooks @ VM3595 chunk-C43VWYGG.js:12151
+mountIndeterminateComponent @ VM3595 chunk-C43VWYGG.js:14901
+beginWork @ VM3595 chunk-C43VWYGG.js:15882
+beginWork$1 @ VM3595 chunk-C43VWYGG.js:19721
+performUnitOfWork @ VM3595 chunk-C43VWYGG.js:19166
+workLoopSync @ VM3595 chunk-C43VWYGG.js:19105
+renderRootSync @ VM3595 chunk-C43VWYGG.js:19084
+recoverFromConcurrentError @ VM3595 chunk-C43VWYGG.js:18704
+performConcurrentWorkOnRoot @ VM3595 chunk-C43VWYGG.js:18652
+workLoop @ VM3595 chunk-C43VWYGG.js:197
+flushWork @ VM3595 chunk-C43VWYGG.js:176
+performWorkUntilDeadline @ VM3595 chunk-C43VWYGG.js:384
+chunk-4RFDBWQV.js?v=4125b99b:136 Warning: Invalid hook call. Hooks can only be called inside of the body of a function component. This could happen for one of the following reasons:
+1. You might have mismatching versions of React and the renderer (such as React DOM)
+2. You might be breaking the Rules of Hooks
+3. You might have more than one copy of React in the same app
+See https://reactjs.org/link/invalid-hook-call for tips about how to debug and fix this problem.
+printWarning @ VM3636 chunk-4RFDBWQV.js:136
+error @ VM3636 chunk-4RFDBWQV.js:120
+resolveDispatcher @ VM3636 chunk-4RFDBWQV.js:1045
+useContext @ VM3636 chunk-4RFDBWQV.js:1051
+useIsRestoring @ VM3634 @tanstack_react-query.js:3039
+useBaseQuery @ VM3634 @tanstack_react-query.js:3210
+useQuery @ VM3634 @tanstack_react-query.js:3288
+AuthProvider @ VM3638 use-auth.tsx:123
+renderWithHooks @ VM3595 chunk-C43VWYGG.js:12151
+mountIndeterminateComponent @ VM3595 chunk-C43VWYGG.js:14901
+beginWork @ VM3595 chunk-C43VWYGG.js:15882
+callCallback2 @ VM3595 chunk-C43VWYGG.js:3674
+invokeGuardedCallbackDev @ VM3595 chunk-C43VWYGG.js:3699
+invokeGuardedCallback @ VM3595 chunk-C43VWYGG.js:3733
+beginWork$1 @ VM3595 chunk-C43VWYGG.js:19733
+performUnitOfWork @ VM3595 chunk-C43VWYGG.js:19166
+workLoopSync @ VM3595 chunk-C43VWYGG.js:19105
+renderRootSync @ VM3595 chunk-C43VWYGG.js:19084
+recoverFromConcurrentError @ VM3595 chunk-C43VWYGG.js:18704
+performConcurrentWorkOnRoot @ VM3595 chunk-C43VWYGG.js:18652
+workLoop @ VM3595 chunk-C43VWYGG.js:197
+flushWork @ VM3595 chunk-C43VWYGG.js:176
+performWorkUntilDeadline @ VM3595 chunk-C43VWYGG.js:384
+chunk-4RFDBWQV.js?v=4125b99b:1062 Uncaught TypeError: Cannot read properties of null (reading 'useContext')
+    at Object.useContext (chunk-4RFDBWQV.js?v=4125b99b:1062:29)
+    at useIsRestoring (@tanstack_react-query.js?v=4125b99b:3039:35)
+    at useBaseQuery (@tanstack_react-query.js?v=4125b99b:3210:23)
+    at useQuery (@tanstack_react-query.js?v=4125b99b:3288:10)
+    at AuthProvider (use-auth.tsx:123:7)
+    at renderWithHooks (chunk-C43VWYGG.js?v=ac1a0e8c:12151:26)
+    at mountIndeterminateComponent (chunk-C43VWYGG.js?v=ac1a0e8c:14901:21)
+    at beginWork (chunk-C43VWYGG.js?v=ac1a0e8c:15882:22)
+    at HTMLUnknownElement.callCallback2 (chunk-C43VWYGG.js?v=ac1a0e8c:3674:22)
+    at Object.invokeGuardedCallbackDev (chunk-C43VWYGG.js?v=ac1a0e8c:3699:24)
+useContext @ VM3636 chunk-4RFDBWQV.js:1062
+useIsRestoring @ VM3634 @tanstack_react-query.js:3039
+useBaseQuery @ VM3634 @tanstack_react-query.js:3210
+useQuery @ VM3634 @tanstack_react-query.js:3288
+AuthProvider @ VM3638 use-auth.tsx:123
+renderWithHooks @ VM3595 chunk-C43VWYGG.js:12151
+mountIndeterminateComponent @ VM3595 chunk-C43VWYGG.js:14901
+beginWork @ VM3595 chunk-C43VWYGG.js:15882
+callCallback2 @ VM3595 chunk-C43VWYGG.js:3674
+invokeGuardedCallbackDev @ VM3595 chunk-C43VWYGG.js:3699
+invokeGuardedCallback @ VM3595 chunk-C43VWYGG.js:3733
+beginWork$1 @ VM3595 chunk-C43VWYGG.js:19733
+performUnitOfWork @ VM3595 chunk-C43VWYGG.js:19166
+workLoopSync @ VM3595 chunk-C43VWYGG.js:19105
+renderRootSync @ VM3595 chunk-C43VWYGG.js:19084
+recoverFromConcurrentError @ VM3595 chunk-C43VWYGG.js:18704
+performConcurrentWorkOnRoot @ VM3595 chunk-C43VWYGG.js:18652
+workLoop @ VM3595 chunk-C43VWYGG.js:197
+flushWork @ VM3595 chunk-C43VWYGG.js:176
+performWorkUntilDeadline @ VM3595 chunk-C43VWYGG.js:384
+chunk-C43VWYGG.js?v=ac1a0e8c:14016 The above error occurred in the <AuthProvider> component:
+
+    at AuthProvider (https://c2729e48-2fb9-4518-8d14-3149229b69cf-00-vi9rmtkaqn4n.kirk.replit.dev/src/hooks/use-auth.tsx:117:32)
+    at QueryClientProvider (https://c2729e48-2fb9-4518-8d14-3149229b69cf-00-vi9rmtkaqn4n.kirk.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/@tanstack_react-query.js?v=1f7aa03f:3024:3)
+    at App
+
+Consider adding an error boundary to your tree to customize error handling behavior.
+Visit https://reactjs.org/link/error-boundaries to learn more about error boundaries.
+logCapturedError @ VM3595 chunk-C43VWYGG.js:14016
+update.callback @ VM3595 chunk-C43VWYGG.js:14036
+callCallback @ VM3595 chunk-C43VWYGG.js:10491
+commitUpdateQueue @ VM3595 chunk-C43VWYGG.js:10508
+commitLayoutEffectOnFiber @ VM3595 chunk-C43VWYGG.js:17061
+commitLayoutMountEffects_complete @ VM3595 chunk-C43VWYGG.js:17948
+commitLayoutEffects_begin @ VM3595 chunk-C43VWYGG.js:17937
+commitLayoutEffects @ VM3595 chunk-C43VWYGG.js:17888
+commitRootImpl @ VM3595 chunk-C43VWYGG.js:19321
+commitRoot @ VM3595 chunk-C43VWYGG.js:19245
+finishConcurrentRender @ VM3595 chunk-C43VWYGG.js:18728
+performConcurrentWorkOnRoot @ VM3595 chunk-C43VWYGG.js:18686
+workLoop @ VM3595 chunk-C43VWYGG.js:197
+flushWork @ VM3595 chunk-C43VWYGG.js:176
+performWorkUntilDeadline @ VM3595 chunk-C43VWYGG.js:384
+chunk-C43VWYGG.js?v=ac1a0e8c:19381 Uncaught TypeError: Cannot read properties of null (reading 'useContext')
+    at Object.useContext (chunk-4RFDBWQV.js?v=4125b99b:1062:29)
+    at useIsRestoring (@tanstack_react-query.js?v=4125b99b:3039:35)
+    at useBaseQuery (@tanstack_react-query.js?v=4125b99b:3210:23)
+    at useQuery (@tanstack_react-query.js?v=4125b99b:3288:10)
+    at AuthProvider (use-auth.tsx:123:7)
+    at renderWithHooks (chunk-C43VWYGG.js?v=ac1a0e8c:12151:26)
+    at mountIndeterminateComponent (chunk-C43VWYGG.js?v=ac1a0e8c:14901:21)
+    at beginWork (chunk-C43VWYGG.js?v=ac1a0e8c:15882:22)
+    at beginWork$1 (chunk-C43VWYGG.js?v=ac1a0e8c:19721:22)
+    at performUnitOfWork (chunk-C43VWYGG.js?v=ac1a0e8c:19166:20)
+useContext @ VM3636 chunk-4RFDBWQV.js:1062
+useIsRestoring @ VM3634 @tanstack_react-query.js:3039
+useBaseQuery @ VM3634 @tanstack_react-query.js:3210
+useQuery @ VM3634 @tanstack_react-query.js:3288
+AuthProvider @ VM3638 use-auth.tsx:123
+renderWithHooks @ VM3595 chunk-C43VWYGG.js:12151
+mountIndeterminateComponent @ VM3595 chunk-C43VWYGG.js:14901
+beginWork @ VM3595 chunk-C43VWYGG.js:15882
+beginWork$1 @ VM3595 chunk-C43VWYGG.js:19721
+performUnitOfWork @ VM3595 chunk-C43VWYGG.js:19166
+workLoopSync @ VM3595 chunk-C43VWYGG.js:19105
+renderRootSync @ VM3595 chunk-C43VWYGG.js:19084
+recoverFromConcurrentError @ VM3595 chunk-C43VWYGG.js:18704
+performConcurrentWorkOnRoot @ VM3595 chunk-C43VWYGG.js:18652
+workLoop @ VM3595 chunk-C43VWYGG.js:197
+flushWork @ VM3595 chunk-C43VWYGG.js:176
+performWorkUntilDeadline @ VM3595 chunk-C43VWYGG.js:384
+7276-6555ca29df541412.js:1 Uncaught (in promise) Error: Committing while reconnecting
+    at r.p [as debounceCommit] (7276-6555ca29df541412.js:1:17093)
+    at f.handlePacket (7276-6555ca29df541412.js:1:6708)
+    at 7276-6555ca29df541412.js:1:13179
+    at Object.next (main-c68511811312a741.js:1:192963)
+    at n (main-c68511811312a741.js:1:59305)
+    at u (main-c68511811312a741.js:1:59502)
+p @ 7276-6555ca29df541412.js:1
+f.handlePacket @ 7276-6555ca29df541412.js:1
+(anónimas) @ 7276-6555ca29df541412.js:1
+(anónimas) @ main-c68511811312a741.js:1
+n @ main-c68511811312a741.js:1
+u @ main-c68511811312a741.js:1
+Promise.then
+n @ main-c68511811312a741.js:1
+u @ main-c68511811312a741.js:1
+(anónimas) @ main-c68511811312a741.js:1
+(anónimas) @ main-c68511811312a741.js:1
+f.handleReconnect @ 7276-6555ca29df541412.js:1
+(anónimas) @ 7276-6555ca29df541412.js:1
+(anónimas) @ main-c68511811312a741.js:1
+n @ main-c68511811312a741.js:1
+u @ main-c68511811312a741.js:1
+(anónimas) @ main-c68511811312a741.js:1
+(anónimas) @ main-c68511811312a741.js:1
+f.handleStatus @ 7276-6555ca29df541412.js:1
+(anónimas) @ 7276-6555ca29df541412.js:1
+(anónimas) @ 6504-95aa0a82fdfa17e0.js:1
+handleCommand @ 6504-95aa0a82fdfa17e0.js:1
+onSocketMessage @ 6504-95aa0a82fdfa17e0.js:1
+VM59:1 Uncaught (in promise) SyntaxError: "[object Object]" is not valid JSON
+    at JSON.parse (<anonymous>)
+    at l._storageChangeDispatcher (content.js:2:898238)
+    at _storageChangeDispatcherCallback (content.js:2:897686)
+_storageChangeDispatcher @ content.js:2
+_storageChangeDispatcherCallback @ content.js:2
+VM34939:1 Uncaught (in promise) SyntaxError: "[object Object]" is not valid JSON
+    at JSON.parse (<anonymous>)
+    at l._storageChangeDispatcher (content.js:2:898238)
+    at _storageChangeDispatcherCallback (content.js:2:897686)
+_storageChangeDispatcher @ content.js:2
+_storageChangeDispatcherCallback @ content.js:2
+VM63:1 Uncaught (in promise) SyntaxError: "[object Object]" is not valid JSON
+    at JSON.parse (<anonymous>)
+    at l._storageChangeDispatcher (content.js:2:898238)
+    at _storageChangeDispatcherCallback (content.js:2:897686)
+_storageChangeDispatcher @ content.js:2
+_storageChangeDispatcherCallback @ content.js:2
+VM77:1 Uncaught (in promise) SyntaxError: "[object Object]" is not valid JSON
+    at JSON.parse (<anonymous>)
+    at l._storageChangeDispatcher (content.js:2:898238)
+    at _storageChangeDispatcherCallback (content.js:2:897686)
+_storageChangeDispatcher @ content.js:2
+_storageChangeDispatcherCallback @ content.js:2
+(índice):1 Uncaught (in promise) SyntaxError: "[object Object]" is not valid JSON
+    at JSON.parse (<anonymous>)
+    at l._storageChangeDispatcher (content.js:2:898238)
+    at _storageChangeDispatcherCallback (content.js:2:897686)
+_storageChangeDispatcher @ VM3780 content.js:2
+_storageChangeDispatcherCallback @ VM3780 content.js:2
+(índice):1 Uncaught (in promise) SyntaxError: "[object Object]" is not valid JSON
+    at JSON.parse (<anonymous>)
+    at l._storageChangeDispatcher (content.js:2:898238)
+    at _storageChangeDispatcherCallback (content.js:2:897686)
+_storageChangeDispatcher @ VM3785 content.js:2
+_storageChangeDispatcherCallback @ VM3785 content.js:2
+workspace_iframe.html?initialPath=%2F&id=%3Ar3sj%3A:1 Uncaught (in promise) SyntaxError: "[object Object]" is not valid JSON
+    at JSON.parse (<anonymous>)
+    at l._storageChangeDispatcher (content.js:2:898238)
+    at _storageChangeDispatcherCallback (content.js:2:897686)
+_storageChangeDispatcher @ content.js:2
+_storageChangeDispatcherCallback @ content.js:2
+workspace_iframe.html?initialPath=%2F&id=%3Ar3sk%3A:1 Uncaught (in promise) SyntaxError: "[object Object]" is not valid JSON
+    at JSON.parse (<anonymous>)
+    at l._storageChangeDispatcher (content.js:2:898238)
+    at _storageChangeDispatcherCallback (content.js:2:897686)
+_storageChangeDispatcher @ content.js:2
+_storageChangeDispatcherCallback @ content.js:2
+VM110:1 Uncaught (in promise) SyntaxError: "[object Object]" is not valid JSON
+    at JSON.parse (<anonymous>)
+    at l._storageChangeDispatcher (content.js:2:898238)
+    at _storageChangeDispatcherCallback (content.js:2:897686)
+_storageChangeDispatcher @ content.js:2
+_storageChangeDispatcherCallback @ content.js:2
+VM111:1 Uncaught (in promise) SyntaxError: "[object Object]" is not valid JSON
+    at JSON.parse (<anonymous>)
+    at l._storageChangeDispatcher (content.js:2:898238)
+    at _storageChangeDispatcherCallback (content.js:2:897686)
+_storageChangeDispatcher @ content.js:2
+_storageChangeDispatcherCallback @ content.js:2
+VM64:1 Uncaught (in promise) SyntaxError: "[object Object]" is not valid JSON
+    at JSON.parse (<anonymous>)
+    at l._storageChangeDispatcher (content.js:2:898238)
+    at _storageChangeDispatcherCallback (content.js:2:897686)
+_storageChangeDispatcher @ content.js:2
+_storageChangeDispatcherCallback @ content.js:2
+VM60:1 Uncaught (in promise) SyntaxError: "[object Object]" is not valid JSON
+    at JSON.parse (<anonymous>)
+    at l._storageChangeDispatcher (content.js:2:898238)
+    at _storageChangeDispatcherCallback (content.js:2:897686)
+_storageChangeDispatcher @ content.js:2
+_storageChangeDispatcherCallback @ content.js:2
+VM34956:1 Uncaught (in promise) SyntaxError: "[object Object]" is not valid JSON
+    at JSON.parse (<anonymous>)
+    at l._storageChangeDispatcher (content.js:2:898238)
+    at _storageChangeDispatcherCallback (content.js:2:897686)
+_storageChangeDispatcher @ content.js:2
+_storageChangeDispatcherCallback @ content.js:2
+(índice):1 Uncaught (in promise) SyntaxError: "[object Object]" is not valid JSON
+    at JSON.parse (<anonymous>)
+    at l._storageChangeDispatcher (content.js:2:898238)
+    at _storageChangeDispatcherCallback (content.js:2:897686)
+_storageChangeDispatcher @ VM3780 content.js:2
+_storageChangeDispatcherCallback @ VM3780 content.js:2
+(índice):1 Uncaught (in promise) SyntaxError: "[object Object]" is not valid JSON
+    at JSON.parse (<anonymous>)
+    at l._storageChangeDispatcher (content.js:2:898238)
+    at _storageChangeDispatcherCallback (content.js:2:897686)
+_storageChangeDispatcher @ VM3785 content.js:2
+_storageChangeDispatcherCallback @ VM3785 content.js:2
+workspace_iframe.html?initialPath=%2F&id=%3Ar3sj%3A:1 Uncaught (in promise) SyntaxError: "[object Object]" is not valid JSON
+    at JSON.parse (<anonymous>)
+    at l._storageChangeDispatcher (content.js:2:898238)
+    at _storageChangeDispatcherCallback (content.js:2:897686)
+_storageChangeDispatcher @ content.js:2
+_storageChangeDispatcherCallback @ content.js:2
+workspace_iframe.html?initialPath=%2F&id=%3Ar3sk%3A:1 Uncaught (in promise) SyntaxError: "[object Object]" is not valid JSON
+    at JSON.parse (<anonymous>)
+    at l._storageChangeDispatcher (content.js:2:898238)
+    at _storageChangeDispatcherCallback (content.js:2:897686)
+_storageChangeDispatcher @ content.js:2
+_storageChangeDispatcherCallback @ content.js:2
+VM78:1 Uncaught (in promise) SyntaxError: "[object Object]" is not valid JSON
+    at JSON.parse (<anonymous>)
+    at l._storageChangeDispatcher (content.js:2:898238)
+    at _storageChangeDispatcherCallback (content.js:2:897686)
+_storageChangeDispatcher @ content.js:2
+_storageChangeDispatcherCallback @ content.js:2
+VM112:1 Uncaught (in promise) SyntaxError: "[object Object]" is not valid JSON
+    at JSON.parse (<anonymous>)
+    at l._storageChangeDispatcher (content.js:2:898238)
+    at _storageChangeDispatcherCallback (content.js:2:897686)
+_storageChangeDispatcher @ content.js:2
+_storageChangeDispatcherCallback @ content.js:2
+VM113:1 Uncaught (in promise) SyntaxError: "[object Object]" is not valid JSON
+    at JSON.parse (<anonymous>)
+    at l._storageChangeDispatcher (content.js:2:898238)
+    at _storageChangeDispatcherCallback (content.js:2:897686)
+_storageChangeDispatcher @ content.js:2
+_storageChangeDispatcherCallback @ content.js:2
+VM65:1 Uncaught (in promise) SyntaxError: "[object Object]" is not valid JSON
+    at JSON.parse (<anonymous>)
+    at l._storageChangeDispatcher (content.js:2:898238)
+    at _storageChangeDispatcherCallback (content.js:2:897686)
+_storageChangeDispatcher @ content.js:2
+_storageChangeDispatcherCallback @ content.js:2
+VM61:1 Uncaught (in promise) SyntaxError: "[object Object]" is not valid JSON
+    at JSON.parse (<anonymous>)
+    at l._storageChangeDispatcher (content.js:2:898238)
+    at _storageChangeDispatcherCallback (content.js:2:897686)
+_storageChangeDispatcher @ content.js:2
+_storageChangeDispatcherCallback @ content.js:2
+VM79:1 Uncaught (in promise) SyntaxError: "[object Object]" is not valid JSON
+    at JSON.parse (<anonymous>)
+    at l._storageChangeDispatcher (content.js:2:898238)
+    at _storageChangeDispatcherCallback (content.js:2:897686)
+_storageChangeDispatcher @ content.js:2
+_storageChangeDispatcherCallback @ content.js:2
+VM35823:1 Uncaught (in promise) SyntaxError: "[object Object]" is not valid JSON
+    at JSON.parse (<anonymous>)
+    at l._storageChangeDispatcher (content.js:2:898238)
+    at _storageChangeDispatcherCallback (content.js:2:897686)
+_storageChangeDispatcher @ content.js:2
+_storageChangeDispatcherCallback @ content.js:2
+(índice):1 Uncaught (in promise) SyntaxError: "[object Object]" is not valid JSON
+    at JSON.parse (<anonymous>)
+    at l._storageChangeDispatcher (content.js:2:898238)
+    at _storageChangeDispatcherCallback (content.js:2:897686)
+_storageChangeDispatcher @ VM3780 content.js:2
+_storageChangeDispatcherCallback @ VM3780 content.js:2
+(índice):1 Uncaught (in promise) SyntaxError: "[object Object]" is not valid JSON
+    at JSON.parse (<anonymous>)
+    at l._storageChangeDispatcher (content.js:2:898238)
+    at _storageChangeDispatcherCallback (content.js:2:897686)
+_storageChangeDispatcher @ VM3785 content.js:2
+_storageChangeDispatcherCallback @ VM3785 content.js:2
+workspace_iframe.html?initialPath=%2F&id=%3Ar3sj%3A:1 Uncaught (in promise) SyntaxError: "[object Object]" is not valid JSON
+    at JSON.parse (<anonymous>)
+    at l._storageChangeDispatcher (content.js:2:898238)
+    at _storageChangeDispatcherCallback (content.js:2:897686)
+_storageChangeDispatcher @ content.js:2
+_storageChangeDispatcherCallback @ content.js:2
+workspace_iframe.html?initialPath=%2F&id=%3Ar3sk%3A:1 Uncaught (in promise) SyntaxError: "[object Object]" is not valid JSON
+    at JSON.parse (<anonymous>)
+    at l._storageChangeDispatcher (content.js:2:898238)
+    at _storageChangeDispatcherCallback (content.js:2:897686)
+_storageChangeDispatcher @ content.js:2
+_storageChangeDispatcherCallback @ content.js:2
+VM114:1 Uncaught (in promise) SyntaxError: "[object Object]" is not valid JSON
+    at JSON.parse (<anonymous>)
+    at l._storageChangeDispatcher (content.js:2:898238)
+    at _storageChangeDispatcherCallback (content.js:2:897686)
+_storageChangeDispatcher @ content.js:2
+_storageChangeDispatcherCallback @ content.js:2
+VM115:1 Uncaught (in promise) SyntaxError: "[object Object]" is not valid JSON
+    at JSON.parse (<anonymous>)
+    at l._storageChangeDispatcher (content.js:2:898238)
+    at _storageChangeDispatcherCallback (content.js:2:897686)
+_storageChangeDispatcher @ content.js:2
+_storageChangeDispatcherCallback @ content.js:2
+VM66:1 Uncaught (in promise) SyntaxError: "[object Object]" is not valid JSON
+    at JSON.parse (<anonymous>)
+    at l._storageChangeDispatcher (content.js:2:898238)
+    at _storageChangeDispatcherCallback (content.js:2:897686)
+_storageChangeDispatcher @ content.js:2
+_storageChangeDispatcherCallback @ content.js:2
+VM35831:1 Uncaught (in promise) SyntaxError: "[object Object]" is not valid JSON
+    at JSON.parse (<anonymous>)
+    at l._storageChangeDispatcher (content.js:2:898238)
+    at _storageChangeDispatcherCallback (content.js:2:897686)
+_storageChangeDispatcher @ content.js:2
+_storageChangeDispatcherCallback @ content.js:2
+VM62:1 Uncaught (in promise) SyntaxError: "[object Object]" is not valid JSON
+    at JSON.parse (<anonymous>)
+    at l._storageChangeDispatcher (content.js:2:898238)
+    at _storageChangeDispatcherCallback (content.js:2:897686)
+_storageChangeDispatcher @ content.js:2
+_storageChangeDispatcherCallback @ content.js:2
+VM80:1 Uncaught (in promise) SyntaxError: "[object Object]" is not valid JSON
+    at JSON.parse (<anonymous>)
+    at l._storageChangeDispatcher (content.js:2:898238)
+    at _storageChangeDispatcherCallback (content.js:2:897686)
+_storageChangeDispatcher @ content.js:2
+_storageChangeDispatcherCallback @ content.js:2
+(índice):1 Uncaught (in promise) SyntaxError: "[object Object]" is not valid JSON
+    at JSON.parse (<anonymous>)
+    at l._storageChangeDispatcher (content.js:2:898238)
+    at _storageChangeDispatcherCallback (content.js:2:897686)
+_storageChangeDispatcher @ VM3780 content.js:2
+_storageChangeDispatcherCallback @ VM3780 content.js:2
+(índice):1 Uncaught (in promise) SyntaxError: "[object Object]" is not valid JSON
+    at JSON.parse (<anonymous>)
+    at l._storageChangeDispatcher (content.js:2:898238)
+    at _storageChangeDispatcherCallback (content.js:2:897686)
+_storageChangeDispatcher @ VM3785 content.js:2
+_storageChangeDispatcherCallback @ VM3785 content.js:2
+workspace_iframe.html?initialPath=%2F&id=%3Ar3sj%3A:1 Uncaught (in promise) SyntaxError: "[object Object]" is not valid JSON
+    at JSON.parse (<anonymous>)
+    at l._storageChangeDispatcher (content.js:2:898238)
+    at _storageChangeDispatcherCallback (content.js:2:897686)
+_storageChangeDispatcher @ content.js:2
+_storageChangeDispatcherCallback @ content.js:2
+workspace_iframe.html?initialPath=%2F&id=%3Ar3sk%3A:1 Uncaught (in promise) SyntaxError: "[object Object]" is not valid JSON
+    at JSON.parse (<anonymous>)
+    at l._storageChangeDispatcher (content.js:2:898238)
+    at _storageChangeDispatcherCallback (content.js:2:897686)
+_storageChangeDispatcher @ content.js:2
+_storageChangeDispatcherCallback @ content.js:2
+VM116:1 Uncaught (in promise) SyntaxError: "[object Object]" is not valid JSON
+    at JSON.parse (<anonymous>)
+    at l._storageChangeDispatcher (content.js:2:898238)
+    at _storageChangeDispatcherCallback (content.js:2:897686)
+_storageChangeDispatcher @ content.js:2
+_storageChangeDispatcherCallback @ content.js:2
+VM117:1 Uncaught (in promise) SyntaxError: "[object Object]" is not valid JSON
+    at JSON.parse (<anonymous>)
+    at l._storageChangeDispatcher (content.js:2:898238)
+    at _storageChangeDispatcherCallback (content.js:2:897686)
+_storageChangeDispatcher @ content.js:2
+_storageChangeDispatcherCallback @ content.js:2
+chunk-4RFDBWQV.js?v=4125b99b:136 Warning: Invalid hook call. Hooks can only be called inside of the body of a function component. This could happen for one of the following reasons:
+1. You might have mismatching versions of React and the renderer (such as React DOM)
+2. You might be breaking the Rules of Hooks
+3. You might have more than one copy of React in the same app
+See https://reactjs.org/link/invalid-hook-call for tips about how to debug and fix this problem.
+printWarning @ VM3636 chunk-4RFDBWQV.js:136
+error @ VM3636 chunk-4RFDBWQV.js:120
+resolveDispatcher @ VM3636 chunk-4RFDBWQV.js:1045
+useContext @ VM3636 chunk-4RFDBWQV.js:1051
+useIsRestoring @ VM3634 @tanstack_react-query.js:3039
+useBaseQuery @ VM3634 @tanstack_react-query.js:3210
+useQuery @ VM3634 @tanstack_react-query.js:3288
+AuthProvider @ VM3804 use-auth.tsx:123
+renderWithHooks @ VM3595 chunk-C43VWYGG.js:12151
+mountIndeterminateComponent @ VM3595 chunk-C43VWYGG.js:14901
+beginWork @ VM3595 chunk-C43VWYGG.js:15882
+beginWork$1 @ VM3595 chunk-C43VWYGG.js:19721
+performUnitOfWork @ VM3595 chunk-C43VWYGG.js:19166
+workLoopSync @ VM3595 chunk-C43VWYGG.js:19105
+renderRootSync @ VM3595 chunk-C43VWYGG.js:19084
+performSyncWorkOnRoot @ VM3595 chunk-C43VWYGG.js:18842
+flushSyncCallbacks @ VM3595 chunk-C43VWYGG.js:9119
+flushSync @ VM3595 chunk-C43VWYGG.js:18927
+scheduleRoot @ VM3595 chunk-C43VWYGG.js:19983
+(anónimas) @ VM3631 @react-refresh:208
+performReactRefresh @ VM3631 @react-refresh:190
+(anónimas) @ VM3631 @react-refresh:608
+setTimeout
+(anónimas) @ VM3631 @react-refresh:598
+validateRefreshBoundaryAndEnqueueUpdate @ VM3631 @react-refresh:648
+(anónimas) @ VM3708 protected-route.tsx:83
+(anónimas) @ VM3630 client:34
+(anónimas) @ VM3630 client:218
+(anónimas) @ VM3630 client:193
+queueUpdate @ VM3630 client:193
+await in queueUpdate
+(anónimas) @ VM3630 client:642
+handleMessage @ VM3630 client:640
+(anónimas) @ VM3630 client:550
+chunk-4RFDBWQV.js?v=4125b99b:136 Warning: Invalid hook call. Hooks can only be called inside of the body of a function component. This could happen for one of the following reasons:
+1. You might have mismatching versions of React and the renderer (such as React DOM)
+2. You might be breaking the Rules of Hooks
+3. You might have more than one copy of React in the same app
+See https://reactjs.org/link/invalid-hook-call for tips about how to debug and fix this problem.
+printWarning @ VM3636 chunk-4RFDBWQV.js:136
+error @ VM3636 chunk-4RFDBWQV.js:120
+resolveDispatcher @ VM3636 chunk-4RFDBWQV.js:1045
+useContext @ VM3636 chunk-4RFDBWQV.js:1051
+useIsRestoring @ VM3634 @tanstack_react-query.js:3039
+useBaseQuery @ VM3634 @tanstack_react-query.js:3210
+useQuery @ VM3634 @tanstack_react-query.js:3288
+AuthProvider @ VM3804 use-auth.tsx:123
+renderWithHooks @ VM3595 chunk-C43VWYGG.js:12151
+mountIndeterminateComponent @ VM3595 chunk-C43VWYGG.js:14901
+beginWork @ VM3595 chunk-C43VWYGG.js:15882
+callCallback2 @ VM3595 chunk-C43VWYGG.js:3674
+invokeGuardedCallbackDev @ VM3595 chunk-C43VWYGG.js:3699
+invokeGuardedCallback @ VM3595 chunk-C43VWYGG.js:3733
+beginWork$1 @ VM3595 chunk-C43VWYGG.js:19733
+performUnitOfWork @ VM3595 chunk-C43VWYGG.js:19166
+workLoopSync @ VM3595 chunk-C43VWYGG.js:19105
+renderRootSync @ VM3595 chunk-C43VWYGG.js:19084
+performSyncWorkOnRoot @ VM3595 chunk-C43VWYGG.js:18842
+flushSyncCallbacks @ VM3595 chunk-C43VWYGG.js:9119
+flushSync @ VM3595 chunk-C43VWYGG.js:18927
+scheduleRoot @ VM3595 chunk-C43VWYGG.js:19983
+(anónimas) @ VM3631 @react-refresh:208
+performReactRefresh @ VM3631 @react-refresh:190
+(anónimas) @ VM3631 @react-refresh:608
+setTimeout
+(anónimas) @ VM3631 @react-refresh:598
+validateRefreshBoundaryAndEnqueueUpdate @ VM3631 @react-refresh:648
+(anónimas) @ VM3708 protected-route.tsx:83
+(anónimas) @ VM3630 client:34
+(anónimas) @ VM3630 client:218
+(anónimas) @ VM3630 client:193
+queueUpdate @ VM3630 client:193
+await in queueUpdate
+(anónimas) @ VM3630 client:642
+handleMessage @ VM3630 client:640
+(anónimas) @ VM3630 client:550
+chunk-4RFDBWQV.js?v=4125b99b:1062 Uncaught TypeError: Cannot read properties of null (reading 'useContext')
+    at Object.useContext (chunk-4RFDBWQV.js?v=4125b99b:1062:29)
+    at useIsRestoring (@tanstack_react-query.js?v=4125b99b:3039:35)
+    at useBaseQuery (@tanstack_react-query.js?v=4125b99b:3210:23)
+    at useQuery (@tanstack_react-query.js?v=4125b99b:3288:10)
+    at AuthProvider (use-auth.tsx?t=1757620933880:123:7)
+    at renderWithHooks (chunk-C43VWYGG.js?v=ac1a0e8c:12151:26)
+    at mountIndeterminateComponent (chunk-C43VWYGG.js?v=ac1a0e8c:14901:21)
+    at beginWork (chunk-C43VWYGG.js?v=ac1a0e8c:15882:22)
+    at HTMLUnknownElement.callCallback2 (chunk-C43VWYGG.js?v=ac1a0e8c:3674:22)
+    at Object.invokeGuardedCallbackDev (chunk-C43VWYGG.js?v=ac1a0e8c:3699:24)
+useContext @ VM3636 chunk-4RFDBWQV.js:1062
+useIsRestoring @ VM3634 @tanstack_react-query.js:3039
+useBaseQuery @ VM3634 @tanstack_react-query.js:3210
+useQuery @ VM3634 @tanstack_react-query.js:3288
+AuthProvider @ VM3804 use-auth.tsx:123
+renderWithHooks @ VM3595 chunk-C43VWYGG.js:12151
+mountIndeterminateComponent @ VM3595 chunk-C43VWYGG.js:14901
+beginWork @ VM3595 chunk-C43VWYGG.js:15882
+callCallback2 @ VM3595 chunk-C43VWYGG.js:3674
+invokeGuardedCallbackDev @ VM3595 chunk-C43VWYGG.js:3699
+invokeGuardedCallback @ VM3595 chunk-C43VWYGG.js:3733
+beginWork$1 @ VM3595 chunk-C43VWYGG.js:19733
+performUnitOfWork @ VM3595 chunk-C43VWYGG.js:19166
+workLoopSync @ VM3595 chunk-C43VWYGG.js:19105
+renderRootSync @ VM3595 chunk-C43VWYGG.js:19084
+performSyncWorkOnRoot @ VM3595 chunk-C43VWYGG.js:18842
+flushSyncCallbacks @ VM3595 chunk-C43VWYGG.js:9119
+flushSync @ VM3595 chunk-C43VWYGG.js:18927
+scheduleRoot @ VM3595 chunk-C43VWYGG.js:19983
+(anónimas) @ VM3631 @react-refresh:208
+performReactRefresh @ VM3631 @react-refresh:190
+(anónimas) @ VM3631 @react-refresh:608
+setTimeout
+(anónimas) @ VM3631 @react-refresh:598
+validateRefreshBoundaryAndEnqueueUpdate @ VM3631 @react-refresh:648
+(anónimas) @ VM3708 protected-route.tsx:83
+(anónimas) @ VM3630 client:34
+(anónimas) @ VM3630 client:218
+(anónimas) @ VM3630 client:193
+queueUpdate @ VM3630 client:193
+await in queueUpdate
+(anónimas) @ VM3630 client:642
+handleMessage @ VM3630 client:640
+(anónimas) @ VM3630 client:550
+chunk-4RFDBWQV.js?v=4125b99b:136 Warning: Invalid hook call. Hooks can only be called inside of the body of a function component. This could happen for one of the following reasons:
+1. You might have mismatching versions of React and the renderer (such as React DOM)
+2. You might be breaking the Rules of Hooks
+3. You might have more than one copy of React in the same app
+See https://reactjs.org/link/invalid-hook-call for tips about how to debug and fix this problem.
+printWarning @ VM3636 chunk-4RFDBWQV.js:136
+error @ VM3636 chunk-4RFDBWQV.js:120
+resolveDispatcher @ VM3636 chunk-4RFDBWQV.js:1045
+useContext @ VM3636 chunk-4RFDBWQV.js:1051
+useIsRestoring @ VM3634 @tanstack_react-query.js:3039
+useBaseQuery @ VM3634 @tanstack_react-query.js:3210
+useQuery @ VM3634 @tanstack_react-query.js:3288
+AuthProvider @ VM3804 use-auth.tsx:123
+renderWithHooks @ VM3595 chunk-C43VWYGG.js:12151
+mountIndeterminateComponent @ VM3595 chunk-C43VWYGG.js:14901
+beginWork @ VM3595 chunk-C43VWYGG.js:15882
+beginWork$1 @ VM3595 chunk-C43VWYGG.js:19721
+performUnitOfWork @ VM3595 chunk-C43VWYGG.js:19166
+workLoopSync @ VM3595 chunk-C43VWYGG.js:19105
+renderRootSync @ VM3595 chunk-C43VWYGG.js:19084
+recoverFromConcurrentError @ VM3595 chunk-C43VWYGG.js:18704
+performSyncWorkOnRoot @ VM3595 chunk-C43VWYGG.js:18847
+flushSyncCallbacks @ VM3595 chunk-C43VWYGG.js:9119
+flushSync @ VM3595 chunk-C43VWYGG.js:18927
+scheduleRoot @ VM3595 chunk-C43VWYGG.js:19983
+(anónimas) @ VM3631 @react-refresh:208
+performReactRefresh @ VM3631 @react-refresh:190
+(anónimas) @ VM3631 @react-refresh:608
+setTimeout
+(anónimas) @ VM3631 @react-refresh:598
+validateRefreshBoundaryAndEnqueueUpdate @ VM3631 @react-refresh:648
+(anónimas) @ VM3708 protected-route.tsx:83
+(anónimas) @ VM3630 client:34
+(anónimas) @ VM3630 client:218
+(anónimas) @ VM3630 client:193
+queueUpdate @ VM3630 client:193
+await in queueUpdate
+(anónimas) @ VM3630 client:642
+handleMessage @ VM3630 client:640
+(anónimas) @ VM3630 client:550
+chunk-4RFDBWQV.js?v=4125b99b:136 Warning: Invalid hook call. Hooks can only be called inside of the body of a function component. This could happen for one of the following reasons:
+1. You might have mismatching versions of React and the renderer (such as React DOM)
+2. You might be breaking the Rules of Hooks
+3. You might have more than one copy of React in the same app
+See https://reactjs.org/link/invalid-hook-call for tips about how to debug and fix this problem.
+printWarning @ VM3636 chunk-4RFDBWQV.js:136
+error @ VM3636 chunk-4RFDBWQV.js:120
+resolveDispatcher @ VM3636 chunk-4RFDBWQV.js:1045
+useContext @ VM3636 chunk-4RFDBWQV.js:1051
+useIsRestoring @ VM3634 @tanstack_react-query.js:3039
+useBaseQuery @ VM3634 @tanstack_react-query.js:3210
+useQuery @ VM3634 @tanstack_react-query.js:3288
+AuthProvider @ VM3804 use-auth.tsx:123
+renderWithHooks @ VM3595 chunk-C43VWYGG.js:12151
+mountIndeterminateComponent @ VM3595 chunk-C43VWYGG.js:14901
+beginWork @ VM3595 chunk-C43VWYGG.js:15882
+callCallback2 @ VM3595 chunk-C43VWYGG.js:3674
+invokeGuardedCallbackDev @ VM3595 chunk-C43VWYGG.js:3699
+invokeGuardedCallback @ VM3595 chunk-C43VWYGG.js:3733
+beginWork$1 @ VM3595 chunk-C43VWYGG.js:19733
+performUnitOfWork @ VM3595 chunk-C43VWYGG.js:19166
+workLoopSync @ VM3595 chunk-C43VWYGG.js:19105
+renderRootSync @ VM3595 chunk-C43VWYGG.js:19084
+recoverFromConcurrentError @ VM3595 chunk-C43VWYGG.js:18704
+performSyncWorkOnRoot @ VM3595 chunk-C43VWYGG.js:18847
+flushSyncCallbacks @ VM3595 chunk-C43VWYGG.js:9119
+flushSync @ VM3595 chunk-C43VWYGG.js:18927
+scheduleRoot @ VM3595 chunk-C43VWYGG.js:19983
+(anónimas) @ VM3631 @react-refresh:208
+performReactRefresh @ VM3631 @react-refresh:190
+(anónimas) @ VM3631 @react-refresh:608
+setTimeout
+(anónimas) @ VM3631 @react-refresh:598
+validateRefreshBoundaryAndEnqueueUpdate @ VM3631 @react-refresh:648
+(anónimas) @ VM3708 protected-route.tsx:83
+(anónimas) @ VM3630 client:34
+(anónimas) @ VM3630 client:218
+(anónimas) @ VM3630 client:193
+queueUpdate @ VM3630 client:193
+await in queueUpdate
+(anónimas) @ VM3630 client:642
+handleMessage @ VM3630 client:640
+(anónimas) @ VM3630 client:550
+chunk-4RFDBWQV.js?v=4125b99b:1062 Uncaught TypeError: Cannot read properties of null (reading 'useContext')
+    at Object.useContext (chunk-4RFDBWQV.js?v=4125b99b:1062:29)
+    at useIsRestoring (@tanstack_react-query.js?v=4125b99b:3039:35)
+    at useBaseQuery (@tanstack_react-query.js?v=4125b99b:3210:23)
+    at useQuery (@tanstack_react-query.js?v=4125b99b:3288:10)
+    at AuthProvider (use-auth.tsx?t=1757620933880:123:7)
+    at renderWithHooks (chunk-C43VWYGG.js?v=ac1a0e8c:12151:26)
+    at mountIndeterminateComponent (chunk-C43VWYGG.js?v=ac1a0e8c:14901:21)
+    at beginWork (chunk-C43VWYGG.js?v=ac1a0e8c:15882:22)
+    at HTMLUnknownElement.callCallback2 (chunk-C43VWYGG.js?v=ac1a0e8c:3674:22)
+    at Object.invokeGuardedCallbackDev (chunk-C43VWYGG.js?v=ac1a0e8c:3699:24)
+useContext @ VM3636 chunk-4RFDBWQV.js:1062
+useIsRestoring @ VM3634 @tanstack_react-query.js:3039
+useBaseQuery @ VM3634 @tanstack_react-query.js:3210
+useQuery @ VM3634 @tanstack_react-query.js:3288
+AuthProvider @ VM3804 use-auth.tsx:123
+renderWithHooks @ VM3595 chunk-C43VWYGG.js:12151
+mountIndeterminateComponent @ VM3595 chunk-C43VWYGG.js:14901
+beginWork @ VM3595 chunk-C43VWYGG.js:15882
+callCallback2 @ VM3595 chunk-C43VWYGG.js:3674
+invokeGuardedCallbackDev @ VM3595 chunk-C43VWYGG.js:3699
+invokeGuardedCallback @ VM3595 chunk-C43VWYGG.js:3733
+beginWork$1 @ VM3595 chunk-C43VWYGG.js:19733
+performUnitOfWork @ VM3595 chunk-C43VWYGG.js:19166
+workLoopSync @ VM3595 chunk-C43VWYGG.js:19105
+renderRootSync @ VM3595 chunk-C43VWYGG.js:19084
+recoverFromConcurrentError @ VM3595 chunk-C43VWYGG.js:18704
+performSyncWorkOnRoot @ VM3595 chunk-C43VWYGG.js:18847
+flushSyncCallbacks @ VM3595 chunk-C43VWYGG.js:9119
+flushSync @ VM3595 chunk-C43VWYGG.js:18927
+scheduleRoot @ VM3595 chunk-C43VWYGG.js:19983
+(anónimas) @ VM3631 @react-refresh:208
+performReactRefresh @ VM3631 @react-refresh:190
+(anónimas) @ VM3631 @react-refresh:608
+setTimeout
+(anónimas) @ VM3631 @react-refresh:598
+validateRefreshBoundaryAndEnqueueUpdate @ VM3631 @react-refresh:648
+(anónimas) @ VM3708 protected-route.tsx:83
+(anónimas) @ VM3630 client:34
+(anónimas) @ VM3630 client:218
+(anónimas) @ VM3630 client:193
+queueUpdate @ VM3630 client:193
+await in queueUpdate
+(anónimas) @ VM3630 client:642
+handleMessage @ VM3630 client:640
+(anónimas) @ VM3630 client:550
+chunk-C43VWYGG.js?v=ac1a0e8c:14016 The above error occurred in the <AuthProvider> component:
+
+    at AuthProvider (https://c2729e48-2fb9-4518-8d14-3149229b69cf-00-vi9rmtkaqn4n.kirk.replit.dev/src/hooks/use-auth.tsx?t=1757620933880:117:32)
+    at QueryClientProvider (https://c2729e48-2fb9-4518-8d14-3149229b69cf-00-vi9rmtkaqn4n.kirk.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/@tanstack_react-query.js?v=1f7aa03f:3024:3)
+    at App
+
+Consider adding an error boundary to your tree to customize error handling behavior.
+Visit https://reactjs.org/link/error-boundaries to learn more about error boundaries.
+logCapturedError @ VM3595 chunk-C43VWYGG.js:14016
+update.callback @ VM3595 chunk-C43VWYGG.js:14036
+callCallback @ VM3595 chunk-C43VWYGG.js:10491
+commitUpdateQueue @ VM3595 chunk-C43VWYGG.js:10508
+commitLayoutEffectOnFiber @ VM3595 chunk-C43VWYGG.js:17061
+commitLayoutMountEffects_complete @ VM3595 chunk-C43VWYGG.js:17948
+commitLayoutEffects_begin @ VM3595 chunk-C43VWYGG.js:17937
+commitLayoutEffects @ VM3595 chunk-C43VWYGG.js:17888
+commitRootImpl @ VM3595 chunk-C43VWYGG.js:19321
+commitRoot @ VM3595 chunk-C43VWYGG.js:19245
+performSyncWorkOnRoot @ VM3595 chunk-C43VWYGG.js:18863
+flushSyncCallbacks @ VM3595 chunk-C43VWYGG.js:9119
+flushSync @ VM3595 chunk-C43VWYGG.js:18927
+scheduleRoot @ VM3595 chunk-C43VWYGG.js:19983
+(anónimas) @ VM3631 @react-refresh:208
+performReactRefresh @ VM3631 @react-refresh:190
+(anónimas) @ VM3631 @react-refresh:608
+setTimeout
+(anónimas) @ VM3631 @react-refresh:598
+validateRefreshBoundaryAndEnqueueUpdate @ VM3631 @react-refresh:648
+(anónimas) @ VM3708 protected-route.tsx:83
+(anónimas) @ VM3630 client:34
+(anónimas) @ VM3630 client:218
+(anónimas) @ VM3630 client:193
+queueUpdate @ VM3630 client:193
+await in queueUpdate
+(anónimas) @ VM3630 client:642
+handleMessage @ VM3630 client:640
+(anónimas) @ VM3630 client:550
+chunk-4RFDBWQV.js?v=4125b99b:1062 Uncaught (in promise) TypeError: Cannot read properties of null (reading 'useContext')
+    at Object.useContext (chunk-4RFDBWQV.js?v=4125b99b:1062:29)
+    at useIsRestoring (@tanstack_react-query.js?v=4125b99b:3039:35)
+    at useBaseQuery (@tanstack_react-query.js?v=4125b99b:3210:23)
+    at useQuery (@tanstack_react-query.js?v=4125b99b:3288:10)
+    at AuthProvider (use-auth.tsx?t=1757620933880:123:7)
+    at renderWithHooks (chunk-C43VWYGG.js?v=ac1a0e8c:12151:26)
+    at mountIndeterminateComponent (chunk-C43VWYGG.js?v=ac1a0e8c:14901:21)
+    at beginWork (chunk-C43VWYGG.js?v=ac1a0e8c:15882:22)
+    at beginWork$1 (chunk-C43VWYGG.js?v=ac1a0e8c:19721:22)
+    at performUnitOfWork (chunk-C43VWYGG.js?v=ac1a0e8c:19166:20)
+useContext @ VM3636 chunk-4RFDBWQV.js:1062
+useIsRestoring @ VM3634 @tanstack_react-query.js:3039
+useBaseQuery @ VM3634 @tanstack_react-query.js:3210
+useQuery @ VM3634 @tanstack_react-query.js:3288
+AuthProvider @ VM3804 use-auth.tsx:123
+renderWithHooks @ VM3595 chunk-C43VWYGG.js:12151
+mountIndeterminateComponent @ VM3595 chunk-C43VWYGG.js:14901
+beginWork @ VM3595 chunk-C43VWYGG.js:15882
+beginWork$1 @ VM3595 chunk-C43VWYGG.js:19721
+performUnitOfWork @ VM3595 chunk-C43VWYGG.js:19166
+workLoopSync @ VM3595 chunk-C43VWYGG.js:19105
+renderRootSync @ VM3595 chunk-C43VWYGG.js:19084
+recoverFromConcurrentError @ VM3595 chunk-C43VWYGG.js:18704
+performSyncWorkOnRoot @ VM3595 chunk-C43VWYGG.js:18847
+flushSyncCallbacks @ VM3595 chunk-C43VWYGG.js:9119
+flushSync @ VM3595 chunk-C43VWYGG.js:18927
+scheduleRoot @ VM3595 chunk-C43VWYGG.js:19983
+(anónimas) @ VM3631 @react-refresh:208
+performReactRefresh @ VM3631 @react-refresh:190
+(anónimas) @ VM3631 @react-refresh:608
+setTimeout
+(anónimas) @ VM3631 @react-refresh:598
+validateRefreshBoundaryAndEnqueueUpdate @ VM3631 @react-refresh:648
+(anónimas) @ VM3708 protected-route.tsx:83
+(anónimas) @ VM3630 client:34
+(anónimas) @ VM3630 client:218
+(anónimas) @ VM3630 client:193
+queueUpdate @ VM3630 client:193
+await in queueUpdate
+(anónimas) @ VM3630 client:642
+handleMessage @ VM3630 client:640
+(anónimas) @ VM3630 client:550
+chunk-4RFDBWQV.js?v=4125b99b:136 Warning: Invalid hook call. Hooks can only be called inside of the body of a function component. This could happen for one of the following reasons:
+1. You might have mismatching versions of React and the renderer (such as React DOM)
+2. You might be breaking the Rules of Hooks
+3. You might have more than one copy of React in the same app
+See https://reactjs.org/link/invalid-hook-call for tips about how to debug and fix this problem.
+printWarning @ VM3606 chunk-4RFDBWQV.js:136
+error @ VM3606 chunk-4RFDBWQV.js:120
+resolveDispatcher @ VM3606 chunk-4RFDBWQV.js:1045
+useContext @ VM3606 chunk-4RFDBWQV.js:1051
+useIsRestoring @ VM3604 @tanstack_react-query.js:3039
+useBaseQuery @ VM3604 @tanstack_react-query.js:3210
+useQuery @ VM3604 @tanstack_react-query.js:3288
+AuthProvider @ VM3803 use-auth.tsx:123
+renderWithHooks @ VM3585 chunk-C43VWYGG.js:12151
+mountIndeterminateComponent @ VM3585 chunk-C43VWYGG.js:14901
+beginWork @ VM3585 chunk-C43VWYGG.js:15882
+beginWork$1 @ VM3585 chunk-C43VWYGG.js:19721
+performUnitOfWork @ VM3585 chunk-C43VWYGG.js:19166
+workLoopSync @ VM3585 chunk-C43VWYGG.js:19105
+renderRootSync @ VM3585 chunk-C43VWYGG.js:19084
+performSyncWorkOnRoot @ VM3585 chunk-C43VWYGG.js:18842
+flushSyncCallbacks @ VM3585 chunk-C43VWYGG.js:9119
+flushSync @ VM3585 chunk-C43VWYGG.js:18927
+scheduleRoot @ VM3585 chunk-C43VWYGG.js:19983
+(anónimas) @ VM3600 @react-refresh:208
+performReactRefresh @ VM3600 @react-refresh:190
+(anónimas) @ VM3600 @react-refresh:608
+setTimeout
+(anónimas) @ VM3600 @react-refresh:598
+validateRefreshBoundaryAndEnqueueUpdate @ VM3600 @react-refresh:648
+(anónimas) @ VM3629 protected-route.tsx:83
+(anónimas) @ VM3599 client:34
+(anónimas) @ VM3599 client:218
+(anónimas) @ VM3599 client:193
+queueUpdate @ VM3599 client:193
+await in queueUpdate
+(anónimas) @ VM3599 client:642
+handleMessage @ VM3599 client:640
+(anónimas) @ VM3599 client:550
+chunk-4RFDBWQV.js?v=4125b99b:136 Warning: Invalid hook call. Hooks can only be called inside of the body of a function component. This could happen for one of the following reasons:
+1. You might have mismatching versions of React and the renderer (such as React DOM)
+2. You might be breaking the Rules of Hooks
+3. You might have more than one copy of React in the same app
+See https://reactjs.org/link/invalid-hook-call for tips about how to debug and fix this problem.
+printWarning @ VM3606 chunk-4RFDBWQV.js:136
+error @ VM3606 chunk-4RFDBWQV.js:120
+resolveDispatcher @ VM3606 chunk-4RFDBWQV.js:1045
+useContext @ VM3606 chunk-4RFDBWQV.js:1051
+useIsRestoring @ VM3604 @tanstack_react-query.js:3039
+useBaseQuery @ VM3604 @tanstack_react-query.js:3210
+useQuery @ VM3604 @tanstack_react-query.js:3288
+AuthProvider @ VM3803 use-auth.tsx:123
+renderWithHooks @ VM3585 chunk-C43VWYGG.js:12151
+mountIndeterminateComponent @ VM3585 chunk-C43VWYGG.js:14901
+beginWork @ VM3585 chunk-C43VWYGG.js:15882
+callCallback2 @ VM3585 chunk-C43VWYGG.js:3674
+invokeGuardedCallbackDev @ VM3585 chunk-C43VWYGG.js:3699
+invokeGuardedCallback @ VM3585 chunk-C43VWYGG.js:3733
+beginWork$1 @ VM3585 chunk-C43VWYGG.js:19733
+performUnitOfWork @ VM3585 chunk-C43VWYGG.js:19166
+workLoopSync @ VM3585 chunk-C43VWYGG.js:19105
+renderRootSync @ VM3585 chunk-C43VWYGG.js:19084
+performSyncWorkOnRoot @ VM3585 chunk-C43VWYGG.js:18842
+flushSyncCallbacks @ VM3585 chunk-C43VWYGG.js:9119
+flushSync @ VM3585 chunk-C43VWYGG.js:18927
+scheduleRoot @ VM3585 chunk-C43VWYGG.js:19983
+(anónimas) @ VM3600 @react-refresh:208
+performReactRefresh @ VM3600 @react-refresh:190
+(anónimas) @ VM3600 @react-refresh:608
+setTimeout
+(anónimas) @ VM3600 @react-refresh:598
+validateRefreshBoundaryAndEnqueueUpdate @ VM3600 @react-refresh:648
+(anónimas) @ VM3629 protected-route.tsx:83
+(anónimas) @ VM3599 client:34
+(anónimas) @ VM3599 client:218
+(anónimas) @ VM3599 client:193
+queueUpdate @ VM3599 client:193
+await in queueUpdate
+(anónimas) @ VM3599 client:642
+handleMessage @ VM3599 client:640
+(anónimas) @ VM3599 client:550
+chunk-4RFDBWQV.js?v=4125b99b:1062 Uncaught TypeError: Cannot read properties of null (reading 'useContext')
+    at Object.useContext (chunk-4RFDBWQV.js?v=4125b99b:1062:29)
+    at useIsRestoring (@tanstack_react-query.js?v=4125b99b:3039:35)
+    at useBaseQuery (@tanstack_react-query.js?v=4125b99b:3210:23)
+    at useQuery (@tanstack_react-query.js?v=4125b99b:3288:10)
+    at AuthProvider (use-auth.tsx?t=1757620933880:123:7)
+    at renderWithHooks (chunk-C43VWYGG.js?v=ac1a0e8c:12151:26)
+    at mountIndeterminateComponent (chunk-C43VWYGG.js?v=ac1a0e8c:14901:21)
+    at beginWork (chunk-C43VWYGG.js?v=ac1a0e8c:15882:22)
+    at HTMLUnknownElement.callCallback2 (chunk-C43VWYGG.js?v=ac1a0e8c:3674:22)
+    at Object.invokeGuardedCallbackDev (chunk-C43VWYGG.js?v=ac1a0e8c:3699:24)
+useContext @ VM3606 chunk-4RFDBWQV.js:1062
+useIsRestoring @ VM3604 @tanstack_react-query.js:3039
+useBaseQuery @ VM3604 @tanstack_react-query.js:3210
+useQuery @ VM3604 @tanstack_react-query.js:3288
+AuthProvider @ VM3803 use-auth.tsx:123
+renderWithHooks @ VM3585 chunk-C43VWYGG.js:12151
+mountIndeterminateComponent @ VM3585 chunk-C43VWYGG.js:14901
+beginWork @ VM3585 chunk-C43VWYGG.js:15882
+callCallback2 @ VM3585 chunk-C43VWYGG.js:3674
+invokeGuardedCallbackDev @ VM3585 chunk-C43VWYGG.js:3699
+invokeGuardedCallback @ VM3585 chunk-C43VWYGG.js:3733
+beginWork$1 @ VM3585 chunk-C43VWYGG.js:19733
+performUnitOfWork @ VM3585 chunk-C43VWYGG.js:19166
+workLoopSync @ VM3585 chunk-C43VWYGG.js:19105
+renderRootSync @ VM3585 chunk-C43VWYGG.js:19084
+performSyncWorkOnRoot @ VM3585 chunk-C43VWYGG.js:18842
+flushSyncCallbacks @ VM3585 chunk-C43VWYGG.js:9119
+flushSync @ VM3585 chunk-C43VWYGG.js:18927
+scheduleRoot @ VM3585 chunk-C43VWYGG.js:19983
+(anónimas) @ VM3600 @react-refresh:208
+performReactRefresh @ VM3600 @react-refresh:190
+(anónimas) @ VM3600 @react-refresh:608
+setTimeout
+(anónimas) @ VM3600 @react-refresh:598
+validateRefreshBoundaryAndEnqueueUpdate @ VM3600 @react-refresh:648
+(anónimas) @ VM3629 protected-route.tsx:83
+(anónimas) @ VM3599 client:34
+(anónimas) @ VM3599 client:218
+(anónimas) @ VM3599 client:193
+queueUpdate @ VM3599 client:193
+await in queueUpdate
+(anónimas) @ VM3599 client:642
+handleMessage @ VM3599 client:640
+(anónimas) @ VM3599 client:550
+chunk-4RFDBWQV.js?v=4125b99b:136 Warning: Invalid hook call. Hooks can only be called inside of the body of a function component. This could happen for one of the following reasons:
+1. You might have mismatching versions of React and the renderer (such as React DOM)
+2. You might be breaking the Rules of Hooks
+3. You might have more than one copy of React in the same app
+See https://reactjs.org/link/invalid-hook-call for tips about how to debug and fix this problem.
+printWarning @ VM3606 chunk-4RFDBWQV.js:136
+error @ VM3606 chunk-4RFDBWQV.js:120
+resolveDispatcher @ VM3606 chunk-4RFDBWQV.js:1045
+useContext @ VM3606 chunk-4RFDBWQV.js:1051
+useIsRestoring @ VM3604 @tanstack_react-query.js:3039
+useBaseQuery @ VM3604 @tanstack_react-query.js:3210
+useQuery @ VM3604 @tanstack_react-query.js:3288
+AuthProvider @ VM3803 use-auth.tsx:123
+renderWithHooks @ VM3585 chunk-C43VWYGG.js:12151
+mountIndeterminateComponent @ VM3585 chunk-C43VWYGG.js:14901
+beginWork @ VM3585 chunk-C43VWYGG.js:15882
+beginWork$1 @ VM3585 chunk-C43VWYGG.js:19721
+performUnitOfWork @ VM3585 chunk-C43VWYGG.js:19166
+workLoopSync @ VM3585 chunk-C43VWYGG.js:19105
+renderRootSync @ VM3585 chunk-C43VWYGG.js:19084
+recoverFromConcurrentError @ VM3585 chunk-C43VWYGG.js:18704
+performSyncWorkOnRoot @ VM3585 chunk-C43VWYGG.js:18847
+flushSyncCallbacks @ VM3585 chunk-C43VWYGG.js:9119
+flushSync @ VM3585 chunk-C43VWYGG.js:18927
+scheduleRoot @ VM3585 chunk-C43VWYGG.js:19983
+(anónimas) @ VM3600 @react-refresh:208
+performReactRefresh @ VM3600 @react-refresh:190
+(anónimas) @ VM3600 @react-refresh:608
+setTimeout
+(anónimas) @ VM3600 @react-refresh:598
+validateRefreshBoundaryAndEnqueueUpdate @ VM3600 @react-refresh:648
+(anónimas) @ VM3629 protected-route.tsx:83
+(anónimas) @ VM3599 client:34
+(anónimas) @ VM3599 client:218
+(anónimas) @ VM3599 client:193
+queueUpdate @ VM3599 client:193
+await in queueUpdate
+(anónimas) @ VM3599 client:642
+handleMessage @ VM3599 client:640
+(anónimas) @ VM3599 client:550
+chunk-4RFDBWQV.js?v=4125b99b:136 Warning: Invalid hook call. Hooks can only be called inside of the body of a function component. This could happen for one of the following reasons:
+1. You might have mismatching versions of React and the renderer (such as React DOM)
+2. You might be breaking the Rules of Hooks
+3. You might have more than one copy of React in the same app
+See https://reactjs.org/link/invalid-hook-call for tips about how to debug and fix this problem.
+printWarning @ VM3606 chunk-4RFDBWQV.js:136
+error @ VM3606 chunk-4RFDBWQV.js:120
+resolveDispatcher @ VM3606 chunk-4RFDBWQV.js:1045
+useContext @ VM3606 chunk-4RFDBWQV.js:1051
+useIsRestoring @ VM3604 @tanstack_react-query.js:3039
+useBaseQuery @ VM3604 @tanstack_react-query.js:3210
+useQuery @ VM3604 @tanstack_react-query.js:3288
+AuthProvider @ VM3803 use-auth.tsx:123
+renderWithHooks @ VM3585 chunk-C43VWYGG.js:12151
+mountIndeterminateComponent @ VM3585 chunk-C43VWYGG.js:14901
+beginWork @ VM3585 chunk-C43VWYGG.js:15882
+callCallback2 @ VM3585 chunk-C43VWYGG.js:3674
+invokeGuardedCallbackDev @ VM3585 chunk-C43VWYGG.js:3699
+invokeGuardedCallback @ VM3585 chunk-C43VWYGG.js:3733
+beginWork$1 @ VM3585 chunk-C43VWYGG.js:19733
+performUnitOfWork @ VM3585 chunk-C43VWYGG.js:19166
+workLoopSync @ VM3585 chunk-C43VWYGG.js:19105
+renderRootSync @ VM3585 chunk-C43VWYGG.js:19084
+recoverFromConcurrentError @ VM3585 chunk-C43VWYGG.js:18704
+performSyncWorkOnRoot @ VM3585 chunk-C43VWYGG.js:18847
+flushSyncCallbacks @ VM3585 chunk-C43VWYGG.js:9119
+flushSync @ VM3585 chunk-C43VWYGG.js:18927
+scheduleRoot @ VM3585 chunk-C43VWYGG.js:19983
+(anónimas) @ VM3600 @react-refresh:208
+performReactRefresh @ VM3600 @react-refresh:190
+(anónimas) @ VM3600 @react-refresh:608
+setTimeout
+(anónimas) @ VM3600 @react-refresh:598
+validateRefreshBoundaryAndEnqueueUpdate @ VM3600 @react-refresh:648
+(anónimas) @ VM3629 protected-route.tsx:83
+(anónimas) @ VM3599 client:34
+(anónimas) @ VM3599 client:218
+(anónimas) @ VM3599 client:193
+queueUpdate @ VM3599 client:193
+await in queueUpdate
+(anónimas) @ VM3599 client:642
+handleMessage @ VM3599 client:640
+(anónimas) @ VM3599 client:550
+chunk-4RFDBWQV.js?v=4125b99b:1062 Uncaught TypeError: Cannot read properties of null (reading 'useContext')
+    at Object.useContext (chunk-4RFDBWQV.js?v=4125b99b:1062:29)
+    at useIsRestoring (@tanstack_react-query.js?v=4125b99b:3039:35)
+    at useBaseQuery (@tanstack_react-query.js?v=4125b99b:3210:23)
+    at useQuery (@tanstack_react-query.js?v=4125b99b:3288:10)
+    at AuthProvider (use-auth.tsx?t=1757620933880:123:7)
+    at renderWithHooks (chunk-C43VWYGG.js?v=ac1a0e8c:12151:26)
+    at mountIndeterminateComponent (chunk-C43VWYGG.js?v=ac1a0e8c:14901:21)
+    at beginWork (chunk-C43VWYGG.js?v=ac1a0e8c:15882:22)
+    at HTMLUnknownElement.callCallback2 (chunk-C43VWYGG.js?v=ac1a0e8c:3674:22)
+    at Object.invokeGuardedCallbackDev (chunk-C43VWYGG.js?v=ac1a0e8c:3699:24)
+useContext @ VM3606 chunk-4RFDBWQV.js:1062
+useIsRestoring @ VM3604 @tanstack_react-query.js:3039
+useBaseQuery @ VM3604 @tanstack_react-query.js:3210
+useQuery @ VM3604 @tanstack_react-query.js:3288
+AuthProvider @ VM3803 use-auth.tsx:123
+renderWithHooks @ VM3585 chunk-C43VWYGG.js:12151
+mountIndeterminateComponent @ VM3585 chunk-C43VWYGG.js:14901
+beginWork @ VM3585 chunk-C43VWYGG.js:15882
+callCallback2 @ VM3585 chunk-C43VWYGG.js:3674
+invokeGuardedCallbackDev @ VM3585 chunk-C43VWYGG.js:3699
+invokeGuardedCallback @ VM3585 chunk-C43VWYGG.js:3733
+beginWork$1 @ VM3585 chunk-C43VWYGG.js:19733
+performUnitOfWork @ VM3585 chunk-C43VWYGG.js:19166
+workLoopSync @ VM3585 chunk-C43VWYGG.js:19105
+renderRootSync @ VM3585 chunk-C43VWYGG.js:19084
+recoverFromConcurrentError @ VM3585 chunk-C43VWYGG.js:18704
+performSyncWorkOnRoot @ VM3585 chunk-C43VWYGG.js:18847
+flushSyncCallbacks @ VM3585 chunk-C43VWYGG.js:9119
+flushSync @ VM3585 chunk-C43VWYGG.js:18927
+scheduleRoot @ VM3585 chunk-C43VWYGG.js:19983
+(anónimas) @ VM3600 @react-refresh:208
+performReactRefresh @ VM3600 @react-refresh:190
+(anónimas) @ VM3600 @react-refresh:608
+setTimeout
+(anónimas) @ VM3600 @react-refresh:598
+validateRefreshBoundaryAndEnqueueUpdate @ VM3600 @react-refresh:648
+(anónimas) @ VM3629 protected-route.tsx:83
+(anónimas) @ VM3599 client:34
+(anónimas) @ VM3599 client:218
+(anónimas) @ VM3599 client:193
+queueUpdate @ VM3599 client:193
+await in queueUpdate
+(anónimas) @ VM3599 client:642
+handleMessage @ VM3599 client:640
+(anónimas) @ VM3599 client:550
+chunk-C43VWYGG.js?v=ac1a0e8c:14016 The above error occurred in the <AuthProvider> component:
+
+    at AuthProvider (https://c2729e48-2fb9-4518-8d14-3149229b69cf-00-vi9rmtkaqn4n.kirk.replit.dev/src/hooks/use-auth.tsx?t=1757620933880:117:32)
+    at QueryClientProvider (https://c2729e48-2fb9-4518-8d14-3149229b69cf-00-vi9rmtkaqn4n.kirk.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/@tanstack_react-query.js?v=1f7aa03f:3024:3)
+    at App
+
+Consider adding an error boundary to your tree to customize error handling behavior.
+Visit https://reactjs.org/link/error-boundaries to learn more about error boundaries.
+logCapturedError @ VM3585 chunk-C43VWYGG.js:14016
+update.callback @ VM3585 chunk-C43VWYGG.js:14036
+callCallback @ VM3585 chunk-C43VWYGG.js:10491
+commitUpdateQueue @ VM3585 chunk-C43VWYGG.js:10508
+commitLayoutEffectOnFiber @ VM3585 chunk-C43VWYGG.js:17061
+commitLayoutMountEffects_complete @ VM3585 chunk-C43VWYGG.js:17948
+commitLayoutEffects_begin @ VM3585 chunk-C43VWYGG.js:17937
+commitLayoutEffects @ VM3585 chunk-C43VWYGG.js:17888
+commitRootImpl @ VM3585 chunk-C43VWYGG.js:19321
+commitRoot @ VM3585 chunk-C43VWYGG.js:19245
+performSyncWorkOnRoot @ VM3585 chunk-C43VWYGG.js:18863
+flushSyncCallbacks @ VM3585 chunk-C43VWYGG.js:9119
+flushSync @ VM3585 chunk-C43VWYGG.js:18927
+scheduleRoot @ VM3585 chunk-C43VWYGG.js:19983
+(anónimas) @ VM3600 @react-refresh:208
+performReactRefresh @ VM3600 @react-refresh:190
+(anónimas) @ VM3600 @react-refresh:608
+setTimeout
+(anónimas) @ VM3600 @react-refresh:598
+validateRefreshBoundaryAndEnqueueUpdate @ VM3600 @react-refresh:648
+(anónimas) @ VM3629 protected-route.tsx:83
+(anónimas) @ VM3599 client:34
+(anónimas) @ VM3599 client:218
+(anónimas) @ VM3599 client:193
+queueUpdate @ VM3599 client:193
+await in queueUpdate
+(anónimas) @ VM3599 client:642
+handleMessage @ VM3599 client:640
+(anónimas) @ VM3599 client:550
+chunk-4RFDBWQV.js?v=4125b99b:1062 Uncaught (in promise) TypeError: Cannot read properties of null (reading 'useContext')
+    at Object.useContext (chunk-4RFDBWQV.js?v=4125b99b:1062:29)
+    at useIsRestoring (@tanstack_react-query.js?v=4125b99b:3039:35)
+    at useBaseQuery (@tanstack_react-query.js?v=4125b99b:3210:23)
+    at useQuery (@tanstack_react-query.js?v=4125b99b:3288:10)
+    at AuthProvider (use-auth.tsx?t=1757620933880:123:7)
+    at renderWithHooks (chunk-C43VWYGG.js?v=ac1a0e8c:12151:26)
+    at mountIndeterminateComponent (chunk-C43VWYGG.js?v=ac1a0e8c:14901:21)
+    at beginWork (chunk-C43VWYGG.js?v=ac1a0e8c:15882:22)
+    at beginWork$1 (chunk-C43VWYGG.js?v=ac1a0e8c:19721:22)
+    at performUnitOfWork (chunk-C43VWYGG.js?v=ac1a0e8c:19166:20)
+useContext @ VM3606 chunk-4RFDBWQV.js:1062
+useIsRestoring @ VM3604 @tanstack_react-query.js:3039
+useBaseQuery @ VM3604 @tanstack_react-query.js:3210
+useQuery @ VM3604 @tanstack_react-query.js:3288
+AuthProvider @ VM3803 use-auth.tsx:123
+renderWithHooks @ VM3585 chunk-C43VWYGG.js:12151
+mountIndeterminateComponent @ VM3585 chunk-C43VWYGG.js:14901
+beginWork @ VM3585 chunk-C43VWYGG.js:15882
+beginWork$1 @ VM3585 chunk-C43VWYGG.js:19721
+performUnitOfWork @ VM3585 chunk-C43VWYGG.js:19166
+workLoopSync @ VM3585 chunk-C43VWYGG.js:19105
+renderRootSync @ VM3585 chunk-C43VWYGG.js:19084
+recoverFromConcurrentError @ VM3585 chunk-C43VWYGG.js:18704
+performSyncWorkOnRoot @ VM3585 chunk-C43VWYGG.js:18847
+flushSyncCallbacks @ VM3585 chunk-C43VWYGG.js:9119
+flushSync @ VM3585 chunk-C43VWYGG.js:18927
+scheduleRoot @ VM3585 chunk-C43VWYGG.js:19983
+(anónimas) @ VM3600 @react-refresh:208
+performReactRefresh @ VM3600 @react-refresh:190
+(anónimas) @ VM3600 @react-refresh:608
+setTimeout
+(anónimas) @ VM3600 @react-refresh:598
+validateRefreshBoundaryAndEnqueueUpdate @ VM3600 @react-refresh:648
+(anónimas) @ VM3629 protected-route.tsx:83
+(anónimas) @ VM3599 client:34
+(anónimas) @ VM3599 client:218
+(anónimas) @ VM3599 client:193
+queueUpdate @ VM3599 client:193
+await in queueUpdate
+(anónimas) @ VM3599 client:642
+handleMessage @ VM3599 client:640
+(anónimas) @ VM3599 client:550
+(índice):1 Unchecked runtime.lastError: Could not establish connection. Receiving end does not exist.
+VM67:1 Uncaught (in promise) SyntaxError: "[object Object]" is not valid JSON
+    at JSON.parse (<anonymous>)
+    at l._storageChangeDispatcher (content.js:2:898238)
+    at _storageChangeDispatcherCallback (content.js:2:897686)
+_storageChangeDispatcher @ content.js:2
+_storageChangeDispatcherCallback @ content.js:2
+VM81:1 Uncaught (in promise) SyntaxError: "[object Object]" is not valid JSON
+    at JSON.parse (<anonymous>)
+    at l._storageChangeDispatcher (content.js:2:898238)
+    at _storageChangeDispatcherCallback (content.js:2:897686)
+_storageChangeDispatcher @ content.js:2
+_storageChangeDispatcherCallback @ content.js:2
+VM63:1 Uncaught (in promise) SyntaxError: "[object Object]" is not valid JSON
+    at JSON.parse (<anonymous>)
+    at l._storageChangeDispatcher (content.js:2:898238)
+    at _storageChangeDispatcherCallback (content.js:2:897686)
+_storageChangeDispatcher @ content.js:2
+_storageChangeDispatcherCallback @ content.js:2
+VM118:1 Uncaught (in promise) SyntaxError: "[object Object]" is not valid JSON
+    at JSON.parse (<anonymous>)
+    at l._storageChangeDispatcher (content.js:2:898238)
+    at _storageChangeDispatcherCallback (content.js:2:897686)
+_storageChangeDispatcher @ content.js:2
+_storageChangeDispatcherCallback @ content.js:2
+VM119:1 Uncaught (in promise) SyntaxError: "[object Object]" is not valid JSON
+    at JSON.parse (<anonymous>)
+    at l._storageChangeDispatcher (content.js:2:898238)
+    at _storageChangeDispatcherCallback (content.js:2:897686)
+_storageChangeDispatcher @ content.js:2
+_storageChangeDispatcherCallback @ content.js:2
+workspace_iframe.html?initialPath=%2F&id=%3Ar3sj%3A:1 Uncaught (in promise) SyntaxError: "[object Object]" is not valid JSON
+    at JSON.parse (<anonymous>)
+    at l._storageChangeDispatcher (content.js:2:898238)
+    at _storageChangeDispatcherCallback (content.js:2:897686)
+_storageChangeDispatcher @ content.js:2
+_storageChangeDispatcherCallback @ content.js:2
+workspace_iframe.html?initialPath=%2F&id=%3Ar3sk%3A:1 Uncaught (in promise) SyntaxError: "[object Object]" is not valid JSON
+    at JSON.parse (<anonymous>)
+    at l._storageChangeDispatcher (content.js:2:898238)
+    at _storageChangeDispatcherCallback (content.js:2:897686)
+_storageChangeDispatcher @ content.js:2
+_storageChangeDispatcherCallback @ content.js:2
+(índice):1 Uncaught (in promise) SyntaxError: "[object Object]" is not valid JSON
+    at JSON.parse (<anonymous>)
+    at l._storageChangeDispatcher (content.js:2:898238)
+    at _storageChangeDispatcherCallback (content.js:2:897686)
+_storageChangeDispatcher @ VM3851 content.js:2
+_storageChangeDispatcherCallback @ VM3851 content.js:2
+VM64:1 Uncaught (in promise) SyntaxError: "[object Object]" is not valid JSON
+    at JSON.parse (<anonymous>)
+    at l._storageChangeDispatcher (content.js:2:898238)
+    at _storageChangeDispatcherCallback (content.js:2:897686)
+_storageChangeDispatcher @ content.js:2
+_storageChangeDispatcherCallback @ content.js:2
+VM68:1 Uncaught (in promise) SyntaxError: "[object Object]" is not valid JSON
+    at JSON.parse (<anonymous>)
+    at l._storageChangeDispatcher (content.js:2:898238)
+    at _storageChangeDispatcherCallback (content.js:2:897686)
+_storageChangeDispatcher @ content.js:2
+_storageChangeDispatcherCallback @ content.js:2
+VM82:1 Uncaught (in promise) SyntaxError: "[object Object]" is not valid JSON
+    at JSON.parse (<anonymous>)
+    at l._storageChangeDispatcher (content.js:2:898238)
+    at _storageChangeDispatcherCallback (content.js:2:897686)
+_storageChangeDispatcher @ content.js:2
+_storageChangeDispatcherCallback @ content.js:2
+workspace_iframe.html?initialPath=%2F&id=%3Ar3sj%3A:1 Uncaught (in promise) SyntaxError: "[object Object]" is not valid JSON
+    at JSON.parse (<anonymous>)
+    at l._storageChangeDispatcher (content.js:2:898238)
+    at _storageChangeDispatcherCallback (content.js:2:897686)
+_storageChangeDispatcher @ content.js:2
+_storageChangeDispatcherCallback @ content.js:2
+VM120:1 Uncaught (in promise) SyntaxError: "[object Object]" is not valid JSON
+    at JSON.parse (<anonymous>)
+    at l._storageChangeDispatcher (content.js:2:898238)
+    at _storageChangeDispatcherCallback (content.js:2:897686)
+_storageChangeDispatcher @ content.js:2
+_storageChangeDispatcherCallback @ content.js:2
+workspace_iframe.html?initialPath=%2F&id=%3Ar3sk%3A:1 Uncaught (in promise) SyntaxError: "[object Object]" is not valid JSON
+    at JSON.parse (<anonymous>)
+    at l._storageChangeDispatcher (content.js:2:898238)
+    at _storageChangeDispatcherCallback (content.js:2:897686)
+_storageChangeDispatcher @ content.js:2
+_storageChangeDispatcherCallback @ content.js:2
+(índice):1 Uncaught (in promise) SyntaxError: "[object Object]" is not valid JSON
+    at JSON.parse (<anonymous>)
+    at l._storageChangeDispatcher (content.js:2:898238)
+    at _storageChangeDispatcherCallback (content.js:2:897686)
+_storageChangeDispatcher @ VM3858 content.js:2
+_storageChangeDispatcherCallback @ VM3858 content.js:2
+(índice):1 Uncaught (in promise) SyntaxError: "[object Object]" is not valid JSON
+    at JSON.parse (<anonymous>)
+    at l._storageChangeDispatcher (content.js:2:898238)
+    at _storageChangeDispatcherCallback (content.js:2:897686)
+_storageChangeDispatcher @ VM3851 content.js:2
+_storageChangeDispatcherCallback @ VM3851 content.js:2
+VM121:1 Uncaught (in promise) SyntaxError: "[object Object]" is not valid JSON
+    at JSON.parse (<anonymous>)
+    at l._storageChangeDispatcher (content.js:2:898238)
+    at _storageChangeDispatcherCallback (content.js:2:897686)
+_storageChangeDispatcher @ content.js:2
+_storageChangeDispatcherCallback @ content.js:2
+VM36568:1 Uncaught (in promise) SyntaxError: "[object Object]" is not valid JSON
+    at JSON.parse (<anonymous>)
+    at l._storageChangeDispatcher (content.js:2:898238)
+    at _storageChangeDispatcherCallback (content.js:2:897686)
+_storageChangeDispatcher @ content.js:2
+_storageChangeDispatcherCallback @ content.js:2
+VM36569:1 Uncaught (in promise) SyntaxError: "[object Object]" is not valid JSON
+    at JSON.parse (<anonymous>)
+    at l._storageChangeDispatcher (content.js:2:898238)
+    at _storageChangeDispatcherCallback (content.js:2:897686)
+_storageChangeDispatcher @ content.js:2
+_storageChangeDispatcherCallback @ content.js:2
+use-auth.tsx:113 Warning: Invalid hook call. Hooks can only be called inside of the body of a function component. This could happen for one of the following reasons:
+1. You might have mismatching versions of React and the renderer (such as React DOM)
+2. You might be breaking the Rules of Hooks
+3. You might have more than one copy of React in the same app
+See https://reactjs.org/link/invalid-hook-call for tips about how to debug and fix this problem.
+printWarning @ chunk-4RFDBWQV.js?v=4125b99b:136
+error @ chunk-4RFDBWQV.js?v=4125b99b:120
+resolveDispatcher @ chunk-4RFDBWQV.js?v=4125b99b:1045
+useContext @ chunk-4RFDBWQV.js?v=4125b99b:1051
+useIsRestoring @ @tanstack_react-query.js?v=4125b99b:3039
+useBaseQuery @ @tanstack_react-query.js?v=4125b99b:3210
+useQuery @ @tanstack_react-query.js?v=4125b99b:3288
+AuthProvider @ use-auth.tsx:113
+renderWithHooks @ chunk-C43VWYGG.js?v=ac1a0e8c:12151
+mountIndeterminateComponent @ chunk-C43VWYGG.js?v=ac1a0e8c:14901
+beginWork @ chunk-C43VWYGG.js?v=ac1a0e8c:15882
+beginWork$1 @ chunk-C43VWYGG.js?v=ac1a0e8c:19721
+performUnitOfWork @ chunk-C43VWYGG.js?v=ac1a0e8c:19166
+workLoopSync @ chunk-C43VWYGG.js?v=ac1a0e8c:19105
+renderRootSync @ chunk-C43VWYGG.js?v=ac1a0e8c:19084
+performConcurrentWorkOnRoot @ chunk-C43VWYGG.js?v=ac1a0e8c:18646
+workLoop @ chunk-C43VWYGG.js?v=ac1a0e8c:197
+flushWork @ chunk-C43VWYGG.js?v=ac1a0e8c:176
+performWorkUntilDeadline @ chunk-C43VWYGG.js?v=ac1a0e8c:384
+use-auth.tsx:113 Warning: Invalid hook call. Hooks can only be called inside of the body of a function component. This could happen for one of the following reasons:
+1. You might have mismatching versions of React and the renderer (such as React DOM)
+2. You might be breaking the Rules of Hooks
+3. You might have more than one copy of React in the same app
+See https://reactjs.org/link/invalid-hook-call for tips about how to debug and fix this problem.
+printWarning @ chunk-4RFDBWQV.js?v=4125b99b:136
+error @ chunk-4RFDBWQV.js?v=4125b99b:120
+resolveDispatcher @ chunk-4RFDBWQV.js?v=4125b99b:1045
+useContext @ chunk-4RFDBWQV.js?v=4125b99b:1051
+useIsRestoring @ @tanstack_react-query.js?v=4125b99b:3039
+useBaseQuery @ @tanstack_react-query.js?v=4125b99b:3210
+useQuery @ @tanstack_react-query.js?v=4125b99b:3288
+AuthProvider @ use-auth.tsx:113
+renderWithHooks @ chunk-C43VWYGG.js?v=ac1a0e8c:12151
+mountIndeterminateComponent @ chunk-C43VWYGG.js?v=ac1a0e8c:14901
+beginWork @ chunk-C43VWYGG.js?v=ac1a0e8c:15882
+callCallback2 @ chunk-C43VWYGG.js?v=ac1a0e8c:3674
+invokeGuardedCallbackDev @ chunk-C43VWYGG.js?v=ac1a0e8c:3699
+invokeGuardedCallback @ chunk-C43VWYGG.js?v=ac1a0e8c:3733
+beginWork$1 @ chunk-C43VWYGG.js?v=ac1a0e8c:19733
+performUnitOfWork @ chunk-C43VWYGG.js?v=ac1a0e8c:19166
+workLoopSync @ chunk-C43VWYGG.js?v=ac1a0e8c:19105
+renderRootSync @ chunk-C43VWYGG.js?v=ac1a0e8c:19084
+performConcurrentWorkOnRoot @ chunk-C43VWYGG.js?v=ac1a0e8c:18646
+workLoop @ chunk-C43VWYGG.js?v=ac1a0e8c:197
+flushWork @ chunk-C43VWYGG.js?v=ac1a0e8c:176
+performWorkUntilDeadline @ chunk-C43VWYGG.js?v=ac1a0e8c:384
+chunk-4RFDBWQV.js?v=4125b99b:1062 Uncaught TypeError: Cannot read properties of null (reading 'useContext')
+    at Object.useContext (chunk-4RFDBWQV.js?v=4125b99b:1062:29)
+    at useIsRestoring (@tanstack_react-query.js?v=4125b99b:3039:35)
+    at useBaseQuery (@tanstack_react-query.js?v=4125b99b:3210:23)
+    at useQuery (@tanstack_react-query.js?v=4125b99b:3288:10)
+    at AuthProvider (use-auth.tsx:113:7)
+    at renderWithHooks (chunk-C43VWYGG.js?v=ac1a0e8c:12151:26)
+    at mountIndeterminateComponent (chunk-C43VWYGG.js?v=ac1a0e8c:14901:21)
+    at beginWork (chunk-C43VWYGG.js?v=ac1a0e8c:15882:22)
+    at HTMLUnknownElement.callCallback2 (chunk-C43VWYGG.js?v=ac1a0e8c:3674:22)
+    at Object.invokeGuardedCallbackDev (chunk-C43VWYGG.js?v=ac1a0e8c:3699:24)
+useContext @ chunk-4RFDBWQV.js?v=4125b99b:1062
+useIsRestoring @ @tanstack_react-query.js?v=4125b99b:3039
+useBaseQuery @ @tanstack_react-query.js?v=4125b99b:3210
+useQuery @ @tanstack_react-query.js?v=4125b99b:3288
+AuthProvider @ use-auth.tsx:113
+renderWithHooks @ chunk-C43VWYGG.js?v=ac1a0e8c:12151
+mountIndeterminateComponent @ chunk-C43VWYGG.js?v=ac1a0e8c:14901
+beginWork @ chunk-C43VWYGG.js?v=ac1a0e8c:15882
+callCallback2 @ chunk-C43VWYGG.js?v=ac1a0e8c:3674
+invokeGuardedCallbackDev @ chunk-C43VWYGG.js?v=ac1a0e8c:3699
+invokeGuardedCallback @ chunk-C43VWYGG.js?v=ac1a0e8c:3733
+beginWork$1 @ chunk-C43VWYGG.js?v=ac1a0e8c:19733
+performUnitOfWork @ chunk-C43VWYGG.js?v=ac1a0e8c:19166
+workLoopSync @ chunk-C43VWYGG.js?v=ac1a0e8c:19105
+renderRootSync @ chunk-C43VWYGG.js?v=ac1a0e8c:19084
+performConcurrentWorkOnRoot @ chunk-C43VWYGG.js?v=ac1a0e8c:18646
+workLoop @ chunk-C43VWYGG.js?v=ac1a0e8c:197
+flushWork @ chunk-C43VWYGG.js?v=ac1a0e8c:176
+performWorkUntilDeadline @ chunk-C43VWYGG.js?v=ac1a0e8c:384
+use-auth.tsx:113 Warning: Invalid hook call. Hooks can only be called inside of the body of a function component. This could happen for one of the following reasons:
+1. You might have mismatching versions of React and the renderer (such as React DOM)
+2. You might be breaking the Rules of Hooks
+3. You might have more than one copy of React in the same app
+See https://reactjs.org/link/invalid-hook-call for tips about how to debug and fix this problem.
+printWarning @ chunk-4RFDBWQV.js?v=4125b99b:136
+error @ chunk-4RFDBWQV.js?v=4125b99b:120
+resolveDispatcher @ chunk-4RFDBWQV.js?v=4125b99b:1045
+useContext @ chunk-4RFDBWQV.js?v=4125b99b:1051
+useIsRestoring @ @tanstack_react-query.js?v=4125b99b:3039
+useBaseQuery @ @tanstack_react-query.js?v=4125b99b:3210
+useQuery @ @tanstack_react-query.js?v=4125b99b:3288
+AuthProvider @ use-auth.tsx:113
+renderWithHooks @ chunk-C43VWYGG.js?v=ac1a0e8c:12151
+mountIndeterminateComponent @ chunk-C43VWYGG.js?v=ac1a0e8c:14901
+beginWork @ chunk-C43VWYGG.js?v=ac1a0e8c:15882
+beginWork$1 @ chunk-C43VWYGG.js?v=ac1a0e8c:19721
+performUnitOfWork @ chunk-C43VWYGG.js?v=ac1a0e8c:19166
+workLoopSync @ chunk-C43VWYGG.js?v=ac1a0e8c:19105
+renderRootSync @ chunk-C43VWYGG.js?v=ac1a0e8c:19084
+recoverFromConcurrentError @ chunk-C43VWYGG.js?v=ac1a0e8c:18704
+performConcurrentWorkOnRoot @ chunk-C43VWYGG.js?v=ac1a0e8c:18652
+workLoop @ chunk-C43VWYGG.js?v=ac1a0e8c:197
+flushWork @ chunk-C43VWYGG.js?v=ac1a0e8c:176
+performWorkUntilDeadline @ chunk-C43VWYGG.js?v=ac1a0e8c:384
+use-auth.tsx:113 Warning: Invalid hook call. Hooks can only be called inside of the body of a function component. This could happen for one of the following reasons:
+1. You might have mismatching versions of React and the renderer (such as React DOM)
+2. You might be breaking the Rules of Hooks
+3. You might have more than one copy of React in the same app
+See https://reactjs.org/link/invalid-hook-call for tips about how to debug and fix this problem.
+printWarning @ chunk-4RFDBWQV.js?v=4125b99b:136
+error @ chunk-4RFDBWQV.js?v=4125b99b:120
+resolveDispatcher @ chunk-4RFDBWQV.js?v=4125b99b:1045
+useContext @ chunk-4RFDBWQV.js?v=4125b99b:1051
+useIsRestoring @ @tanstack_react-query.js?v=4125b99b:3039
+useBaseQuery @ @tanstack_react-query.js?v=4125b99b:3210
+useQuery @ @tanstack_react-query.js?v=4125b99b:3288
+AuthProvider @ use-auth.tsx:113
+renderWithHooks @ chunk-C43VWYGG.js?v=ac1a0e8c:12151
+mountIndeterminateComponent @ chunk-C43VWYGG.js?v=ac1a0e8c:14901
+beginWork @ chunk-C43VWYGG.js?v=ac1a0e8c:15882
+callCallback2 @ chunk-C43VWYGG.js?v=ac1a0e8c:3674
+invokeGuardedCallbackDev @ chunk-C43VWYGG.js?v=ac1a0e8c:3699
+invokeGuardedCallback @ chunk-C43VWYGG.js?v=ac1a0e8c:3733
+beginWork$1 @ chunk-C43VWYGG.js?v=ac1a0e8c:19733
+performUnitOfWork @ chunk-C43VWYGG.js?v=ac1a0e8c:19166
+workLoopSync @ chunk-C43VWYGG.js?v=ac1a0e8c:19105
+renderRootSync @ chunk-C43VWYGG.js?v=ac1a0e8c:19084
+recoverFromConcurrentError @ chunk-C43VWYGG.js?v=ac1a0e8c:18704
+performConcurrentWorkOnRoot @ chunk-C43VWYGG.js?v=ac1a0e8c:18652
+workLoop @ chunk-C43VWYGG.js?v=ac1a0e8c:197
+flushWork @ chunk-C43VWYGG.js?v=ac1a0e8c:176
+performWorkUntilDeadline @ chunk-C43VWYGG.js?v=ac1a0e8c:384
+chunk-4RFDBWQV.js?v=4125b99b:1062 Uncaught TypeError: Cannot read properties of null (reading 'useContext')
+    at Object.useContext (chunk-4RFDBWQV.js?v=4125b99b:1062:29)
+    at useIsRestoring (@tanstack_react-query.js?v=4125b99b:3039:35)
+    at useBaseQuery (@tanstack_react-query.js?v=4125b99b:3210:23)
+    at useQuery (@tanstack_react-query.js?v=4125b99b:3288:10)
+    at AuthProvider (use-auth.tsx:113:7)
+    at renderWithHooks (chunk-C43VWYGG.js?v=ac1a0e8c:12151:26)
+    at mountIndeterminateComponent (chunk-C43VWYGG.js?v=ac1a0e8c:14901:21)
+    at beginWork (chunk-C43VWYGG.js?v=ac1a0e8c:15882:22)
+    at HTMLUnknownElement.callCallback2 (chunk-C43VWYGG.js?v=ac1a0e8c:3674:22)
+    at Object.invokeGuardedCallbackDev (chunk-C43VWYGG.js?v=ac1a0e8c:3699:24)
+useContext @ chunk-4RFDBWQV.js?v=4125b99b:1062
+useIsRestoring @ @tanstack_react-query.js?v=4125b99b:3039
+useBaseQuery @ @tanstack_react-query.js?v=4125b99b:3210
+useQuery @ @tanstack_react-query.js?v=4125b99b:3288
+AuthProvider @ use-auth.tsx:113
+renderWithHooks @ chunk-C43VWYGG.js?v=ac1a0e8c:12151
+mountIndeterminateComponent @ chunk-C43VWYGG.js?v=ac1a0e8c:14901
+beginWork @ chunk-C43VWYGG.js?v=ac1a0e8c:15882
+callCallback2 @ chunk-C43VWYGG.js?v=ac1a0e8c:3674
+invokeGuardedCallbackDev @ chunk-C43VWYGG.js?v=ac1a0e8c:3699
+invokeGuardedCallback @ chunk-C43VWYGG.js?v=ac1a0e8c:3733
+beginWork$1 @ chunk-C43VWYGG.js?v=ac1a0e8c:19733
+performUnitOfWork @ chunk-C43VWYGG.js?v=ac1a0e8c:19166
+workLoopSync @ chunk-C43VWYGG.js?v=ac1a0e8c:19105
+renderRootSync @ chunk-C43VWYGG.js?v=ac1a0e8c:19084
+recoverFromConcurrentError @ chunk-C43VWYGG.js?v=ac1a0e8c:18704
+performConcurrentWorkOnRoot @ chunk-C43VWYGG.js?v=ac1a0e8c:18652
+workLoop @ chunk-C43VWYGG.js?v=ac1a0e8c:197
+flushWork @ chunk-C43VWYGG.js?v=ac1a0e8c:176
+performWorkUntilDeadline @ chunk-C43VWYGG.js?v=ac1a0e8c:384
+chunk-C43VWYGG.js?v=ac1a0e8c:14016 The above error occurred in the <AuthProvider> component:
+
+    at AuthProvider (https://c2729e48-2fb9-4518-8d14-3149229b69cf-00-vi9rmtkaqn4n.kirk.replit.dev/src/hooks/use-auth.tsx:117:32)
+    at QueryClientProvider (https://c2729e48-2fb9-4518-8d14-3149229b69cf-00-vi9rmtkaqn4n.kirk.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/@tanstack_react-query.js?v=1f7aa03f:3024:3)
+    at App
+
+Consider adding an error boundary to your tree to customize error handling behavior.
+Visit https://reactjs.org/link/error-boundaries to learn more about error boundaries.
+logCapturedError @ chunk-C43VWYGG.js?v=ac1a0e8c:14016
+update.callback @ chunk-C43VWYGG.js?v=ac1a0e8c:14036
+callCallback @ chunk-C43VWYGG.js?v=ac1a0e8c:10491
+commitUpdateQueue @ chunk-C43VWYGG.js?v=ac1a0e8c:10508
+commitLayoutEffectOnFiber @ chunk-C43VWYGG.js?v=ac1a0e8c:17061
+commitLayoutMountEffects_complete @ chunk-C43VWYGG.js?v=ac1a0e8c:17948
+commitLayoutEffects_begin @ chunk-C43VWYGG.js?v=ac1a0e8c:17937
+commitLayoutEffects @ chunk-C43VWYGG.js?v=ac1a0e8c:17888
+commitRootImpl @ chunk-C43VWYGG.js?v=ac1a0e8c:19321
+commitRoot @ chunk-C43VWYGG.js?v=ac1a0e8c:19245
+finishConcurrentRender @ chunk-C43VWYGG.js?v=ac1a0e8c:18728
+performConcurrentWorkOnRoot @ chunk-C43VWYGG.js?v=ac1a0e8c:18686
+workLoop @ chunk-C43VWYGG.js?v=ac1a0e8c:197
+flushWork @ chunk-C43VWYGG.js?v=ac1a0e8c:176
+performWorkUntilDeadline @ chunk-C43VWYGG.js?v=ac1a0e8c:384
+chunk-C43VWYGG.js?v=ac1a0e8c:19381 Uncaught TypeError: Cannot read properties of null (reading 'useContext')
+    at Object.useContext (chunk-4RFDBWQV.js?v=4125b99b:1062:29)
+    at useIsRestoring (@tanstack_react-query.js?v=4125b99b:3039:35)
+    at useBaseQuery (@tanstack_react-query.js?v=4125b99b:3210:23)
+    at useQuery (@tanstack_react-query.js?v=4125b99b:3288:10)
+    at AuthProvider (use-auth.tsx:113:7)
+    at renderWithHooks (chunk-C43VWYGG.js?v=ac1a0e8c:12151:26)
+    at mountIndeterminateComponent (chunk-C43VWYGG.js?v=ac1a0e8c:14901:21)
+    at beginWork (chunk-C43VWYGG.js?v=ac1a0e8c:15882:22)
+    at beginWork$1 (chunk-C43VWYGG.js?v=ac1a0e8c:19721:22)
+    at performUnitOfWork (chunk-C43VWYGG.js?v=ac1a0e8c:19166:20)
+useContext @ chunk-4RFDBWQV.js?v=4125b99b:1062
+useIsRestoring @ @tanstack_react-query.js?v=4125b99b:3039
+useBaseQuery @ @tanstack_react-query.js?v=4125b99b:3210
+useQuery @ @tanstack_react-query.js?v=4125b99b:3288
+AuthProvider @ use-auth.tsx:113
+renderWithHooks @ chunk-C43VWYGG.js?v=ac1a0e8c:12151
+mountIndeterminateComponent @ chunk-C43VWYGG.js?v=ac1a0e8c:14901
+beginWork @ chunk-C43VWYGG.js?v=ac1a0e8c:15882
+beginWork$1 @ chunk-C43VWYGG.js?v=ac1a0e8c:19721
+performUnitOfWork @ chunk-C43VWYGG.js?v=ac1a0e8c:19166
+workLoopSync @ chunk-C43VWYGG.js?v=ac1a0e8c:19105
+renderRootSync @ chunk-C43VWYGG.js?v=ac1a0e8c:19084
+recoverFromConcurrentError @ chunk-C43VWYGG.js?v=ac1a0e8c:18704
+performConcurrentWorkOnRoot @ chunk-C43VWYGG.js?v=ac1a0e8c:18652
+workLoop @ chunk-C43VWYGG.js?v=ac1a0e8c:197
+flushWork @ chunk-C43VWYGG.js?v=ac1a0e8c:176
+performWorkUntilDeadline @ chunk-C43VWYGG.js?v=ac1a0e8c:384
+use-auth.tsx:113 Warning: Invalid hook call. Hooks can only be called inside of the body of a function component. This could happen for one of the following reasons:
+1. You might have mismatching versions of React and the renderer (such as React DOM)
+2. You might be breaking the Rules of Hooks
+3. You might have more than one copy of React in the same app
+See https://reactjs.org/link/invalid-hook-call for tips about how to debug and fix this problem.
+printWarning @ chunk-4RFDBWQV.js?v=4125b99b:136
+error @ chunk-4RFDBWQV.js?v=4125b99b:120
+resolveDispatcher @ chunk-4RFDBWQV.js?v=4125b99b:1045
+useContext @ chunk-4RFDBWQV.js?v=4125b99b:1051
+useIsRestoring @ @tanstack_react-query.js?v=4125b99b:3039
+useBaseQuery @ @tanstack_react-query.js?v=4125b99b:3210
+useQuery @ @tanstack_react-query.js?v=4125b99b:3288
+AuthProvider @ use-auth.tsx:113
+renderWithHooks @ chunk-C43VWYGG.js?v=ac1a0e8c:12151
+mountIndeterminateComponent @ chunk-C43VWYGG.js?v=ac1a0e8c:14901
+beginWork @ chunk-C43VWYGG.js?v=ac1a0e8c:15882
+beginWork$1 @ chunk-C43VWYGG.js?v=ac1a0e8c:19721
+performUnitOfWork @ chunk-C43VWYGG.js?v=ac1a0e8c:19166
+workLoopSync @ chunk-C43VWYGG.js?v=ac1a0e8c:19105
+renderRootSync @ chunk-C43VWYGG.js?v=ac1a0e8c:19084
+performConcurrentWorkOnRoot @ chunk-C43VWYGG.js?v=ac1a0e8c:18646
+workLoop @ chunk-C43VWYGG.js?v=ac1a0e8c:197
+flushWork @ chunk-C43VWYGG.js?v=ac1a0e8c:176
+performWorkUntilDeadline @ chunk-C43VWYGG.js?v=ac1a0e8c:384
+use-auth.tsx:113 Warning: Invalid hook call. Hooks can only be called inside of the body of a function component. This could happen for one of the following reasons:
+1. You might have mismatching versions of React and the renderer (such as React DOM)
+2. You might be breaking the Rules of Hooks
+3. You might have more than one copy of React in the same app
+See https://reactjs.org/link/invalid-hook-call for tips about how to debug and fix this problem.
+printWarning @ chunk-4RFDBWQV.js?v=4125b99b:136
+error @ chunk-4RFDBWQV.js?v=4125b99b:120
+resolveDispatcher @ chunk-4RFDBWQV.js?v=4125b99b:1045
+useContext @ chunk-4RFDBWQV.js?v=4125b99b:1051
+useIsRestoring @ @tanstack_react-query.js?v=4125b99b:3039
+useBaseQuery @ @tanstack_react-query.js?v=4125b99b:3210
+useQuery @ @tanstack_react-query.js?v=4125b99b:3288
+AuthProvider @ use-auth.tsx:113
+renderWithHooks @ chunk-C43VWYGG.js?v=ac1a0e8c:12151
+mountIndeterminateComponent @ chunk-C43VWYGG.js?v=ac1a0e8c:14901
+beginWork @ chunk-C43VWYGG.js?v=ac1a0e8c:15882
+callCallback2 @ chunk-C43VWYGG.js?v=ac1a0e8c:3674
+invokeGuardedCallbackDev @ chunk-C43VWYGG.js?v=ac1a0e8c:3699
+invokeGuardedCallback @ chunk-C43VWYGG.js?v=ac1a0e8c:3733
+beginWork$1 @ chunk-C43VWYGG.js?v=ac1a0e8c:19733
+performUnitOfWork @ chunk-C43VWYGG.js?v=ac1a0e8c:19166
+workLoopSync @ chunk-C43VWYGG.js?v=ac1a0e8c:19105
+renderRootSync @ chunk-C43VWYGG.js?v=ac1a0e8c:19084
+performConcurrentWorkOnRoot @ chunk-C43VWYGG.js?v=ac1a0e8c:18646
+workLoop @ chunk-C43VWYGG.js?v=ac1a0e8c:197
+flushWork @ chunk-C43VWYGG.js?v=ac1a0e8c:176
+performWorkUntilDeadline @ chunk-C43VWYGG.js?v=ac1a0e8c:384
+chunk-4RFDBWQV.js?v=4125b99b:1062 Uncaught TypeError: Cannot read properties of null (reading 'useContext')
+    at Object.useContext (chunk-4RFDBWQV.js?v=4125b99b:1062:29)
+    at useIsRestoring (@tanstack_react-query.js?v=4125b99b:3039:35)
+    at useBaseQuery (@tanstack_react-query.js?v=4125b99b:3210:23)
+    at useQuery (@tanstack_react-query.js?v=4125b99b:3288:10)
+    at AuthProvider (use-auth.tsx:113:7)
+    at renderWithHooks (chunk-C43VWYGG.js?v=ac1a0e8c:12151:26)
+    at mountIndeterminateComponent (chunk-C43VWYGG.js?v=ac1a0e8c:14901:21)
+    at beginWork (chunk-C43VWYGG.js?v=ac1a0e8c:15882:22)
+    at HTMLUnknownElement.callCallback2 (chunk-C43VWYGG.js?v=ac1a0e8c:3674:22)
+    at Object.invokeGuardedCallbackDev (chunk-C43VWYGG.js?v=ac1a0e8c:3699:24)
+useContext @ chunk-4RFDBWQV.js?v=4125b99b:1062
+useIsRestoring @ @tanstack_react-query.js?v=4125b99b:3039
+useBaseQuery @ @tanstack_react-query.js?v=4125b99b:3210
+useQuery @ @tanstack_react-query.js?v=4125b99b:3288
+AuthProvider @ use-auth.tsx:113
+renderWithHooks @ chunk-C43VWYGG.js?v=ac1a0e8c:12151
+mountIndeterminateComponent @ chunk-C43VWYGG.js?v=ac1a0e8c:14901
+beginWork @ chunk-C43VWYGG.js?v=ac1a0e8c:15882
+callCallback2 @ chunk-C43VWYGG.js?v=ac1a0e8c:3674
+invokeGuardedCallbackDev @ chunk-C43VWYGG.js?v=ac1a0e8c:3699
+invokeGuardedCallback @ chunk-C43VWYGG.js?v=ac1a0e8c:3733
+beginWork$1 @ chunk-C43VWYGG.js?v=ac1a0e8c:19733
+performUnitOfWork @ chunk-C43VWYGG.js?v=ac1a0e8c:19166
+workLoopSync @ chunk-C43VWYGG.js?v=ac1a0e8c:19105
+renderRootSync @ chunk-C43VWYGG.js?v=ac1a0e8c:19084
+performConcurrentWorkOnRoot @ chunk-C43VWYGG.js?v=ac1a0e8c:18646
+workLoop @ chunk-C43VWYGG.js?v=ac1a0e8c:197
+flushWork @ chunk-C43VWYGG.js?v=ac1a0e8c:176
+performWorkUntilDeadline @ chunk-C43VWYGG.js?v=ac1a0e8c:384
+use-auth.tsx:113 Warning: Invalid hook call. Hooks can only be called inside of the body of a function component. This could happen for one of the following reasons:
+1. You might have mismatching versions of React and the renderer (such as React DOM)
+2. You might be breaking the Rules of Hooks
+3. You might have more than one copy of React in the same app
+See https://reactjs.org/link/invalid-hook-call for tips about how to debug and fix this problem.
+printWarning @ chunk-4RFDBWQV.js?v=4125b99b:136
+error @ chunk-4RFDBWQV.js?v=4125b99b:120
+resolveDispatcher @ chunk-4RFDBWQV.js?v=4125b99b:1045
+useContext @ chunk-4RFDBWQV.js?v=4125b99b:1051
+useIsRestoring @ @tanstack_react-query.js?v=4125b99b:3039
+useBaseQuery @ @tanstack_react-query.js?v=4125b99b:3210
+useQuery @ @tanstack_react-query.js?v=4125b99b:3288
+AuthProvider @ use-auth.tsx:113
+renderWithHooks @ chunk-C43VWYGG.js?v=ac1a0e8c:12151
+mountIndeterminateComponent @ chunk-C43VWYGG.js?v=ac1a0e8c:14901
+beginWork @ chunk-C43VWYGG.js?v=ac1a0e8c:15882
+beginWork$1 @ chunk-C43VWYGG.js?v=ac1a0e8c:19721
+performUnitOfWork @ chunk-C43VWYGG.js?v=ac1a0e8c:19166
+workLoopSync @ chunk-C43VWYGG.js?v=ac1a0e8c:19105
+renderRootSync @ chunk-C43VWYGG.js?v=ac1a0e8c:19084
+recoverFromConcurrentError @ chunk-C43VWYGG.js?v=ac1a0e8c:18704
+performConcurrentWorkOnRoot @ chunk-C43VWYGG.js?v=ac1a0e8c:18652
+workLoop @ chunk-C43VWYGG.js?v=ac1a0e8c:197
+flushWork @ chunk-C43VWYGG.js?v=ac1a0e8c:176
+performWorkUntilDeadline @ chunk-C43VWYGG.js?v=ac1a0e8c:384
+use-auth.tsx:113 Warning: Invalid hook call. Hooks can only be called inside of the body of a function component. This could happen for one of the following reasons:
+1. You might have mismatching versions of React and the renderer (such as React DOM)
+2. You might be breaking the Rules of Hooks
+3. You might have more than one copy of React in the same app
+See https://reactjs.org/link/invalid-hook-call for tips about how to debug and fix this problem.
+printWarning @ chunk-4RFDBWQV.js?v=4125b99b:136
+error @ chunk-4RFDBWQV.js?v=4125b99b:120
+resolveDispatcher @ chunk-4RFDBWQV.js?v=4125b99b:1045
+useContext @ chunk-4RFDBWQV.js?v=4125b99b:1051
+useIsRestoring @ @tanstack_react-query.js?v=4125b99b:3039
+useBaseQuery @ @tanstack_react-query.js?v=4125b99b:3210
+useQuery @ @tanstack_react-query.js?v=4125b99b:3288
+AuthProvider @ use-auth.tsx:113
+renderWithHooks @ chunk-C43VWYGG.js?v=ac1a0e8c:12151
+mountIndeterminateComponent @ chunk-C43VWYGG.js?v=ac1a0e8c:14901
+beginWork @ chunk-C43VWYGG.js?v=ac1a0e8c:15882
+callCallback2 @ chunk-C43VWYGG.js?v=ac1a0e8c:3674
+invokeGuardedCallbackDev @ chunk-C43VWYGG.js?v=ac1a0e8c:3699
+invokeGuardedCallback @ chunk-C43VWYGG.js?v=ac1a0e8c:3733
+beginWork$1 @ chunk-C43VWYGG.js?v=ac1a0e8c:19733
+performUnitOfWork @ chunk-C43VWYGG.js?v=ac1a0e8c:19166
+workLoopSync @ chunk-C43VWYGG.js?v=ac1a0e8c:19105
+renderRootSync @ chunk-C43VWYGG.js?v=ac1a0e8c:19084
+recoverFromConcurrentError @ chunk-C43VWYGG.js?v=ac1a0e8c:18704
+performConcurrentWorkOnRoot @ chunk-C43VWYGG.js?v=ac1a0e8c:18652
+workLoop @ chunk-C43VWYGG.js?v=ac1a0e8c:197
+flushWork @ chunk-C43VWYGG.js?v=ac1a0e8c:176
+performWorkUntilDeadline @ chunk-C43VWYGG.js?v=ac1a0e8c:384
+chunk-4RFDBWQV.js?v=4125b99b:1062 Uncaught TypeError: Cannot read properties of null (reading 'useContext')
+    at Object.useContext (chunk-4RFDBWQV.js?v=4125b99b:1062:29)
+    at useIsRestoring (@tanstack_react-query.js?v=4125b99b:3039:35)
+    at useBaseQuery (@tanstack_react-query.js?v=4125b99b:3210:23)
+    at useQuery (@tanstack_react-query.js?v=4125b99b:3288:10)
+    at AuthProvider (use-auth.tsx:113:7)
+    at renderWithHooks (chunk-C43VWYGG.js?v=ac1a0e8c:12151:26)
+    at mountIndeterminateComponent (chunk-C43VWYGG.js?v=ac1a0e8c:14901:21)
+    at beginWork (chunk-C43VWYGG.js?v=ac1a0e8c:15882:22)
+    at HTMLUnknownElement.callCallback2 (chunk-C43VWYGG.js?v=ac1a0e8c:3674:22)
+    at Object.invokeGuardedCallbackDev (chunk-C43VWYGG.js?v=ac1a0e8c:3699:24)
+useContext @ chunk-4RFDBWQV.js?v=4125b99b:1062
+useIsRestoring @ @tanstack_react-query.js?v=4125b99b:3039
+useBaseQuery @ @tanstack_react-query.js?v=4125b99b:3210
+useQuery @ @tanstack_react-query.js?v=4125b99b:3288
+AuthProvider @ use-auth.tsx:113
+renderWithHooks @ chunk-C43VWYGG.js?v=ac1a0e8c:12151
+mountIndeterminateComponent @ chunk-C43VWYGG.js?v=ac1a0e8c:14901
+beginWork @ chunk-C43VWYGG.js?v=ac1a0e8c:15882
+callCallback2 @ chunk-C43VWYGG.js?v=ac1a0e8c:3674
+invokeGuardedCallbackDev @ chunk-C43VWYGG.js?v=ac1a0e8c:3699
+invokeGuardedCallback @ chunk-C43VWYGG.js?v=ac1a0e8c:3733
+beginWork$1 @ chunk-C43VWYGG.js?v=ac1a0e8c:19733
+performUnitOfWork @ chunk-C43VWYGG.js?v=ac1a0e8c:19166
+workLoopSync @ chunk-C43VWYGG.js?v=ac1a0e8c:19105
+renderRootSync @ chunk-C43VWYGG.js?v=ac1a0e8c:19084
+recoverFromConcurrentError @ chunk-C43VWYGG.js?v=ac1a0e8c:18704
+performConcurrentWorkOnRoot @ chunk-C43VWYGG.js?v=ac1a0e8c:18652
+workLoop @ chunk-C43VWYGG.js?v=ac1a0e8c:197
+flushWork @ chunk-C43VWYGG.js?v=ac1a0e8c:176
+performWorkUntilDeadline @ chunk-C43VWYGG.js?v=ac1a0e8c:384
+chunk-C43VWYGG.js?v=ac1a0e8c:14016 The above error occurred in the <AuthProvider> component:
+
+    at AuthProvider (https://c2729e48-2fb9-4518-8d14-3149229b69cf-00-vi9rmtkaqn4n.kirk.replit.dev/src/hooks/use-auth.tsx:117:32)
+    at QueryClientProvider (https://c2729e48-2fb9-4518-8d14-3149229b69cf-00-vi9rmtkaqn4n.kirk.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/@tanstack_react-query.js?v=1f7aa03f:3024:3)
+    at App
+
+Consider adding an error boundary to your tree to customize error handling behavior.
+Visit https://reactjs.org/link/error-boundaries to learn more about error boundaries.
+logCapturedError @ chunk-C43VWYGG.js?v=ac1a0e8c:14016
+update.callback @ chunk-C43VWYGG.js?v=ac1a0e8c:14036
+callCallback @ chunk-C43VWYGG.js?v=ac1a0e8c:10491
+commitUpdateQueue @ chunk-C43VWYGG.js?v=ac1a0e8c:10508
+commitLayoutEffectOnFiber @ chunk-C43VWYGG.js?v=ac1a0e8c:17061
+commitLayoutMountEffects_complete @ chunk-C43VWYGG.js?v=ac1a0e8c:17948
+commitLayoutEffects_begin @ chunk-C43VWYGG.js?v=ac1a0e8c:17937
+commitLayoutEffects @ chunk-C43VWYGG.js?v=ac1a0e8c:17888
+commitRootImpl @ chunk-C43VWYGG.js?v=ac1a0e8c:19321
+commitRoot @ chunk-C43VWYGG.js?v=ac1a0e8c:19245
+finishConcurrentRender @ chunk-C43VWYGG.js?v=ac1a0e8c:18728
+performConcurrentWorkOnRoot @ chunk-C43VWYGG.js?v=ac1a0e8c:18686
+workLoop @ chunk-C43VWYGG.js?v=ac1a0e8c:197
+flushWork @ chunk-C43VWYGG.js?v=ac1a0e8c:176
+performWorkUntilDeadline @ chunk-C43VWYGG.js?v=ac1a0e8c:384
+chunk-C43VWYGG.js?v=ac1a0e8c:19381 Uncaught TypeError: Cannot read properties of null (reading 'useContext')
+    at Object.useContext (chunk-4RFDBWQV.js?v=4125b99b:1062:29)
+    at useIsRestoring (@tanstack_react-query.js?v=4125b99b:3039:35)
+    at useBaseQuery (@tanstack_react-query.js?v=4125b99b:3210:23)
+    at useQuery (@tanstack_react-query.js?v=4125b99b:3288:10)
+    at AuthProvider (use-auth.tsx:113:7)
+    at renderWithHooks (chunk-C43VWYGG.js?v=ac1a0e8c:12151:26)
+    at mountIndeterminateComponent (chunk-C43VWYGG.js?v=ac1a0e8c:14901:21)
+    at beginWork (chunk-C43VWYGG.js?v=ac1a0e8c:15882:22)
+    at beginWork$1 (chunk-C43VWYGG.js?v=ac1a0e8c:19721:22)
+    at performUnitOfWork (chunk-C43VWYGG.js?v=ac1a0e8c:19166:20)
+useContext @ chunk-4RFDBWQV.js?v=4125b99b:1062
+useIsRestoring @ @tanstack_react-query.js?v=4125b99b:3039
+useBaseQuery @ @tanstack_react-query.js?v=4125b99b:3210
+useQuery @ @tanstack_react-query.js?v=4125b99b:3288
+AuthProvider @ use-auth.tsx:113
+renderWithHooks @ chunk-C43VWYGG.js?v=ac1a0e8c:12151
+mountIndeterminateComponent @ chunk-C43VWYGG.js?v=ac1a0e8c:14901
+beginWork @ chunk-C43VWYGG.js?v=ac1a0e8c:15882
+beginWork$1 @ chunk-C43VWYGG.js?v=ac1a0e8c:19721
+performUnitOfWork @ chunk-C43VWYGG.js?v=ac1a0e8c:19166
+workLoopSync @ chunk-C43VWYGG.js?v=ac1a0e8c:19105
+renderRootSync @ chunk-C43VWYGG.js?v=ac1a0e8c:19084
+recoverFromConcurrentError @ chunk-C43VWYGG.js?v=ac1a0e8c:18704
+performConcurrentWorkOnRoot @ chunk-C43VWYGG.js?v=ac1a0e8c:18652
+workLoop @ chunk-C43VWYGG.js?v=ac1a0e8c:197
+flushWork @ chunk-C43VWYGG.js?v=ac1a0e8c:176
+performWorkUntilDeadline @ chunk-C43VWYGG.js?v=ac1a0e8c:384
