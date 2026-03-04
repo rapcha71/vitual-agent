@@ -2,6 +2,13 @@
 @tailwind components;
 @tailwind utilities;
 
+/* Color de superficie original de la app - naranja claro para modales/cards (tint de #F05023) */
+:root {
+  --app-surface-orange: #FFCCB3;
+  --app-surface-orange-border: #F05023;
+  --app-surface-orange-hover: #FFBFA0;
+}
+
 @layer base {
   * {
     @apply border-border;

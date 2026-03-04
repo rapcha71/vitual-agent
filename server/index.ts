@@ -1,3 +1,4 @@
+import "dotenv/config";
 import express, { type Request, Response, NextFunction } from "express";
 import { registerRoutes } from "./routes";
 import { setupVite, serveStatic, log } from "./vite";
@@ -135,12 +136,15 @@ try {
       }
 
       const PORT = parseInt(process.env.PORT || "5000", 10);
+      const useHttps = process.env.USE_HTTPS_DEV === "true" && process.env.NODE_ENV !== "production";
+      const protocol = useHttps ? "https" : "http";
       server.listen(PORT, "0.0.0.0", async () => {
         debugLog(`Server is running on port ${PORT}`);
         console.log(`
         🚀 Server is running!
-           - Local: http://localhost:${PORT}
-           - Network: http://0.0.0.0:${PORT}
+           - Local: ${protocol}://localhost:${PORT}
+           - Network: ${protocol}://0.0.0.0:${PORT}
+           ${useHttps ? `\n           📱 En el celular usá: ${protocol}://192.168.1.16:${PORT} (reemplazá con tu IP)\n           La cámara y GPS funcionan con HTTPS.` : ""}
            - Environment: ${app.get("env")}
         `);
         
@@ -155,16 +159,17 @@ try {
         }
         
         // Schedule daily cleanup of old messages (every 24 hours)
-        setInterval(async () => {
+        const cleanupInterval = setInterval(async () => {
           try {
             const deletedCount = await storage.deleteOldMessages(7);
             if (deletedCount > 0) {
-              console.log(`Scheduled cleanup: deleted ${deletedCount} old messages`);
+              debugLog(`Scheduled cleanup: deleted ${deletedCount} old messages`);
             }
           } catch (error) {
             console.error('Error in scheduled message cleanup:', error);
           }
-        }, 24 * 60 * 60 * 1000); // 24 hours
+        }, 24 * 60 * 60 * 1000);
+        cleanupInterval.unref(); // No mantiene el proceso vivo solo por este timer
       });
     } catch (error) {
       console.error('Failed to start server:', error);

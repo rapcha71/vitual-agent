@@ -12,6 +12,7 @@ import { useLocation } from "wouter";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from "@/components/ui/dialog";
 import imageCompression from "browser-image-compression";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { apiRequest } from "@/lib/queryClient";
 import { nanoid } from "nanoid";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -25,8 +26,6 @@ export default function PropertyEntry() {
   const [activeCamera, setActiveCamera] = useState<"sign" | "property" | null>(null);
   const [stream, setStream] = useState<MediaStream | null>(null);
   const [isCompressing, setIsCompressing] = useState(false);
-  const [devices, setDevices] = useState<MediaDeviceInfo[]>([]);
-  const [selectedDevice, setSelectedDevice] = useState<string>("");
   const videoRef = useRef<HTMLVideoElement | null>(null);
   const canvasRef = useRef<HTMLCanvasElement | null>(null);
   const fileInputRef = useRef<HTMLInputElement | null>(null);
@@ -41,6 +40,11 @@ export default function PropertyEntry() {
     existingPropertyId?: string;
     distance?: string;
   } | null>(null);
+  const [showManualCoords, setShowManualCoords] = useState(false);
+  const [manualLat, setManualLat] = useState("");
+  const [manualLng, setManualLng] = useState("");
+  const signFileInputRef = useRef<HTMLInputElement>(null);
+  const propertyFileInputRef = useRef<HTMLInputElement>(null);
 
   const form = useForm({
     resolver: zodResolver(insertPropertySchema),
@@ -81,30 +85,11 @@ export default function PropertyEntry() {
     setIsCapturing(false);
   };
 
-  // Effect for device enumeration
   useEffect(() => {
-    let mounted = true;
-
-    const getDevices = async () => {
-      try {
-        const devices = await navigator.mediaDevices.enumerateDevices();
-        const videoDevices = devices.filter(device => device.kind === 'videoinput');
-        if (mounted) {
-          setDevices(videoDevices);
-          if (videoDevices.length > 0) {
-            setSelectedDevice(videoDevices[0].deviceId);
-          }
-        }
-      } catch (error) {
-        console.error('Error getting devices:', error);
-      }
-    };
-
-    getDevices();
-
     return () => {
-      mounted = false;
-      cleanup();
+      if (videoRef.current?.srcObject) {
+        (videoRef.current.srcObject as MediaStream).getTracks().forEach(t => t.stop());
+      }
     };
   }, []);
 
@@ -177,14 +162,28 @@ export default function PropertyEntry() {
       setIsCapturing(true);
       setActiveCamera(type);
 
-      const constraints = {
-        video: {
-          deviceId: selectedDevice ? { exact: selectedDevice } : undefined,
-          facingMode: "environment"
-        }
-      };
+      // Estrategia: primero cámara trasera (environment) para fotos de propiedades
+      // Funciona en Android e iPhone - abre la cámara principal automáticamente
+      const tryConstraints = [
+        { video: { facingMode: { ideal: "environment" } } },
+        { video: { facingMode: "environment" } },
+        { video: true }
+      ];
 
-      const mediaStream = await navigator.mediaDevices.getUserMedia(constraints);
+      let mediaStream: MediaStream | null = null;
+      for (const c of tryConstraints) {
+        try {
+          mediaStream = await navigator.mediaDevices.getUserMedia(c);
+          break;
+        } catch {
+          continue;
+        }
+      }
+
+      if (!mediaStream) {
+        throw new Error("No se pudo acceder a la cámara");
+      }
+
       setStream(mediaStream);
 
       if (videoRef.current) {
@@ -193,18 +192,16 @@ export default function PropertyEntry() {
     } catch (error) {
       console.error("Error accessing camera:", error);
       toast({
-        title: "Camera Error",
-        description: "Unable to access device camera. Try uploading an image instead.",
-        variant: "destructive"
+        title: "Error de cámara",
+        description: "No se pudo acceder a la cámara. Usá el botón 'Subir desde galería' o ejecutá con HTTPS (npm run dev:https).",
+        variant: "destructive",
+        duration: 8000
       });
       cleanup();
     }
   };
 
-  const handleFileUpload = async (event: React.ChangeEvent<HTMLInputElement>) => {
-    const file = event.target.files?.[0];
-    if (!file || !activeCamera) return;
-
+  const processFileUpload = async (file: File, type: "sign" | "property") => {
     try {
       setIsCompressing(true);
       const compressedFile = await imageCompression(file, {
@@ -216,15 +213,15 @@ export default function PropertyEntry() {
       const reader = new FileReader();
       reader.onloadend = async () => {
         const base64data = reader.result as string;
-        form.setValue(`images.${activeCamera}`, base64data);
+        form.setValue(`images.${type}`, base64data);
 
         const originalSize = Math.round(file.size / 1024);
         const compressedSize = Math.round(compressedFile.size / 1024);
         const savings = Math.round(((originalSize - compressedSize) / originalSize) * 100);
 
         toast({
-          title: "Image Uploaded",
-          description: `Image compressed from ${originalSize}KB to ${compressedSize}KB (${savings}% reduction)`,
+          title: "Imagen subida",
+          description: `Comprimida de ${originalSize}KB a ${compressedSize}KB (${savings}% menos)`,
           duration: 3000,
         });
         cleanup();
@@ -233,14 +230,59 @@ export default function PropertyEntry() {
     } catch (error) {
       console.error('Error processing file:', error);
       toast({
-        title: "Upload Error",
-        description: "Failed to process image. Please try again.",
+        title: "Error al subir",
+        description: "No se pudo procesar la imagen. Intentá de nuevo.",
         variant: "destructive",
         duration: 5000
       });
     } finally {
       setIsCompressing(false);
     }
+  };
+
+  const handleFileUpload = async (event: React.ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0];
+    const type = activeCamera;
+    if (!file) return;
+    if (type) {
+      await processFileUpload(file, type);
+    }
+    event.target.value = "";
+  };
+
+  const handleDirectGalleryUpload = (type: "sign" | "property") => {
+    const input = type === "sign" ? signFileInputRef.current : propertyFileInputRef.current;
+    if (input) {
+      setActiveCamera(type);
+      input.click();
+    }
+  };
+
+  const handleDirectFileSelect = async (event: React.ChangeEvent<HTMLInputElement>, type: "sign" | "property") => {
+    const file = event.target.files?.[0];
+    if (file) await processFileUpload(file, type);
+    event.target.value = "";
+  };
+
+  const applyManualCoords = () => {
+    const lat = parseFloat(manualLat.replace(",", "."));
+    const lng = parseFloat(manualLng.replace(",", "."));
+    if (isNaN(lat) || isNaN(lng) || lat < -90 || lat > 90 || lng < -180 || lng > 180) {
+      toast({
+        title: "Coordenadas inválidas",
+        description: "Latitud debe estar entre -90 y 90. Longitud entre -180 y 180.",
+        variant: "destructive"
+      });
+      return;
+    }
+    form.setValue("location", { lat, lng });
+    toast({
+      title: "Ubicación guardada",
+      description: `Coordenadas: ${lat.toFixed(6)}, ${lng.toFixed(6)}`
+    });
+    setShowManualCoords(false);
+    setManualLat("");
+    setManualLng("");
   };
 
   const capturePhoto = async () => {
@@ -355,12 +397,16 @@ export default function PropertyEntry() {
 
       console.log("Starting location capture...");
 
-      // Verificar permisos
-      const permission = await navigator.permissions.query({ name: 'geolocation' });
-      console.log("Geolocation permission status:", permission.state);
-
-      if (permission.state === 'denied') {
-        throw new Error('PERMISSION_DENIED');
+      // Verificar permisos (puede no estar disponible en todos los navegadores)
+      try {
+        const permission = await navigator.permissions.query({ name: 'geolocation' });
+        console.log("Geolocation permission status:", permission.state);
+        if (permission.state === 'denied') {
+          throw new Error('PERMISSION_DENIED');
+        }
+      } catch (permErr) {
+        console.log("Permissions API not available or error:", permErr);
+        // Continuar igual - getCurrentPosition pedirá permiso si es necesario
       }
 
       const position = await new Promise<GeolocationPosition>((resolve, reject) => {
@@ -420,10 +466,11 @@ export default function PropertyEntry() {
 
       toast({
         title: "Error de ubicación",
-        description: errorMessage,
+        description: `${errorMessage} Podés usar "Coordenadas manuales" como alternativa.`,
         variant: "destructive",
-        duration: 7000
+        duration: 8000
       });
+      setShowManualCoords(true);
     }
   };
 
@@ -536,7 +583,7 @@ export default function PropertyEntry() {
 
   const logoutMutation = useMutation({
     mutationFn: async () => {
-      await fetch('/api/auth/logout', { method: 'POST', credentials: 'include' });
+      await apiRequest("POST", "/api/logout");
       setLocation('/');
     }
   });
@@ -602,14 +649,14 @@ export default function PropertyEntry() {
                             <FormLabel className="text-lg">Tipo de Propiedad</FormLabel>
                             <Select onValueChange={field.onChange} defaultValue={field.value}>
                               <FormControl>
-                                <SelectTrigger>
+                                <SelectTrigger className="bg-white border-gray-200 text-gray-900">
                                   <SelectValue placeholder="Seleccione tipo de propiedad" />
                                 </SelectTrigger>
                               </FormControl>
-                              <SelectContent>
-                                <SelectItem value="house">Casa</SelectItem>
-                                <SelectItem value="land">Terreno</SelectItem>
-                                <SelectItem value="commercial">Local Comercial</SelectItem>
+                              <SelectContent className="bg-white border border-gray-200 text-gray-900 [&_[data-highlighted]]:bg-gray-100">
+                                <SelectItem value="house" className="text-gray-900 focus:bg-gray-100 focus:text-gray-900">Casa</SelectItem>
+                                <SelectItem value="land" className="text-gray-900 focus:bg-gray-100 focus:text-gray-900">Terreno</SelectItem>
+                                <SelectItem value="commercial" className="text-gray-900 focus:bg-gray-100 focus:text-gray-900">Local Comercial</SelectItem>
                               </SelectContent>
                             </Select>
                             <FormMessage />
@@ -633,22 +680,39 @@ export default function PropertyEntry() {
 
                       <div className="space-y-4">
                         <h3 className="text-lg font-medium">Fotos de la Propiedad</h3>
+                        <p className="text-sm text-gray-600">Si la cámara no funciona, usá "Subir desde galería"</p>
                         <div className="grid gap-4">
-                          <button
-                            type="button"
-                            className="h-32 flex flex-col items-center justify-center relative border-2 border-gray-300 rounded-lg hover:border-[#F05023] transition-colors bg-white/95 backdrop-blur-sm"
-                            onClick={() => startCamera("sign")}
-                            disabled={isCompressing}
-                          >
-                            <Camera className="h-8 w-8 mb-2" />
-                            <span>Foto del Rótulo</span>
+                          <div className="space-y-2">
+                            <div className="flex gap-2">
+                              <button
+                                type="button"
+                                className="flex-1 h-32 flex flex-col items-center justify-center relative border-2 border-gray-300 rounded-lg hover:border-[#F05023] transition-colors bg-white"
+                                onClick={() => startCamera("sign")}
+                                disabled={isCompressing}
+                              >
+                                <Camera className="h-8 w-8 mb-2" />
+                                <span>Tomar foto</span>
+                              </button>
+                              <button
+                                type="button"
+                                className="flex-1 h-32 flex flex-col items-center justify-center border-2 border-[#F05023] rounded-lg hover:bg-[#F05023]/10 transition-colors bg-white text-[#F05023]"
+                                onClick={() => handleDirectGalleryUpload("sign")}
+                                disabled={isCompressing}
+                              >
+                                <Upload className="h-8 w-8 mb-2" />
+                                <span>Subir desde galería</span>
+                              </button>
+                            </div>
+                            <input
+                              ref={signFileInputRef}
+                              type="file"
+                              accept="image/*"
+                              className="hidden"
+                              onChange={(e) => handleDirectFileSelect(e, "sign")}
+                            />
                             {form.watch("images.sign") && (
-                              <>
-                                <img
-                                  src={form.watch("images.sign")}
-                                  alt="Sign Preview"
-                                  className="absolute inset-0 w-full h-full object-cover rounded-lg opacity-50"
-                                />
+                              <div className="relative rounded-lg overflow-hidden border">
+                                <img src={form.watch("images.sign")} alt="Rótulo" className="w-full h-24 object-cover" />
                                 <button
                                   type="button"
                                   onClick={testOCR}
@@ -656,42 +720,92 @@ export default function PropertyEntry() {
                                 >
                                   Verificar OCR
                                 </button>
-                              </>
+                              </div>
                             )}
-                          </button>
+                          </div>
 
-                          <button
-                            type="button"
-                            className="h-32 flex flex-col items-center justify-center relative border-2 border-gray-300 rounded-lg hover:border-[#F05023] transition-colors bg-white/95 backdrop-blur-sm"
-                            onClick={() => startCamera("property")}
-                            disabled={isCompressing}
-                          >
-                            <Camera className="h-8 w-8 mb-2" />
-                            <span>Foto de la Propiedad</span>
+                          <div className="space-y-2">
+                            <div className="flex gap-2">
+                              <button
+                                type="button"
+                                className="flex-1 h-32 flex flex-col items-center justify-center relative border-2 border-gray-300 rounded-lg hover:border-[#F05023] transition-colors bg-white"
+                                onClick={() => startCamera("property")}
+                                disabled={isCompressing}
+                              >
+                                <Camera className="h-8 w-8 mb-2" />
+                                <span>Tomar foto</span>
+                              </button>
+                              <button
+                                type="button"
+                                className="flex-1 h-32 flex flex-col items-center justify-center border-2 border-[#F05023] rounded-lg hover:bg-[#F05023]/10 transition-colors bg-white text-[#F05023]"
+                                onClick={() => handleDirectGalleryUpload("property")}
+                                disabled={isCompressing}
+                              >
+                                <Upload className="h-8 w-8 mb-2" />
+                                <span>Subir desde galería</span>
+                              </button>
+                            </div>
+                            <input
+                              ref={propertyFileInputRef}
+                              type="file"
+                              accept="image/*"
+                              className="hidden"
+                              onChange={(e) => handleDirectFileSelect(e, "property")}
+                            />
                             {form.watch("images.property") && (
-                              <img
-                                src={form.watch("images.property")}
-                                alt="Property Preview"
-                                className="absolute inset-0 w-full h-full object-cover rounded-lg opacity-50"
-                              />
+                              <img src={form.watch("images.property")} alt="Propiedad" className="w-full h-24 object-cover rounded-lg border" />
                             )}
-                          </button>
+                          </div>
                         </div>
                       </div>
 
-                      <button
-                        type="button"
-                        className="w-full h-32 flex flex-col items-center justify-center border-2 border-gray-300 rounded-lg hover:border-[#F05023] transition-colors bg-white/95 backdrop-blur-sm"
-                        onClick={captureLocation}
-                      >
-                        <MapPin className="h-8 w-8 mb-2" />
-                        <span>Capturar Ubicación</span>
+                      <div className="space-y-3">
+                        <div className="flex gap-2 flex-wrap">
+                          <button
+                            type="button"
+                            className="flex-1 min-w-[140px] h-20 flex flex-col items-center justify-center border-2 border-gray-300 rounded-lg hover:border-[#F05023] transition-colors bg-white"
+                            onClick={captureLocation}
+                          >
+                            <MapPin className="h-6 w-6 mb-1" />
+                            <span>Capturar GPS</span>
+                          </button>
+                          <button
+                            type="button"
+                            className="flex-1 min-w-[140px] h-20 flex flex-col items-center justify-center border-2 border-[#F05023] rounded-lg hover:bg-[#F05023]/10 transition-colors bg-white text-[#F05023]"
+                            onClick={() => setShowManualCoords(!showManualCoords)}
+                          >
+                            <MapPin className="h-6 w-6 mb-1" />
+                            <span>Coordenadas manuales</span>
+                          </button>
+                        </div>
                         {form.watch("location.lat") !== 0 && (
-                          <span className="text-sm text-gray-600 mt-2">
+                          <p className="text-sm text-gray-600">
                             Ubicación: {form.watch("location.lat").toFixed(6)}, {form.watch("location.lng").toFixed(6)}
-                          </span>
+                          </p>
                         )}
-                      </button>
+                        {showManualCoords && (
+                          <div className="p-4 bg-gray-50 rounded-lg space-y-2">
+                            <p className="text-sm text-gray-700">Buscá la ubicación en Google Maps y copiá las coordenadas</p>
+                            <div className="grid grid-cols-2 gap-2">
+                              <Input
+                                placeholder="Latitud (ej: 9.9319)"
+                                value={manualLat}
+                                onChange={(e) => setManualLat(e.target.value)}
+                                className="bg-white"
+                              />
+                              <Input
+                                placeholder="Longitud (ej: -84.0925)"
+                                value={manualLng}
+                                onChange={(e) => setManualLng(e.target.value)}
+                                className="bg-white"
+                              />
+                            </div>
+                            <Button type="button" onClick={applyManualCoords} className="w-full bg-[#F05023] hover:bg-[#E04015]">
+                              Aplicar coordenadas
+                            </Button>
+                          </div>
+                        )}
+                      </div>
 
                       <button
                         type="submit"
@@ -754,26 +868,12 @@ export default function PropertyEntry() {
               </DialogTitle>
             </DialogHeader>
             <div className="flex flex-col gap-4">
-              {devices.length > 1 && (
-                <Select value={selectedDevice} onValueChange={setSelectedDevice}>
-                  <SelectTrigger>
-                    <SelectValue placeholder="Select camera" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    {devices.map((device) => (
-                      <SelectItem key={device.deviceId} value={device.deviceId}>
-                        {device.label || `Camera ${device.deviceId}`}
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
-              )}
-
               <div className="relative aspect-video bg-black rounded-lg overflow-hidden">
                 <video
                   ref={videoRef}
                   autoPlay
                   playsInline
+                  muted
                   className="w-full h-full object-cover"
                 />
                 <canvas ref={canvasRef} className="hidden" />

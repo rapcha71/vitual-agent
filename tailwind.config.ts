@@ -11,6 +11,9 @@ export default {
         sm: "calc(var(--radius) - 4px)",
       },
       colors: {
+        "app-surface": "var(--app-surface-orange)",
+        "app-surface-border": "var(--app-surface-orange-border)",
+        "app-surface-hover": "var(--app-surface-orange-hover)",
         background: "hsl(var(--background))",
         foreground: "hsl(var(--foreground))",
         card: {

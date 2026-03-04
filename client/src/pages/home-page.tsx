@@ -129,7 +129,7 @@ export default function HomePage() {
                     </Button>
                   </Link>
                   {user?.isAdmin && (
-                    <Link href="/admin/web">
+                    <Link href="/admin">
                       <Button variant="outline" className="w-full">
                         <Shield className="h-4 w-4 mr-2" />
                         Panel de Administración
@@ -193,17 +193,17 @@ export default function HomePage() {
                       <span>Compartir App</span>
                     </Button>
                   </DialogTrigger>
-                  <DialogContent className="sm:max-w-md">
-                    <DialogHeader>
-                      <DialogTitle>Compartir Virtual Agent</DialogTitle>
+                  <DialogContent className="sm:max-w-md bg-[#F05023] border-[#E04015] [&>*]:bg-[#F05023] [&_button]:text-white [&_button]:hover:bg-white/20 [&_button]:border-white">
+                    <DialogHeader className="bg-[#F05023]">
+                      <DialogTitle className="text-white">Compartir Virtual Agent</DialogTitle>
                     </DialogHeader>
-                    <div className="flex flex-col items-center space-y-4 p-4">
+                    <div className="flex flex-col items-center space-y-4 p-4 bg-[#F05023]">
                       <img 
                         src={`https://api.qrserver.com/v1/create-qr-code/?size=250x250&data=${encodeURIComponent(window.location.origin)}`}
                         alt="Código QR de Virtual Agent"
-                        className="w-64 h-64"
+                        className="w-64 h-64 bg-white rounded-lg p-2"
                       />
-                      <p className="text-sm text-center text-muted-foreground">
+                      <p className="text-sm text-center text-white">
                         Escanea este código QR para acceder a Virtual Agent
                       </p>
                       <Button
@@ -213,7 +213,7 @@ export default function HomePage() {
                           });
                         }}
                         variant="outline"
-                        className="w-full"
+                        className="w-full border-white text-white hover:bg-white/20 hover:text-white"
                       >
                         Copiar Enlace
                       </Button>

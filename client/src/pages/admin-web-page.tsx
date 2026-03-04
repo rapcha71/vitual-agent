@@ -24,6 +24,7 @@ import { List } from "lucide-react";
 
 const MapComponent = memo(forwardRef(({ properties }: { properties: PropertyWithUser[] }, ref) => {
   const [isLoading, setIsLoading] = useState(true);
+  const [mapError, setMapError] = useState<string | null>(null);
   const mapRef = useRef<HTMLDivElement>(null);
   const map = useRef<google.maps.Map | null>(null);
   const markersRef = useRef<google.maps.Marker[]>([]);
@@ -152,6 +153,13 @@ const MapComponent = memo(forwardRef(({ properties }: { properties: PropertyWith
   }, [cleanupMap, toast]);
 
   useImperativeHandle(ref, () => ({
+    resizeMap: () => {
+      if (map.current) {
+        const center = map.current.getCenter();
+        google.maps.event.trigger(map.current, 'resize');
+        if (center) map.current.setCenter(center);
+      }
+    },
     searchProperty: (propertyId: string) => {
       if (!propertyId) {
         addMarkers(properties); // Show all if search is cleared
@@ -293,20 +301,27 @@ const MapComponent = memo(forwardRef(({ properties }: { properties: PropertyWith
 
   useEffect(() => {
     let isMounted = true;
+    let onResize: (() => void) | undefined;
+    let onOrientationChange: (() => void) | undefined;
 
     const initMap = async () => {
-      if (!mapRef.current || !properties.length) {
+      if (!mapRef.current) {
+        setIsLoading(false);
+        return;
+      }
+
+      if (!import.meta.env.VITE_GOOGLE_MAPS_API_KEY) {
+        console.error('Google Maps API key is missing');
+        setIsLoading(false);
+        return;
+      }
+
+      if (!properties.length) {
         setIsLoading(false);
         return;
       }
 
       try {
-        if (!import.meta.env.VITE_GOOGLE_MAPS_API_KEY) {
-          console.error('Google Maps API key is missing');
-          setIsLoading(false);
-          return;
-        }
-
         const loader = new Loader({
           apiKey: import.meta.env.VITE_GOOGLE_MAPS_API_KEY,
           version: "weekly",
@@ -332,6 +347,18 @@ const MapComponent = memo(forwardRef(({ properties }: { properties: PropertyWith
 
         addMarkers(properties);
 
+        // En móvil: redibujar al rotar o cambiar tamaño (orientationchange/resize)
+        onResize = () => {
+          if (map.current) {
+            const center = map.current.getCenter();
+            google.maps.event.trigger(map.current, 'resize');
+            if (center) map.current.setCenter(center);
+          }
+        };
+        onOrientationChange = () => setTimeout(onResize, 400);
+        window.addEventListener('resize', onResize);
+        window.addEventListener('orientationchange', onOrientationChange);
+
         if (isMounted) {
           setIsLoading(false);
         }
@@ -339,9 +366,10 @@ const MapComponent = memo(forwardRef(({ properties }: { properties: PropertyWith
       } catch (error) {
         console.error('Error loading map:', error);
         if (isMounted) {
+          setMapError(String(error instanceof Error ? error.message : error));
           toast({
             title: "Error al cargar el mapa",
-            description: "Por favor, recarga la página",
+            description: "Revisá las restricciones de la API key en Google Cloud (ver instrucciones en pantalla)",
             variant: "destructive"
           });
           setIsLoading(false);
@@ -354,8 +382,64 @@ const MapComponent = memo(forwardRef(({ properties }: { properties: PropertyWith
     return () => {
       isMounted = false;
       cleanupMap();
+      if (typeof onResize === 'function') window.removeEventListener('resize', onResize);
+      if (typeof onOrientationChange === 'function') window.removeEventListener('orientationchange', onOrientationChange);
     };
   }, [properties, toast, cleanupMap, addMarkers]);
+
+  const hasApiKey = !!import.meta.env.VITE_GOOGLE_MAPS_API_KEY;
+  const hasProperties = properties.length > 0;
+
+  if (!hasApiKey) {
+    return (
+      <div className="w-full h-[500px] flex flex-col items-center justify-center bg-gray-100 rounded-lg shadow-md p-6 text-center">
+        <MapPin className="h-16 w-16 text-gray-400 mb-4" />
+        <h3 className="text-lg font-semibold text-gray-700 mb-2">Mapa no disponible</h3>
+        <p className="text-sm text-gray-600 max-w-md">
+          Para ver el mapa necesitás configurar la API key de Google Maps.
+          <br />Agregá <code className="bg-gray-200 px-1 rounded">VITE_GOOGLE_MAPS_API_KEY</code> en tu archivo <code className="bg-gray-200 px-1 rounded">.env</code>
+        </p>
+      </div>
+    );
+  }
+
+  if (!hasProperties) {
+    return (
+      <div className="w-full h-[500px] flex flex-col items-center justify-center bg-gray-100 rounded-lg shadow-md p-6 text-center">
+        <MapPin className="h-16 w-16 text-gray-400 mb-4" />
+        <p className="text-gray-600">No hay propiedades para mostrar en el mapa</p>
+      </div>
+    );
+  }
+
+  if (mapError) {
+    const isReferrerError = /referrer|RefererNotAllowed|restriction/i.test(mapError);
+    const currentOrigin = typeof window !== 'undefined' ? window.location.origin : '';
+    const urlToAdd = currentOrigin ? `${currentOrigin}/*` : '(ej: https://tu-app.railway.app/*)';
+    return (
+      <div className="w-full h-[500px] flex flex-col items-center justify-center bg-white rounded-lg shadow-md p-6 text-center">
+        <MapPin className="h-16 w-16 text-orange-500 mb-4" />
+        <h3 className="text-lg font-semibold text-gray-800 mb-2">Error al cargar el mapa</h3>
+        <p className="text-sm text-gray-700 mb-4 max-w-md">
+          {isReferrerError
+            ? "La API key de Google Maps no permite acceder desde este dispositivo. Agregá la URL actual a las restricciones."
+            : "No se pudo cargar Google Maps. Revisá la consola del navegador para más detalles."}
+        </p>
+        {isReferrerError && (
+          <div className="bg-gray-50 rounded-lg p-4 text-left text-sm text-gray-700 max-w-md space-y-2">
+            <p className="font-medium">Solución (Google Cloud Console → Credenciales → tu API key):</p>
+            <ol className="list-decimal list-inside space-y-1 text-xs">
+              <li>Editá tu API key de Maps</li>
+              <li>En "Restricciones de sitios web" → HTTP referrers</li>
+              <li>Agregá esta URL exacta: <code className="bg-gray-200 px-1 rounded block mt-1 break-all">{urlToAdd}</code></li>
+              <li>En pruebas locales: <code className="bg-gray-200 px-1 rounded block mt-1">http://192.168.*.*/*</code></li>
+              <li>En producción: <code className="bg-gray-200 px-1 rounded block mt-1">https://tu-dominio.railway.app/*</code></li>
+            </ol>
+          </div>
+        )}
+      </div>
+    );
+  }
 
   return (
     <div className="w-full h-[500px] relative bg-gray-100 rounded-lg overflow-hidden shadow-md">
@@ -440,6 +524,15 @@ export default function AdminWebPage() {
   const [searchPropertyId, setSearchPropertyId] = useState("");
   const mapComponentRef = useRef<any>(null);
   const [showNewMessageForm, setShowNewMessageForm] = useState(false);
+
+  // Redibujar el mapa cuando se vuelve a la pestaña Mapa (Google Maps no calcula dimensiones si el contenedor estuvo oculto)
+  // 350ms en móvil suele necesitar más tiempo para que el contenedor sea visible
+  useEffect(() => {
+    if (activeTab === "map") {
+      const t = setTimeout(() => mapComponentRef.current?.resizeMap?.(), 350);
+      return () => clearTimeout(t);
+    }
+  }, [activeTab]);
   const [messageDialogOpen, setMessageDialogOpen] = useState(false);
   const [messageImageFile, setMessageImageFile] = useState<File | null>(null);
   const [messageImagePreview, setMessageImagePreview] = useState<string | null>(null);
@@ -740,13 +833,14 @@ export default function AdminWebPage() {
 
       <main style={{ flex: 1, width: '100vw', maxWidth: '100vw', padding: '1rem', margin: 0, backgroundImage: 'url("/assets/ciudad.jpeg")', backgroundSize: 'cover', backgroundPosition: 'center', backgroundRepeat: 'no-repeat' }}>
         <div style={{ width: '100%', maxWidth: '100%' }} className="space-y-4 md:space-y-6">
-          <h1 className="text-xl md:text-2xl lg:text-3xl font-bold text-white bg-black/50 p-2 md:p-3 rounded">Panel de Administración</h1>
-          <div className="flex gap-2 md:gap-3 mt-4 flex-wrap">
+          {/* Header: título + botones con fondo oscuro semitransparente */}
+          <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-3 p-3 md:p-4 rounded-lg bg-[rgba(60,50,45,0.75)]">
+            <h1 className="text-xl md:text-2xl lg:text-3xl font-bold text-white">Panel de Administración</h1>
+            <div className="flex gap-2 md:gap-3 flex-wrap">
             <Button
               onClick={() => setLocation("/property/new")}
-              variant="outline"
               size="sm"
-              className="w-[140px] inline-flex items-center justify-center"
+              className="w-[140px] inline-flex items-center justify-center bg-[rgba(255,255,255,0.15)] hover:bg-[rgba(255,255,255,0.25)] text-white border-0"
             >
               <Plus className="h-4 w-4 mr-2" />
               Agregar Prop.
@@ -755,9 +849,8 @@ export default function AdminWebPage() {
               <Dialog open={messageDialogOpen} onOpenChange={setMessageDialogOpen}>
                 <DialogTrigger asChild>
                   <Button
-                    variant="outline"
                     size="sm"
-                    className="w-[140px] inline-flex items-center justify-center"
+                    className="w-[140px] inline-flex items-center justify-center bg-[rgba(255,255,255,0.15)] hover:bg-[rgba(255,255,255,0.25)] text-white border-0"
                   >
                     <span className="inline-flex items-center">
                       <MessageCircle className="h-4 w-4 mr-2" />
@@ -765,9 +858,9 @@ export default function AdminWebPage() {
                     </span>
                   </Button>
                 </DialogTrigger>
-                <DialogContent className="max-w-md">
+                <DialogContent className="max-w-md bg-white text-gray-900 [&_label]:text-gray-900">
                   <DialogHeader>
-                    <DialogTitle>Enviar Mensaje</DialogTitle>
+                    <DialogTitle className="text-gray-900">Enviar Mensaje</DialogTitle>
                   </DialogHeader>
                   <Form {...messageForm}>
                     <form onSubmit={messageForm.handleSubmit(handleSendMessage)} className="space-y-4">
@@ -786,7 +879,7 @@ export default function AdminWebPage() {
                                   <SelectValue placeholder="Seleccionar destinatario" />
                                 </SelectTrigger>
                               </FormControl>
-                              <SelectContent>
+                              <SelectContent className="bg-white text-gray-900">
                                 <SelectItem value="all">Todos los usuarios</SelectItem>
                                 {users?.map((u) => (
                                   <SelectItem key={u.id} value={u.id.toString()}>
@@ -872,9 +965,8 @@ export default function AdminWebPage() {
             <Dialog>
               <DialogTrigger asChild>
                 <Button
-                  variant="outline"
                   size="sm"
-                  className="w-[140px] inline-flex items-center justify-center"
+                  className="w-[140px] inline-flex items-center justify-center bg-[rgba(255,255,255,0.15)] hover:bg-[rgba(255,255,255,0.25)] text-white border-0"
                 >
                   <span className="inline-flex items-center">
                     <Share2 className="h-4 w-4 mr-2" />
@@ -882,17 +974,17 @@ export default function AdminWebPage() {
                   </span>
                 </Button>
               </DialogTrigger>
-              <DialogContent className="sm:max-w-md">
-                <DialogHeader>
-                  <DialogTitle>Compartir Virtual Agent</DialogTitle>
+              <DialogContent className="sm:max-w-md bg-[#F05023] border-[#E04015] [&>*]:bg-[#F05023] [&_button]:text-white [&_button]:hover:bg-white/20 [&_button]:border-white">
+                <DialogHeader className="bg-[#F05023]">
+                  <DialogTitle className="text-white">Compartir Virtual Agent</DialogTitle>
                 </DialogHeader>
-                <div className="flex flex-col items-center space-y-4 p-4">
+                <div className="flex flex-col items-center space-y-4 p-4 bg-[#F05023]">
                   <img 
                     src={`https://api.qrserver.com/v1/create-qr-code/?size=250x250&data=${encodeURIComponent(window.location.origin)}`}
                     alt="Código QR de Virtual Agent"
-                    className="w-64 h-64"
+                    className="w-64 h-64 bg-white rounded-lg p-2"
                   />
-                  <p className="text-sm text-center text-muted-foreground">
+                  <p className="text-sm text-center text-white">
                     Escanea este código QR para acceder a Virtual Agent
                   </p>
                   <Button
@@ -905,48 +997,49 @@ export default function AdminWebPage() {
                       });
                     }}
                     variant="outline"
-                    className="w-full"
+                    className="w-full border-white text-white hover:bg-white/20 hover:text-white"
                   >
                     Copiar Enlace
                   </Button>
                 </div>
               </DialogContent>
             </Dialog>
+            </div>
           </div>
           <div className="grid grid-cols-3 md:grid-cols-3 lg:grid-cols-6 gap-2 md:gap-4 mt-4">
-            <Card className="bg-white shadow-sm">
+            <Card className="bg-white shadow-sm rounded-xl border-0">
               <CardContent className="py-2 md:py-4">
-                <p className="text-base md:text-lg font-medium">Casas</p>
-                <p className="text-2xl md:text-3xl lg:text-4xl font-bold">{propertyCounts.house}</p>
+                <p className="text-base md:text-lg font-medium text-gray-800">Casas</p>
+                <p className="text-2xl md:text-3xl lg:text-4xl font-bold text-gray-900">{propertyCounts.house}</p>
               </CardContent>
             </Card>
-            <Card className="bg-white shadow-sm">
+            <Card className="bg-white shadow-sm rounded-xl border-0">
               <CardContent className="py-2 md:py-4">
-                <p className="text-base md:text-lg font-medium">Terrenos</p>
-                <p className="text-2xl md:text-3xl lg:text-4xl font-bold">{propertyCounts.land}</p>
+                <p className="text-base md:text-lg font-medium text-gray-800">Terrenos</p>
+                <p className="text-2xl md:text-3xl lg:text-4xl font-bold text-gray-900">{propertyCounts.land}</p>
               </CardContent>
             </Card>
-            <Card className="bg-white shadow-sm">
+            <Card className="bg-white shadow-sm rounded-xl border-0">
               <CardContent className="py-2 md:py-4">
-                <p className="text-base md:text-lg font-medium">Comercial</p>
-                <p className="text-2xl md:text-3xl lg:text-4xl font-bold">{propertyCounts.commercial}</p>
+                <p className="text-base md:text-lg font-medium text-gray-800">Comercial</p>
+                <p className="text-2xl md:text-3xl lg:text-4xl font-bold text-gray-900">{propertyCounts.commercial}</p>
               </CardContent>
             </Card>
-            <Card className="bg-white shadow-sm hidden lg:block">
+            <Card className="bg-white shadow-sm rounded-xl border-0 hidden lg:block">
               <CardContent className="py-4">
-                <p className="text-lg font-medium">Total</p>
-                <p className="text-4xl font-bold">{properties.length}</p>
+                <p className="text-lg font-medium text-gray-800">Total</p>
+                <p className="text-4xl font-bold text-gray-900">{properties.length}</p>
               </CardContent>
             </Card>
           </div>
 
           <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
-            <TabsList className="w-full grid grid-cols-4 h-12 md:h-14">
-              <TabsTrigger value="map" className="text-sm md:text-base">
+            <TabsList className={`w-full grid ${user.isSuperAdmin ? 'grid-cols-4' : 'grid-cols-2'} h-12 md:h-14 bg-[#FF6347] p-0 gap-0 rounded-none border-b-2 border-[#ff7a5c]`}>
+              <TabsTrigger value="map" className="text-sm md:text-base text-white data-[state=active]:bg-[#ff7a5c] data-[state=active]:text-white data-[state=active]:shadow-none data-[state=active]:border-b-2 data-[state=active]:border-gray-800 rounded-none border-b-2 border-transparent data-[state=inactive]:bg-transparent">
                 <MapPin className="h-4 w-4 md:h-5 md:w-5 mr-2" />
                 Mapa
               </TabsTrigger>
-              <TabsTrigger value="list" className="text-sm md:text-base relative">
+              <TabsTrigger value="list" className="text-sm md:text-base text-white data-[state=active]:bg-[#ff7a5c] data-[state=active]:text-white data-[state=active]:shadow-none data-[state=active]:border-b-2 data-[state=active]:border-gray-800 rounded-none border-b-2 border-transparent data-[state=inactive]:bg-transparent relative">
                 <List className="h-4 w-4 md:h-5 md:w-5 mr-2" />
                 Lista
                 {unviewedCount > 0 && (
@@ -956,27 +1049,27 @@ export default function AdminWebPage() {
                 )}
               </TabsTrigger>
               {user.isSuperAdmin && (
-                <TabsTrigger value="users" className="text-sm md:text-base">
+                <TabsTrigger value="users" className="text-sm md:text-base text-white data-[state=active]:bg-[#ff7a5c] data-[state=active]:text-white data-[state=active]:shadow-none data-[state=active]:border-b-2 data-[state=active]:border-gray-800 rounded-none border-b-2 border-transparent data-[state=inactive]:bg-transparent">
                   <Users className="h-4 w-4 md:h-5 md:w-5 mr-2" />
                   Roles
                 </TabsTrigger>
               )}
               {user.isSuperAdmin && (
-                <TabsTrigger value="payments" className="text-sm md:text-base">
+                <TabsTrigger value="payments" className="text-sm md:text-base text-white data-[state=active]:bg-[#ff7a5c] data-[state=active]:text-white data-[state=active]:shadow-none data-[state=active]:border-b-2 data-[state=active]:border-gray-800 rounded-none border-b-2 border-transparent data-[state=inactive]:bg-transparent">
                   <DollarSign className="h-4 w-4 md:h-5 md:w-5 mr-2" />
-                  Pagos
+                  $ Pagos
                 </TabsTrigger>
               )}
             </TabsList>
 
             <TabsContent value="map">
-              <Card>
+              <Card className="bg-white border-0 shadow-md">
                 <CardContent className="p-4 md:p-6 space-y-4">
                   <div className="flex gap-2 w-full md:max-w-md">
                     <input
                       type="text"
                       placeholder="Buscar por ID de propiedad..."
-                      className="flex-1 px-3 py-2 border rounded-md text-sm md:text-base"
+                      className="flex-1 px-3 py-2 border border-gray-200 rounded-lg bg-white text-gray-900 placeholder:text-gray-500 text-sm md:text-base"
                       value={searchPropertyId}
                       onChange={(e) => setSearchPropertyId(e.target.value)}
                     />
@@ -988,6 +1081,7 @@ export default function AdminWebPage() {
                       }}
                       size="sm"
                       disabled={!searchPropertyId.trim()}
+                      className="bg-[#FF6347] hover:bg-[#ff7a5c] text-white border-0 rounded-lg"
                     >
                       Buscar
                     </Button>
@@ -1026,21 +1120,21 @@ export default function AdminWebPage() {
                     </Button>
                   </div>
                 )}
-                <Table>
+                <Table className="[&_th]:bg-white [&_th]:text-gray-800 [&_td]:bg-white [&_td]:text-gray-900">
                   <TableHeader>
-                    <TableRow>
-                      <TableHead className="w-20 md:w-28">ID</TableHead>
-                      <TableHead className="md:w-32">Tipo</TableHead>
-                      <TableHead className="hidden sm:table-cell md:w-48">Usuario</TableHead>
-                      <TableHead className="hidden sm:table-cell md:w-40">Teléfono</TableHead>
-                      <TableHead className="hidden lg:table-cell">Ubicación</TableHead>
-                      <TableHead className="hidden md:table-cell w-14 pl-1">Foto</TableHead>
-                      <TableHead className="w-[140px] md:w-[180px]">Acciones</TableHead>
+                    <TableRow className="border-gray-200 hover:bg-gray-50">
+                      <TableHead className="w-20 md:w-28 text-gray-800">ID</TableHead>
+                      <TableHead className="md:w-32 text-gray-800">Tipo</TableHead>
+                      <TableHead className="hidden sm:table-cell md:w-48 text-gray-800">Usuario</TableHead>
+                      <TableHead className="hidden sm:table-cell md:w-40 text-gray-800">Teléfono</TableHead>
+                      <TableHead className="hidden lg:table-cell text-gray-800">Ubicación</TableHead>
+                      <TableHead className="hidden md:table-cell w-14 pl-1 text-gray-800">Foto</TableHead>
+                      <TableHead className="w-[140px] md:w-[180px] text-gray-800">Acciones</TableHead>
                     </TableRow>
                   </TableHeader>
                   <TableBody>
                     {properties.map((property) => (
-                      <TableRow key={property.propertyId}>
+                      <TableRow key={property.propertyId} className="bg-white hover:bg-gray-50 border-gray-200">
                         <TableCell className="font-medium">
                           <button
                             className="text-blue-600 hover:text-blue-800 hover:underline cursor-pointer font-medium"
@@ -1084,11 +1178,13 @@ export default function AdminWebPage() {
                                   Ver
                                 </button>
                               </DialogTrigger>
-                              <DialogContent className="max-w-2xl">
-                                <DialogHeader>
-                                  <DialogTitle>Fotos de la Propiedad {property.propertyId}</DialogTitle>
+                              <DialogContent className="max-w-2xl bg-app-surface border-app-surface-border [&>*]:bg-app-surface [&_button]:text-gray-900 [&_button]:hover:bg-app-surface-hover">
+                                <DialogHeader className="bg-app-surface">
+                                  <DialogTitle className="text-gray-900">Fotos de la Propiedad {property.propertyId}</DialogTitle>
                                 </DialogHeader>
-                                <PropertyImagesViewer propertyId={property.propertyId} />
+                                <div className="bg-white rounded-lg p-4">
+                                  <PropertyImagesViewer propertyId={property.propertyId} />
+                                </div>
                               </DialogContent>
                             </Dialog>
                           ) : (
@@ -1103,11 +1199,11 @@ export default function AdminWebPage() {
                                   Detalles
                                 </Button>
                               </DialogTrigger>
-                              <DialogContent className="w-[90vw] max-w-lg">
-                                <DialogHeader>
-                                  <DialogTitle>Detalles de la Propiedad</DialogTitle>
+                              <DialogContent className="w-[90vw] max-w-lg bg-app-surface border-app-surface-border [&>*]:bg-app-surface [&_button]:text-gray-900 [&_button]:hover:bg-app-surface-hover">
+                                <DialogHeader className="bg-app-surface">
+                                  <DialogTitle className="text-gray-900">Detalles de la Propiedad</DialogTitle>
                                 </DialogHeader>
-                                <div className="space-y-4">
+                                <div className="space-y-4 bg-app-surface text-gray-900">
                                   <div className="sm:hidden">
                                     <p><strong>Usuario:</strong> <span className={property.user.isDeleted ? "text-red-500 line-through" : ""}>{property.user.fullName || property.user.username}{property.user.isDeleted && " (eliminado)"}</span></p>
                                     <p><strong>Teléfono:</strong> {property.signPhoneNumber || '-'}</p>
@@ -1184,14 +1280,14 @@ export default function AdminWebPage() {
 
             <TabsContent value="users">
                 <div className="space-y-4">
-                  <Card>
-                    <CardContent className="pt-6">
-                      <div className="overflow-x-auto -mx-6">
+                  <Card className="bg-white border-0 shadow-md">
+                    <CardContent className="pt-6 bg-white">
+                      <div className="overflow-x-auto -mx-6 bg-white">
                         <div className="inline-block min-w-full align-middle">
-                          <Table>
+                          <Table className="[&_th]:bg-white [&_th]:text-gray-800 [&_td]:bg-white [&_td]:text-gray-900">
                             <TableHeader>
-                              <TableRow>
-                                <TableHead className="w-40">Usuario</TableHead>
+                              <TableRow className="bg-white border-gray-200 hover:bg-gray-50">
+                                <TableHead className="w-40 text-gray-800">Usuario</TableHead>
                                 <TableHead className="w-32">Rol</TableHead>
                                 <TableHead className="w-24 text-right">Admin</TableHead>
                                 <TableHead className="w-20 text-right pr-6">Acciones</TableHead>
@@ -1199,7 +1295,7 @@ export default function AdminWebPage() {
                             </TableHeader>
                             <TableBody>
                               {users.map((adminUser) => (
-                                <TableRow key={adminUser.id}>
+                                <TableRow key={adminUser.id} className="bg-white hover:bg-gray-50 border-gray-200">
                                   <TableCell className="py-2">{adminUser.fullName || adminUser.username}</TableCell>
                                   <TableCell className="py-2">
                                     {adminUser.isSuperAdmin ? 'Super Admin' :
@@ -1268,15 +1364,15 @@ export default function AdminWebPage() {
             </TabsContent>
 
             <TabsContent value="payments">
-            <Card>
-              <CardHeader>
-                <CardTitle>Pagos Semanales</CardTitle>
+            <Card className="bg-white border-0 shadow-md">
+              <CardHeader className="bg-white">
+                <CardTitle className="text-gray-900">Pagos Semanales</CardTitle>
                 <p className="text-sm text-muted-foreground">
                   Los usuarios reciben ₡250 por cada propiedad registrada durante la semana actual.
                 </p>
               </CardHeader>
-              <CardContent>
-                <div className="overflow-x-auto bg-white/95 backdrop-blur-sm rounded-lg shadow-sm p-4">
+              <CardContent className="bg-white">
+                <div className="overflow-x-auto bg-white rounded-lg shadow-sm p-4">
                   {paymentsLoading ? (
                     <div className="text-center py-8">
                       <Loader2 className="h-8 w-8 animate-spin mx-auto text-primary" />
@@ -1314,10 +1410,10 @@ export default function AdminWebPage() {
                         </div>
                       </div>
 
-                      <Table>
+                      <Table className="[&_th]:bg-white [&_th]:text-gray-800 [&_td]:bg-white [&_td]:text-gray-900">
                         <TableHeader>
-                          <TableRow>
-                            <TableHead>Usuario</TableHead>
+                          <TableRow className="bg-white border-gray-200 hover:bg-gray-50">
+                            <TableHead className="text-gray-800">Usuario</TableHead>
                             <TableHead>Nombre Completo</TableHead>
                             <TableHead>Teléfono</TableHead>
                             <TableHead className="text-center">Propiedades</TableHead>
@@ -1331,7 +1427,7 @@ export default function AdminWebPage() {
                             const weekEnd = new Date(payment.weekEnd);
 
                             return (
-                              <TableRow key={payment.userId}>
+                              <TableRow key={payment.userId} className="bg-white hover:bg-gray-50 border-gray-200">
                                 <TableCell className="font-medium">
                                   {payment.user.username}
                                 </TableCell>

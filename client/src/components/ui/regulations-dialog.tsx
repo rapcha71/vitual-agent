@@ -18,14 +18,14 @@ export function RegulationsDialog() {
           Ver Reglamento
         </Button>
       </DialogTrigger>
-      <DialogContent className="max-w-3xl">
-        <DialogHeader>
+      <DialogContent className="max-w-3xl bg-white [&>*]:bg-white [&_button]:text-gray-900 [&_button]:hover:bg-gray-100">
+        <DialogHeader className="bg-white">
           <DialogTitle className="text-xl font-bold text-[#F05023]">
             Reglamento y Funcionamiento de Virtual Agent
           </DialogTitle>
         </DialogHeader>
-        <ScrollArea className="h-[60vh] rounded-md border p-4">
-          <div className="space-y-4">
+        <ScrollArea className="h-[60vh] rounded-md border p-4 bg-white">
+          <div className="space-y-4 text-gray-900">
             <p className="text-base">
               Bienvenido a Virtual Agent, tu aliado digital en el mundo de los bienes raíces. 
               Nuestra misión es construir una base de datos actualizada de propiedades en venta, 

@@ -6,6 +6,8 @@ import { scrypt, randomBytes, timingSafeEqual } from "crypto";
 import { promisify } from "util";
 import { storage } from "./storage";
 import { User as SelectUser, insertUserSchema } from "@shared/schema";
+import { logger } from "./lib/logger";
+import { sendPasswordResetEmail } from "./services/email";
 
 declare global {
   namespace Express {
@@ -36,7 +38,7 @@ export function setupAuth(app: Express) {
   // HTTPS required for secure cookies in production (Replit, Railway, Vercel)
   const isProduction = process.env.NODE_ENV === 'production';
   const useSecureCookie = isProduction; // Cualquier deploy en prod usa HTTPS
-  console.log("Environment:", process.env.REPL_SLUG ? "Replit" : process.env.RAILWAY_PUBLIC_DOMAIN ? "Railway" : isProduction ? "Production" : "Local");
+  logger.info("Environment: " + (process.env.REPL_SLUG ? "Replit" : process.env.RAILWAY_PUBLIC_DOMAIN ? "Railway" : isProduction ? "Production" : "Local"));
   
   const sessionSettings: session.SessionOptions = {
     secret: process.env.SESSION_SECRET,
@@ -61,25 +63,25 @@ export function setupAuth(app: Express) {
   passport.use(
     new LocalStrategy(async (username, password, done) => {
       try {
-        console.log("Attempting login for user:", username);
+        logger.debug("Login attempt", username);
         const user = await storage.getUserByUsername(username);
 
         if (!user) {
-          console.log("User not found:", username);
+          logger.debug("User not found");
           return done(null, false, { message: "Usuario o contraseña inválidos" });
         }
 
         const passwordValid = await comparePasswords(password, user.password);
 
         if (!passwordValid) {
-          console.log("Invalid password for user:", username);
+          logger.debug("Invalid password");
           return done(null, false, { message: "Usuario o contraseña inválidos" });
         }
 
-        console.log("Login successful for user:", username);
+        logger.debug("Login successful");
         return done(null, user);
       } catch (error) {
-        console.error("Login error:", error);
+        logger.error("Login error", error);
         return done(error);
       }
     })
@@ -130,9 +132,10 @@ export function setupAuth(app: Express) {
   });
 
   app.post("/api/login", (req, res, next) => {
+    const rememberMe = !!req.body?.rememberMe;
     passport.authenticate("local", (err: any, user: any, info: any) => {
       if (err) {
-        console.error("Authentication error:", err);
+        logger.error("Authentication error", err);
         return res.status(500).json({ message: "Error interno del servidor" });
       }
 
@@ -142,8 +145,12 @@ export function setupAuth(app: Express) {
 
       req.login(user, (err) => {
         if (err) {
-          console.error("Session creation error:", err);
+          logger.error("Session creation error", err);
           return res.status(500).json({ message: "Error al crear la sesión" });
+        }
+        // "Recordarme": extender la sesión a 30 días si el usuario lo eligió
+        if (rememberMe && req.session) {
+          req.session.cookie.maxAge = 30 * 24 * 60 * 60 * 1000;
         }
         // Return the full user object (without password) for the frontend
         const userResponse = {
@@ -153,7 +160,7 @@ export function setupAuth(app: Express) {
           nickname: user.nickname,
           isAdmin: user.isAdmin,
           isSuperAdmin: user.isSuperAdmin,
-          phoneNumber: user.phoneNumber,
+          phoneNumber: user.mobile ?? user.paymentMobile,
           lastLoginAt: user.lastLoginAt
         };
         res.json(userResponse);
@@ -164,12 +171,12 @@ export function setupAuth(app: Express) {
   app.post("/api/logout", (req, res) => {
     req.logout((err) => {
       if (err) {
-        console.error("Logout error:", err);
+        logger.error("Logout error", err);
         return res.status(500).json({ message: "Error al cerrar sesión" });
       }
       req.session.destroy((err) => {
         if (err) {
-          console.error("Session destroy error:", err);
+          logger.error("Session destroy error", err);
           return res.status(500).json({ message: "Error al destruir la sesión" });
         }
         res.clearCookie('connect.sid', {
@@ -178,7 +185,7 @@ export function setupAuth(app: Express) {
           secure: true,
           sameSite: 'none'
         });
-        console.log("Logout successful, session destroyed");
+        logger.debug("Logout successful");
         res.sendStatus(200);
       });
     });
@@ -210,14 +217,18 @@ export function setupAuth(app: Express) {
       const resetCode = Math.floor(100000 + Math.random() * 900000).toString();
       const expireTime = Date.now() + (15 * 60 * 1000); // 15 minutes
 
-      // Store reset code (in a real app, you'd send this via email)
       await storage.storePasswordResetCode(user.id, resetCode, expireTime);
 
+      // Enviar código por correo (username = correo)
+      const emailSent = await sendPasswordResetEmail(user.username, resetCode);
+
       res.json({ 
-        message: "Si el correo existe, recibirás un código de recuperación"
+        message: emailSent 
+          ? "Si el correo existe, recibirás un código de recuperación por email."
+          : "Si el correo existe, recibirás un código de recuperación. (Configurá SMTP para envío por correo.)"
       });
     } catch (error: any) {
-      console.error("Password reset request error:", error);
+      logger.error("Password reset request error", error);
       res.status(500).json({ message: "Error interno del servidor" });
     }
   });
@@ -250,7 +261,7 @@ export function setupAuth(app: Express) {
 
       res.json({ message: "Contraseña actualizada exitosamente" });
     } catch (error: any) {
-      console.error("Password reset error:", error);
+      logger.error("Password reset error", error);
       res.status(500).json({ message: "Error interno del servidor" });
     }
   });

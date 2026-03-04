@@ -17,7 +17,7 @@ type AuthContextType = {
   registerMutation: ReturnType<typeof useRegisterMutation>;
 };
 
-type LoginData = Pick<InsertUser, "username" | "password">;
+type LoginData = Pick<InsertUser, "username" | "password"> & { rememberMe?: boolean };
 
 function useLoginMutation() {
   const { toast } = useToast();

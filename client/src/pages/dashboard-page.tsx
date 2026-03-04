@@ -246,17 +246,17 @@ export default function DashboardPage() {
               <span className="text-sm">Compartir App</span>
             </Button>
           </DialogTrigger>
-          <DialogContent className="sm:max-w-md">
-            <DialogHeader>
-              <DialogTitle>Compartir Virtual Agent</DialogTitle>
+          <DialogContent className="sm:max-w-md bg-[#F05023] border-[#E04015] [&>*]:bg-[#F05023] [&_button]:text-white [&_button]:hover:bg-white/20 [&_button]:border-white">
+            <DialogHeader className="bg-[#F05023]">
+              <DialogTitle className="text-white">Compartir Virtual Agent</DialogTitle>
             </DialogHeader>
-            <div className="flex flex-col items-center space-y-4 p-4">
+            <div className="flex flex-col items-center space-y-4 p-4 bg-[#F05023]">
               <img 
                 src={`https://api.qrserver.com/v1/create-qr-code/?size=250x250&data=${encodeURIComponent(window.location.origin)}`}
                 alt="Código QR de Virtual Agent"
-                className="w-64 h-64"
+                className="w-64 h-64 bg-white rounded-lg p-2"
               />
-              <p className="text-sm text-center text-muted-foreground">
+              <p className="text-sm text-center text-white">
                 Escanea este código QR para acceder a Virtual Agent
               </p>
               <Button
@@ -266,7 +266,7 @@ export default function DashboardPage() {
                   });
                 }}
                 variant="outline"
-                className="w-full"
+                className="w-full border-white text-white hover:bg-white/20 hover:text-white"
               >
                 Copiar Enlace
               </Button>
@@ -285,12 +285,12 @@ export default function DashboardPage() {
               <span>Contactar Administrador</span>
             </Button>
           </DialogTrigger>
-          <DialogContent className="max-w-md">
-            <DialogHeader>
-              <DialogTitle>Enviar Mensaje al Administrador</DialogTitle>
+          <DialogContent className="max-w-md bg-white [&>*]:bg-white [&_button]:text-gray-900 [&_button]:hover:bg-gray-100">
+            <DialogHeader className="bg-white">
+              <DialogTitle className="text-gray-900">Enviar Mensaje al Administrador</DialogTitle>
             </DialogHeader>
-            <Form {...contactAdminForm}>
-              <form onSubmit={contactAdminForm.handleSubmit(handleSendToAdmin)} className="space-y-4">
+            <Form {...contactAdminForm} className="bg-white">
+              <form onSubmit={contactAdminForm.handleSubmit(handleSendToAdmin)} className="space-y-4 text-gray-900">
                 <FormField
                   control={contactAdminForm.control}
                   name="content"
@@ -337,9 +337,9 @@ export default function DashboardPage() {
           Agregar Propiedad
         </Button>
 
-        {user?.role === 'admin' && (
+        {user?.isAdmin && (
           <Button
-            onClick={() => setLocation("/admin")}
+            onClick={() => setLocation("/admin/web")}
             variant="outline"
             className="w-full border-[#F05023] text-[#F05023] hover:bg-[#F05023] hover:text-white transform transition-all duration-200 hover:scale-[1.02] active:scale-[0.98] shadow-[4px_4px_10px_rgba(240,80,35,0.3)] hover:shadow-[6px_6px_15px_rgba(240,80,35,0.4)]"
           >

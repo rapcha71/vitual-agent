@@ -35,6 +35,7 @@ export default function AuthPage() {
       password: "",
     },
   });
+  const [rememberMe, setRememberMe] = useState(true);
 
   const registerForm = useForm({
     resolver: zodResolver(insertUserSchema),
@@ -43,6 +44,7 @@ export default function AuthPage() {
       password: "",
       fullName: "",
       mobile: "",
+      paymentMobile: "",
       nickname: "",
     },
   });
@@ -52,7 +54,7 @@ export default function AuthPage() {
 
     try {
       setIsSubmitting(true);
-      await loginMutation.mutateAsync(data);
+      await loginMutation.mutateAsync({ ...data, rememberMe });
     } catch (error: any) {
       console.error('Login error:', error);
       toast({
@@ -160,6 +162,19 @@ export default function AuthPage() {
                         )}
                       />
 
+                      <div className="flex items-center space-x-2">
+                        <input
+                          type="checkbox"
+                          id="rememberMe"
+                          checked={rememberMe}
+                          onChange={(e) => setRememberMe(e.target.checked)}
+                          className="h-4 w-4 rounded border-gray-300 text-[#F05023] focus:ring-[#F05023]"
+                        />
+                        <label htmlFor="rememberMe" className="text-sm text-gray-700">
+                          Recordarme en este dispositivo
+                        </label>
+                      </div>
+
                       <Button 
                         type="submit" 
                         className="w-full transform transition-all duration-200 hover:scale-[1.02] active:scale-[0.98] shadow-[4px_4px_10px_rgba(240,80,35,0.3)] hover:shadow-[6px_6px_15px_rgba(240,80,35,0.4)]"
@@ -244,6 +259,27 @@ export default function AuthPage() {
                                 disabled={isLoading}
                               />
                             </FormControl>
+                            <FormMessage />
+                          </FormItem>
+                        )}
+                      />
+
+                      <FormField
+                        control={registerForm.control}
+                        name="paymentMobile"
+                        render={({ field }) => (
+                          <FormItem>
+                            <FormLabel>Teléfono para transferencias SINPE</FormLabel>
+                            <FormControl>
+                              <Input 
+                                placeholder="Número para recibir pagos vía SINPE" 
+                                {...field} 
+                                disabled={isLoading}
+                              />
+                            </FormControl>
+                            <p className="text-xs text-muted-foreground mt-1">
+                              Se utilizará este número para hacer las transferencias a través de SINPE
+                            </p>
                             <FormMessage />
                           </FormItem>
                         )}

@@ -221,7 +221,7 @@ export default function MessagesPage() {
                     <SelectTrigger>
                       <SelectValue placeholder="Seleccionar usuario" />
                     </SelectTrigger>
-                    <SelectContent>
+                    <SelectContent className="bg-app-surface border-app-surface-border text-gray-900 [&_[data-highlighted]]:bg-app-surface-hover">
                       {users.filter(u => u.id !== user.id).map(u => (
                         <SelectItem key={u.id} value={u.id.toString()}>
                           {u.fullName || u.username}

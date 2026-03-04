@@ -47,6 +47,8 @@ En Railway → tu proyecto → Variables, agregá:
 | `APP_URL` | **Después del primer deploy**: la URL que te da Railway (ej. `https://vitual-agent-production.up.railway.app`). Necesaria para WebAuthn y cookies. |
 | `GOOGLE_SHEETS_CREDENTIALS` | JSON de credenciales (si usás Google Sheets) |
 | `GOOGLE_SHEETS_ID` | ID del spreadsheet (si usás) |
+| `VITE_GOOGLE_MAPS_API_KEY` | API key de Google Maps (para el mapa de propiedades). En Google Cloud → Restricciones → agregá la URL de producción: `https://tu-app.up.railway.app/*` |
+| `SMTP_HOST`, `SMTP_USER`, `SMTP_PASS`, `SMTP_PORT` | Para enviar códigos de recuperación por correo (Gmail, SendGrid, etc.) |
 
 Railway setea automáticamente `NODE_ENV=production`.
 

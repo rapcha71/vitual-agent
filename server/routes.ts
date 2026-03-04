@@ -1,7 +1,10 @@
 import type { Express } from "express";
-import { createServer, type Server } from "http";
+import { createServer as createHttpServer, type Server } from "http";
+import { createServer as createHttpsServer } from "https";
+import selfsigned from "selfsigned";
 import { setupAuth } from "./auth";
 import { storage } from "./storage";
+import webauthnRouter from "./routes/webauthn";
 import { insertPropertySchema } from "@shared/schema";
 import { nanoid } from "nanoid";
 import ocrService from "./services/ocr";
@@ -26,6 +29,8 @@ const uploadMessageImage = multer({
 
 export async function registerRoutes(app: Express): Promise<Server> {
   setupAuth(app);
+
+  app.use("/api", webauthnRouter);
 
   // Health check endpoint
   app.get('/health', (req, res) => {
@@ -243,21 +248,26 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
-  // Regular users route to get their own properties
+  // Regular users route to get their own properties (optimizado: sin imágenes para carga rápida)
   app.get("/api/properties", async (req, res) => {
-    console.log("Properties request - Session ID:", req.sessionID);
-    console.log("Properties request - Is authenticated:", req.isAuthenticated());
-    console.log("Properties request - User:", req.user ? req.user.id : 'No user');
-    
     if (!req.isAuthenticated() || !req.user) {
-      console.log("Authentication failed for properties request");
       return res.status(401).json({ message: "Unauthorized" });
     }
 
     try {
       const properties = await storage.getPropertiesByUserId(req.user.id);
-      console.log("Properties found:", properties.length);
-      res.json(properties);
+      // Optimización: no enviar imágenes en la lista (cargar bajo demanda vía /api/properties/:id/images)
+      const lightweightProperties = properties.map(p => {
+        let hasImages = false;
+        if (p.images) {
+          if (Array.isArray(p.images)) hasImages = p.images.length > 0;
+          else if (typeof p.images === 'object') hasImages = Object.values(p.images).some(v => typeof v === 'string' && v.startsWith('data:'));
+        }
+        const { images: _, ...rest } = p;
+        return { ...rest, hasImages };
+      });
+      res.set('Cache-Control', 'private, max-age=60');
+      res.json(lightweightProperties);
     } catch (error: any) {
       console.error("Error fetching properties:", error);
       res.status(500).json({ message: error.message || "Failed to fetch properties" });
@@ -625,27 +635,37 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
-  // Route to get property images on demand
+  // Route to get property images on demand (optimizado: solo carga 1 propiedad)
   app.get("/api/properties/:propertyId/images", async (req, res) => {
-    if (!req.isAuthenticated()) {
+    if (!req.isAuthenticated() || !req.user) {
       return res.status(401).json({ message: "Unauthorized" });
     }
 
     try {
       const propertyId = req.params.propertyId;
-      const properties = await storage.getAllPropertiesWithUsers();
-      const property = properties.find(p => p.propertyId === propertyId);
+      const property = await storage.getPropertyByPropertyId(propertyId);
 
       if (!property) {
         return res.status(404).json({ message: "Property not found" });
       }
 
-      // Check if user is admin or owns the property
-      if (!req.user?.isAdmin && property.userId !== req.user?.id) {
+      // Solo admin o dueño puede ver imágenes
+      if (!req.user.isAdmin && property.userId !== req.user.id) {
         return res.status(403).json({ message: "Access denied" });
       }
 
-      res.json({ images: property.images || [] });
+      let imagesArray: string[] = [];
+      if (property.images) {
+        const img = property.images;
+        if (Array.isArray(img)) imagesArray = img.filter((x): x is string => typeof x === 'string');
+        else if (typeof img === 'object') {
+          for (const v of Object.values(img)) {
+            if (typeof v === 'string' && v.startsWith('data:')) imagesArray.push(v);
+            else if (Array.isArray(v)) imagesArray.push(...v.filter((x): x is string => typeof x === 'string'));
+          }
+        }
+      }
+      res.json({ images: imagesArray });
     } catch (error: any) {
       console.error("Error fetching property images:", error);
       res.status(500).json({ message: error.message || "Failed to fetch images" });
@@ -863,6 +883,20 @@ export async function registerRoutes(app: Express): Promise<Server> {
   });
 
 
-  const httpServer = createServer(app);
-  return httpServer;
+  const useHttps = process.env.USE_HTTPS_DEV === "true" && process.env.NODE_ENV !== "production";
+  let server: Server;
+
+  if (useHttps) {
+    const attrs = [{ name: "commonName", value: "localhost" }];
+    const pems = selfsigned.generate(attrs, { days: 365, keySize: 2048 });
+    server = createHttpsServer(
+      { key: pems.private, cert: pems.cert },
+      app
+    );
+    console.log("[HTTPS] Usando certificado autofirmado para desarrollo - cámara y GPS funcionarán en móvil");
+  } else {
+    server = createHttpServer(app);
+  }
+
+  return server;
 }
