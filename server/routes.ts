@@ -13,6 +13,7 @@ import { requireAdmin } from "./middleware/admin";
 import { insertMessageSchema } from "@shared/schema";
 import multer from "multer";
 import { logger } from "./lib/logger";
+import { validateBody } from "./middleware/validate";
 
 // Configure multer for message images - use memory storage for production compatibility
 const uploadMessageImage = multer({
@@ -275,20 +276,13 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
-  app.post("/api/properties", async (req, res) => {
+  app.post("/api/properties", validateBody(insertPropertySchema), async (req, res) => {
     if (!req.isAuthenticated()) {
       return res.status(401).json({ message: "Unauthorized" });
     }
 
     try {
-      logger.debug("Received property submission request:", {
-        propertyType: req.body.propertyType,
-        hasImages: !!req.body.images,
-        location: req.body.location
-      });
-
-      // Validate the request body
-      const propertyData = insertPropertySchema.parse(req.body);
+      const propertyData = req.body;
 
       // Extract text from sign image if present
       let extractedPhoneNumber = null;
@@ -471,7 +465,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
   });
 
   // Route for super admin to send messages
-  app.post("/api/admin/messages", requireAdmin, async (req, res) => {
+  app.post("/api/admin/messages", requireAdmin, validateBody(insertMessageSchema), async (req, res) => {
     try {
       if (!req.user?.isSuperAdmin) {
         return res.status(403).json({
@@ -479,7 +473,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
         });
       }
 
-      const messageData = insertMessageSchema.parse(req.body);
+      const messageData = req.body;
       const message = await storage.createMessage({
         ...messageData,
         senderId: req.user.id
@@ -495,13 +489,13 @@ export async function registerRoutes(app: Express): Promise<Server> {
   });
 
   // Route for regular users to send messages to super admin
-  app.post("/api/messages/to-admin", async (req, res) => {
+  app.post("/api/messages/to-admin", validateBody(insertMessageSchema), async (req, res) => {
     if (!req.isAuthenticated()) {
       return res.status(401).json({ message: "No autenticado" });
     }
 
     try {
-      const messageData = insertMessageSchema.parse(req.body);
+      const messageData = req.body;
       
       // Find super admin to send message to
       const allUsers = await storage.getAllUsers();

@@ -75,10 +75,9 @@ Revisión para producción realizada según especificación. Cambios aplicados d
 
 ### Etapa 3 – Ideal (L – 2–4 días)
 
-- Tests en rutas críticas (auth, propiedades, mensajes).
-- Migrar lógica grande de `routes.ts` a controladores por feature.
-- Endpoints con validación centralizada (middleware Zod).
-- Mejora de accesibilidad (labels, contraste, focus, teclado).
+- Tests en rutas críticas (schemas Zod, geo-utils).
+- Middleware Zod para validación centralizada (`validateBody` en properties, messages).
+- Mejora de accesibilidad (skip link, aria-labels, focus-visible en forms).
 
 ---
 

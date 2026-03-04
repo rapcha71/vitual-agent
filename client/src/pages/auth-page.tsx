@@ -124,6 +124,8 @@ export default function AuthPage() {
                     <form 
                       onSubmit={loginForm.handleSubmit(handleLogin)} 
                       className="space-y-4 bg-white/95 backdrop-blur-sm rounded-lg p-4"
+                      aria-label="Iniciar sesión"
+                      noValidate
                     >
                       <FormField
                         control={loginForm.control}
@@ -168,9 +170,8 @@ export default function AuthPage() {
                           id="rememberMe"
                           checked={rememberMe}
                           onChange={(e) => setRememberMe(e.target.checked)}
-                          className="h-4 w-4 rounded border-gray-300 text-[#F05023] focus:ring-[#F05023]"
-                        />
-                        <label htmlFor="rememberMe" className="text-sm text-gray-700">
+className="h-4 w-4 rounded border-gray-300 text-[#F05023] focus:ring-2 focus:ring-[#F05023] focus:ring-offset-2"                        />
+                        <label htmlFor="rememberMe" className="text-sm text-gray-700 cursor-pointer">
                           Recordarme en este dispositivo
                         </label>
                       </div>
@@ -209,6 +210,8 @@ export default function AuthPage() {
                     <form 
                       onSubmit={registerForm.handleSubmit(handleRegister)} 
                       className="space-y-4 bg-white/95 backdrop-blur-sm rounded-lg p-4"
+                      aria-label="Registrarse"
+                      noValidate
                     >
                       <FormField
                         control={registerForm.control}
