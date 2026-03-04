@@ -8,6 +8,7 @@ import rateLimit from "express-rate-limit";
 import { setupAuth } from "./auth";
 import cookieParser from "cookie-parser";
 import { storage } from "./storage";
+import { logger } from "./lib/logger";
 
 const app = express();
 
@@ -118,7 +119,7 @@ try {
 
       // Error handling middleware
       app.use((err: any, _req: Request, res: Response, _next: NextFunction) => {
-        console.error('Server Error:', err);
+        logger.error('Server Error:', err);
         const status = err.status || err.statusCode || 500;
         const message = err.message || "Internal Server Error";
         res.status(status).json({ 
@@ -155,7 +156,7 @@ try {
             console.log(`Cleaned up ${deletedCount} messages older than 7 days`);
           }
         } catch (error) {
-          console.error('Error cleaning up old messages:', error);
+          logger.error('Error cleaning up old messages:', error);
         }
         
         // Schedule daily cleanup of old messages (every 24 hours)
@@ -166,18 +167,18 @@ try {
               debugLog(`Scheduled cleanup: deleted ${deletedCount} old messages`);
             }
           } catch (error) {
-            console.error('Error in scheduled message cleanup:', error);
+            logger.error('Error in scheduled message cleanup:', error);
           }
         }, 24 * 60 * 60 * 1000);
         cleanupInterval.unref(); // No mantiene el proceso vivo solo por este timer
       });
     } catch (error) {
-      console.error('Failed to start server:', error);
+      logger.error('Failed to start server:', error);
       process.exit(1);
     }
   })();
 
 } catch (error) {
-  console.error('Critical server initialization error:', error);
+  logger.error('Critical server initialization error:', error);
   process.exit(1);
 }

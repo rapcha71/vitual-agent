@@ -12,6 +12,7 @@ import { isWithinRadius } from "./lib/geo-utils";
 import { requireAdmin } from "./middleware/admin";
 import { insertMessageSchema } from "@shared/schema";
 import multer from "multer";
+import { logger } from "./lib/logger";
 
 // Configure multer for message images - use memory storage for production compatibility
 const uploadMessageImage = multer({
@@ -71,7 +72,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
       const users = await storage.getAllUsers();
       res.json(users);
     } catch (error: any) {
-      console.error("Error fetching users:", error);
+      logger.error("Error fetching users:", error);
       res.status(500).json({
         message: error.message || "Error al obtener la lista de usuarios"
       });
@@ -118,7 +119,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
         message: "Usuario eliminado exitosamente"
       });
     } catch (error: any) {
-      console.error("Error deleting user:", error);
+      logger.error("Error deleting user:", error);
       res.status(500).json({
         message: error.message || "Error al eliminar el usuario"
       });
@@ -128,11 +129,11 @@ export async function registerRoutes(app: Express): Promise<Server> {
   // Admin route to get all properties with user information (optimized)
   app.get("/api/admin/properties", requireAdmin, async (req, res) => {
     try {
-      console.log("Admin properties request - User:", req.user ? req.user.id : 'No user');
-      console.log("Admin properties request - Is admin:", req.user?.isAdmin);
+      logger.debug("Admin properties request - User:", req.user ? req.user.id : 'No user');
+      logger.debug("Admin properties request - Is admin:", req.user?.isAdmin);
       
       const properties = await storage.getAllPropertiesWithUsers();
-      console.log("Admin properties found:", properties.length);
+      logger.debug("Admin properties found:", properties.length);
 
       // Optimize response by removing heavy image data for list view
       const optimizedProperties = properties.map(property => {
@@ -166,7 +167,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
       res.json(optimizedProperties);
     } catch (error: any) {
-      console.error("Error fetching admin properties:", error);
+      logger.error("Error fetching admin properties:", error);
       res.status(500).json({ message: error.message || "Failed to fetch properties" });
     }
   });
@@ -212,7 +213,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
       res.json({ images: imagesArray });
     } catch (error: any) {
-      console.error("Error fetching property images:", error);
+      logger.error("Error fetching property images:", error);
       res.status(500).json({ message: "Error al obtener imágenes" });
     }
   });
@@ -241,7 +242,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
       const updatedUser = await storage.updateUserRole(userId, isAdmin);
       res.json(updatedUser);
     } catch (error: any) {
-      console.error("Error updating admin role:", error);
+      logger.error("Error updating admin role:", error);
       res.status(500).json({
         message: error.message || "Error al actualizar rol de administrador"
       });
@@ -269,7 +270,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
       res.set('Cache-Control', 'private, max-age=60');
       res.json(lightweightProperties);
     } catch (error: any) {
-      console.error("Error fetching properties:", error);
+      logger.error("Error fetching properties:", error);
       res.status(500).json({ message: error.message || "Failed to fetch properties" });
     }
   });
@@ -280,7 +281,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
 
     try {
-      console.log("Received property submission request:", {
+      logger.debug("Received property submission request:", {
         propertyType: req.body.propertyType,
         hasImages: !!req.body.images,
         location: req.body.location
@@ -297,10 +298,10 @@ export async function registerRoutes(app: Express): Promise<Server> {
           const phoneNumbers = await ocrService.extractPhoneNumbers(extractedText);
           if (phoneNumbers.length > 0) {
             extractedPhoneNumber = phoneNumbers[0];
-            console.log('Extracted phone number from sign:', extractedPhoneNumber);
+            logger.debug('Extracted phone number from sign:', extractedPhoneNumber);
           }
         } catch (error) {
-          console.error('Error processing sign image:', error);
+          logger.error('Error processing sign image:', error);
           // Continue without OCR if it fails
         }
       }
@@ -360,7 +361,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
         createdAt: propertyData.createdAt || new Date().toISOString()
       });
 
-      console.log("Property created successfully:", property.propertyId);
+      logger.debug("Property created successfully:", property.propertyId);
       
       // Notify admin of new property
       const { notificationService } = await import("./services/notifications");
@@ -377,7 +378,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
         message: "Property created successfully"
       });
     } catch (error: any) {
-      console.error("Error creating property:", {
+      logger.error("Error creating property:", {
         error: error.message,
         stack: error.stack,
         body: req.body
@@ -403,11 +404,11 @@ export async function registerRoutes(app: Express): Promise<Server> {
         return res.status(400).json({ message: "No image provided" });
       }
 
-      console.log("Testing OCR functionality...");
+      logger.debug("Testing OCR functionality...");
       const extractedText = await ocrService.extractTextFromBase64Image(image);
       const phoneNumbers = await ocrService.extractPhoneNumbers(extractedText);
 
-      console.log("OCR test result:", {
+      logger.debug("OCR test result:", {
         extractedText,
         phoneNumbers
       });
@@ -418,7 +419,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
         phoneNumbers
       });
     } catch (error: any) {
-      console.error("Error testing OCR:", error);
+      logger.error("Error testing OCR:", error);
       res.status(500).json({
         success: false,
         message: error.message || "Failed to process image"
@@ -436,7 +437,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
       }
       res.json({ email });
     } catch (error) {
-      console.error("Error parsing credentials:", error);
+      logger.error("Error parsing credentials:", error);
       res.status(500).json({ error: "Error reading credentials" });
     }
   });
@@ -486,7 +487,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
       res.status(201).json(message);
     } catch (error: any) {
-      console.error("Error creating message:", error);
+      logger.error("Error creating message:", error);
       res.status(500).json({
         message: error.message || "Error al enviar el mensaje"
       });
@@ -518,7 +519,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
       res.status(201).json(message);
     } catch (error: any) {
-      console.error("Error creating message to admin:", error);
+      logger.error("Error creating message to admin:", error);
       res.status(500).json({
         message: error.message || "Error al enviar el mensaje"
       });
@@ -533,11 +534,11 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
     try {
       const messages = await storage.getMessages();
-      console.log("Messages returned to user:", req.user?.id, "count:", messages.length);
-      console.log("Sample message recipientIds:", messages.slice(0, 5).map(m => ({ id: m.id, recipientId: m.recipientId, type: typeof m.recipientId })));
+      logger.debug("Messages returned to user:", req.user?.id, "count:", messages.length);
+      logger.debug("Sample message recipientIds:", messages.slice(0, 5).map(m => ({ id: m.id, recipientId: m.recipientId, type: typeof m.recipientId })));
       res.json(messages);
     } catch (error: any) {
-      console.error("Error fetching messages:", error);
+      logger.error("Error fetching messages:", error);
       res.status(500).json({
         message: error.message || "Error al obtener los mensajes"
       });
@@ -554,7 +555,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
       await storage.markMessageAsRead(parseInt(req.params.messageId), req.user.id);
       res.json({ success: true });
     } catch (error: any) {
-      console.error("Error marking message as read:", error);
+      logger.error("Error marking message as read:", error);
       res.status(500).json({
         message: error.message || "Error al marcar el mensaje como leído"
       });
@@ -571,7 +572,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
       const count = await storage.getUnreadMessageCount(req.user.id);
       res.json({ count });
     } catch (error: any) {
-      console.error("Error getting unread message count:", error);
+      logger.error("Error getting unread message count:", error);
       res.status(500).json({
         message: error.message || "Error al obtener el conteo de mensajes no leídos"
       });
@@ -602,7 +603,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
       res.status(201).json(message);
     } catch (error: any) {
-      console.error("Error sending message to user:", error);
+      logger.error("Error sending message to user:", error);
       res.status(500).json({
         message: error.message || "Error al enviar el mensaje"
       });
@@ -628,7 +629,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
       res.status(201).json(message);
     } catch (error: any) {
-      console.error("Error sending broadcast message:", error);
+      logger.error("Error sending broadcast message:", error);
       res.status(500).json({
         message: error.message || "Error al enviar el mensaje"
       });
@@ -667,7 +668,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
       }
       res.json({ images: imagesArray });
     } catch (error: any) {
-      console.error("Error fetching property images:", error);
+      logger.error("Error fetching property images:", error);
       res.status(500).json({ message: error.message || "Failed to fetch images" });
     }
   });
@@ -678,7 +679,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
       const payments = await storage.getWeeklyPayments();
       res.json(payments);
     } catch (error: any) {
-      console.error("Error fetching weekly payments:", error);
+      logger.error("Error fetching weekly payments:", error);
       res.status(500).json({
         message: error.message || "Error al obtener los pagos semanales"
       });
@@ -692,7 +693,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
       const history = await storage.getUserPaymentHistory(userId);
       res.json(history);
     } catch (error: any) {
-      console.error("Error fetching user payment history:", error);
+      logger.error("Error fetching user payment history:", error);
       res.status(500).json({
         message: error.message || "Error al obtener el historial de pagos del usuario"
       });
@@ -705,7 +706,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
       const count = await storage.getUnviewedPropertiesCount();
       res.json({ count });
     } catch (error: any) {
-      console.error("Error fetching unviewed properties count:", error);
+      logger.error("Error fetching unviewed properties count:", error);
       res.status(500).json({ message: "Error al obtener el conteo de propiedades nuevas" });
     }
   });
@@ -720,7 +721,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
       await storage.markPropertiesAsViewed(propertyIds);
       res.json({ success: true });
     } catch (error: any) {
-      console.error("Error marking properties as viewed:", error);
+      logger.error("Error marking properties as viewed:", error);
       res.status(500).json({ message: "Error al marcar propiedades como vistas" });
     }
   });
@@ -875,7 +876,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
         rowCount: rows.length
       });
     } catch (error: any) {
-      console.error("Error exporting to Google Sheets:", error);
+      logger.error("Error exporting to Google Sheets:", error);
       res.status(500).json({
         message: error.message || "Error al exportar a Google Sheets"
       });
@@ -893,7 +894,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
       { key: pems.private, cert: pems.cert },
       app
     );
-    console.log("[HTTPS] Usando certificado autofirmado para desarrollo - cámara y GPS funcionarán en móvil");
+    logger.debug("[HTTPS] Usando certificado autofirmado para desarrollo - cámara y GPS funcionarán en móvil");
   } else {
     server = createHttpServer(app);
   }

@@ -66,12 +66,12 @@ Revisión para producción realizada según especificación. Cambios aplicados d
 - Logger y eliminación de logs sensibles.
 - Ajustes P2 menores (tailwind-scrollbar, cross-env, unref, vite).
 
-### Etapa 2 – Mediano (L – 1–2 días)
+### Etapa 2 – Mediano (L – 1–2 días) ✅
 
 - Sustituir `console.*` por `logger` en `routes.ts` y `storage`.
 - Lazy loading de rutas (AdminWebPage, PropertyEntry, etc.) para reducir bundle.
-- Eliminar código muerto con pruebas de regresión.
 - Revisar y aplicar fixes de `npm audit`.
+- (Opcional) Eliminar código muerto con pruebas de regresión.
 
 ### Etapa 3 – Ideal (L – 2–4 días)
 

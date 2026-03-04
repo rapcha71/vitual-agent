@@ -1,4 +1,5 @@
 import { ImageAnnotatorClient } from '@google-cloud/vision';
+import { logger } from '../lib/logger';
 
 export class OCRService {
   private client: ImageAnnotatorClient | null = null;
@@ -10,13 +11,13 @@ export class OCRService {
                                 process.env.GOOGLE_CLOUD_VISION_API_KEY || 
                                 '{}';
         const credentials = JSON.parse(credentialsJson);
-        console.log('Initializing Vision API with project:', credentials.project_id);
+        logger.debug('Initializing Vision API with project:', credentials.project_id);
         this.client = new ImageAnnotatorClient({
           credentials,
           projectId: credentials.project_id
         });
       } catch (error) {
-        console.error('Error initializing Vision API client:', error);
+        logger.error('Error initializing Vision API client:', error);
         throw error;
       }
     }
@@ -25,33 +26,33 @@ export class OCRService {
 
   async extractTextFromBase64Image(base64Image: string): Promise<string> {
     try {
-      console.log('Starting OCR text extraction...');
+      logger.debug('Starting OCR text extraction...');
       const base64Data = base64Image.replace(/^data:image\/\w+;base64,/, '');
       const imageBuffer = Buffer.from(base64Data, 'base64');
 
-      console.log('Sending image to Vision API...');
+      logger.debug('Sending image to Vision API...');
       const client = this.getClient();
       const [result] = await client.textDetection(imageBuffer);
       const detections = result.textAnnotations;
 
       if (!detections || detections.length === 0) {
-        console.log('No text detected in image');
+        logger.debug('No text detected in image');
         return '';
       }
 
       // The first annotation contains the entire text
       const extractedText = detections[0].description || '';
-      console.log('Extracted text:', extractedText);
+      logger.debug('Extracted text:', extractedText);
 
       return extractedText;
     } catch (error) {
-      console.error('Error processing image with Vision API:', error);
+      logger.error('Error processing image with Vision API:', error);
       throw error;
     }
   }
 
   async extractPhoneNumbers(text: string): Promise<string[]> {
-    console.log('Extracting phone numbers from text:', text);
+    logger.debug('Extracting phone numbers from text:', text);
 
     // Normalizar el texto: eliminar caracteres especiales excepto números y espacios
     const normalizedText = text
@@ -59,7 +60,7 @@ export class OCRService {
       .replace(/\s+/g, ' ') // Normalizar espacios
       .trim();
 
-    console.log('Normalized text:', normalizedText);
+    logger.debug('Normalized text:', normalizedText);
 
     // Patrones de números de teléfono de Costa Rica (8 dígitos)
     // Acepta formatos:
@@ -97,7 +98,7 @@ export class OCRService {
     // Eliminar duplicados y ordenar
     const uniqueNumbers = Array.from(new Set(cleanedNumbers)).sort();
 
-    console.log('Found valid phone numbers:', uniqueNumbers);
+    logger.debug('Found valid phone numbers:', uniqueNumbers);
     return uniqueNumbers;
   }
 

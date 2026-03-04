@@ -1,4 +1,5 @@
 import { storage } from "../storage";
+import { logger } from "../lib/logger";
 
 export interface PropertyNotification {
   type: 'new_property';
@@ -15,9 +16,7 @@ class NotificationService {
     agentName: string;
     createdAt: string;
   }): Promise<void> {
-    console.log('New property registered:', property.propertyId);
-    console.log('Agent:', property.agentName);
-    console.log('Type:', property.propertyType);
+    logger.debug('New property registered:', property.propertyId, 'Agent:', property.agentName);
   }
 
   async getUnviewedCount(): Promise<number> {

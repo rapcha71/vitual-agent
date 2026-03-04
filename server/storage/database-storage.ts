@@ -4,6 +4,7 @@ import { db } from "../db";
 import { eq, and, sql } from "drizzle-orm";
 import { IStorage } from "../storage";
 import session from "express-session";
+import { logger } from "../lib/logger";
 import connectPg from "connect-pg-simple";
 import { pool } from "../db";
 
@@ -21,28 +22,28 @@ export class DatabaseStorage implements IStorage {
   }
 
   async getUser(id: number): Promise<User | undefined> {
-    console.log("Getting user by ID:", id);
+    logger.debug("Getting user by ID:", id);
     const [user] = await db.select().from(users).where(eq(users.id, id));
-    console.log("Found user:", user ? "Yes" : "No");
+    logger.debug("Found user:", user ? "Yes" : "No");
     return user;
   }
 
   async getUserByUsername(username: string): Promise<User | undefined> {
-    console.log("Getting user by username:", username);
+    logger.debug("Getting user by username:", username);
     const [user] = await db.select().from(users).where(eq(users.username, username));
-    console.log("Found user:", user ? "Yes" : "No");
+    logger.debug("Found user:", user ? "Yes" : "No");
     return user;
   }
 
   async getUserByRememberToken(token: string): Promise<User | undefined> {
-    console.log("Getting user by remember token");
+    logger.debug("Getting user by remember token");
     const [user] = await db.select().from(users).where(eq(users.rememberToken, token));
-    console.log("Found user:", user ? "Yes" : "No");
+    logger.debug("Found user:", user ? "Yes" : "No");
     return user;
   }
 
   async createUser(insertUser: InsertUser): Promise<User> {
-    console.log("Creating new user:", insertUser.username);
+    logger.debug("Creating new user:", insertUser.username);
     const [user] = await db
       .insert(users)
       .values({
@@ -51,52 +52,52 @@ export class DatabaseStorage implements IStorage {
         lastLoginAt: new Date().toISOString()
       })
       .returning();
-    console.log("User created successfully:", user);
+    logger.debug("User created successfully:", user);
     return user;
   }
 
   async getAllUsers(): Promise<User[]> {
-    console.log("Getting all users");
+    logger.debug("Getting all users");
     const allUsers = await db.select().from(users).where(eq(users.isDeleted, false));
-    console.log("Found users count:", allUsers.length);
+    logger.debug("Found users count:", allUsers.length);
     return allUsers;
   }
 
   async deleteUser(userId: number): Promise<void> {
-    console.log("Soft deleting user:", userId);
+    logger.debug("Soft deleting user:", userId);
     await db.update(users)
       .set({ isDeleted: true })
       .where(eq(users.id, userId));
-    console.log("User soft deleted successfully");
+    logger.debug("User soft deleted successfully");
   }
 
   async updateUserRole(userId: number, isAdmin: boolean): Promise<User> {
-    console.log("Updating user role:", { userId, isAdmin });
+    logger.debug("Updating user role:", { userId, isAdmin });
     const [updatedUser] = await db
       .update(users)
       .set({ isAdmin })
       .where(eq(users.id, userId))
       .returning();
-    console.log("User role updated successfully");
+    logger.debug("User role updated successfully");
     return updatedUser;
   }
 
   async updateUserRememberToken(userId: number, token: string | null): Promise<void> {
-    console.log("Updating remember token for user:", userId);
+    logger.debug("Updating remember token for user:", userId);
     await db
       .update(users)
       .set({ rememberToken: token })
       .where(eq(users.id, userId));
-    console.log("Remember token updated successfully");
+    logger.debug("Remember token updated successfully");
   }
 
   async updateLastLogin(userId: number): Promise<void> {
-    console.log("Updating last login for user:", userId);
+    logger.debug("Updating last login for user:", userId);
     await db
       .update(users)
       .set({ lastLoginAt: new Date().toISOString() })
       .where(eq(users.id, userId));
-    console.log("Last login updated successfully");
+    logger.debug("Last login updated successfully");
   }
 
   async createProperty(insertProperty: InsertProperty & { userId: number }): Promise<Property> {
@@ -141,7 +142,7 @@ export class DatabaseStorage implements IStorage {
     publicKey: Buffer;
     counter: number;
   }): Promise<void> {
-    console.log("Updating biometric credentials for user:", userId);
+    logger.debug("Updating biometric credentials for user:", userId);
     await db
       .update(users)
       .set({
@@ -151,20 +152,20 @@ export class DatabaseStorage implements IStorage {
         biometricEnabled: true
       })
       .where(eq(users.id, userId));
-    console.log("Biometric credentials updated successfully");
+    logger.debug("Biometric credentials updated successfully");
   }
 
   async updateUserBiometricCounter(userId: number, counter: number): Promise<void> {
-    console.log("Updating biometric counter for user:", userId);
+    logger.debug("Updating biometric counter for user:", userId);
     await db
       .update(users)
       .set({ biometricCounter: counter })
       .where(eq(users.id, userId));
-    console.log("Biometric counter updated successfully");
+    logger.debug("Biometric counter updated successfully");
   }
 
   async createMessage(message: InsertMessage & { senderId: number }): Promise<Message> {
-    console.log("Creating new message:", message.content);
+    logger.debug("Creating new message:", message.content);
     
     let unreadByUsers: number[];
     
@@ -185,12 +186,12 @@ export class DatabaseStorage implements IStorage {
       })
       .returning();
 
-    console.log("Message created successfully");
+    logger.debug("Message created successfully");
     return createdMessage;
   }
 
   async getMessages(): Promise<(Message & { sender: User })[]> {
-    console.log("Getting all messages");
+    logger.debug("Getting all messages");
     const result = await db.select({
       message: messages,
       sender: users
@@ -205,7 +206,7 @@ export class DatabaseStorage implements IStorage {
   }
 
   async markMessageAsRead(messageId: number, userId: number): Promise<void> {
-    console.log("Marking message as read:", { messageId, userId });
+    logger.debug("Marking message as read:", { messageId, userId });
     const [message] = await db.select().from(messages).where(eq(messages.id, messageId));
 
     if (!message) {
@@ -219,17 +220,17 @@ export class DatabaseStorage implements IStorage {
       .set({ unreadByUsers })
       .where(eq(messages.id, messageId));
 
-    console.log("Message marked as read successfully");
+    logger.debug("Message marked as read successfully");
   }
 
   async getUnreadMessageCount(userId: number): Promise<number> {
-    console.log("Getting unread message count for user:", userId);
+    logger.debug("Getting unread message count for user:", userId);
     const allMessages = await db.select().from(messages);
     
     // Debug: Log first message to check array type
     if (allMessages.length > 0) {
       const firstMsg = allMessages[0];
-      console.log("First message unreadByUsers:", firstMsg.unreadByUsers, "type:", typeof firstMsg.unreadByUsers, "Array.isArray:", Array.isArray(firstMsg.unreadByUsers));
+      logger.debug("First message unreadByUsers:", firstMsg.unreadByUsers, "type:", typeof firstMsg.unreadByUsers, "Array.isArray:", Array.isArray(firstMsg.unreadByUsers));
     }
     
     const unreadCount = allMessages.filter(msg => {
@@ -237,11 +238,11 @@ export class DatabaseStorage implements IStorage {
       const unreadList = Array.isArray(msg.unreadByUsers) ? msg.unreadByUsers : [];
       const isUnread = unreadList.includes(userId);
       if (msg.recipientId === userId || (msg.recipientId === null && msg.senderId !== userId)) {
-        console.log(`Message ${msg.id} - recipientId: ${msg.recipientId}, userId: ${userId}, unreadByUsers: [${unreadList.join(',')}], isUnread: ${isUnread}`);
+        logger.debug(`Message ${msg.id} - recipientId: ${msg.recipientId}, userId: ${userId}, unreadByUsers: [${unreadList.join(',')}], isUnread: ${isUnread}`);
       }
       return isUnread;
     }).length;
-    console.log("Unread message count:", unreadCount);
+    logger.debug("Unread message count:", unreadCount);
     return unreadCount;
   }
 
@@ -249,7 +250,7 @@ export class DatabaseStorage implements IStorage {
     const cutoffDate = new Date();
     cutoffDate.setDate(cutoffDate.getDate() - daysOld);
     
-    console.log(`Deleting messages older than ${daysOld} days (before ${cutoffDate.toISOString()})`);
+    logger.debug(`Deleting messages older than ${daysOld} days (before ${cutoffDate.toISOString()})`);
     
     const oldMessages = await db.select({ id: messages.id })
       .from(messages)
@@ -258,9 +259,9 @@ export class DatabaseStorage implements IStorage {
     if (oldMessages.length > 0) {
       await db.delete(messages)
         .where(sql`${messages.createdAt} < ${cutoffDate}`);
-      console.log(`Deleted ${oldMessages.length} old messages`);
+      logger.debug(`Deleted ${oldMessages.length} old messages`);
     } else {
-      console.log("No old messages to delete");
+      logger.debug("No old messages to delete");
     }
     
     return oldMessages.length;
@@ -288,12 +289,12 @@ export class DatabaseStorage implements IStorage {
   }
 
   async updateUserPassword(userId: number, hashedPassword: string): Promise<void> {
-    console.log("Updating password for user:", userId);
+    logger.debug("Updating password for user:", userId);
     await db
       .update(users)
       .set({ password: hashedPassword })
       .where(eq(users.id, userId));
-    console.log("Password updated successfully");
+    logger.debug("Password updated successfully");
   }
 
   async clearPasswordResetCode(userId: number): Promise<void> {

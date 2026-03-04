@@ -1,6 +1,7 @@
 import { google } from "googleapis";
 import { sheets_v4 } from "@googleapis/sheets";
 import { IStorage } from "../storage";
+import { logger } from "../lib/logger";
 import { User, Property, InsertUser, InsertProperty, PropertyType, MarkerColors } from "@shared/schema";
 import session from "express-session";
 import createMemoryStore from "memorystore";
@@ -127,7 +128,7 @@ export class GoogleSheetsStorage implements IStorage {
         });
       }
 
-      console.log('Successfully initialized Google Sheets storage');
+      logger.debug('Successfully initialized Google Sheets storage');
     } catch (error) {
       console.error('Error initializing spreadsheet:', error);
       throw error;
