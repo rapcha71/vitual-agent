@@ -17,7 +17,7 @@ Revisión para producción realizada según especificación. Cambios aplicados d
 9. **P2**: `setInterval` de limpieza de mensajes ahora usa `.unref()` – evita mantener el proceso vivo solo por el timer.
 10. **P2**: Eliminada clave duplicada `server` en `vite.ts` – quita el warning de build.
 11. El build compila correctamente; quedan ~19 vulnerabilidades en dependencias (revisar con `npm audit`).
-12. Código muerto identificado (admin-page, preview-page, hybrid-storage, mem-storage, biometric-auth) – documentado; no se eliminó para no romper referencias futuras sin validar.
+12. Código muerto eliminado: admin-page, preview-page, hybrid-storage, mem-storage, google-sheets, biometric-auth.
 
 ---
 
@@ -51,7 +51,7 @@ Revisión para producción realizada según especificación. Cambios aplicados d
 
 | Hallazgo | Archivos | Riesgo | Recomendación |
 |----------|----------|--------|--------------|
-| Código muerto | admin-page, preview-page, hybrid-storage, mem-storage, biometric-auth | Bajo | Eliminar tras verificar que no hay referencias o feature flags. |
+| ~~Código muerto~~ | ~~admin-page, preview-page, hybrid-storage, mem-storage, google-sheets, biometric-auth~~ | - | ✅ Eliminado (tests + build OK). |
 | ~150 `console.*` en repo | routes, storage, ocr, etc. | Medio | Migrar gradualmente a `logger`. |
 | Chunk >500KB | Build Vite | Medio | Code-splitting con `lazy()` en rutas. |
 | 19 vulnerabilidades npm | `package.json` | Variable | Ejecutar `npm audit` y `npm audit fix` con cuidado. |
