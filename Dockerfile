@@ -1,6 +1,9 @@
 # Build stage
 FROM node:20-alpine AS builder
 
+# Dependencias para módulos nativos (bufferutil, etc.)
+RUN apk add --no-cache python3 make g++
+
 WORKDIR /app
 
 # Install all deps (including dev for build)
@@ -21,7 +24,6 @@ COPY package.json package-lock.json ./
 RUN npm ci --omit=dev && npm cache clean --force
 
 COPY --from=builder /app/dist ./dist
-COPY --from=builder /app/public ./public
 
 EXPOSE 5000
 
