@@ -124,6 +124,30 @@ export class DatabaseStorage implements IStorage {
     return db.select().from(properties).where(eq(properties.userId, userId));
   }
 
+  /** Optimizado para lista: excluye images y kmlData (evita transferir MB desde Neon) */
+  async getPropertiesListByUserId(userId: number): Promise<Array<Omit<Property, "images" | "kmlData"> & { hasImages: boolean }>> {
+    const rows = await db
+      .select({
+        id: properties.id,
+        userId: properties.userId,
+        propertyType: properties.propertyType,
+        signPhoneNumber: properties.signPhoneNumber,
+        location: properties.location,
+        propertyId: properties.propertyId,
+        markerColor: properties.markerColor,
+        createdAt: properties.createdAt,
+        viewedByAdmin: properties.viewedByAdmin,
+        hasImages: sql<boolean>`(
+          jsonb_typeof(${properties.images}) = 'array' AND jsonb_array_length(${properties.images}) > 0
+        ) OR (
+          jsonb_typeof(${properties.images}) = 'object' AND ${properties.images} != '{}'::jsonb
+        )`.as("has_images"),
+      })
+      .from(properties)
+      .where(eq(properties.userId, userId));
+    return rows.map(({ has_images, ...r }) => ({ ...r, hasImages: has_images }));
+  }
+
   async getAllPropertiesWithUsers(): Promise<(Property & { user: User })[]> {
     const result = await db.select({
       property: properties,

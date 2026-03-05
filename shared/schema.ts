@@ -1,5 +1,5 @@
 
-import { pgTable, text, serial, integer, boolean, jsonb, numeric, timestamp } from "drizzle-orm/pg-core";
+import { pgTable, text, serial, integer, boolean, jsonb, numeric, timestamp, index } from "drizzle-orm/pg-core";
 import { createInsertSchema } from "drizzle-zod";
 import { z } from "zod";
 import { relations } from "drizzle-orm";
@@ -77,7 +77,7 @@ export const properties = pgTable("properties", {
   markerColor: text("marker_color").notNull(),
   createdAt: text("created_at").notNull().default(new Date().toISOString()),
   viewedByAdmin: boolean("viewed_by_admin").notNull().default(false),
-});
+}, (t) => [index("properties_user_id_idx").on(t.userId)]);
 
 // Define the payments table
 export const payments = pgTable("payments", {

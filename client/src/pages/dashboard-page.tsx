@@ -123,7 +123,7 @@ export default function DashboardPage() {
             <img
               src="/assets/logo-full.png"
               alt="Virtual Agent"
-              className="h-14 w-auto max-w-[60vw] object-contain"
+              className="h-14 w-auto max-w-[60vw] object-contain header-logo-2x"
             />
           </div>
           <Button

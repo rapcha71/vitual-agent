@@ -12,6 +12,8 @@ export interface IStorage {
   deleteUser(userId: number): Promise<void>;
   createProperty(property: InsertProperty & { userId: number }): Promise<Property>;
   getPropertiesByUserId(userId: number): Promise<Property[]>;
+  /** Lista ligera sin images/kmlData para carga rápida */
+  getPropertiesListByUserId(userId: number): Promise<Array<Omit<Property, "images" | "kmlData"> & { hasImages: boolean }>>;
   getAllPropertiesWithUsers(): Promise<(Property & { user: User })[]>;
   updateUserRememberToken(userId: number, token: string | null): Promise<void>;
   updateLastLogin(userId: number): Promise<void>;

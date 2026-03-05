@@ -99,7 +99,7 @@ export default function AuthPage() {
               <img 
                 src="/assets/logo-full.png"
                 alt="Virtual Agent - Tu llave de ingreso a los bienes raíces"
-                className="h-[96px] md:h-[160px] w-auto object-contain" style={{ maxWidth: 'none' }}
+                className="h-[96px] md:h-[160px] w-auto object-contain header-logo-2x" style={{ maxWidth: 'none' }}
               />
             </div>
             {/* Add PWA Install Button */}

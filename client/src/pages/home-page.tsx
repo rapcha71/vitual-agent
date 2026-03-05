@@ -45,7 +45,7 @@ export default function HomePage() {
                 <img
                   src="/assets/logo-full.png"
                   alt="Virtual Agent"
-                  className="h-[96px] w-auto object-contain" style={{ maxWidth: 'none' }}
+                  className="h-[96px] w-auto object-contain header-logo-2x" style={{ maxWidth: 'none' }}
                 />
               </div>
             </header>
@@ -87,7 +87,7 @@ export default function HomePage() {
                 <img
                   src="/assets/logo-full.png"
                   alt="Virtual Agent"
-                  className="h-14 w-auto max-w-[60vw] object-contain"
+                  className="h-14 w-auto max-w-[60vw] object-contain header-logo-2x"
                   loading="eager"
                 />
               </div>
@@ -130,7 +130,7 @@ export default function HomePage() {
                   </Link>
                   {user?.isAdmin && (
                     <Link href="/admin">
-                      <Button variant="outline" className="w-full">
+                      <Button variant="outline" className="w-full active:bg-[#F05023] active:text-white active:border-[#F05023] hover:bg-[#F05023]/10">
                         <Shield className="h-4 w-4 mr-2" />
                         Panel de Administración
                       </Button>
@@ -145,7 +145,7 @@ export default function HomePage() {
                 <Link href="/properties">
                   <Button
                     variant="outline"
-                    className="w-full h-full flex flex-col items-center justify-center py-4 px-2 gap-1 text-sm bg-white/90 backdrop-blur-sm"
+                    className="w-full h-full flex flex-col items-center justify-center py-4 px-2 gap-1 text-sm bg-white/90 backdrop-blur-sm active:bg-[#F05023] active:text-white active:border-[#F05023] hover:bg-[#F05023]/10"
                   >
                     <Building className="h-4 w-4" />
                     <span>Propiedades</span>
@@ -154,7 +154,7 @@ export default function HomePage() {
                 <Link href="/profile">
                   <Button
                     variant="outline"
-                    className="w-full h-full flex flex-col items-center justify-center py-4 px-2 gap-1 text-sm bg-white/90 backdrop-blur-sm"
+                    className="w-full h-full flex flex-col items-center justify-center py-4 px-2 gap-1 text-sm bg-white/90 backdrop-blur-sm active:bg-[#F05023] active:text-white active:border-[#F05023] hover:bg-[#F05023]/10"
                   >
                     <User className="h-4 w-4" />
                     <span>Perfil</span>
@@ -163,7 +163,7 @@ export default function HomePage() {
                 <Link href="/dashboard">
                   <Button
                     variant="outline"
-                    className="w-full h-full flex flex-col items-center justify-center py-4 px-2 gap-1 text-sm bg-white/90 backdrop-blur-sm"
+                    className="w-full h-full flex flex-col items-center justify-center py-4 px-2 gap-1 text-sm bg-white/90 backdrop-blur-sm active:bg-[#F05023] active:text-white active:border-[#F05023] hover:bg-[#F05023]/10"
                   >
                     <Building className="h-4 w-4" />
                     <span>Dashboard</span>
@@ -172,7 +172,7 @@ export default function HomePage() {
                 <Link href="/messages">
                   <Button
                     variant="outline"
-                    className="w-full h-full flex flex-col items-center justify-center py-4 px-2 gap-1 text-sm bg-white/90 backdrop-blur-sm relative"
+                    className="w-full h-full flex flex-col items-center justify-center py-4 px-2 gap-1 text-sm bg-white/90 backdrop-blur-sm active:bg-[#F05023] active:text-white active:border-[#F05023] hover:bg-[#F05023]/10 relative"
                   >
                     <MessageCircle className="h-4 w-4" />
                     <span>Mensajes</span>
@@ -187,7 +187,7 @@ export default function HomePage() {
                   <DialogTrigger asChild>
                     <Button
                       variant="outline"
-                      className="w-full h-full flex flex-col items-center justify-center py-4 px-2 gap-1 text-sm bg-white/90 backdrop-blur-sm"
+                      className="w-full h-full flex flex-col items-center justify-center py-4 px-2 gap-1 text-sm bg-white/90 backdrop-blur-sm active:bg-[#F05023] active:text-white active:border-[#F05023] hover:bg-[#F05023]/10"
                     >
                       <Share2 className="h-4 w-4" />
                       <span>Compartir App</span>
