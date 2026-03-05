@@ -336,16 +336,23 @@ export class DatabaseStorage implements IStorage {
   }>> {
     const paymentRate = 250; // 250 colones per property
     const currentDate = new Date();
-    
-    // Get start of current week (Monday)
-    const weekStart = new Date(currentDate);
-    weekStart.setDate(currentDate.getDate() - currentDate.getDay() + 1);
-    weekStart.setHours(0, 0, 0, 0);
-    
-    // Get end of current week (Sunday)
-    const weekEnd = new Date(weekStart);
-    weekEnd.setDate(weekStart.getDate() + 6);
-    weekEnd.setHours(23, 59, 59, 999);
+
+    // Semana Lun-Dom en zona Costa Rica (UTC-6). Server puede estar en UTC (Railway).
+    const crOffsetMs = -6 * 60 * 60 * 1000;
+    const crEquiv = new Date(currentDate.getTime() + crOffsetMs);
+    const dayOfWeekCR = crEquiv.getUTCDay();
+    const daysToMonday = dayOfWeekCR === 0 ? 6 : dayOfWeekCR - 1;
+
+    const weekStart = new Date(Date.UTC(
+      crEquiv.getUTCFullYear(),
+      crEquiv.getUTCMonth(),
+      crEquiv.getUTCDate() - daysToMonday,
+      6, 0, 0, 0
+    ));
+
+    const weekEnd = new Date(weekStart.getTime());
+    weekEnd.setUTCDate(weekEnd.getUTCDate() + 7);
+    weekEnd.setUTCMilliseconds(weekEnd.getUTCMilliseconds() - 1);
 
     // Get properties registered this week with users
     const weeklyProperties = await db.select({
@@ -401,9 +408,11 @@ export class DatabaseStorage implements IStorage {
     
     userProperties.forEach(property => {
       const propertyDate = new Date(property.createdAt);
+      const dayOfWeek = propertyDate.getUTCDay();
+      const daysToMonday = dayOfWeek === 0 ? 6 : dayOfWeek - 1;
       const weekStart = new Date(propertyDate);
-      weekStart.setDate(propertyDate.getDate() - propertyDate.getDay() + 1);
-      weekStart.setHours(0, 0, 0, 0);
+      weekStart.setUTCDate(propertyDate.getUTCDate() - daysToMonday);
+      weekStart.setUTCHours(0, 0, 0, 0); // Lunes 00:00 UTC para agrupar (historial)
       
       const weekKey = weekStart.toISOString().split('T')[0];
       weeklyGroups.set(weekKey, (weeklyGroups.get(weekKey) || 0) + 1);

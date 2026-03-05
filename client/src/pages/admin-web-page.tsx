@@ -1066,7 +1066,7 @@ export default function AdminWebPage() {
               {user.isSuperAdmin && (
                 <TabsTrigger value="payments" className="text-sm md:text-base text-white data-[state=active]:bg-[#ff7a5c] data-[state=active]:text-white data-[state=active]:shadow-none data-[state=active]:border-b-2 data-[state=active]:border-gray-800 rounded-none border-b-2 border-transparent data-[state=inactive]:bg-transparent">
                   <DollarSign className="h-4 w-4 md:h-5 md:w-5 mr-2" />
-                  $ Pagos
+                  ₡ Pagos
                 </TabsTrigger>
               )}
             </TabsList>
@@ -1391,7 +1391,7 @@ export default function AdminWebPage() {
                     <div className="text-center py-8 text-muted-foreground">
                       <DollarSign className="h-12 w-12 mx-auto mb-4 opacity-50" />
                       <p>No hay pagos pendientes esta semana.</p>
-                      <p className="text-sm">Los usuarios que registren propiedades aparecerán aquí.</p>
+                      <p className="text-sm">Los usuarios que registren propiedades aparecerán aquí. Los administradores no reciben pagos.</p>
                     </div>
                   ) : (
                     <>
@@ -1472,8 +1472,8 @@ export default function AdminWebPage() {
 
                       <div className="mt-4 p-3 bg-blue-50 border border-blue-200 rounded-lg">
                         <p className="text-sm text-blue-700">
-                          <strong>Nota:</strong> Los pagos se calculan automáticamente cada semana. 
-                          Cada propiedad registrada vale ₡250 colones. Solo se muestran usuarios con propiedades registradas esta semana.
+                          <strong>Nota:</strong> Los pagos se calculan automáticamente cada semana (Lun–Dom, zona Costa Rica). 
+                          Cada propiedad registrada vale ₡250 colones. Solo usuarios normales (no administradores) reciben pagos.
                         </p>
                       </div>
                     </>
