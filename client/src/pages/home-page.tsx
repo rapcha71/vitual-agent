@@ -130,7 +130,7 @@ export default function HomePage() {
                   </Link>
                   {user?.isAdmin && (
                     <Link href="/admin">
-                      <Button variant="outline" className="w-full nav-option-orange hover:bg-[#F05023]/10">
+                      <Button variant="outline" className="w-full bg-white nav-option-orange">
                         <Shield className="h-4 w-4 mr-2" />
                         Panel de Administración
                       </Button>
@@ -145,7 +145,7 @@ export default function HomePage() {
                 <Link href="/properties">
                   <Button
                     variant="outline"
-                    className="w-full h-full flex flex-col items-center justify-center py-4 px-2 gap-1 text-sm bg-white/90 backdrop-blur-sm nav-option-orange hover:bg-[#F05023]/10"
+                    className="w-full h-full flex flex-col items-center justify-center py-4 px-2 gap-1 text-sm bg-white nav-option-orange"
                   >
                     <Building className="h-4 w-4" />
                     <span>Propiedades</span>
@@ -154,7 +154,7 @@ export default function HomePage() {
                 <Link href="/profile">
                   <Button
                     variant="outline"
-                    className="w-full h-full flex flex-col items-center justify-center py-4 px-2 gap-1 text-sm bg-white/90 backdrop-blur-sm nav-option-orange hover:bg-[#F05023]/10"
+                    className="w-full h-full flex flex-col items-center justify-center py-4 px-2 gap-1 text-sm bg-white nav-option-orange"
                   >
                     <User className="h-4 w-4" />
                     <span>Perfil</span>
@@ -163,7 +163,7 @@ export default function HomePage() {
                 <Link href="/dashboard">
                   <Button
                     variant="outline"
-                    className="w-full h-full flex flex-col items-center justify-center py-4 px-2 gap-1 text-sm bg-white/90 backdrop-blur-sm nav-option-orange hover:bg-[#F05023]/10"
+                    className="w-full h-full flex flex-col items-center justify-center py-4 px-2 gap-1 text-sm bg-white nav-option-orange"
                   >
                     <Building className="h-4 w-4" />
                     <span>Dashboard</span>
@@ -172,7 +172,7 @@ export default function HomePage() {
                 <Link href="/messages">
                   <Button
                     variant="outline"
-                    className="w-full h-full flex flex-col items-center justify-center py-4 px-2 gap-1 text-sm bg-white/90 backdrop-blur-sm nav-option-orange hover:bg-[#F05023]/10 relative"
+                    className="w-full h-full flex flex-col items-center justify-center py-4 px-2 gap-1 text-sm bg-white nav-option-orange relative"
                   >
                     <MessageCircle className="h-4 w-4" />
                     <span>Mensajes</span>
@@ -187,7 +187,7 @@ export default function HomePage() {
                   <DialogTrigger asChild>
                     <Button
                       variant="outline"
-                      className="w-full h-full flex flex-col items-center justify-center py-4 px-2 gap-1 text-sm bg-white/90 backdrop-blur-sm nav-option-orange hover:bg-[#F05023]/10"
+                      className="w-full h-full flex flex-col items-center justify-center py-4 px-2 gap-1 text-sm bg-white nav-option-orange"
                     >
                       <Share2 className="h-4 w-4" />
                       <span>Compartir App</span>

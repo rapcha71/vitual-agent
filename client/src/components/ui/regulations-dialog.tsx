@@ -13,7 +13,7 @@ export function RegulationsDialog() {
   return (
     <Dialog>
       <DialogTrigger asChild>
-        <Button variant="outline" className="gap-2 w-full nav-option-orange hover:bg-[#F05023]/10">
+        <Button variant="outline" className="gap-2 w-full bg-white nav-option-orange">
           <Book className="h-4 w-4" />
           Ver Reglamento
         </Button>

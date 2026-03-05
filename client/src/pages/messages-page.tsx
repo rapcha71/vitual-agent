@@ -158,7 +158,7 @@ export default function MessagesPage() {
   });
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen bg-white">
       <header className="bg-[#F05023] text-white p-3 sticky top-0 z-10">
         <div className="flex items-center justify-between max-w-4xl mx-auto">
           <Button
@@ -190,7 +190,7 @@ export default function MessagesPage() {
       <main className="max-w-4xl mx-auto p-4 space-y-4">
         <h1 className="text-xl font-bold">Mensajes</h1>
 
-        <Card>
+        <Card className="bg-white">
           <CardHeader>
             <CardTitle className="text-lg">
               {user?.isSuperAdmin ? 'Enviar mensaje' : 'Enviar mensaje al administrador'}
@@ -279,7 +279,7 @@ export default function MessagesPage() {
           </CardContent>
         </Card>
 
-        <Card>
+        <Card className="bg-white">
           <CardHeader>
             <CardTitle className="text-lg">Historial de mensajes</CardTitle>
           </CardHeader>
