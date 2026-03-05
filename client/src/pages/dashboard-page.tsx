@@ -138,22 +138,47 @@ export default function DashboardPage() {
       </header>
 
       <main className="page-content space-y-4 content-wrapper">
-        <div className="flex justify-between items-center">
-          <h1 className="text-xl font-bold">Bienvenido, {user?.fullName}</h1>
+        <h1 className="text-xl font-bold">Bienvenido, {user?.fullName}</h1>
+
+        {/* Grupo de 4 botones principales: Propiedades, Perfil, Dashboard, Mensajes */}
+        <div className="grid grid-cols-2 gap-4">
+          <Button
+            onClick={() => setLocation("/properties")}
+            className="h-20 flex flex-col items-center justify-center space-y-1 transform transition-all duration-200 hover:scale-[1.02] active:scale-[0.98] shadow-[4px_4px_10px_rgba(240,80,35,0.3)] hover:shadow-[6px_6px_15px_rgba(240,80,35,0.4)]"
+          >
+            <Home className="h-6 w-6" />
+            <span className="text-sm">Propiedades</span>
+          </Button>
+
+          <Button
+            onClick={() => setLocation("/profile")}
+            className="h-20 flex flex-col items-center justify-center space-y-1 transform transition-all duration-200 hover:scale-[1.02] active:scale-[0.98] shadow-[4px_4px_10px_rgba(240,80,35,0.3)] hover:shadow-[6px_6px_15px_rgba(240,80,35,0.4)]"
+          >
+            <User className="h-6 w-6" />
+            <span className="text-sm">Perfil</span>
+          </Button>
+
+          <Button
+            onClick={() => setLocation("/dashboard")}
+            className="h-20 flex flex-col items-center justify-center space-y-1 transform transition-all duration-200 hover:scale-[1.02] active:scale-[0.98] shadow-[4px_4px_10px_rgba(240,80,35,0.3)] hover:shadow-[6px_6px_15px_rgba(240,80,35,0.4)]"
+          >
+            <BarChart className="h-6 w-6" />
+            <span className="text-sm">Dashboard</span>
+          </Button>
+
           <Dialog>
             <DialogTrigger asChild>
               <Button
-                variant="outline"
-                size="sm"
-                className="relative"
+                className="h-20 flex flex-col items-center justify-center space-y-1 transform transition-all duration-200 hover:scale-[1.02] active:scale-[0.98] shadow-[4px_4px_10px_rgba(240,80,35,0.3)] hover:shadow-[6px_6px_15px_rgba(240,80,35,0.4)] relative"
               >
-                <MessageCircle className="h-4 w-4" />
+                <MessageCircle className="h-6 w-6" />
+                <span className="text-sm">Mensajes</span>
                 {unreadCount?.count > 0 && (
                   <Badge
                     variant="destructive"
-                    className="absolute -top-2 -right-2 h-5 w-5 flex items-center justify-center p-0"
+                    className="absolute top-1 right-1 h-5 w-5 flex items-center justify-center p-0 text-xs"
                   >
-                    {unreadCount?.count}
+                    {unreadCount?.count > 9 ? "9+" : unreadCount?.count}
                   </Badge>
                 )}
               </Button>
@@ -207,34 +232,6 @@ export default function DashboardPage() {
               </ScrollArea>
             </DialogContent>
           </Dialog>
-        </div>
-
-        {/* Grupo de 3 botones principales */}
-        <div className="grid grid-cols-3 gap-4">
-          <Button
-            onClick={() => setLocation("/properties")}
-            className="h-20 flex flex-col items-center justify-center space-y-1 transform transition-all duration-200 hover:scale-[1.02] active:scale-[0.98] shadow-[4px_4px_10px_rgba(240,80,35,0.3)] hover:shadow-[6px_6px_15px_rgba(240,80,35,0.4)]"
-          >
-            <Home className="h-6 w-6" />
-            <span className="text-sm">Propiedades</span>
-          </Button>
-
-          <Button
-            onClick={() => setLocation("/profile")}
-            className="h-20 flex flex-col items-center justify-center space-y-1 transform transition-all duration-200 hover:scale-[1.02] active:scale-[0.98] shadow-[4px_4px_10px_rgba(240,80,35,0.3)] hover:shadow-[6px_6px_15px_rgba(240,80,35,0.4)]"
-          >
-            <User className="h-6 w-6" />
-            <span className="text-sm">Perfil</span>
-          </Button>
-
-          <Button
-            onClick={() => setLocation("/dashboard")}
-            className="h-20 flex flex-col items-center justify-center space-y-1 transform transition-all duration-200 hover:scale-[1.02] active:scale-[0.98] shadow-[4px_4px_10px_rgba(240,80,35,0.3)] hover:shadow-[6px_6px_15px_rgba(240,80,35,0.4)]"
-          >
-            <BarChart className="h-6 w-6" />
-            <span className="text-sm">Dashboard</span>
-          </Button>
-
         </div>
 
         <Dialog>
