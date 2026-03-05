@@ -65,10 +65,21 @@ export type LocationType = {
   address?: string;
 };
 
+export const PROVINCE_CODES: Record<string, string> = {
+  "01": "San José",
+  "02": "Cartago",
+  "03": "Heredia",
+  "04": "Alajuela",
+  "05": "Puntarenas",
+  "06": "Guanacaste",
+  "07": "Limón",
+};
+
 export const properties = pgTable("properties", {
   id: serial("id").primaryKey(),
   userId: integer("user_id").notNull().references(() => users.id),
   propertyType: text("property_type").notNull(),
+  province: text("province"),
   signPhoneNumber: text("sign_phone_number"),
   location: jsonb("location").notNull().$type<LocationType>(),
   propertyId: text("property_id").notNull().unique(),
@@ -212,15 +223,16 @@ export const propertySchema = z.object({
 export const insertPropertySchema = createInsertSchema(properties)
   .pick({
     propertyType: true,
+    province: true,
     signPhoneNumber: true,
     location: true,
-    propertyId: true,
     images: true,
     kmlData: true,
     markerColor: true
   })
   .extend({
     propertyType: z.enum([PropertyType.house, PropertyType.land, PropertyType.commercial]),
+    province: z.enum(["01", "02", "03", "04", "05", "06", "07"]).optional().default("01"),
     location: LocationSchema,
     kmlData: z.string().optional(),
     markerColor: z.string().optional().default(""),

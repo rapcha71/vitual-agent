@@ -13,7 +13,6 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } f
 import imageCompression from "browser-image-compression";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { apiRequest } from "@/lib/queryClient";
-import { nanoid } from "nanoid";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 
@@ -50,9 +49,9 @@ export default function PropertyEntry() {
     resolver: zodResolver(insertPropertySchema),
     defaultValues: {
       propertyType: "",
+      province: "01",
       signPhoneNumber: "",
       location: { lat: 0, lng: 0 },
-      propertyId: nanoid(8),
       images: { sign: "", property: "" },
       markerColor: ""
     }
@@ -633,6 +632,7 @@ export default function PropertyEntry() {
                       console.error("Form validation errors:", errors);
                       const errorMessages: string[] = [];
                       if (errors.propertyType) errorMessages.push("Seleccione tipo de propiedad");
+                      if (errors.province) errorMessages.push("Seleccione provincia");
                       if (errors.images) errorMessages.push("Capture las fotos requeridas");
                       if (errors.location) errorMessages.push("Capture la ubicación");
                       toast({
@@ -657,6 +657,33 @@ export default function PropertyEntry() {
                                 <SelectItem value="house" className="text-gray-900 focus:bg-gray-100 focus:text-gray-900">Casa</SelectItem>
                                 <SelectItem value="land" className="text-gray-900 focus:bg-gray-100 focus:text-gray-900">Terreno</SelectItem>
                                 <SelectItem value="commercial" className="text-gray-900 focus:bg-gray-100 focus:text-gray-900">Local Comercial</SelectItem>
+                              </SelectContent>
+                            </Select>
+                            <FormMessage />
+                          </FormItem>
+                        )}
+                      />
+
+                      <FormField
+                        control={form.control}
+                        name="province"
+                        render={({ field }) => (
+                          <FormItem>
+                            <FormLabel className="text-lg">Provincia</FormLabel>
+                            <Select onValueChange={field.onChange} defaultValue={field.value}>
+                              <FormControl>
+                                <SelectTrigger className="bg-white border-gray-200 text-gray-900">
+                                  <SelectValue placeholder="Seleccione provincia" />
+                                </SelectTrigger>
+                              </FormControl>
+                              <SelectContent className="bg-white border border-gray-200 text-gray-900 [&_[data-highlighted]]:bg-gray-100">
+                                <SelectItem value="01" className="text-gray-900 focus:bg-gray-100 focus:text-gray-900">San José</SelectItem>
+                                <SelectItem value="02" className="text-gray-900 focus:bg-gray-100 focus:text-gray-900">Cartago</SelectItem>
+                                <SelectItem value="03" className="text-gray-900 focus:bg-gray-100 focus:text-gray-900">Heredia</SelectItem>
+                                <SelectItem value="04" className="text-gray-900 focus:bg-gray-100 focus:text-gray-900">Alajuela</SelectItem>
+                                <SelectItem value="05" className="text-gray-900 focus:bg-gray-100 focus:text-gray-900">Puntarenas</SelectItem>
+                                <SelectItem value="06" className="text-gray-900 focus:bg-gray-100 focus:text-gray-900">Guanacaste</SelectItem>
+                                <SelectItem value="07" className="text-gray-900 focus:bg-gray-100 focus:text-gray-900">Limón</SelectItem>
                               </SelectContent>
                             </Select>
                             <FormMessage />

@@ -6,9 +6,9 @@ import { setupAuth } from "./auth";
 import { storage } from "./storage";
 import webauthnRouter from "./routes/webauthn";
 import { insertPropertySchema } from "@shared/schema";
-import { nanoid } from "nanoid";
 import ocrService from "./services/ocr";
 import { isWithinRadius } from "./lib/geo-utils";
+import { pool } from "./db";
 import { requireAdmin } from "./middleware/admin";
 import { insertMessageSchema } from "@shared/schema";
 import multer from "multer";
@@ -340,8 +340,20 @@ export async function registerRoutes(app: Express): Promise<Server> {
       };
       const markerColor = propertyData.markerColor || markerColorMap[propertyData.propertyType] || "blue";
 
-      // Create the property with extracted phone number if found
-      const propertyId = nanoid();
+      // Property ID format: XX + T + NNNNN (provincia 01-07, tipo 1-3, consecutivo global)
+      const provinceCode = propertyData.province || "01";
+      const typeCode = { house: "1", land: "2", commercial: "3" }[propertyData.propertyType] || "1";
+      let nextConsecutive = 1;
+      try {
+        const seqResult = await pool.query("SELECT nextval('property_consecutive_seq') as next");
+        nextConsecutive = Number(seqResult.rows?.[0]?.next ?? 1);
+      } catch (e) {
+        logger.warn("property_consecutive_seq not found, using count fallback", e);
+        const countResult = await pool.query("SELECT COUNT(*)::int as count FROM properties");
+        nextConsecutive = (countResult.rows?.[0]?.count ?? 0) + 1;
+      }
+      const propertyId = `${provinceCode}${typeCode}${String(nextConsecutive).padStart(5, "0")}`;
+
       const property = await storage.createProperty({
         ...propertyData,
         userId: req.user.id,
@@ -786,6 +798,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
       // Prepare data for export
       const sheetName = `Exportación_${new Date().toISOString().split('T')[0]}`;
       const headers = [
+        'ID Propiedad',
         'Tipo de Propiedad',
         'Teléfono',
         'Ubicación (Lat, Lng)',
@@ -794,6 +807,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
       ];
 
       const rows = sortedProperties.map(prop => [
+        prop.propertyId || '',
         translatePropertyType(prop.propertyType),
         prop.signPhoneNumber || 'Sin teléfono',
         formatLocation(prop.location),
@@ -837,7 +851,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
       // Add headers
       await sheets.spreadsheets.values.update({
         spreadsheetId,
-        range: `${sheetName}!A1:E1`,
+        range: `${sheetName}!A1:F1`,
         valueInputOption: 'RAW',
         requestBody: {
           values: [headers]
@@ -848,7 +862,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
       if (rows.length > 0) {
         await sheets.spreadsheets.values.update({
           spreadsheetId,
-          range: `${sheetName}!A2:E${rows.length + 1}`,
+          range: `${sheetName}!A2:F${rows.length + 1}`,
           valueInputOption: 'RAW',
           requestBody: {
             values: rows
