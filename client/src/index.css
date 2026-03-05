@@ -68,6 +68,14 @@
     transform-origin: center center;
   }
 
+  /* Fondo naranja al presionar opciones del menú (override de estilos) */
+  .nav-option-orange:active,
+  a:has(.nav-option-orange):active .nav-option-orange {
+    background-color: #F05023 !important;
+    color: white !important;
+    border-color: #F05023 !important;
+  }
+
   .page-content {
     @apply flex-1 w-full overflow-y-auto;
   }
