@@ -548,7 +548,13 @@ export default function AdminWebPage() {
   const [isUploadingImage, setIsUploadingImage] = useState(false);
 
 
-  const { data: properties = [] } = useQuery<PropertyWithUser[]>({
+  const { 
+    data: properties = [], 
+    isLoading: propertiesLoading, 
+    isError: propertiesError,
+    error: propertiesErrorDetail,
+    refetch: refetchProperties 
+  } = useQuery<PropertyWithUser[]>({
     queryKey: ['/api/admin/properties'],
     enabled: user?.isAdmin === true
   });
@@ -1129,6 +1135,32 @@ export default function AdminWebPage() {
                     </Button>
                   </div>
                 )}
+                {propertiesLoading ? (
+                  <div className="flex flex-col items-center justify-center py-16">
+                    <Loader2 className="h-10 w-10 animate-spin text-[#F05023] mb-4" />
+                    <p className="text-gray-600">Cargando propiedades...</p>
+                  </div>
+                ) : propertiesError ? (
+                  <div className="flex flex-col items-center justify-center py-16 text-center">
+                    <p className="text-red-600 font-medium mb-2">Error al cargar las propiedades</p>
+                    <p className="text-sm text-gray-600 mb-4 max-w-md">
+                      {(propertiesErrorDetail as { message?: string })?.message || 
+                        'No se pudo conectar con el servidor. Verificá tu sesión e intentá de nuevo.'}
+                    </p>
+                    <Button onClick={() => refetchProperties()} variant="outline" className="text-[#F05023] border-[#F05023] hover:bg-[#F05023]/10">
+                      Reintentar
+                    </Button>
+                  </div>
+                ) : properties.length === 0 ? (
+                  <div className="flex flex-col items-center justify-center py-16 text-center">
+                    <p className="text-gray-600 font-medium mb-2">No hay propiedades registradas</p>
+                    <p className="text-sm text-gray-500 mb-4">Usá "Agregar Prop." para registrar la primera propiedad.</p>
+                    <Button onClick={() => setLocation("/property/new")} className="bg-[#F05023] hover:bg-[#E04015]">
+                      <Plus className="h-4 w-4 mr-2" />
+                      Agregar Propiedad
+                    </Button>
+                  </div>
+                ) : (
                 <Table className="[&_th]:bg-white [&_th]:text-gray-800 [&_td]:bg-white [&_td]:text-gray-900">
                   <TableHeader>
                     <TableRow className="border-gray-200 hover:bg-gray-50">
@@ -1284,6 +1316,7 @@ export default function AdminWebPage() {
                     ))}
                   </TableBody>
                 </Table>
+                )}
               </div>
             </TabsContent>
 
