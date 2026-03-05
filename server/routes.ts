@@ -43,6 +43,13 @@ export async function registerRoutes(app: Express): Promise<Server> {
     res.json({ status: 'ok', timestamp: new Date().toISOString() });
   });
 
+  // Config público para el cliente (API key de Maps - runtime, no build-time)
+  app.get('/api/config', (_req, res) => {
+    res.json({
+      googleMapsApiKey: process.env.VITE_GOOGLE_MAPS_API_KEY || process.env.GOOGLE_MAPS_API_KEY || ''
+    });
+  });
+
   // Upload message image endpoint - returns base64 data URL (no local file storage)
   app.post('/api/upload/message-image', (req, res, next) => {
     if (!req.isAuthenticated()) {
@@ -257,17 +264,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
 
     try {
-      const properties = await storage.getPropertiesByUserId(req.user.id);
-      // Optimización: no enviar imágenes en la lista (cargar bajo demanda vía /api/properties/:id/images)
-      const lightweightProperties = properties.map(p => {
-        let hasImages = false;
-        if (p.images) {
-          if (Array.isArray(p.images)) hasImages = p.images.length > 0;
-          else if (typeof p.images === 'object') hasImages = Object.values(p.images).some(v => typeof v === 'string' && v.startsWith('data:'));
-        }
-        const { images: _, ...rest } = p;
-        return { ...rest, hasImages };
-      });
+      const lightweightProperties = await storage.getPropertiesListByUserId(req.user.id);
       res.set('Cache-Control', 'private, max-age=60');
       res.json(lightweightProperties);
     } catch (error: any) {

@@ -25,6 +25,7 @@ import { List } from "lucide-react";
 const MapComponent = memo(forwardRef(({ properties }: { properties: PropertyWithUser[] }, ref) => {
   const [isLoading, setIsLoading] = useState(true);
   const [mapError, setMapError] = useState<string | null>(null);
+  const [apiKey, setApiKey] = useState<string>("");
   const mapRef = useRef<HTMLDivElement>(null);
   const map = useRef<google.maps.Map | null>(null);
   const markersRef = useRef<google.maps.Marker[]>([]);
@@ -299,7 +300,16 @@ const MapComponent = memo(forwardRef(({ properties }: { properties: PropertyWith
   }));
 
 
+  // Obtener API key desde el servidor (funciona en Railway/Docker donde VITE_* no se inyecta en build)
   useEffect(() => {
+    fetch("/api/config", { credentials: "include" })
+      .then((r) => r.json())
+      .then((data) => setApiKey(data.googleMapsApiKey || ""))
+      .catch(() => setApiKey(""));
+  }, []);
+
+  useEffect(() => {
+    if (!apiKey) return;
     let isMounted = true;
     let onResize: (() => void) | undefined;
     let onOrientationChange: (() => void) | undefined;
@@ -310,8 +320,7 @@ const MapComponent = memo(forwardRef(({ properties }: { properties: PropertyWith
         return;
       }
 
-      if (!import.meta.env.VITE_GOOGLE_MAPS_API_KEY) {
-        console.error('Google Maps API key is missing');
+      if (!apiKey) {
         setIsLoading(false);
         return;
       }
@@ -323,7 +332,7 @@ const MapComponent = memo(forwardRef(({ properties }: { properties: PropertyWith
 
       try {
         const loader = new Loader({
-          apiKey: import.meta.env.VITE_GOOGLE_MAPS_API_KEY,
+          apiKey,
           version: "weekly",
           libraries: ["places"]
         });
@@ -385,9 +394,9 @@ const MapComponent = memo(forwardRef(({ properties }: { properties: PropertyWith
       if (typeof onResize === 'function') window.removeEventListener('resize', onResize);
       if (typeof onOrientationChange === 'function') window.removeEventListener('orientationchange', onOrientationChange);
     };
-  }, [properties, toast, cleanupMap, addMarkers]);
+  }, [apiKey, properties, toast, cleanupMap, addMarkers]);
 
-  const hasApiKey = !!import.meta.env.VITE_GOOGLE_MAPS_API_KEY;
+  const hasApiKey = !!apiKey;
   const hasProperties = properties.length > 0;
 
   if (!hasApiKey) {
@@ -397,7 +406,7 @@ const MapComponent = memo(forwardRef(({ properties }: { properties: PropertyWith
         <h3 className="text-lg font-semibold text-gray-700 mb-2">Mapa no disponible</h3>
         <p className="text-sm text-gray-600 max-w-md">
           Para ver el mapa necesitás configurar la API key de Google Maps.
-          <br />Agregá <code className="bg-gray-200 px-1 rounded">VITE_GOOGLE_MAPS_API_KEY</code> en tu archivo <code className="bg-gray-200 px-1 rounded">.env</code>
+          <br />Agregá <code className="bg-gray-200 px-1 rounded">VITE_GOOGLE_MAPS_API_KEY</code> en tu archivo <code className="bg-gray-200 px-1 rounded">.env</code> o en las variables de Railway.
         </p>
       </div>
     );
@@ -817,7 +826,7 @@ export default function AdminWebPage() {
             <img
               src="/assets/logo-full.png"
               alt="Virtual Agent"
-              className="h-14 w-auto max-w-[60vw] object-contain"
+              className="h-14 w-auto max-w-[60vw] object-contain header-logo-2x"
             />
           </div>
           <Button
