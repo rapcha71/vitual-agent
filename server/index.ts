@@ -9,6 +9,7 @@ import { setupAuth } from "./auth";
 import cookieParser from "cookie-parser";
 import { storage } from "./storage";
 import { logger } from "./lib/logger";
+import { pool } from "./db";
 
 const app = express();
 
@@ -149,6 +150,16 @@ try {
            ${useHttps ? `\n           📱 En el celular usá: ${protocol}://192.168.1.16:${PORT} (reemplazá con tu IP)\n           La cámara y GPS funcionan con HTTPS.` : ""}
            - Environment: ${app.get("env")}
         `);
+        
+        // Ensure province column and sequence exist (migration 0005 - idempotent)
+        try {
+          await pool.query(`ALTER TABLE "properties" ADD COLUMN IF NOT EXISTS "province" text DEFAULT '01'`);
+          await pool.query(`CREATE SEQUENCE IF NOT EXISTS "property_consecutive_seq"`);
+          await pool.query(`SELECT setval('property_consecutive_seq', (SELECT COALESCE(COUNT(*), 0) FROM properties))`);
+          debugLog("Schema migration (province, sequence) verified");
+        } catch (migErr) {
+          logger.warn("Startup migration check:", migErr);
+        }
         
         // Clean up old messages (older than 7 days) on startup
         try {
