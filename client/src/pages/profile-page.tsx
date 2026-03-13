@@ -72,15 +72,11 @@ export default function ProfilePage() {
   };
 
   const handleSave = () => {
-    const payload: ProfileUpdate = {};
-    if (editValues.fullName !== undefined) payload.fullName = editValues.fullName || null;
-    if (editValues.mobile !== undefined) payload.mobile = editValues.mobile || null;
-    if (editValues.nickname !== undefined) payload.nickname = editValues.nickname || null;
-    if (Object.keys(payload).length === 0) {
-      setIsEditing(false);
-      return;
-    }
-    updateProfileMutation.mutate(payload);
+    updateProfileMutation.mutate({
+      fullName: (editValues.fullName ?? "").trim() || null,
+      mobile: (editValues.mobile ?? "").trim() || null,
+      nickname: (editValues.nickname ?? "").trim() || null,
+    });
   };
 
   return (
@@ -200,12 +196,15 @@ export default function ProfilePage() {
                   <span className="text-muted-foreground md:pt-2">Alias:</span>
                   {isEditing ? (
                     <Input
+                      name="nickname"
                       value={editValues.nickname ?? ""}
                       onChange={(e) =>
                         setEditValues((prev) => ({ ...prev, nickname: e.target.value }))
                       }
-                      placeholder="Alias"
+                      placeholder="Ingrese su alias"
                       className="max-w-xs"
+                      autoComplete="nickname"
+                      disabled={false}
                     />
                   ) : (
                     <span>{user?.nickname || "No establecido"}</span>
