@@ -321,6 +321,25 @@ export class DatabaseStorage implements IStorage {
     logger.debug("Password updated successfully");
   }
 
+  async updateUserProfile(userId: number, data: { fullName?: string | null; mobile?: string | null; nickname?: string | null }): Promise<User> {
+    logger.debug("Updating user profile:", { userId, fields: Object.keys(data) });
+    const updateData: Record<string, string | null | undefined> = {};
+    if (data.fullName !== undefined) updateData.fullName = data.fullName;
+    if (data.mobile !== undefined) updateData.mobile = data.mobile;
+    if (data.nickname !== undefined) updateData.nickname = data.nickname;
+    if (Object.keys(updateData).length === 0) {
+      const [u] = await db.select().from(users).where(eq(users.id, userId));
+      return u!;
+    }
+    const [updatedUser] = await db
+      .update(users)
+      .set(updateData)
+      .where(eq(users.id, userId))
+      .returning();
+    logger.debug("User profile updated successfully");
+    return updatedUser;
+  }
+
   async clearPasswordResetCode(userId: number): Promise<void> {
     this.passwordResetCodes.delete(userId);
   }

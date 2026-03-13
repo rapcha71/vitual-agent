@@ -27,6 +27,7 @@ export interface IStorage {
   storePasswordResetCode(userId: number, code: string, expireTime: number): Promise<void>;
   verifyPasswordResetCode(userId: number, code: string): Promise<boolean>;
   updateUserPassword(userId: number, hashedPassword: string): Promise<void>;
+  updateUserProfile(userId: number, data: { fullName?: string | null; mobile?: string | null; nickname?: string | null }): Promise<User>;
   clearPasswordResetCode(userId: number): Promise<void>;
   // New methods for messages
   createMessage(message: InsertMessage & { senderId: number }): Promise<Message>;

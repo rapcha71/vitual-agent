@@ -15,7 +15,8 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { useAuth } from "@/hooks/use-auth";
-import { insertUserSchema } from "@shared/schema";
+import { insertUserSchema, registerFormSchema } from "@shared/schema";
+import { cn } from "@/lib/utils";
 import { Redirect, useLocation } from "wouter";
 import { useToast } from "@/hooks/use-toast";
 import { Loader2 } from "lucide-react";
@@ -38,7 +39,8 @@ export default function AuthPage() {
   const [rememberMe, setRememberMe] = useState(true);
 
   const registerForm = useForm({
-    resolver: zodResolver(insertUserSchema),
+    resolver: zodResolver(registerFormSchema),
+    mode: "onChange", // Revalida al escribir para que desaparezca el naranja
     defaultValues: {
       username: "",
       password: "",
@@ -83,6 +85,14 @@ export default function AuthPage() {
     } finally {
       setIsSubmitting(false);
     }
+  };
+
+  const handleRegisterValidationError = () => {
+    toast({
+      title: "Campos incompletos",
+      description: "Por favor, completa todos los espacios para poder registrarte",
+      variant: "destructive",
+    });
   };
 
   if (user) {
@@ -208,7 +218,7 @@ className="h-4 w-4 rounded border-gray-300 text-[#F05023] focus:ring-2 focus:rin
                 <TabsContent value="register">
                   <Form {...registerForm}>
                     <form 
-                      onSubmit={registerForm.handleSubmit(handleRegister)} 
+                      onSubmit={registerForm.handleSubmit(handleRegister, handleRegisterValidationError)} 
                       className="space-y-4 bg-white/95 backdrop-blur-sm rounded-lg p-4"
                       aria-label="Registrarse"
                       noValidate
@@ -216,7 +226,7 @@ className="h-4 w-4 rounded border-gray-300 text-[#F05023] focus:ring-2 focus:rin
                       <FormField
                         control={registerForm.control}
                         name="fullName"
-                        render={({ field }) => (
+                        render={({ field, fieldState }) => (
                           <FormItem>
                             <FormLabel>Nombre Completo</FormLabel>
                             <FormControl>
@@ -224,6 +234,9 @@ className="h-4 w-4 rounded border-gray-300 text-[#F05023] focus:ring-2 focus:rin
                                 placeholder="Ingrese su nombre completo" 
                                 {...field} 
                                 disabled={isLoading}
+                                className={cn(
+                                  fieldState.error && "border-orange-500 bg-orange-50/50 focus-visible:ring-orange-500 focus-visible:border-orange-500"
+                                )}
                               />
                             </FormControl>
                             <FormMessage />
@@ -234,7 +247,7 @@ className="h-4 w-4 rounded border-gray-300 text-[#F05023] focus:ring-2 focus:rin
                       <FormField
                         control={registerForm.control}
                         name="username"
-                        render={({ field }) => (
+                        render={({ field, fieldState }) => (
                           <FormItem>
                             <FormLabel>Correo</FormLabel>
                             <FormControl>
@@ -242,6 +255,9 @@ className="h-4 w-4 rounded border-gray-300 text-[#F05023] focus:ring-2 focus:rin
                                 placeholder="Ingrese su correo electrónico" 
                                 {...field} 
                                 disabled={isLoading}
+                                className={cn(
+                                  fieldState.error && "border-orange-500 bg-orange-50/50 focus-visible:ring-orange-500 focus-visible:border-orange-500"
+                                )}
                               />
                             </FormControl>
                             <FormMessage />
@@ -252,7 +268,7 @@ className="h-4 w-4 rounded border-gray-300 text-[#F05023] focus:ring-2 focus:rin
                       <FormField
                         control={registerForm.control}
                         name="mobile"
-                        render={({ field }) => (
+                        render={({ field, fieldState }) => (
                           <FormItem>
                             <FormLabel>Teléfono</FormLabel>
                             <FormControl>
@@ -260,6 +276,9 @@ className="h-4 w-4 rounded border-gray-300 text-[#F05023] focus:ring-2 focus:rin
                                 placeholder="Ingrese su número de teléfono" 
                                 {...field} 
                                 disabled={isLoading}
+                                className={cn(
+                                  fieldState.error && "border-orange-500 bg-orange-50/50 focus-visible:ring-orange-500 focus-visible:border-orange-500"
+                                )}
                               />
                             </FormControl>
                             <FormMessage />
@@ -270,7 +289,7 @@ className="h-4 w-4 rounded border-gray-300 text-[#F05023] focus:ring-2 focus:rin
                       <FormField
                         control={registerForm.control}
                         name="paymentMobile"
-                        render={({ field }) => (
+                        render={({ field, fieldState }) => (
                           <FormItem>
                             <FormLabel>Teléfono para transferencias SINPE</FormLabel>
                             <FormControl>
@@ -278,6 +297,9 @@ className="h-4 w-4 rounded border-gray-300 text-[#F05023] focus:ring-2 focus:rin
                                 placeholder="Número para recibir pagos vía SINPE" 
                                 {...field} 
                                 disabled={isLoading}
+                                className={cn(
+                                  fieldState.error && "border-orange-500 bg-orange-50/50 focus-visible:ring-orange-500 focus-visible:border-orange-500"
+                                )}
                               />
                             </FormControl>
                             <p className="text-xs text-muted-foreground mt-1">
@@ -291,7 +313,7 @@ className="h-4 w-4 rounded border-gray-300 text-[#F05023] focus:ring-2 focus:rin
                       <FormField
                         control={registerForm.control}
                         name="nickname"
-                        render={({ field }) => (
+                        render={({ field, fieldState }) => (
                           <FormItem>
                             <FormLabel>Alias</FormLabel>
                             <FormControl>
@@ -299,6 +321,9 @@ className="h-4 w-4 rounded border-gray-300 text-[#F05023] focus:ring-2 focus:rin
                                 placeholder="Ingrese su alias" 
                                 {...field} 
                                 disabled={isLoading}
+                                className={cn(
+                                  fieldState.error && "border-orange-500 bg-orange-50/50 focus-visible:ring-orange-500 focus-visible:border-orange-500"
+                                )}
                               />
                             </FormControl>
                             <FormMessage />
@@ -309,7 +334,7 @@ className="h-4 w-4 rounded border-gray-300 text-[#F05023] focus:ring-2 focus:rin
                       <FormField
                         control={registerForm.control}
                         name="password"
-                        render={({ field }) => (
+                        render={({ field, fieldState }) => (
                           <FormItem>
                             <FormLabel>Contraseña</FormLabel>
                             <FormControl>
@@ -318,12 +343,24 @@ className="h-4 w-4 rounded border-gray-300 text-[#F05023] focus:ring-2 focus:rin
                                 placeholder="Ingrese su contraseña" 
                                 {...field} 
                                 disabled={isLoading}
+                                className={cn(
+                                  fieldState.error && "border-orange-500 bg-orange-50/50 focus-visible:ring-orange-500 focus-visible:border-orange-500"
+                                )}
                               />
                             </FormControl>
                             <FormMessage />
                           </FormItem>
                         )}
                       />
+
+                      {Object.keys(registerForm.formState.errors).length > 0 && (
+                        <div
+                          role="alert"
+                          className="flex items-center gap-2 rounded-lg border border-orange-500 bg-orange-50/80 px-3 py-2 text-sm text-orange-800"
+                        >
+                          <span>Por favor, completa todos los espacios para poder registrarte.</span>
+                        </div>
+                      )}
 
                       <div className="text-sm text-gray-600 bg-white/95 backdrop-blur-sm p-3 rounded-lg space-y-2">
                         <p>

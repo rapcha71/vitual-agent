@@ -198,6 +198,28 @@ export function setupAuth(app: Express) {
     res.json(req.user);
   });
 
+  // Actualizar perfil del usuario autenticado
+  app.put("/api/user/profile", async (req, res) => {
+    if (!req.isAuthenticated()) {
+      return res.status(401).json({ message: "No autenticado" });
+    }
+    try {
+      const { fullName, mobile, nickname } = req.body;
+      const data: { fullName?: string | null; mobile?: string | null; nickname?: string | null } = {};
+      if (fullName !== undefined) data.fullName = fullName === "" ? null : fullName;
+      if (mobile !== undefined) data.mobile = mobile === "" ? null : mobile;
+      if (nickname !== undefined) data.nickname = nickname === "" ? null : nickname;
+      if (Object.keys(data).length === 0) {
+        return res.status(400).json({ message: "No se enviaron datos para actualizar" });
+      }
+      const updatedUser = await storage.updateUserProfile(req.user!.id, data);
+      res.json(updatedUser);
+    } catch (error: any) {
+      logger.error("Error updating profile:", error);
+      res.status(500).json({ message: error.message || "Error al actualizar el perfil" });
+    }
+  });
+
   // Password reset request
   app.post("/api/forgot-password", async (req, res) => {
     try {

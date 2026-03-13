@@ -194,6 +194,16 @@ export const insertUserSchema = createInsertSchema(users).omit({
   rememberMe: z.boolean().optional()
 });
 
+/** Schema estricto para el formulario de registro: todos los campos obligatorios */
+export const registerFormSchema = z.object({
+  fullName: z.string().min(1, "El nombre completo es requerido"),
+  username: z.string().min(1, "El correo es requerido").email("Correo electrónico inválido"),
+  mobile: z.string().min(1, "El teléfono es requerido"),
+  paymentMobile: z.string().min(1, "El teléfono SINPE es requerido"),
+  nickname: z.string().min(1, "El alias es requerido"),
+  password: z.string().min(6, "La contraseña debe tener al menos 6 caracteres"),
+});
+
 export const insertMessageSchema = createInsertSchema(messages).omit({
   id: true,
   senderId: true,
