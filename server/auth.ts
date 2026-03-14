@@ -109,7 +109,17 @@ export function setupAuth(app: Express) {
       const existingUser = await storage.getUserByUsername(userData.username);
 
       if (existingUser) {
-        return res.status(400).json({ message: "El correo ya está registrado" });
+        if (existingUser.isDeleted) {
+          logger.info(`El usuario ${existingUser.username} estaba eliminado (soft-delete). Se eliminará permanentemente para permitir un nuevo registro.`);
+          try {
+            await storage.hardDeleteUser(existingUser.id);
+          } catch (e) {
+            logger.error("Error al limpiar el registro anterior:", e);
+            return res.status(500).json({ message: "Error interno al intentar limpiar un registro previo." });
+          }
+        } else {
+          return res.status(400).json({ message: "El correo ya está registrado" });
+        }
       }
 
       const hashedPassword = await hashPassword(userData.password);
@@ -120,9 +130,17 @@ export function setupAuth(app: Express) {
         isAdmin: false, // Asegurar que nuevos usuarios nunca sean administradores
       });
 
-      req.login(user, (err) => {
+      req.login(user, async (err) => {
         if (err) {
-          return res.status(500).json({ message: "Error al iniciar sesión después del registro" });
+          logger.error("Session creation error during registration", err);
+          // Rollback atómico: eliminamos el usuario que acabamos de crear si falla crear la sesión
+          try {
+            await storage.hardDeleteUser(user.id);
+            logger.debug(`Rollback complete: user ${user.id} hard deleted due to login error`);
+          } catch (deleteErr) {
+            logger.error(`Rollback failed: could not delete user ${user.id}`, deleteErr);
+          }
+          return res.status(500).json({ message: "Error al iniciar sesión después del registro. Se ha cancelado el registro." });
         }
         res.status(201).json(user);
       });
@@ -244,10 +262,19 @@ export function setupAuth(app: Express) {
       // Enviar código por correo (username = correo)
       const emailSent = await sendPasswordResetEmail(user.username, resetCode);
 
+      if (!emailSent) {
+        if (process.env.NODE_ENV === "development") {
+          return res.json({ 
+            message: "Si el correo existe, recibirás un código de recuperación. (Configurá SMTP para envío por correo.)" 
+          });
+        } else {
+          logger.error(`Failed to send password reset email to ${username}`);
+          return res.status(500).json({ message: "Error al enviar el correo de recuperación. Por favor, intenta de nuevo más tarde o verifica la configuración del correo." });
+        }
+      }
+
       res.json({ 
-        message: emailSent 
-          ? "Si el correo existe, recibirás un código de recuperación por email."
-          : "Si el correo existe, recibirás un código de recuperación. (Configurá SMTP para envío por correo.)"
+        message: "Si el correo existe, recibirás un código de recuperación por email."
       });
     } catch (error: any) {
       logger.error("Password reset request error", error);

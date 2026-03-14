@@ -71,6 +71,12 @@ export class DatabaseStorage implements IStorage {
     logger.debug("User soft deleted successfully");
   }
 
+  async hardDeleteUser(userId: number): Promise<void> {
+    logger.debug("Hard deleting user:", userId);
+    await db.delete(users).where(eq(users.id, userId));
+    logger.debug("User hard deleted successfully");
+  }
+
   async updateUserRole(userId: number, isAdmin: boolean): Promise<User> {
     logger.debug("Updating user role:", { userId, isAdmin });
     const [updatedUser] = await db

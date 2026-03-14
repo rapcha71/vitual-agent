@@ -10,6 +10,7 @@ export interface IStorage {
   createUser(user: InsertUser): Promise<User>;
   getAllUsers(): Promise<User[]>;
   deleteUser(userId: number): Promise<void>;
+  hardDeleteUser(userId: number): Promise<void>;
   createProperty(property: InsertProperty & { userId: number }): Promise<Property>;
   getPropertiesByUserId(userId: number): Promise<Property[]>;
   /** Lista ligera sin images/kmlData para carga rápida */
