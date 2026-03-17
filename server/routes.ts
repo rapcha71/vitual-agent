@@ -67,16 +67,9 @@ export async function registerRoutes(app: Express): Promise<Server> {
     res.json({ url: dataUrl });
   });
 
-  // Ruta para obtener todos los usuarios (solo super admin)
+  // Ruta para obtener todos los usuarios (solo admins y super admins)
   app.get("/api/admin/users", requireAdmin, async (req, res) => {
     try {
-      // Verificar si el usuario es super admin
-      if (!req.user?.isSuperAdmin) {
-        return res.status(403).json({
-          message: "Esta acción requiere privilegios de super administrador"
-        });
-      }
-
       const users = await storage.getAllUsers();
       res.json(users);
     } catch (error: any) {
@@ -87,7 +80,44 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
-  // Admin route to delete a user (super admin only)
+  // Admin route to update a user's profile (super admin only)
+  app.patch("/api/admin/users/:userId", requireAdmin, async (req, res) => {
+    try {
+      if (!req.user?.isSuperAdmin) {
+        return res.status(403).json({
+          message: "Esta acción requiere privilegios de super administrador"
+        });
+      }
+
+      const userId = parseInt(req.params.userId);
+      if (isNaN(userId)) {
+        return res.status(400).json({ message: "ID de usuario inválido" });
+      }
+
+      const { fullName, mobile, nickname, paymentMobile } = req.body;
+
+      // updateUserProfile covers fullName, mobile, nickname. paymentMobile is an extra field.
+      const updatedUser = await storage.updateUserProfile(userId, { fullName, mobile, nickname });
+
+      // Also update paymentMobile separately if provided via a direct DB update
+      if (paymentMobile !== undefined) {
+        const { db } = await import("./db");
+        const { users } = await import("../shared/schema");
+        const { eq } = await import("drizzle-orm");
+        await db.update(users).set({ paymentMobile }).where(eq(users.id, userId));
+      }
+
+      const finalUser = await storage.getUser(userId);
+      res.json(finalUser);
+    } catch (error: any) {
+      logger.error("Error updating user profile:", error);
+      res.status(500).json({
+        message: error.message || "Error al actualizar el perfil del usuario"
+      });
+    }
+  });
+
+
   app.delete("/api/admin/users/:userId", requireAdmin, async (req, res) => {
     try {
       if (!req.user?.isSuperAdmin) {

@@ -528,6 +528,7 @@ export default function AdminWebPage() {
   const { user, logoutMutation } = useAuth();
   const [, setLocation] = useLocation();
   const [activeTab, setActiveTab] = useState("map");
+  const [selectedUserId, setSelectedUserId] = useState<number | "all">("all");
   const { toast } = useToast();
 
   const [searchPropertyId, setSearchPropertyId] = useState("");
@@ -573,8 +574,16 @@ export default function AdminWebPage() {
 
   const { data: users = [], refetch: refetchUsers } = useQuery<any[]>({
     queryKey: ['/api/admin/users'],
-    enabled: user?.isSuperAdmin === true
+    enabled: user?.isAdmin === true
   });
+
+  const propertiesToDisplay = properties.filter(p => 
+    selectedUserId === "all" || p.userId === selectedUserId
+  );
+
+  // State for user profile editing
+  const [editingUserId, setEditingUserId] = useState<number | null>(null);
+  const [editForm, setEditForm] = useState({ fullName: '', nickname: '', mobile: '', paymentMobile: '' });
 
   const deleteUserMutation = useMutation({
     mutationFn: async (userId: number) => {
@@ -601,6 +610,30 @@ export default function AdminWebPage() {
         description: error.message,
         variant: "destructive"
       });
+    }
+  });
+
+  const updateUserProfileMutation = useMutation({
+    mutationFn: async ({ userId, data }: { userId: number; data: typeof editForm }) => {
+      const response = await fetch(`/api/admin/users/${userId}`, {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json' },
+        credentials: 'include',
+        body: JSON.stringify(data),
+      });
+      if (!response.ok) {
+        const error = await response.json();
+        throw new Error(error.message);
+      }
+      return response.json();
+    },
+    onSuccess: () => {
+      refetchUsers();
+      setEditingUserId(null);
+      toast({ title: "Perfil actualizado", description: "Información actualizada exitosamente." });
+    },
+    onError: (error: Error) => {
+      toast({ title: "Error al actualizar", description: error.message, variant: "destructive" });
     }
   });
 
@@ -995,9 +1028,9 @@ export default function AdminWebPage() {
                 </DialogHeader>
                 <div className="flex flex-col items-center space-y-4 p-4 bg-[#F05023]">
                   <img 
-                    src={`https://api.qrserver.com/v1/create-qr-code/?size=250x250&data=${encodeURIComponent(window.location.origin)}`}
+                    src="/assets/qr-virtualagent.png"
                     alt="Código QR de Virtual Agent"
-                    className="w-64 h-64 bg-white rounded-lg p-2"
+                    className="w-64 h-64 rounded-lg p-2"
                   />
                   <p className="text-sm text-center text-white">
                     Escanea este código QR para acceder a Virtual Agent
@@ -1021,35 +1054,52 @@ export default function AdminWebPage() {
             </Dialog>
             </div>
           </div>
-          <div className="grid grid-cols-3 md:grid-cols-3 lg:grid-cols-6 gap-2 md:gap-4 mt-4">
-            <Card className="bg-white shadow-sm rounded-xl border-0">
-              <CardContent className="py-2 md:py-4">
-                <p className="text-base md:text-lg font-medium text-gray-800">Casas</p>
-                <p className="text-2xl md:text-3xl lg:text-4xl font-bold text-gray-900">{propertyCounts.house}</p>
-              </CardContent>
-            </Card>
-            <Card className="bg-white shadow-sm rounded-xl border-0">
-              <CardContent className="py-2 md:py-4">
-                <p className="text-base md:text-lg font-medium text-gray-800">Terrenos</p>
-                <p className="text-2xl md:text-3xl lg:text-4xl font-bold text-gray-900">{propertyCounts.land}</p>
-              </CardContent>
-            </Card>
-            <Card className="bg-white shadow-sm rounded-xl border-0">
-              <CardContent className="py-2 md:py-4">
-                <p className="text-base md:text-lg font-medium text-gray-800">Comercial</p>
-                <p className="text-2xl md:text-3xl lg:text-4xl font-bold text-gray-900">{propertyCounts.commercial}</p>
-              </CardContent>
-            </Card>
-            <Card className="bg-white shadow-sm rounded-xl border-0 hidden lg:block">
-              <CardContent className="py-4">
-                <p className="text-lg font-medium text-gray-800">Total</p>
-                <p className="text-4xl font-bold text-gray-900">{properties.length}</p>
-              </CardContent>
-            </Card>
+          {/* Filtro de Usuarios y Estadísticas */}
+          <div className="bg-white/90 backdrop-blur-sm p-4 rounded-xl shadow-sm border border-gray-100 mb-4">
+            <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
+              <div className="w-full md:w-64">
+                <p className="text-xs font-semibold text-gray-500 uppercase tracking-wider mb-1 px-1">Filtrar por Agente</p>
+                <Select
+                  value={selectedUserId.toString()}
+                  onValueChange={(val) => setSelectedUserId(val === "all" ? "all" : parseInt(val))}
+                >
+                  <SelectTrigger className="bg-white border-gray-200 text-gray-900 focus:ring-[#F05023]">
+                    <SelectValue placeholder="Todos los Agentes" />
+                  </SelectTrigger>
+                  <SelectContent className="bg-white text-gray-900 border-gray-200">
+                    <SelectItem value="all">Ver Todos (General)</SelectItem>
+                    {users.map((u: any) => (
+                      <SelectItem key={u.id} value={u.id.toString()}>
+                        {u.fullName || u.username}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </div>
+
+              <div className="grid grid-cols-2 md:grid-cols-4 gap-4 flex-1">
+                <div className="text-center p-2 bg-orange-50 rounded-lg border border-orange-100">
+                  <p className="text-[10px] md:text-xs font-medium text-orange-600 uppercase">Casas</p>
+                  <p className="text-lg md:text-xl font-bold text-gray-900">{propertiesToDisplay.filter(p => p.propertyType === 'house').length}</p>
+                </div>
+                <div className="text-center p-2 bg-green-50 rounded-lg border border-green-100">
+                  <p className="text-[10px] md:text-xs font-medium text-green-600 uppercase">Terrenos</p>
+                  <p className="text-lg md:text-xl font-bold text-gray-900">{propertiesToDisplay.filter(p => p.propertyType === 'land').length}</p>
+                </div>
+                <div className="text-center p-2 bg-blue-50 rounded-lg border border-blue-100">
+                  <p className="text-[10px] md:text-xs font-medium text-blue-600 uppercase">Comercial</p>
+                  <p className="text-lg md:text-xl font-bold text-gray-900">{propertiesToDisplay.filter(p => p.propertyType === 'commercial').length}</p>
+                </div>
+                <div className="text-center p-2 bg-gray-50 rounded-lg border border-gray-200">
+                  <p className="text-[10px] md:text-xs font-medium text-gray-600 uppercase">Total</p>
+                  <p className="text-lg md:text-xl font-bold text-gray-900">{propertiesToDisplay.length}</p>
+                </div>
+              </div>
+            </div>
           </div>
 
           <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
-            <TabsList className={`w-full grid ${user.isSuperAdmin ? 'grid-cols-4' : 'grid-cols-2'} h-12 md:h-14 bg-[#FF6347] p-0 gap-0 rounded-none border-b-2 border-[#ff7a5c]`}>
+            <TabsList className={`w-full grid ${user.isSuperAdmin ? 'grid-cols-4' : (user.isAdmin ? 'grid-cols-3' : 'grid-cols-2')} h-12 md:h-14 bg-[#FF6347] p-0 gap-0 rounded-none border-b-2 border-[#ff7a5c]`}>
               <TabsTrigger value="map" className="text-sm md:text-base text-white data-[state=active]:bg-[#ff7a5c] data-[state=active]:text-white data-[state=active]:shadow-none data-[state=active]:border-b-2 data-[state=active]:border-gray-800 rounded-none border-b-2 border-transparent data-[state=inactive]:bg-transparent">
                 <MapPin className="h-4 w-4 md:h-5 md:w-5 mr-2" />
                 Mapa
@@ -1063,10 +1113,10 @@ export default function AdminWebPage() {
                   </Badge>
                 )}
               </TabsTrigger>
-              {user.isSuperAdmin && (
+              {user.isAdmin && (
                 <TabsTrigger value="users" className="text-sm md:text-base text-white data-[state=active]:bg-[#ff7a5c] data-[state=active]:text-white data-[state=active]:shadow-none data-[state=active]:border-b-2 data-[state=active]:border-gray-800 rounded-none border-b-2 border-transparent data-[state=inactive]:bg-transparent">
                   <Users className="h-4 w-4 md:h-5 md:w-5 mr-2" />
-                  Roles
+                  Usuarios
                 </TabsTrigger>
               )}
               {user.isSuperAdmin && (
@@ -1105,7 +1155,7 @@ export default function AdminWebPage() {
                   <div className="w-full h-[400px] md:h-[500px] lg:h-[600px]">
                     <MapComponent 
                       ref={mapComponentRef}
-                      properties={properties} 
+                      properties={propertiesToDisplay} 
                     />
                   </div>
                 </CardContent>
@@ -1174,7 +1224,7 @@ export default function AdminWebPage() {
                     </TableRow>
                   </TableHeader>
                   <TableBody>
-                    {properties.map((property) => (
+                    {propertiesToDisplay.map((property) => (
                       <TableRow key={property.propertyId} className="bg-white hover:bg-gray-50 border-gray-200">
                         <TableCell className="font-medium">
                           <button
@@ -1332,7 +1382,7 @@ export default function AdminWebPage() {
                                 <TableHead className="w-40 text-gray-800">Usuario</TableHead>
                                 <TableHead className="w-32">Rol</TableHead>
                                 <TableHead className="w-24 text-right">Admin</TableHead>
-                                <TableHead className="w-20 text-right pr-6">Acciones</TableHead>
+                                <TableHead className="w-32 text-right pr-6">Acciones</TableHead>
                               </TableRow>
                             </TableHeader>
                             <TableBody>
@@ -1344,28 +1394,116 @@ export default function AdminWebPage() {
                                      adminUser.isAdmin ? 'Admin' : 'Usuario'}
                                   </TableCell>
                                   <TableCell className="py-2 text-right">
-                                    {!adminUser.isSuperAdmin && (
+                                    {user?.isSuperAdmin && !adminUser.isSuperAdmin && (
                                       <Switch
                                         checked={adminUser.isAdmin}
                                         onCheckedChange={(checked) =>
-                                          updateRoleMutation.mutate({
-                                            userId: adminUser.id,
-                                            isAdmin: checked
-                                          })
+                                          updateRoleMutation.mutate({ userId: adminUser.id, isAdmin: checked })
                                         }
                                         disabled={updateRoleMutation.isPending}
                                       />
                                     )}
                                   </TableCell>
-                                  <TableCell className="py-2 text-right pr-6">
-                                    {!adminUser.isSuperAdmin && (
+                                  <TableCell className="py-2 text-right pr-6 flex gap-2 justify-end">
+                                    {/* Ver Detalles button for all admins */}
+                                    <Dialog>
+                                      <DialogTrigger asChild>
+                                        <Button variant="outline" size="sm">Ver Detalles</Button>
+                                      </DialogTrigger>
+                                      <DialogContent className="sm:max-w-[500px] p-0 overflow-hidden rounded-xl border border-gray-200 bg-white">
+                                        <DialogHeader className="px-6 py-4" style={{ backgroundColor: '#F05023', borderRadius: '0.75rem 0.75rem 0 0' }}>
+                                          <DialogTitle className="text-white text-lg font-bold">Perfil de Usuario</DialogTitle>
+                                        </DialogHeader>
+                                        <div className="grid gap-4 px-6 py-4 bg-white" style={{ backgroundColor: 'white' }}>
+                                          {/* Informacion Personal */}
+                                          <div className="space-y-2">
+                                            <div className="flex items-center justify-between">
+                                              <h4 className="font-medium text-sm text-gray-500 uppercase tracking-wider">Información Personal</h4>
+                                              {user?.isSuperAdmin && editingUserId !== adminUser.id && (
+                                                <Button size="sm" variant="outline" onClick={() => {
+                                                  setEditingUserId(adminUser.id);
+                                                  setEditForm({ fullName: adminUser.fullName || '', nickname: adminUser.nickname || '', mobile: adminUser.mobile || '', paymentMobile: adminUser.paymentMobile || '' });
+                                                }}>&#9998; Editar</Button>
+                                              )}
+                                              {user?.isSuperAdmin && editingUserId === adminUser.id && (
+                                                <div className="flex gap-2">
+                                                  <Button size="sm" className="bg-[#F05023] hover:bg-[#E04015] text-white" disabled={updateUserProfileMutation.isPending}
+                                                    onClick={() => updateUserProfileMutation.mutate({ userId: adminUser.id, data: editForm })}>
+                                                    {updateUserProfileMutation.isPending ? <><Loader2 className="mr-1 h-3 w-3 animate-spin" />Guardando...</> : "Guardar"}
+                                                  </Button>
+                                                  <Button size="sm" variant="outline" onClick={() => setEditingUserId(null)}>Cancelar</Button>
+                                                </div>
+                                              )}
+                                            </div>
+                                            <div className="grid grid-cols-2 gap-2 text-sm">
+                                              <div>
+                                                <span className="font-semibold text-gray-700 block">Nombre Completo:</span>
+                                                {editingUserId === adminUser.id ? (
+                                                  <Input value={editForm.fullName} onChange={e => setEditForm(f => ({ ...f, fullName: e.target.value }))} placeholder="Nombre completo" className="mt-1 h-8 text-sm" />
+                                                ) : (
+                                                  <span className={adminUser.fullName ? "text-gray-900" : "text-gray-400 italic"}>{adminUser.fullName || "No completado"}</span>
+                                                )}
+                                              </div>
+                                              <div>
+                                                <span className="font-semibold text-gray-700 block">Alias:</span>
+                                                {editingUserId === adminUser.id ? (
+                                                  <Input value={editForm.nickname} onChange={e => setEditForm(f => ({ ...f, nickname: e.target.value }))} placeholder="Alias" className="mt-1 h-8 text-sm" />
+                                                ) : (
+                                                  <span className={adminUser.nickname ? "text-gray-900" : "text-gray-400 italic"}>{adminUser.nickname || "No completado"}</span>
+                                                )}
+                                              </div>
+                                            </div>
+                                          </div>
+                                          {/* Informacion de Contacto */}
+                                          <div className="space-y-3">
+                                            <h4 className="font-medium text-sm text-gray-500 uppercase tracking-wider pt-2 border-t">Información de Contacto</h4>
+                                            <div className="grid grid-cols-1 gap-3 text-sm">
+                                              <div className="flex items-center justify-between bg-gray-50 p-2 rounded-md">
+                                                <div className="flex-1 mr-2">
+                                                  <span className="font-semibold text-gray-700 block">Correo Electrónico:</span>
+                                                  <span className="text-gray-900">{adminUser.email || adminUser.username}</span>
+                                                </div>
+                                                <Button size="sm" variant="secondary" asChild>
+                                                  <a href={`mailto:${adminUser.email || adminUser.username}`}>Escribir</a>
+                                                </Button>
+                                              </div>
+                                              <div className="flex items-center justify-between bg-gray-50 p-2 rounded-md">
+                                                <div className="flex-1 mr-2">
+                                                  <span className="font-semibold text-gray-700 block">Teléfono (WhatsApp):</span>
+                                                  {editingUserId === adminUser.id ? (
+                                                    <Input value={editForm.mobile} onChange={e => setEditForm(f => ({ ...f, mobile: e.target.value }))} placeholder="Ej: 88001234" className="mt-1 h-8 text-sm" />
+                                                  ) : (
+                                                    <span className={adminUser.mobile ? "text-gray-900" : "text-gray-400 italic"}>{adminUser.mobile ? `+506 ${adminUser.mobile}` : "No completado"}</span>
+                                                  )}
+                                                </div>
+                                                {adminUser.mobile && editingUserId !== adminUser.id && (
+                                                  <Button size="sm" variant="secondary" className="bg-green-100 text-green-700 hover:bg-green-200" asChild>
+                                                    <a href={`https://wa.me/506${adminUser.mobile.replace(/\s+/g, '')}`} target="_blank" rel="noopener noreferrer">WhatsApp</a>
+                                                  </Button>
+                                                )}
+                                              </div>
+                                            </div>
+                                          </div>
+                                          {/* Datos de Facturacion */}
+                                          <div className="space-y-2">
+                                            <h4 className="font-medium text-sm text-gray-500 uppercase tracking-wider pt-2 border-t">Datos de Facturación</h4>
+                                            <div className="bg-blue-50 p-3 rounded-md border border-blue-100">
+                                              <span className="font-semibold text-blue-900 block">Número SINPE Móvil:</span>
+                                              {editingUserId === adminUser.id ? (
+                                                <Input value={editForm.paymentMobile} onChange={e => setEditForm(f => ({ ...f, paymentMobile: e.target.value }))} placeholder="Ej: 88001234" className="mt-1 h-8 text-sm bg-white" />
+                                              ) : (
+                                                <span className={adminUser.paymentMobile ? "text-blue-900 font-bold" : "text-gray-400 italic"}>{adminUser.paymentMobile || "No completado"}</span>
+                                              )}
+                                            </div>
+                                          </div>
+                                        </div>
+                                      </DialogContent>
+                                    </Dialog>
+                                    {/* Delete button — super admin only */}
+                                    {user?.isSuperAdmin && !adminUser.isSuperAdmin && (
                                       <Dialog>
                                         <DialogTrigger asChild>
-                                          <Button
-                                            variant="destructive"
-                                            size="sm"
-                                            className="w-8 h-8 p-0"
-                                          >
+                                          <Button variant="destructive" size="sm" className="w-8 h-8 p-0">
                                             <Trash2 className="h-4 w-4" />
                                           </Button>
                                         </DialogTrigger>
@@ -1375,19 +1513,8 @@ export default function AdminWebPage() {
                                           </DialogHeader>
                                           <p>¿Está seguro que desea eliminar este usuario? Esta acción no se puede deshacer.</p>
                                           <DialogFooter>
-                                            <Button
-                                              variant="destructive"
-                                              onClick={() => deleteUserMutation.mutate(adminUser.id)}
-                                              disabled={deleteUserMutation.isPending}
-                                            >
-                                              {deleteUserMutation.isPending ? (
-                                                <>
-                                                  <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                                                  Eliminando...
-                                                </>
-                                              ) : (
-                                                "Eliminar"
-                                              )}
+                                            <Button variant="destructive" onClick={() => deleteUserMutation.mutate(adminUser.id)} disabled={deleteUserMutation.isPending}>
+                                              {deleteUserMutation.isPending ? <><Loader2 className="mr-2 h-4 w-4 animate-spin" />Eliminando...</> : "Eliminar"}
                                             </Button>
                                           </DialogFooter>
                                         </DialogContent>

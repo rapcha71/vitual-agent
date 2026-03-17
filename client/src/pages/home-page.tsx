@@ -199,9 +199,9 @@ export default function HomePage() {
                     </DialogHeader>
                     <div className="flex flex-col items-center space-y-4 p-4 bg-[#F05023]">
                       <img 
-                        src={`https://api.qrserver.com/v1/create-qr-code/?size=250x250&data=${encodeURIComponent(window.location.origin)}`}
+                        src="/assets/qr-virtualagent.png"
                         alt="Código QR de Virtual Agent"
-                        className="w-64 h-64 bg-white rounded-lg p-2"
+                        className="w-64 h-64 rounded-lg p-2"
                       />
                       <p className="text-sm text-center text-white">
                         Escanea este código QR para acceder a Virtual Agent
