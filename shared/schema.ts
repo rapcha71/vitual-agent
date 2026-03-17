@@ -88,7 +88,12 @@ export const properties = pgTable("properties", {
   markerColor: text("marker_color").notNull(),
   createdAt: text("created_at").notNull().default(new Date().toISOString()),
   viewedByAdmin: boolean("viewed_by_admin").notNull().default(false),
-}, (t) => [index("properties_user_id_idx").on(t.userId)]);
+  isPaid: boolean("is_paid").notNull().default(false),
+  paidAt: timestamp("paid_at", { withTimezone: true }),
+}, (t) => [
+  index("properties_user_id_idx").on(t.userId),
+  index("properties_phone_idx").on(t.signPhoneNumber)
+]);
 
 // Define the payments table
 export const payments = pgTable("payments", {

@@ -10,6 +10,7 @@ import cookieParser from "cookie-parser";
 import { storage } from "./storage";
 import { logger } from "./lib/logger";
 import { pool } from "./db";
+import { PaymentService } from "./services/payment-service";
 
 const app = express();
 
@@ -183,6 +184,34 @@ try {
           }
         }, 24 * 60 * 60 * 1000);
         cleanupInterval.unref(); // No mantiene el proceso vivo solo por este timer
+
+        // Programar pagos de los viernes (Costa Rica es UTC-6)
+        // Revisar cada hora si es viernes a las 4pm
+        const paymentCheckInterval = setInterval(async () => {
+          try {
+            const now = new Date();
+            // Costa Rica es UTC-6 fijo (no hay horario de verano)
+            const crTime = new Date(now.getTime() - (6 * 60 * 60 * 1000));
+            const day = crTime.getUTCDay(); // 5 = Viernes
+            const hour = crTime.getUTCHours();
+
+            // Si es viernes entre las 4:00 PM y 4:59 PM
+            if (day === 5 && hour === 16) {
+              debugLog("Es hora de procesar pagos (Viernes 4 PM CR). Iniciando...");
+              await PaymentService.processWeeklyPayments();
+            }
+          } catch (error) {
+            logger.error('Error en el intervalo de verificación de pagos:', error);
+          }
+        }, 60 * 60 * 1000); // Revisar cada hora
+        paymentCheckInterval.unref();
+
+        // Ejecución inicial: Si el servidor inicia un viernes a la hora de pago, procesar inmediatamente
+        const initialCrTime = new Date(new Date().getTime() - (6 * 60 * 60 * 1000));
+        if (initialCrTime.getUTCDay() === 5 && initialCrTime.getUTCHours() === 16) {
+           debugLog("Inicio de servidor coincide con hora de pago. Procesando...");
+           PaymentService.processWeeklyPayments().catch(e => logger.error("Error en pago inicial:", e));
+        }
       });
     } catch (error) {
       logger.error('Failed to start server:', error);

@@ -1,7 +1,7 @@
 
-import { users, properties, messages, type User, type Property, type Message, type InsertUser, type InsertProperty, type InsertMessage, PropertyType, MarkerColors } from "@shared/schema";
+import { users, properties, messages, earnings, weeklyPayments, type User, type Property, type Message, type InsertUser, type InsertProperty, type InsertMessage, PropertyType, MarkerColors } from "@shared/schema";
 import { db } from "../db";
-import { eq, and, sql } from "drizzle-orm";
+import { eq, and, sql, inArray } from "drizzle-orm";
 import { IStorage } from "../storage";
 import session from "express-session";
 import { logger } from "../lib/logger";
@@ -106,7 +106,7 @@ export class DatabaseStorage implements IStorage {
     logger.debug("Last login updated successfully");
   }
 
-  async createProperty(insertProperty: InsertProperty & { userId: number }): Promise<Property> {
+  async createProperty(insertProperty: InsertProperty & { userId: number; propertyId: string }): Promise<Property> {
     const markerColor = MarkerColors[insertProperty.propertyType as keyof typeof PropertyType];
 
     // Convert images object to array if it's not already an array
@@ -143,15 +143,18 @@ export class DatabaseStorage implements IStorage {
         markerColor: properties.markerColor,
         createdAt: properties.createdAt,
         viewedByAdmin: properties.viewedByAdmin,
+        province: properties.province,
+        isPaid: properties.isPaid,
+        paidAt: properties.paidAt,
         hasImages: sql<boolean>`(
           jsonb_typeof(${properties.images}) = 'array' AND jsonb_array_length(${properties.images}) > 0
         ) OR (
           jsonb_typeof(${properties.images}) = 'object' AND ${properties.images} != '{}'::jsonb
-        )`.as("has_images"),
+        )`,
       })
       .from(properties)
       .where(eq(properties.userId, userId));
-    return rows.map(({ has_images, ...r }) => ({ ...r, hasImages: has_images }));
+    return rows.map((r) => ({ ...r, hasImages: !!r.hasImages }));
   }
 
   async getAllPropertiesWithUsers(): Promise<(Property & { user: User })[]> {
@@ -471,7 +474,7 @@ export class DatabaseStorage implements IStorage {
     await db
       .update(properties)
       .set({ viewedByAdmin: true })
-      .where(sql`${properties.id} = ANY(${propertyIds})`);
+      .where(inArray(properties.id, propertyIds));
   }
 
   async getSuperAdminEmails(): Promise<string[]> {
@@ -491,6 +494,68 @@ export class DatabaseStorage implements IStorage {
       .where(eq(properties.propertyId, propertyId))
       .limit(1);
     return property;
+  }
+
+  async getUnpaidProperties(): Promise<(Property & { user: User })[]> {
+    const result = await db.select({
+      property: properties,
+      user: users
+    }).from(properties)
+      .leftJoin(users, eq(properties.userId, users.id))
+      .where(eq(properties.isPaid, false));
+
+    return result.map(({ property, user }) => ({
+      ...property,
+      user: user as User
+    }));
+  }
+
+  async markPropertiesAsPaid(propertyIds: number[], weeklyPaymentId: number): Promise<void> {
+    if (propertyIds.length === 0) return;
+    
+    await db.transaction(async (tx) => {
+      // Mark properties as paid
+      await tx.update(properties)
+        .set({ 
+          isPaid: true, 
+          paidAt: new Date()
+        })
+        .where(inArray(properties.id, propertyIds));
+
+      // Create entries in earnings for traceability
+      for (const propId of propertyIds) {
+        const [prop] = await tx.select().from(properties).where(eq(properties.id, propId));
+        if (prop) {
+          await tx.insert(earnings).values({
+            userId: prop.userId,
+            propertyId: prop.id,
+            paymentType: "property_upload",
+            amount: "250.00",
+            status: "completed",
+            processedAt: new Date().toISOString(),
+            weekOf: new Date().toISOString().split('T')[0], // Simplified
+          });
+        }
+      }
+    });
+  }
+
+  async createWeeklyPayment(data: {
+    userId: number;
+    weekOf: string;
+    totalAmount: string;
+    propertyCount: number;
+    status: string;
+  }): Promise<number> {
+    const [inserted] = await db.insert(weeklyPayments).values({
+      ...data,
+      createdAt: new Date().toISOString()
+    }).returning();
+    return inserted.id;
+  }
+
+  async getPropertiesByPhone(phone: string): Promise<Property[]> {
+    return db.select().from(properties).where(eq(properties.signPhoneNumber, phone));
   }
 }
 

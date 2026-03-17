@@ -11,7 +11,7 @@ export interface IStorage {
   getAllUsers(): Promise<User[]>;
   deleteUser(userId: number): Promise<void>;
   hardDeleteUser(userId: number): Promise<void>;
-  createProperty(property: InsertProperty & { userId: number }): Promise<Property>;
+  createProperty(property: InsertProperty & { userId: number; propertyId: string }): Promise<Property>;
   getPropertiesByUserId(userId: number): Promise<Property[]>;
   /** Lista ligera sin images/kmlData para carga rápida */
   getPropertiesListByUserId(userId: number): Promise<Array<Omit<Property, "images" | "kmlData"> & { hasImages: boolean }>>;
@@ -56,6 +56,17 @@ export interface IStorage {
   markPropertiesAsViewed(propertyIds: number[]): Promise<void>;
   getSuperAdminEmails(): Promise<string[]>;
   getPropertyByPropertyId(propertyId: string): Promise<Property | undefined>;
+  getPropertiesByPhone(phone: string): Promise<Property[]>;
+  // Payment processing
+  getUnpaidProperties(): Promise<(Property & { user: User })[]>;
+  markPropertiesAsPaid(propertyIds: number[], weeklyPaymentId: number): Promise<void>;
+  createWeeklyPayment(data: {
+    userId: number;
+    weekOf: string;
+    totalAmount: string;
+    propertyCount: number;
+    status: string;
+  }): Promise<number>;
 }
 
 // Import and re-export the storage instance

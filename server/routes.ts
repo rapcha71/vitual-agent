@@ -6,6 +6,7 @@ import { setupAuth } from "./auth";
 import { storage } from "./storage";
 import webauthnRouter from "./routes/webauthn";
 import { insertPropertySchema } from "@shared/schema";
+import { normalizePhoneNumber } from "./lib/phone-utils";
 import ocrService from "./services/ocr";
 import { isWithinRadius } from "./lib/geo-utils";
 import { pool } from "./db";
@@ -337,31 +338,40 @@ export async function registerRoutes(app: Express): Promise<Server> {
         }
       }
 
-      // Check for duplicate properties
-      const phoneToCheck = extractedPhoneNumber || propertyData.signPhoneNumber;
-      if (phoneToCheck) {
-        const existingProperties = await storage.getAllPropertiesWithUsers();
+      // Check for duplicate properties (Optimized: Same Phone AND < 20m)
+      const inputPhone = normalizePhoneNumber(propertyData.signPhoneNumber);
+      const extractedPhone = normalizePhoneNumber(extractedPhoneNumber);
+      const phoneToCheck = extractedPhone || inputPhone;
 
-        const duplicateProperty = existingProperties.find(existingProp => {
-          // Check if phone numbers match
-          if (existingProp.signPhoneNumber === phoneToCheck) {
-            // Check if locations are within 15 meters
+      if (phoneToCheck) {
+        // Efficient search: Only properties with the SAME normalized phone
+        const potentialDuplicates = await storage.getPropertiesByPhone(phoneToCheck);
+        
+        const duplicateProperty = potentialDuplicates.find(existingProp => {
+          // Check if same phone (already filtered by SQL, but safe to double check)
+          const existingNormalized = normalizePhoneNumber(existingProp.signPhoneNumber);
+          if (existingNormalized === phoneToCheck) {
+            // Check if locations are within 20 meters
             return isWithinRadius(
               existingProp.location,
               propertyData.location,
-              15 // 15 meters radius
+              20 // 20 meters radius (AND condition)
             );
           }
           return false;
         });
-
+        
         if (duplicateProperty) {
+          logger.info(`Duplicate property detected for phone ${phoneToCheck} within 20m.`, {
+            existingId: duplicateProperty.propertyId,
+            newUserId: req.user.id
+          });
           return res.status(400).json({
             success: false,
-            message: "Ya existe una propiedad con el mismo número de teléfono en esta ubicación. Por este motivo, la propiedad no será registrada nuevamente.",
+            message: "Esta propiedad ya ha sido ingresada por otro usuario.",
             details: {
               existingPropertyId: duplicateProperty.propertyId,
-              distance: "menos de 15 metros"
+              distance: "menos de 20 metros"
             }
           });
         }
@@ -382,7 +392,8 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
       // Property ID format: XX + T + NNNNN (provincia 01-07, tipo 1-3, consecutivo global)
       const provinceCode = propertyData.province || "01";
-      const typeCode = { house: "1", land: "2", commercial: "3" }[propertyData.propertyType] || "1";
+      const typeMap: Record<string, string> = { house: "1", land: "2", commercial: "3" };
+      const typeCode = typeMap[propertyData.propertyType as string] || "1";
       let nextConsecutive = 1;
       try {
         const seqResult = await pool.query("SELECT nextval('property_consecutive_seq') as next");

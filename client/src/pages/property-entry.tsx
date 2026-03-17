@@ -858,7 +858,7 @@ export default function PropertyEntry() {
                 </h3>
               </div>
               <div className="p-4 space-y-3">
-                <p className="text-center text-sm">
+                <p className="text-center text-sm text-red-700 font-medium">
                   {duplicateErrorDetails?.message}
                 </p>
                 <div className="text-xs text-gray-500 space-y-1">
