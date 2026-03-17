@@ -583,7 +583,7 @@ export default function AdminWebPage() {
 
   // State for user profile editing
   const [editingUserId, setEditingUserId] = useState<number | null>(null);
-  const [editForm, setEditForm] = useState({ fullName: '', nickname: '', mobile: '', paymentMobile: '' });
+  const [editForm, setEditForm] = useState({ fullName: '', nickname: '', mobile: '', paymentMobile: '', username: '' });
 
   const deleteUserMutation = useMutation({
     mutationFn: async (userId: number) => {
@@ -1422,7 +1422,13 @@ export default function AdminWebPage() {
                                               {user?.isSuperAdmin && editingUserId !== adminUser.id && (
                                                 <Button size="sm" variant="outline" onClick={() => {
                                                   setEditingUserId(adminUser.id);
-                                                  setEditForm({ fullName: adminUser.fullName || '', nickname: adminUser.nickname || '', mobile: adminUser.mobile || '', paymentMobile: adminUser.paymentMobile || '' });
+                                                  setEditForm({ 
+                                                    fullName: adminUser.fullName || '', 
+                                                    nickname: adminUser.nickname || '', 
+                                                    mobile: adminUser.mobile || '', 
+                                                    paymentMobile: adminUser.paymentMobile || '',
+                                                    username: adminUser.username || ''
+                                                  });
                                                 }}>&#9998; Editar</Button>
                                               )}
                                               {user?.isSuperAdmin && editingUserId === adminUser.id && (
@@ -1460,12 +1466,23 @@ export default function AdminWebPage() {
                                             <div className="grid grid-cols-1 gap-3 text-sm">
                                               <div className="flex items-center justify-between bg-gray-50 p-2 rounded-md">
                                                 <div className="flex-1 mr-2">
-                                                  <span className="font-semibold text-gray-700 block">Correo Electrónico:</span>
-                                                  <span className="text-gray-900">{adminUser.email || adminUser.username}</span>
+                                                  <span className="font-semibold text-gray-700 block">Correo Electrónico (Usuario):</span>
+                                                  {editingUserId === adminUser.id ? (
+                                                    <Input 
+                                                      value={editForm.username} 
+                                                      onChange={e => setEditForm(f => ({ ...f, username: e.target.value }))} 
+                                                      placeholder="correo@ejemplo.com" 
+                                                      className="mt-1 h-8 text-sm" 
+                                                    />
+                                                  ) : (
+                                                    <span className="text-gray-900">{adminUser.email || adminUser.username}</span>
+                                                  )}
                                                 </div>
-                                                <Button size="sm" variant="secondary" asChild>
-                                                  <a href={`mailto:${adminUser.email || adminUser.username}`}>Escribir</a>
-                                                </Button>
+                                                {editingUserId !== adminUser.id && (
+                                                  <Button size="sm" variant="secondary" asChild>
+                                                    <a href={`mailto:${adminUser.email || adminUser.username}`}>Escribir</a>
+                                                  </Button>
+                                                )}
                                               </div>
                                               <div className="flex items-center justify-between bg-gray-50 p-2 rounded-md">
                                                 <div className="flex-1 mr-2">

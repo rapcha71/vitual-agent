@@ -94,17 +94,27 @@ export async function registerRoutes(app: Express): Promise<Server> {
         return res.status(400).json({ message: "ID de usuario inválido" });
       }
 
-      const { fullName, mobile, nickname, paymentMobile } = req.body;
+      const { fullName, mobile, nickname, paymentMobile, username } = req.body;
 
-      // updateUserProfile covers fullName, mobile, nickname. paymentMobile is an extra field.
-      const updatedUser = await storage.updateUserProfile(userId, { fullName, mobile, nickname });
+      // Update basic profile fields
+      await storage.updateUserProfile(userId, { fullName, mobile, nickname });
 
-      // Also update paymentMobile separately if provided via a direct DB update
-      if (paymentMobile !== undefined) {
-        const { db } = await import("./db");
-        const { users } = await import("../shared/schema");
-        const { eq } = await import("drizzle-orm");
-        await db.update(users).set({ paymentMobile }).where(eq(users.id, userId));
+      const { db } = await import("./db");
+      const { users } = await import("../shared/schema");
+      const { eq } = await import("drizzle-orm");
+
+      const updateData: any = {};
+      if (paymentMobile !== undefined) updateData.paymentMobile = paymentMobile;
+      if (username !== undefined) {
+        updateData.username = username;
+        // If username looks like an email, sync the email field too
+        if (username.includes('@')) {
+          updateData.email = username;
+        }
+      }
+
+      if (Object.keys(updateData).length > 0) {
+        await db.update(users).set(updateData).where(eq(users.id, userId));
       }
 
       const finalUser = await storage.getUser(userId);
