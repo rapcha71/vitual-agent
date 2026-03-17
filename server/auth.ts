@@ -222,15 +222,31 @@ export function setupAuth(app: Express) {
       return res.status(401).json({ message: "No autenticado" });
     }
     try {
-      const { fullName, mobile, nickname } = req.body;
+      const { fullName, mobile, nickname, username } = req.body;
       const data: { fullName?: string | null; mobile?: string | null; nickname?: string | null } = {};
+      
       if (fullName !== undefined) data.fullName = fullName === "" ? null : fullName;
       if (mobile !== undefined) data.mobile = mobile === "" ? null : mobile;
       if (nickname !== undefined) data.nickname = nickname === "" ? null : nickname;
-      if (Object.keys(data).length === 0) {
-        return res.status(400).json({ message: "No se enviaron datos para actualizar" });
+
+      if (fullName !== undefined || mobile !== undefined || nickname !== undefined) {
+        await storage.updateUserProfile(req.user!.id, data);
       }
-      const updatedUser = await storage.updateUserProfile(req.user!.id, data);
+
+      // Handle username and email sync
+      if (username !== undefined && username !== req.user?.username) {
+        const { db } = await import("./db");
+        const { users } = await import("../shared/schema");
+        const { eq } = await import("drizzle-orm");
+
+        const updateData: any = { username };
+        if (username.includes('@')) {
+          updateData.email = username;
+        }
+        await db.update(users).set(updateData).where(eq(users.id, req.user!.id));
+      }
+
+      const updatedUser = await storage.getUser(req.user!.id);
       res.json(updatedUser);
     } catch (error: any) {
       logger.error("Error updating profile:", error);

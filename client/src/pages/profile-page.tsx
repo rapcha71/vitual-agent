@@ -14,6 +14,7 @@ type ProfileUpdate = {
   fullName?: string | null;
   mobile?: string | null;
   nickname?: string | null;
+  username?: string | null;
 };
 
 export default function ProfilePage() {
@@ -25,6 +26,7 @@ export default function ProfilePage() {
     fullName: user?.fullName ?? "",
     mobile: user?.mobile ?? "",
     nickname: user?.nickname ?? "",
+    username: user?.username ?? "",
   });
 
   const updateProfileMutation = useMutation({
@@ -63,6 +65,7 @@ export default function ProfilePage() {
       fullName: user?.fullName ?? "",
       mobile: user?.mobile ?? "",
       nickname: user?.nickname ?? "",
+      username: user?.username ?? "",
     });
     setIsEditing(true);
   };
@@ -76,6 +79,7 @@ export default function ProfilePage() {
       fullName: (editValues.fullName ?? "").trim() || null,
       mobile: (editValues.mobile ?? "").trim() || null,
       nickname: (editValues.nickname ?? "").trim() || null,
+      username: (editValues.username ?? "").trim() || null,
     });
   };
 
@@ -161,8 +165,19 @@ export default function ProfilePage() {
               <div className="space-y-4">
                 <h3 className="text-lg font-semibold">Información del Usuario</h3>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                  <span className="text-muted-foreground md:pt-2">Usuario:</span>
-                  <span className="font-medium">{user?.username}</span>
+                  <span className="text-muted-foreground md:pt-2">Usuario (Correo):</span>
+                  {isEditing ? (
+                    <Input
+                      value={editValues.username ?? ""}
+                      onChange={(e) =>
+                        setEditValues((prev) => ({ ...prev, username: e.target.value }))
+                      }
+                      placeholder="correo@ejemplo.com"
+                      className="max-w-xs"
+                    />
+                  ) : (
+                    <span className="font-medium">{user?.username}</span>
+                  )}
 
                   <span className="text-muted-foreground md:pt-2">Nombre Completo:</span>
                   {isEditing ? (
