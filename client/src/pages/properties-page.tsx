@@ -33,7 +33,11 @@ function PropertyImageContent({ propertyId, enabled }: { propertyId: string; ena
   if (isError) return <p className="text-red-500 py-4">Error al cargar la imagen</p>;
   const images: string[] = data?.images || [];
   if (images.length === 0) return <p className="text-gray-500 py-4">Sin imágenes</p>;
+  
+  // Safe image selection
   const imgSrc = images.length > 1 ? images[1] : images[0];
+  if (!imgSrc) return <p className="text-gray-500 py-4">Imagen no válida</p>;
+
   return (
     <div className="relative aspect-video">
       <img src={imgSrc} alt={`Propiedad ${propertyId}`} className="object-cover w-full h-full rounded-lg cursor-pointer" onClick={() => window.open(imgSrc, '_blank')} />

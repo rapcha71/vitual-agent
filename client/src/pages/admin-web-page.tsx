@@ -455,11 +455,11 @@ const MapComponent = memo(forwardRef(({ properties }: { properties: PropertyWith
   }
 
   return (
-    <div className="w-full h-[500px] relative bg-gray-100 rounded-lg overflow-hidden shadow-md">
+    <div className="w-full h-[500px] relative bg-gray-200 rounded-lg overflow-hidden shadow-md border-2 border-gray-300">
       <div
         ref={mapRef}
         className="absolute inset-0"
-        style={{ width: '100%', height: '100%' }}
+        style={{ width: '100%', height: '100%', minHeight: '500px' }}
       />
       {isLoading && (
         <div className="absolute inset-0 flex items-center justify-center bg-gray-100/80">

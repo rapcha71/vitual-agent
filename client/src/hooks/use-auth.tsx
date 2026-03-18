@@ -102,7 +102,6 @@ function useRegisterMutation() {
 export const AuthContext = createContext<AuthContextType | null>(null);
 
 export function AuthProvider({ children }: { children: ReactNode }) {
-  const [, setLocation] = useLocation();
   
   const {
     data: user,
