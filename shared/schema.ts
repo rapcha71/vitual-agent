@@ -84,6 +84,8 @@ export const properties = pgTable("properties", {
   location: jsonb("location").notNull().$type<LocationType>(),
   propertyId: text("property_id").notNull().unique(),
   images: jsonb("images").notNull().$type<string[]>(),
+  thumbnails: jsonb("thumbnails").$type<string[]>(),
+  blurhashes: jsonb("blurhashes").$type<string[]>(),
   kmlData: text("kml_data"),
   markerColor: text("marker_color").notNull(),
   createdAt: text("created_at").notNull().default(new Date().toISOString()),
@@ -229,6 +231,8 @@ export const propertySchema = z.object({
   signPhoneNumber: z.string().nullable(),
   location: LocationSchema,
   images: z.array(z.string()),
+  thumbnails: z.array(z.string()).optional(),
+  blurhashes: z.array(z.string()).optional(),
   kmlData: z.string().nullable(),
   markerColor: z.string(),
   createdAt: z.string()
@@ -242,6 +246,8 @@ export const insertPropertySchema = createInsertSchema(properties)
     signPhoneNumber: true,
     location: true,
     images: true,
+    thumbnails: true,
+    blurhashes: true,
     kmlData: true,
     markerColor: true
   })
@@ -255,6 +261,8 @@ export const insertPropertySchema = createInsertSchema(properties)
       sign: z.string().optional(),
       property: z.string().optional()
     }),
+    thumbnails: z.array(z.string()).optional(),
+    blurhashes: z.array(z.string()).optional(),
     createdAt: z.string().optional(),
   });
 
@@ -294,6 +302,8 @@ export type PropertyWithUser = {
   location: LocationType;
   propertyId: string;
   images: string[];
+  thumbnails: string[] | null;
+  blurhashes: string[] | null;
   kmlData: string | null;
   markerColor: string;
   createdAt: string;

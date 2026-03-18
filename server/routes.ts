@@ -15,6 +15,7 @@ import { insertMessageSchema } from "@shared/schema";
 import multer from "multer";
 import { logger } from "./lib/logger";
 import { validateBody } from "./middleware/validate";
+import { mediaService } from "./services/media-service";
 
 // Configure multer for message images - use memory storage for production compatibility
 const uploadMessageImage = multer({
@@ -377,10 +378,24 @@ export async function registerRoutes(app: Express): Promise<Server> {
         }
       }
 
-      // Convert images object to array for storage
+      // Process and convert images to optimized formats and generate metadata
       const imagesArray = [];
-      if (propertyData.images?.sign) imagesArray.push(propertyData.images.sign);
-      if (propertyData.images?.property) imagesArray.push(propertyData.images.property);
+      const thumbnailsArray = [];
+      const blurhashesArray = [];
+
+      if (propertyData.images?.sign) {
+        const { optimized, thumbnail, blurhash } = await mediaService.processImage(propertyData.images.sign);
+        imagesArray.push(optimized);
+        thumbnailsArray.push(thumbnail);
+        blurhashesArray.push(blurhash);
+      }
+      
+      if (propertyData.images?.property) {
+        const { optimized, thumbnail, blurhash } = await mediaService.processImage(propertyData.images.property);
+        imagesArray.push(optimized);
+        thumbnailsArray.push(thumbnail);
+        blurhashesArray.push(blurhash);
+      }
 
       // Auto-set markerColor from propertyType if missing
       const markerColorMap: Record<string, string> = {
@@ -411,6 +426,8 @@ export async function registerRoutes(app: Express): Promise<Server> {
         propertyId,
         signPhoneNumber: phoneToCheck || propertyData.signPhoneNumber,
         images: imagesArray as any,
+        thumbnails: thumbnailsArray as any,
+        blurhashes: blurhashesArray as any,
         markerColor,
         createdAt: propertyData.createdAt || new Date().toISOString()
       });

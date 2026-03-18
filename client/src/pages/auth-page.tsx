@@ -118,7 +118,7 @@ export default function AuthPage() {
             </div>
           </header>
 
-          <div className="flex-1 bg-cover bg-center bg-no-repeat" style={{backgroundImage: 'url("/assets/ciudad.jpeg")'}}>
+          <div className="flex-1 bg-cover bg-center bg-no-repeat" style={{backgroundImage: 'url("/assets/ciudad-optimized.webp")'}}>
             <div className="min-h-full p-4 content-wrapper max-w-2xl mx-auto">
               {showPasswordReset ? (
                 <PasswordReset onBackToLogin={() => setShowPasswordReset(false)} />

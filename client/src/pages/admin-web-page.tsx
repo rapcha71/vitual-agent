@@ -14,6 +14,7 @@ import { Loader } from "@googlemaps/js-api-loader";
 import { useToast } from "@/hooks/use-toast";
 import { Switch } from "@/components/ui/switch";
 import { queryClient } from "@/lib/queryClient";
+import { OptimizedImage } from "@/components/optimized-image";
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
 import { Textarea } from "@/components/ui/textarea";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
@@ -121,7 +122,10 @@ const MapComponent = memo(forwardRef(({ properties }: { properties: PropertyWith
             });
             if (response.ok) {
               const data = await response.json();
-              if (data.images && data.images.length > 0) {
+              // Use thumbnail for the small info window
+              const displayImg = (data.thumbnails && data.thumbnails[0]) || (data.images && data.images[0]);
+              
+              if (displayImg) {
                 imagesLoaded = true;
                 const img = document.createElement('img');
                 img.alt = 'Imagen de la propiedad';
@@ -131,10 +135,7 @@ const MapComponent = memo(forwardRef(({ properties }: { properties: PropertyWith
                   imgContainer.style.background = 'transparent';
                   imgContainer.appendChild(img);
                 };
-                img.onerror = () => {
-                  imgContainer.innerHTML = '<span style="color: #999; font-size: 12px;">Error al cargar imagen</span>';
-                };
-                img.src = data.images[0];
+                img.src = displayImg;
               }
             }
           } catch (error) {
@@ -211,11 +212,13 @@ const MapComponent = memo(forwardRef(({ properties }: { properties: PropertyWith
           }, 10000);
         }, 3000);
 
-        const propertyImage = Array.isArray(foundProperty.images) && foundProperty.images.length > 0
-          ? foundProperty.images[0]
-          : null;
+        const propertyImage = (foundProperty.thumbnails && foundProperty.thumbnails.length > 0)
+          ? foundProperty.thumbnails[0]
+          : (foundProperty.images && (foundProperty.images as any).length > 0 ? (foundProperty.images[0] as string) : null);
 
-        // Enhanced info window with larger image and more details
+        const fullImage = (foundProperty.images && (foundProperty.images as any).length > 0) ? (foundProperty.images[0] as string) : null;
+
+        // Enhanced info window with larger image and more details (optimized)
         const infoWindow = new google.maps.InfoWindow({
           content: `
             <div style="padding: 16px; min-width: 280px; max-width: 350px; font-family: Arial, sans-serif;">
@@ -230,10 +233,11 @@ const MapComponent = memo(forwardRef(({ properties }: { properties: PropertyWith
                   <img src="${propertyImage}"
                        alt="Imagen de la propiedad ${foundProperty.propertyId}"
                        style="width: 100%; max-width: 280px; height: 180px; object-fit: cover; border-radius: 8px; border: 2px solid #F05023; box-shadow: 0 4px 8px rgba(0,0,0,0.2);"
-                       onclick="window.open('${propertyImage}', '_blank')"
+                       onclick="window.open('${fullImage}', '_blank')"
                        title="Click para ver en tamaño completo"
+                       loading="lazy"
                   />
-                  <p style="margin: 4px 0 0 0; font-size: 10px; color: #666; cursor: pointer;" onclick="window.open('${propertyImage}', '_blank')">
+                  <p style="margin: 4px 0 0 0; font-size: 10px; color: #666; cursor: pointer;" onclick="window.open('${fullImage}', '_blank')">
                     📸 Click en la imagen para ampliar
                   </p>
                 </div>
@@ -469,7 +473,11 @@ const MapComponent = memo(forwardRef(({ properties }: { properties: PropertyWith
 MapComponent.displayName = 'MapComponent';
 
 function PropertyImagesViewer({ propertyId }: { propertyId: string }) {
-  const [images, setImages] = useState<string[]>([]);
+  const [data, setData] = useState<{
+    images: string[];
+    thumbnails: string[];
+    blurhashes: string[];
+  }>({ images: [], thumbnails: [], blurhashes: [] });
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
@@ -480,8 +488,12 @@ function PropertyImagesViewer({ propertyId }: { propertyId: string }) {
           credentials: 'include'
         });
         if (response.ok) {
-          const data = await response.json();
-          setImages(data.images || []);
+          const fetchedData = await response.json();
+          setData({
+            images: fetchedData.images || [],
+            thumbnails: fetchedData.thumbnails || [],
+            blurhashes: fetchedData.blurhashes || []
+          });
         } else {
           setError('Error al cargar imágenes');
         }
@@ -506,18 +518,21 @@ function PropertyImagesViewer({ propertyId }: { propertyId: string }) {
     return <div className="text-center text-red-500 py-4">{error}</div>;
   }
 
-  if (images.length === 0) {
+  if (data.images.length === 0) {
     return <div className="text-center text-gray-500 py-4">No hay imágenes disponibles</div>;
   }
 
   return (
-    <div className="grid grid-cols-1 gap-4 max-h-[60vh] overflow-y-auto">
-      {images.map((img, idx) => (
-        <img 
-          key={idx} 
-          src={img} 
-          alt={`Foto ${idx + 1}`} 
-          className="w-full rounded-lg shadow-md"
+    <div className="grid grid-cols-1 md:grid-cols-2 gap-4 max-h-[70vh] overflow-y-auto p-1">
+      {data.images.map((_, idx) => (
+        <OptimizedImage
+          key={idx}
+          src={data.thumbnails?.[idx] || data.images[idx]}
+          alt={`Foto ${idx + 1}`}
+          blurhash={data.blurhashes?.[idx]}
+          className="w-full h-48"
+          aspectRatio="video"
+          onClick={() => window.open(data.images[idx], '_blank')}
         />
       ))}
     </div>
@@ -879,7 +894,7 @@ export default function AdminWebPage() {
         </div>
       </header>
 
-      <main style={{ flex: 1, width: '100vw', maxWidth: '100vw', padding: '1rem', margin: 0, backgroundImage: 'url("/assets/ciudad.jpeg")', backgroundSize: 'cover', backgroundPosition: 'center', backgroundRepeat: 'no-repeat' }}>
+      <main style={{ flex: 1, width: '100vw', maxWidth: '100vw', padding: '1rem', margin: 0, backgroundImage: 'url("/assets/ciudad-optimized.webp")', backgroundSize: 'cover', backgroundPosition: 'center', backgroundRepeat: 'no-repeat' }}>
         <div style={{ width: '100%', maxWidth: '100%' }} className="space-y-4 md:space-y-6">
           {/* Header: título + botones con fondo oscuro semitransparente */}
           <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-3 p-3 md:p-4 rounded-lg bg-[rgba(60,50,45,0.75)]">
@@ -1022,17 +1037,17 @@ export default function AdminWebPage() {
                   </span>
                 </Button>
               </DialogTrigger>
-              <DialogContent className="sm:max-w-md bg-[#F05023] border-[#E04015] [&>*]:bg-[#F05023] [&_button]:text-white [&_button]:hover:bg-white/20 [&_button]:border-white">
-                <DialogHeader className="bg-[#F05023]">
-                  <DialogTitle className="text-white">Compartir Virtual Agent</DialogTitle>
+              <DialogContent className="sm:max-w-md bg-[#FFF5F2] border-[#F05023]/20 [&>*]:bg-[#FFF5F2] [&_button]:text-[#F05023] [&_button]:hover:bg-[#F05023]/10 [&_button]:border-[#F05023]">
+                <DialogHeader className="bg-[#FFF5F2]">
+                  <DialogTitle className="text-[#F05023]">Compartir Virtual Agent</DialogTitle>
                 </DialogHeader>
-                <div className="flex flex-col items-center space-y-4 p-4 bg-[#F05023]">
+                <div className="flex flex-col items-center space-y-4 p-4 bg-[#FFF5F2]">
                   <img 
                     src="/assets/qr-virtualagent.png"
                     alt="Código QR de Virtual Agent"
                     className="w-64 h-64 rounded-lg p-2"
                   />
-                  <p className="text-sm text-center text-white">
+                  <p className="text-sm text-center text-[#F05023] font-medium">
                     Escanea este código QR para acceder a Virtual Agent
                   </p>
                   <Button
@@ -1045,7 +1060,7 @@ export default function AdminWebPage() {
                       });
                     }}
                     variant="outline"
-                    className="w-full border-white text-white hover:bg-white/20 hover:text-white"
+                    className="w-full border-[#F05023] text-[#F05023] hover:bg-[#F05023]/10 hover:text-[#F05023]"
                   >
                     Copiar Enlace
                   </Button>
@@ -1300,22 +1315,21 @@ export default function AdminWebPage() {
                                     <p><strong>Teléfono:</strong> {property.signPhoneNumber || '-'}</p>
                                   </div>
                                   <p><strong>Ubicación:</strong> {property.location.lat.toFixed(6)}, {property.location.lng.toFixed(6)}</p>
-                                  {property.images && property.images.length > 0 && (
+                                  {property.images && (property.thumbnails || property.images).length > 0 && (
                                     <div className="mt-4">
                                       <h4 className="font-semibold mb-2">Imágenes de la Propiedad</h4>
                                       <div className="grid grid-cols-2 gap-2">
-                                        {property.images.map((image, index) => (
+                                        {(property.thumbnails || property.images).map((_, index) => (
                                           <div key={index} className="relative aspect-video group">
-                                            <img
-                                              src={image}
-                                              alt={`Imagen ${index + 1} de la propiedad ${property.propertyId}`}
-                                              className="object-cover w-full h-full rounded-lg cursor-pointer"
-                                              onClick={() => {
-                                                window.open(image, '_blank');
-                                              }}
+                                            <OptimizedImage
+                                              src={property.thumbnails?.[index] || property.images[index]}
+                                              alt={`Foto ${index + 1}`}
+                                              blurhash={property.blurhashes?.[index]}
+                                              aspectRatio="video"
+                                              onClick={() => window.open(property.images[index], '_blank')}
                                             />
-                                            <div className="absolute inset-0 bg-black/50 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
-                                              <span className="text-white text-sm">Ver tamaño completo</span>
+                                            <div className="absolute inset-0 bg-black/50 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center pointer-events-none">
+                                              <span className="text-white text-xs">Click para ampliar</span>
                                             </div>
                                           </div>
                                         ))}

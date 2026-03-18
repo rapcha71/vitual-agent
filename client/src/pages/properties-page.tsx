@@ -84,7 +84,7 @@ export default function PropertiesPage() {
             </div>
           </header>
 
-          <main className="page-content bg-cover bg-center bg-no-repeat content-wrapper" style={{backgroundImage: 'url("/assets/ciudad.jpeg")'}}>
+          <main className="page-content bg-cover bg-center bg-no-repeat content-wrapper" style={{backgroundImage: 'url("/assets/ciudad-optimized.webp")'}}>
             <div className="space-y-4 bg-white rounded-lg p-4 md:p-6 shadow-md">
               <h1 className="text-xl font-bold text-gray-900">
                 Mis Propiedades

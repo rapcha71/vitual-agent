@@ -114,7 +114,7 @@ export default function ProfilePage() {
 
       <div
         className="p-4 bg-cover bg-center bg-no-repeat min-h-[calc(100vh-76px)] max-w-7xl mx-auto"
-        style={{ backgroundImage: 'url("/assets/ciudad.jpeg")' }}
+        style={{ backgroundImage: 'url("/assets/ciudad-optimized.webp")' }}
       >
         <div className="max-w-2xl mx-auto">
           <Card className="bg-white/90 backdrop-blur-sm">

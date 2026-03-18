@@ -243,17 +243,17 @@ export default function DashboardPage() {
               <span className="text-sm">Compartir App</span>
             </Button>
           </DialogTrigger>
-          <DialogContent className="sm:max-w-md bg-[#F05023] border-[#E04015] [&>*]:bg-[#F05023] [&_button]:text-white [&_button]:hover:bg-white/20 [&_button]:border-white">
-            <DialogHeader className="bg-[#F05023]">
-              <DialogTitle className="text-white">Compartir Virtual Agent</DialogTitle>
+          <DialogContent className="sm:max-w-md bg-[#FFF5F2] border-[#F05023]/20 [&>*]:bg-[#FFF5F2] [&_button]:text-[#F05023] [&_button]:hover:bg-[#F05023]/10 [&_button]:border-[#F05023]">
+            <DialogHeader className="bg-[#FFF5F2]">
+              <DialogTitle className="text-[#F05023]">Compartir Virtual Agent</DialogTitle>
             </DialogHeader>
-            <div className="flex flex-col items-center space-y-4 p-4 bg-[#F05023]">
+            <div className="flex flex-col items-center space-y-4 p-4 bg-[#FFF5F2]">
               <img 
                 src="/assets/qr-virtualagent.png"
                 alt="Código QR de Virtual Agent"
                 className="w-64 h-64 rounded-lg p-2"
               />
-              <p className="text-sm text-center text-white">
+              <p className="text-sm text-center text-[#F05023] font-medium">
                 Escanea este código QR para acceder a Virtual Agent
               </p>
               <Button
@@ -263,7 +263,7 @@ export default function DashboardPage() {
                   });
                 }}
                 variant="outline"
-                className="w-full border-white text-white hover:bg-white/20 hover:text-white"
+                className="w-full border-[#F05023] text-[#F05023] hover:bg-[#F05023]/10 hover:text-[#F05023]"
               >
                 Copiar Enlace
               </Button>

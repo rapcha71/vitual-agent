@@ -119,6 +119,8 @@ export class DatabaseStorage implements IStorage {
       .values({
         ...insertProperty,
         images,
+        thumbnails: insertProperty.thumbnails || [],
+        blurhashes: insertProperty.blurhashes || [],
         markerColor,
       })
       .returning();
@@ -130,7 +132,7 @@ export class DatabaseStorage implements IStorage {
     return db.select().from(properties).where(eq(properties.userId, userId));
   }
 
-  /** Optimizado para lista: excluye images y kmlData (evita transferir MB desde Neon) */
+  /** Optimizado para lista: excluye images pesadas y kmlData (evita transferir MB desde Neon) */
   async getPropertiesListByUserId(userId: number): Promise<Array<Omit<Property, "images" | "kmlData"> & { hasImages: boolean }>> {
     const rows = await db
       .select({
@@ -146,15 +148,30 @@ export class DatabaseStorage implements IStorage {
         province: properties.province,
         isPaid: properties.isPaid,
         paidAt: properties.paidAt,
-        hasImages: sql<boolean>`(
-          jsonb_typeof(${properties.images}) = 'array' AND jsonb_array_length(${properties.images}) > 0
-        ) OR (
-          jsonb_typeof(${properties.images}) = 'object' AND ${properties.images} != '{}'::jsonb
-        )`,
+        images: properties.images, 
+        thumbnails: properties.thumbnails,
+        blurhashes: properties.blurhashes,
       })
       .from(properties)
       .where(eq(properties.userId, userId));
-    return rows.map((r) => ({ ...r, hasImages: !!r.hasImages }));
+
+    return rows.map((r) => {
+      let hasImagesFlag = false;
+      if (r.images) {
+        if (Array.isArray(r.images)) {
+          hasImagesFlag = r.images.length > 0;
+        } else if (typeof r.images === 'object') {
+          hasImagesFlag = Object.keys(r.images).length > 0;
+        }
+      }
+
+      // We remove the heavy images from the final object
+      const { images, ...rest } = r;
+      return { 
+        ...rest, 
+        hasImages: hasImagesFlag 
+      };
+    });
   }
 
   async getAllPropertiesWithUsers(): Promise<(Property & { user: User })[]> {

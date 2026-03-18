@@ -41,7 +41,7 @@ export default function PropertyConfirmation() {
         </div>
       </header>
 
-      <main className="page-content bg-cover bg-center bg-no-repeat content-wrapper" style={{backgroundImage: 'url("/assets/ciudad.jpeg")'}}>
+      <main className="page-content bg-cover bg-center bg-no-repeat content-wrapper" style={{backgroundImage: 'url("/assets/ciudad-optimized.webp")'}}>
         <div className="flex flex-col items-center justify-center min-h-full">
           <div className="text-center bg-white/90 backdrop-blur-sm p-8 rounded-lg max-w-md w-full mx-4">
             <h2 className="text-2xl font-bold mb-4 text-gray-800">
