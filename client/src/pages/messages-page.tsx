@@ -164,7 +164,7 @@ export default function MessagesPage() {
           <Button
             variant="ghost"
             size="sm"
-            className="text-white hover:text-white/80 p-0"
+            className="text-white hover:text-white/80 p-0 relative z-10"
             onClick={() => setLocation("/")}
           >
             <ChevronLeft className="h-5 w-5" />
@@ -179,7 +179,7 @@ export default function MessagesPage() {
           <Button
             variant="ghost"
             size="sm"
-            className="text-white hover:text-white/80 p-0"
+            className="text-white hover:text-white/80 p-0 relative z-10"
             onClick={() => logoutMutation.mutate()}
           >
             <MessageCircle className="h-5 w-5" />

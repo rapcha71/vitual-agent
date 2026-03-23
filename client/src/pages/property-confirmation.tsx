@@ -18,7 +18,7 @@ export default function PropertyConfirmation() {
         <div className="flex items-center justify-between content-wrapper">
           <Button 
             variant="ghost" 
-            className="text-white hover:text-white/80 p-0"
+            className="text-white hover:text-white/80 p-0 relative z-10"
             onClick={() => setLocation("/")}
           >
             <ChevronLeft className="h-5 w-5" />
@@ -33,7 +33,7 @@ export default function PropertyConfirmation() {
           <Button 
             variant="ghost" 
             size="sm" 
-            className="text-white hover:text-white/80 p-0"
+            className="text-white hover:text-white/80 p-0 relative z-10"
             onClick={() => logoutMutation.mutate()}
           >
             <LogOut className="h-5 w-5" />

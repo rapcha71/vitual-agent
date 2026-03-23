@@ -910,7 +910,7 @@ export default function AdminWebPage() {
         <div className="flex items-center justify-between w-full">
           <Button
             variant="ghost"
-            className="text-white hover:text-white/80 p-0"
+            className="text-white hover:text-white/80 p-0 relative z-10"
             onClick={() => setLocation("/dashboard")}
           >
             <ChevronLeft className="h-5 w-5 md:h-6 md:w-6" />
@@ -925,7 +925,7 @@ export default function AdminWebPage() {
           <Button
             variant="ghost"
             size="sm"
-            className="text-white hover:text-white/80 p-0"
+            className="text-white hover:text-white/80 p-0 relative z-10"
             onClick={() => logoutMutation.mutate()}
           >
             <LogOut className="h-5 w-5 md:h-6 md:w-6" />

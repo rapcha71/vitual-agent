@@ -78,7 +78,7 @@ export default function HomePage() {
             <div className="flex items-center justify-between">
               <Button
                 variant="ghost"
-                className="text-white hover:text-white/80 p-0"
+                className="text-white hover:text-white/80 p-0 relative z-10"
                 onClick={() => window.history.back()}
               >
                 <ChevronLeft className="h-5 w-5" />
@@ -91,7 +91,7 @@ export default function HomePage() {
                   loading="eager"
                 />
               </div>
-              <div className="flex items-center gap-3">
+              <div className="flex items-center gap-3 relative z-10">
                 <PWAInstallButton />
                 <Button
                   variant="ghost"
