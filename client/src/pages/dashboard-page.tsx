@@ -247,24 +247,30 @@ export default function DashboardPage() {
             <DialogHeader className="bg-[#FFF5F2]">
               <DialogTitle className="text-[#F05023]">Compartir Virtual Agent</DialogTitle>
             </DialogHeader>
-            <div className="flex flex-col items-center space-y-4 p-4 bg-[#FFF5F2]">
-              <img 
-                src="/assets/qr-virtualagent.png"
-                alt="Código QR de Virtual Agent"
-                className="w-64 h-64 rounded-lg p-2"
-              />
-              <p className="text-sm text-center text-[#F05023] font-medium">
-                Escanea este código QR para acceder a Virtual Agent
+            <div className="flex flex-col items-center space-y-4 p-6 bg-[#FFF5F2] rounded-xl border border-[#F05023]/10 text-gray-900">
+              <div className="bg-white p-4 rounded-2xl shadow-[0_8px_30px_rgb(240,80,35,0.1)] transition-transform hover:scale-105 duration-300">
+                <img 
+                  src="/assets/qr-virtualagent.png"
+                  alt="Código QR de Virtual Agent"
+                  className="w-64 h-64 object-contain"
+                />
+              </div>
+              <p className="text-sm text-center text-[#F05023] font-semibold tracking-tight">
+                Escanea para acceder a Virtual Agent
               </p>
               <Button
                 onClick={() => {
                   navigator.clipboard.writeText(window.location.origin).then(() => {
-                    alert('Enlace copiado al portapapeles');
+                    toast({
+                      title: "¡Enlace copiado!",
+                      description: "El enlace se ha copiado al portapapeles.",
+                    });
                   });
                 }}
                 variant="outline"
-                className="w-full border-[#F05023] text-[#F05023] hover:bg-[#F05023]/10 hover:text-[#F05023]"
+                className="w-full h-12 border-[#F05023] text-[#F05023] hover:bg-[#F05023] hover:text-white transition-all duration-300 font-bold rounded-xl"
               >
+                <Share2 className="mr-2 h-4 w-4" />
                 Copiar Enlace
               </Button>
             </div>

@@ -49,9 +49,15 @@ export class ErrorBoundary extends Component<Props, State> {
             <h2 className="text-xl font-semibold text-gray-900 mb-2">
               Algo salió mal
             </h2>
-            <p className="text-gray-600 mb-6">
+            <p className="text-gray-600 mb-2">
               Ha ocurrido un error inesperado. Por favor, intenta recargar la página.
             </p>
+            {this.state.error && (
+              <div className="text-left bg-gray-100 p-3 rounded mb-6 overflow-auto max-h-40 text-xs font-mono text-red-800 border border-red-200">
+                <p className="font-bold mb-1">Error: {this.state.error.message}</p>
+                <pre className="whitespace-pre-wrap">{this.state.error.stack}</pre>
+              </div>
+            )}
             <div className="flex flex-col sm:flex-row gap-3 justify-center">
               <Button
                 onClick={this.handleRetry}

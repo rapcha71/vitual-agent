@@ -167,14 +167,16 @@ export default function ProfilePage() {
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   <span className="text-muted-foreground md:pt-2">Usuario (Correo):</span>
                   {isEditing ? (
-                    <Input
-                      value={editValues.username ?? ""}
-                      onChange={(e) =>
-                        setEditValues((prev) => ({ ...prev, username: e.target.value }))
-                      }
-                      placeholder="correo@ejemplo.com"
-                      className="max-w-xs"
-                    />
+                      <Input
+                        type="email"
+                        value={editValues.username ?? ""}
+                        autoComplete="username"
+                        onChange={(e) =>
+                          setEditValues((prev) => ({ ...prev, username: e.target.value }))
+                        }
+                        placeholder="correo@ejemplo.com"
+                        className="max-w-xs"
+                      />
                   ) : (
                     <span className="font-medium">{user?.username}</span>
                   )}
@@ -183,6 +185,7 @@ export default function ProfilePage() {
                   {isEditing ? (
                     <Input
                       value={editValues.fullName ?? ""}
+                      autoComplete="name"
                       onChange={(e) =>
                         setEditValues((prev) => ({ ...prev, fullName: e.target.value }))
                       }
@@ -197,6 +200,7 @@ export default function ProfilePage() {
                   {isEditing ? (
                     <Input
                       value={editValues.mobile ?? ""}
+                      autoComplete="tel"
                       onChange={(e) =>
                         setEditValues((prev) => ({ ...prev, mobile: e.target.value }))
                       }

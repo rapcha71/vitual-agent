@@ -32,15 +32,15 @@
     
     <!-- PWA Service Worker Registration -->
     <script>
+      // Temporarily unregister Service Worker in dev mode to prevent "Sin conexión" cache issues
       if ('serviceWorker' in navigator) {
         window.addEventListener('load', function() {
-          navigator.serviceWorker.register('/sw.js')
-            .then(function(registration) {
-              console.log('ServiceWorker registration successful');
-            })
-            .catch(function(err) {
-              console.log('ServiceWorker registration failed: ', err);
-            });
+          navigator.serviceWorker.getRegistrations().then(function(registrations) {
+            for(let registration of registrations) {
+              registration.unregister();
+              console.log('ServiceWorker unregistered successfully to clear cache');
+            }
+          });
         });
       }
     </script>

@@ -253,7 +253,7 @@ export default function HomePage() {
                               </p>
                             )}
                             <p className="text-muted-foreground">
-                              Ubicación: {property.location && `${property.location.lat.toFixed(6)}, ${property.location.lng.toFixed(6)}`}
+                              Ubicación: {property.location && `${property.location.lat.toFixed(7)}, ${property.location.lng.toFixed(7)}`}
                             </p>
                           </div>
                         </CardContent>

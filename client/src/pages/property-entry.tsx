@@ -277,7 +277,7 @@ export default function PropertyEntry() {
     form.setValue("location", { lat, lng });
     toast({
       title: "Ubicación guardada",
-      description: `Coordenadas: ${lat.toFixed(6)}, ${lng.toFixed(6)}`
+      description: `Coordenadas: ${lat.toFixed(7)}, ${lng.toFixed(7)}`
     });
     setShowManualCoords(false);
     setManualLat("");
@@ -437,17 +437,32 @@ export default function PropertyEntry() {
         );
       });
 
+      // Verificar precisión antes de guardar
+      const accuracy = position.coords.accuracy;
+      const accuracyWarning = accuracy > 60;
+
       // Actualizar el formulario con la ubicación
       form.setValue("location", {
         lat: position.coords.latitude,
         lng: position.coords.longitude
       });
 
-      // Mostrar mensaje de éxito
+      // Mostrar mensaje de éxito con advertencia si la precisión es baja
       toast({
-        title: "Ubicación capturada",
-        description: `Ubicación registrada: ${position.coords.latitude.toFixed(6)}, ${position.coords.longitude.toFixed(6)}`,
-        duration: 5000
+        title: accuracyWarning ? "⚠️ Baja Precisión detectada" : "🎯 Ubicación capturada",
+        description: (
+          <div className="space-y-1">
+            <p>Ubicación registrada: {position.coords.latitude.toFixed(7)}, {position.coords.longitude.toFixed(7)}</p>
+            {accuracyWarning && (
+              <p className="text-destructive font-bold text-sm">
+                Nota: La señal de GPS es débil (margen de error: {Math.round(accuracy)}m). 
+                Se recomienda moverse a un lugar más despejado y capturar de nuevo.
+              </p>
+            )}
+          </div>
+        ),
+        variant: accuracyWarning ? "destructive" : "default",
+        duration: 10000
       });
 
     } catch (error: any) {
@@ -698,7 +713,11 @@ export default function PropertyEntry() {
                           <FormItem>
                             <FormLabel className="text-lg">Número de Teléfono del Rótulo (Opcional)</FormLabel>
                             <FormControl>
-                              <Input {...field} />
+                              <Input 
+                                type="tel"
+                                autoComplete="tel"
+                                {...field} 
+                              />
                             </FormControl>
                             <FormMessage />
                           </FormItem>
@@ -807,7 +826,7 @@ export default function PropertyEntry() {
                         </div>
                         {form.watch("location.lat") !== 0 && (
                           <p className="text-sm text-gray-600">
-                            Ubicación: {form.watch("location.lat").toFixed(6)}, {form.watch("location.lng").toFixed(6)}
+                            Ubicación: {form.watch("location.lat").toFixed(7)}, {form.watch("location.lng").toFixed(7)}
                           </p>
                         )}
                         {showManualCoords && (

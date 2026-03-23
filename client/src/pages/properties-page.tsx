@@ -9,6 +9,7 @@ import { useLocation } from "wouter";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { Loader2 } from "lucide-react";
+import { OptimizedImage } from "@/components/optimized-image";
 
 function PropertyImageContent({ propertyId, enabled }: { propertyId: string; enabled: boolean }) {
   const { data, isLoading, isError } = useQuery({
@@ -40,7 +41,7 @@ function PropertyImageContent({ propertyId, enabled }: { propertyId: string; ena
 
   return (
     <div className="relative aspect-video">
-      <img src={imgSrc} alt={`Propiedad ${propertyId}`} className="object-cover w-full h-full rounded-lg cursor-pointer" onClick={() => window.open(imgSrc, '_blank')} />
+      <OptimizedImage src={imgSrc} alt={`Propiedad ${propertyId}`} className="rounded-lg" aspectRatio="auto" onClick={() => window.open(imgSrc, '_blank')} />
       <div className="absolute inset-0 bg-black/50 opacity-0 hover:opacity-100 transition-opacity flex items-center justify-center">
         <span className="text-white text-sm">Ver tamaño completo</span>
       </div>

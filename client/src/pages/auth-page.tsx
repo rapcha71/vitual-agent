@@ -145,7 +145,9 @@ export default function AuthPage() {
                             <FormLabel>Correo</FormLabel>
                             <FormControl>
                               <Input 
+                                type="email"
                                 placeholder="Ingrese su correo electrónico" 
+                                autoComplete="username"
                                 {...field} 
                                 disabled={isLoading}
                               />
@@ -165,6 +167,7 @@ export default function AuthPage() {
                               <Input 
                                 type="password" 
                                 placeholder="Ingrese su contraseña" 
+                                autoComplete="current-password"
                                 {...field} 
                                 disabled={isLoading}
                               />
@@ -232,6 +235,7 @@ className="h-4 w-4 rounded border-gray-300 text-[#F05023] focus:ring-2 focus:rin
                             <FormControl>
                               <Input 
                                 placeholder="Ingrese su nombre completo" 
+                                autoComplete="name"
                                 {...field} 
                                 disabled={isLoading}
                                 className={cn(
@@ -252,7 +256,9 @@ className="h-4 w-4 rounded border-gray-300 text-[#F05023] focus:ring-2 focus:rin
                             <FormLabel>Correo</FormLabel>
                             <FormControl>
                               <Input 
-                                placeholder="Ingrese su correo electrónico" 
+                                type="email"
+                                placeholder="Ingrese su correo electrónico"
+                                autoComplete="email"
                                 {...field} 
                                 disabled={isLoading}
                                 className={cn(
@@ -273,7 +279,9 @@ className="h-4 w-4 rounded border-gray-300 text-[#F05023] focus:ring-2 focus:rin
                             <FormLabel>Teléfono</FormLabel>
                             <FormControl>
                               <Input 
+                                type="tel"
                                 placeholder="Ingrese su número de teléfono" 
+                                autoComplete="tel"
                                 {...field} 
                                 disabled={isLoading}
                                 className={cn(
@@ -294,7 +302,9 @@ className="h-4 w-4 rounded border-gray-300 text-[#F05023] focus:ring-2 focus:rin
                             <FormLabel>Teléfono para transferencias SINPE</FormLabel>
                             <FormControl>
                               <Input 
+                                type="tel"
                                 placeholder="Número para recibir pagos vía SINPE" 
+                                autoComplete="tel"
                                 {...field} 
                                 disabled={isLoading}
                                 className={cn(
@@ -319,6 +329,7 @@ className="h-4 w-4 rounded border-gray-300 text-[#F05023] focus:ring-2 focus:rin
                             <FormControl>
                               <Input 
                                 placeholder="Ingrese su alias" 
+                                autoComplete="username"
                                 {...field} 
                                 disabled={isLoading}
                                 className={cn(
@@ -341,6 +352,7 @@ className="h-4 w-4 rounded border-gray-300 text-[#F05023] focus:ring-2 focus:rin
                               <Input 
                                 type="password" 
                                 placeholder="Ingrese su contraseña" 
+                                autoComplete="new-password"
                                 {...field} 
                                 disabled={isLoading}
                                 className={cn(

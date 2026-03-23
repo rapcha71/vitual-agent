@@ -278,18 +278,12 @@ export async function registerRoutes(app: Express): Promise<Server> {
         });
       }
 
-      const { userId, isAdmin } = req.body;
+      const { userId, isAdmin, isSuperAdmin } = req.body;
 
       // No permitir cambios en el rol de super admin
       const targetUser = await storage.getUser(userId);
-      if (targetUser?.isSuperAdmin) {
-        return res.status(403).json({
-          message: "No se pueden modificar los privilegios de un super administrador"
-        });
-      }
-
-      // Actualizar rol de administrador
-      const updatedUser = await storage.updateUserRole(userId, isAdmin);
+      
+      const updatedUser = await storage.updateUserRole(userId, isAdmin, isSuperAdmin);
       res.json(updatedUser);
     } catch (error: any) {
       logger.error("Error updating admin role:", error);
@@ -779,6 +773,22 @@ export async function registerRoutes(app: Express): Promise<Server> {
     } catch (error: any) {
       logger.error("Error fetching unviewed properties count:", error);
       res.status(500).json({ message: "Error al obtener el conteo de propiedades nuevas" });
+    }
+  });
+
+  app.delete("/api/admin/properties/:propertyId", requireAdmin, async (req, res) => {
+    try {
+      // Consistent with frontend UI check for SuperAdmin
+      if (!req.user?.isSuperAdmin) {
+        return res.status(403).json({ message: "Esta acción requiere privilegios de super administrador" });
+      }
+
+      const propertyId = req.params.propertyId;
+      await storage.deleteProperty(propertyId);
+      res.json({ success: true, message: "Propiedad eliminada exitosamente" });
+    } catch (error: any) {
+      logger.error("Error deleting property:", error);
+      res.status(500).json({ message: error.message || "Error al eliminar la propiedad" });
     }
   });
 

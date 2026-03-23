@@ -11,6 +11,7 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger, DialogFooter } from "@/components/ui/dialog";
 import { useEffect, useState, useRef, memo, useCallback, forwardRef, useImperativeHandle } from "react";
 import { Loader } from "@googlemaps/js-api-loader";
+import { MarkerClusterer } from "@googlemaps/markerclusterer";
 import { useToast } from "@/hooks/use-toast";
 import { Switch } from "@/components/ui/switch";
 import { queryClient } from "@/lib/queryClient";
@@ -31,10 +32,16 @@ const MapComponent = memo(forwardRef(({ properties }: { properties: PropertyWith
   const map = useRef<google.maps.Map | null>(null);
   const markersRef = useRef<google.maps.Marker[]>([]);
   const infoWindowsRef = useRef<google.maps.InfoWindow[]>([]);
+  const clustererRef = useRef<MarkerClusterer | null>(null);
   const { toast } = useToast();
 
   // Cleanup function to remove markers and listeners
   const cleanupMap = useCallback(() => {
+    if (clustererRef.current) {
+      clustererRef.current.clearMarkers();
+      clustererRef.current = null;
+    }
+
     if (markersRef.current.length > 0) {
       markersRef.current.forEach(marker => {
         google.maps.event.clearInstanceListeners(marker);
@@ -56,8 +63,11 @@ const MapComponent = memo(forwardRef(({ properties }: { properties: PropertyWith
     const bounds = new google.maps.LatLngBounds();
 
     propertiesToDisplay.forEach(property => {
+      const lat = Number(property.location?.lat || 0);
+      const lng = Number(property.location?.lng || 0);
+      
       const marker = new google.maps.Marker({
-        position: { lat: property.location.lat, lng: property.location.lng },
+        position: { lat, lng },
         map: map.current,
         title: property.propertyId,
         optimized: false,
@@ -104,6 +114,12 @@ const MapComponent = memo(forwardRef(({ properties }: { properties: PropertyWith
       phoneEl.textContent = `Teléfono: ${property.signPhoneNumber || 'No disponible'}`;
       contentDiv.appendChild(phoneEl);
 
+      const locEl = document.createElement('p');
+      locEl.style.cssText = 'margin: 6px 0; font-size: 11px; color: #666;';
+      const isCorrupted = property.location?.address?.includes('[REVISIÓN REQUERIDA]');
+      locEl.innerHTML = `<strong>📍 Coord:</strong> ${property.location?.lat?.toFixed(7) || '0'}, ${property.location?.lng?.toFixed(7) || '0'}${isCorrupted ? '<br/><span style="color:red;font-weight:bold;">⚠️ REVISIÓN REQUERIDA</span>' : ''}`;
+      contentDiv.appendChild(locEl);
+
       const infoWindow = new google.maps.InfoWindow({
         content: contentDiv,
         maxWidth: 300
@@ -147,7 +163,17 @@ const MapComponent = memo(forwardRef(({ properties }: { properties: PropertyWith
       bounds.extend(marker.getPosition()!);
       markersRef.current.push(marker);
       infoWindowsRef.current.push(infoWindow);
+
+      // GeoAudit Log
+      console.log(`[Virtual Agent GeoAudit] Property ${property.propertyId}: Saved (${lat}, ${lng}) -> Rendered (${marker.getPosition()?.lat()}, ${marker.getPosition()?.lng()})`);
     });
+
+    if (markersRef.current.length > 0 && map.current) {
+      clustererRef.current = new MarkerClusterer({
+        map: map.current,
+        markers: markersRef.current
+      });
+    }
 
     if (propertiesToDisplay.length > 0) {
       map.current.fitBounds(bounds);
@@ -173,12 +199,14 @@ const MapComponent = memo(forwardRef(({ properties }: { properties: PropertyWith
         cleanupMap();
 
         // Center map on the found property with higher zoom
-        map.current?.setCenter({ lat: foundProperty.location.lat, lng: foundProperty.location.lng });
+        const lat = Number(foundProperty.location?.lat || 0);
+        const lng = Number(foundProperty.location?.lng || 0);
+        map.current?.setCenter({ lat, lng });
         map.current?.setZoom(18);
 
         // Create a special blinking marker for the found property
         const blinkingMarker = new google.maps.Marker({
-          position: { lat: foundProperty.location.lat, lng: foundProperty.location.lng },
+          position: { lat, lng },
           map: map.current,
           title: foundProperty.propertyId,
           optimized: false,
@@ -256,14 +284,19 @@ const MapComponent = memo(forwardRef(({ properties }: { properties: PropertyWith
                   }
                 </p>
                 <p style="margin: 0 0 8px; font-size: 13px; color: #333;">
-                  <strong>👤 Usuario:</strong> <span style="${foundProperty.user.isDeleted ? 'color: red; text-decoration: line-through;' : ''}">${foundProperty.user.fullName || foundProperty.user.username}${foundProperty.user.isDeleted ? ' (eliminado)' : ''}</span>
+                  <strong>👤 Usuario:</strong> <span style="${foundProperty.user?.isDeleted ? 'color: red; text-decoration: line-through;' : ''}">${foundProperty.user?.fullName || foundProperty.user?.username || 'Usuario Desconocido'}${foundProperty.user?.isDeleted ? ' (eliminado)' : ''}</span>
                 </p>
                 <p style="margin: 0 0 8px; font-size: 13px; color: #333;">
                   <strong>📞 Teléfono:</strong> ${foundProperty.signPhoneNumber || 'No disponible'}
                 </p>
                 <p style="margin: 0; font-size: 12px; color: #666;">
-                  <strong>📍 Coordenadas:</strong> ${foundProperty.location.lat.toFixed(6)}, ${foundProperty.location.lng.toFixed(6)}
+                  <strong>📍 Coordenadas:</strong> ${foundProperty.location?.lat?.toFixed(7) || '0'}, ${foundProperty.location?.lng?.toFixed(7) || '0'}
                 </p>
+                ${foundProperty.location?.address?.includes('[REVISIÓN REQUERIDA]') ? `
+                  <p style="margin: 4px 0 0; font-size: 12px; color: #ef4444; font-weight: bold;">
+                    ⚠️ REVISIÓN REQUERIDA (Ubicación corrupta)
+                  </p>
+                ` : ''}
               </div>
               <style>
                 @keyframes pulse {
@@ -288,6 +321,12 @@ const MapComponent = memo(forwardRef(({ properties }: { properties: PropertyWith
 
         markersRef.current.push(blinkingMarker);
         infoWindowsRef.current.push(infoWindow);
+        if (clustererRef.current) {
+          clustererRef.current.addMarker(blinkingMarker);
+        }
+
+        // GeoAudit Log
+        console.log(`[Virtual Agent GeoAudit] Selected Property ${foundProperty.propertyId}: Saved (${lat}, ${lng}) -> Rendered (${blinkingMarker.getPosition()?.lat()}, ${blinkingMarker.getPosition()?.lng()})`);
 
         toast({
           title: "¡Propiedad encontrada!",
@@ -1041,27 +1080,30 @@ export default function AdminWebPage() {
                 <DialogHeader className="bg-[#FFF5F2]">
                   <DialogTitle className="text-[#F05023]">Compartir Virtual Agent</DialogTitle>
                 </DialogHeader>
-                <div className="flex flex-col items-center space-y-4 p-4 bg-[#FFF5F2]">
-                  <img 
-                    src="/assets/qr-virtualagent.png"
-                    alt="Código QR de Virtual Agent"
-                    className="w-64 h-64 rounded-lg p-2"
-                  />
-                  <p className="text-sm text-center text-[#F05023] font-medium">
-                    Escanea este código QR para acceder a Virtual Agent
+                <div className="flex flex-col items-center space-y-4 p-6 bg-[#FFF5F2] rounded-xl border border-[#F05023]/10">
+                  <div className="bg-white p-4 rounded-2xl shadow-[0_8px_30px_rgb(240,80,35,0.1)] transition-transform hover:scale-105 duration-300">
+                    <img 
+                      src="/assets/qr-virtualagent.png"
+                      alt="Código QR de Virtual Agent"
+                      className="w-64 h-64 object-contain"
+                    />
+                  </div>
+                  <p className="text-sm text-center text-[#F05023] font-semibold tracking-tight">
+                    Escanea para acceder a Virtual Agent
                   </p>
                   <Button
                     onClick={() => {
                       navigator.clipboard.writeText(window.location.origin).then(() => {
                         toast({
-                          title: "Enlace copiado",
-                          description: "La URL ha sido copiada al portapapeles",
+                          title: "¡Enlace copiado!",
+                          description: "El enlace se ha copiado al portapapeles.",
                         });
                       });
                     }}
                     variant="outline"
-                    className="w-full border-[#F05023] text-[#F05023] hover:bg-[#F05023]/10 hover:text-[#F05023]"
+                    className="w-full h-12 border-[#F05023] text-[#F05023] hover:bg-[#F05023] hover:text-white transition-all duration-300 font-bold rounded-xl"
                   >
+                    <Share2 className="mr-2 h-4 w-4" />
                     Copiar Enlace
                   </Button>
                 </div>
@@ -1167,12 +1209,12 @@ export default function AdminWebPage() {
                     </Button>
                   </div>
 
-                  <div className="w-full h-[400px] md:h-[500px] lg:h-[600px]">
-                    <MapComponent 
-                      ref={mapComponentRef}
-                      properties={propertiesToDisplay} 
-                    />
-                  </div>
+                  <div className="w-full h-[400px] md:h-[500px] lg:h-[600px] rounded-lg border-2 border-[#F05023]/20 shadow-inner overflow-hidden">
+            <MapComponent 
+              ref={mapComponentRef}
+              properties={propertiesToDisplay} 
+            />
+          </div>
                 </CardContent>
               </Card>
             </TabsContent>
@@ -1265,16 +1307,18 @@ export default function AdminWebPage() {
                               'Comercial'}
                         </TableCell>
                         <TableCell className="hidden sm:table-cell">
-                          <span className={property.user.isDeleted ? "text-red-500 line-through" : ""}>
-                            {property.user.fullName || property.user.username}
-                            {property.user.isDeleted && " (eliminado)"}
-                          </span>
+                          <div className="flex flex-col">
+                            <span className={property.user?.isDeleted ? "text-red-500 line-through text-xs" : "text-xs font-semibold text-gray-900"}>
+                              {property.user?.fullName || property.user?.username || "Usuario Desconocido"}
+                            </span>
+                            <span className="text-[10px] text-muted-foreground">ID: {property.userId}</span>
+                          </div>
                         </TableCell>
                         <TableCell className="hidden sm:table-cell">
                           {property.signPhoneNumber || '-'}
                         </TableCell>
                         <TableCell className="hidden lg:table-cell text-sm">
-                          {property.location.lat.toFixed(4)}, {property.location.lng.toFixed(4)}
+                          {property.location?.lat?.toFixed(4) || '0.0000'}, {property.location?.lng?.toFixed(4) || '0.0000'}
                         </TableCell>
                         <TableCell className="hidden md:table-cell pl-1">
                           {(property as any).hasImages ? (
@@ -1311,22 +1355,22 @@ export default function AdminWebPage() {
                                 </DialogHeader>
                                 <div className="space-y-4 bg-app-surface text-gray-900">
                                   <div className="sm:hidden">
-                                    <p><strong>Usuario:</strong> <span className={property.user.isDeleted ? "text-red-500 line-through" : ""}>{property.user.fullName || property.user.username}{property.user.isDeleted && " (eliminado)"}</span></p>
+                                    <p><strong>Usuario:</strong> <span className={property.user?.isDeleted ? "text-red-500 line-through" : ""}>{property.user?.fullName || property.user?.username || "Usuario Desconocido"}{property.user?.isDeleted && " (eliminado)"}</span></p>
                                     <p><strong>Teléfono:</strong> {property.signPhoneNumber || '-'}</p>
                                   </div>
-                                  <p><strong>Ubicación:</strong> {property.location.lat.toFixed(6)}, {property.location.lng.toFixed(6)}</p>
+                                  <p><strong>Ubicación:</strong> {property.location?.lat?.toFixed(7) || '0.0000000'}, {property.location?.lng?.toFixed(7) || '0.0000000'}</p>
                                   {property.images && (property.thumbnails || property.images).length > 0 && (
                                     <div className="mt-4">
                                       <h4 className="font-semibold mb-2">Imágenes de la Propiedad</h4>
                                       <div className="grid grid-cols-2 gap-2">
-                                        {(property.thumbnails || property.images).map((_, index) => (
+                                        {(property.thumbnails || property.images || []).map((_, index) => (
                                           <div key={index} className="relative aspect-video group">
                                             <OptimizedImage
-                                              src={property.thumbnails?.[index] || property.images[index]}
+                                              src={(property.thumbnails && property.thumbnails[index]) || (property.images && (property.images as any)[index]) || ''}
                                               alt={`Foto ${index + 1}`}
                                               blurhash={property.blurhashes?.[index]}
                                               aspectRatio="video"
-                                              onClick={() => window.open(property.images[index], '_blank')}
+                                              onClick={() => property.images && window.open((property.images as any)[index], '_blank')}
                                             />
                                             <div className="absolute inset-0 bg-black/50 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center pointer-events-none">
                                               <span className="text-white text-xs">Click para ampliar</span>
@@ -1408,15 +1452,33 @@ export default function AdminWebPage() {
                                      adminUser.isAdmin ? 'Admin' : 'Usuario'}
                                   </TableCell>
                                   <TableCell className="py-2 text-right">
-                                    {user?.isSuperAdmin && !adminUser.isSuperAdmin && (
-                                      <Switch
-                                        checked={adminUser.isAdmin}
-                                        onCheckedChange={(checked) =>
-                                          updateRoleMutation.mutate({ userId: adminUser.id, isAdmin: checked })
-                                        }
-                                        disabled={updateRoleMutation.isPending}
-                                      />
-                                    )}
+                                    <div className="flex flex-col items-end gap-1">
+                                      {user?.isSuperAdmin && !adminUser.isSuperAdmin && (
+                                        <div className="flex items-center gap-2">
+                                          <span className="text-[10px] text-gray-500">Admin</span>
+                                          <Switch
+                                            checked={adminUser.isAdmin}
+                                            onCheckedChange={(checked) =>
+                                              updateRoleMutation.mutate({ userId: adminUser.id, isAdmin: checked })
+                                            }
+                                            disabled={updateRoleMutation.isPending}
+                                          />
+                                        </div>
+                                      )}
+                                      {user?.isSuperAdmin && user.id !== adminUser.id && (
+                                        <div className="flex items-center gap-2">
+                                          <span className="text-[10px] text-red-500 font-bold">SUPER</span>
+                                          <Switch
+                                            checked={adminUser.isSuperAdmin}
+                                            onCheckedChange={(checked) =>
+                                              updateRoleMutation.mutate({ userId: adminUser.id, isAdmin: adminUser.isAdmin, isSuperAdmin: checked })
+                                            }
+                                            disabled={updateRoleMutation.isPending}
+                                            className="data-[state=checked]:bg-red-600"
+                                          />
+                                        </div>
+                                      )}
+                                    </div>
                                   </TableCell>
                                   <TableCell className="py-2 text-right pr-6 flex gap-2 justify-end">
                                     {/* Ver Detalles button for all admins */}
@@ -1629,13 +1691,13 @@ export default function AdminWebPage() {
                             return (
                               <TableRow key={payment.userId} className="bg-white hover:bg-gray-50 border-gray-200">
                                 <TableCell className="font-medium">
-                                  {payment.user.username}
+                                  {payment.user?.username || 'Usuario Desconocido'}
                                 </TableCell>
                                 <TableCell>
-                                  {payment.user.fullName || '-'}
+                                  {payment.user?.fullName || '-'}
                                 </TableCell>
                                 <TableCell>
-                                  {payment.user.mobile || '-'}
+                                  {payment.user?.mobile || '-'}
                                 </TableCell>
                                 <TableCell className="text-center">
                                   <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-blue-100 text-blue-800">

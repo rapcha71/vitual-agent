@@ -1,5 +1,5 @@
 
-import { users, properties, messages, earnings, weeklyPayments, type User, type Property, type Message, type InsertUser, type InsertProperty, type InsertMessage, PropertyType, MarkerColors } from "@shared/schema";
+import { users, properties, messages, earnings, payments, weeklyPayments, type User, type Property, type Message, type InsertUser, type InsertProperty, type InsertMessage, PropertyType, MarkerColors } from "@shared/schema";
 import { db } from "../db";
 import { eq, and, sql, inArray } from "drizzle-orm";
 import { IStorage } from "../storage";
@@ -77,11 +77,14 @@ export class DatabaseStorage implements IStorage {
     logger.debug("User hard deleted successfully");
   }
 
-  async updateUserRole(userId: number, isAdmin: boolean): Promise<User> {
-    logger.debug("Updating user role:", { userId, isAdmin });
+  async updateUserRole(userId: number, isAdmin: boolean, isSuperAdmin?: boolean): Promise<User> {
+    logger.debug("Updating user role:", { userId, isAdmin, isSuperAdmin });
+    const updateData: any = { isAdmin };
+    if (isSuperAdmin !== undefined) updateData.isSuperAdmin = isSuperAdmin;
+    
     const [updatedUser] = await db
       .update(users)
-      .set({ isAdmin })
+      .set(updateData)
       .where(eq(users.id, userId))
       .returning();
     logger.debug("User role updated successfully");
@@ -573,6 +576,32 @@ export class DatabaseStorage implements IStorage {
 
   async getPropertiesByPhone(phone: string): Promise<Property[]> {
     return db.select().from(properties).where(eq(properties.signPhoneNumber, phone));
+  }
+
+  async deleteProperty(propertyId: string): Promise<void> {
+    logger.info(`Deleting property: ${propertyId}`);
+    
+    // Find the internal numeric ID first
+    const [prop] = await db.select().from(properties).where(eq(properties.propertyId, propertyId));
+    if (!prop) {
+      logger.warn(`Property with ID ${propertyId} not found for deletion`);
+      return;
+    }
+
+    const numericId = prop.id;
+
+    await db.transaction(async (tx) => {
+      // 1. Delete associated earnings
+      await tx.delete(earnings).where(eq(earnings.propertyId, numericId));
+      
+      // 2. Delete associated payments
+      await tx.delete(payments).where(eq(payments.propertyId, numericId));
+      
+      // 3. Delete the property itself
+      await tx.delete(properties).where(eq(properties.id, numericId));
+    });
+
+    logger.info(`Property ${propertyId} (numeric ID: ${numericId}) and associated records deleted successfully`);
   }
 }
 

@@ -67,6 +67,7 @@ export interface IStorage {
     propertyCount: number;
     status: string;
   }): Promise<number>;
+  deleteProperty(propertyId: string): Promise<void>;
 }
 
 // Import and re-export the storage instance
