@@ -5,6 +5,7 @@ import selfsigned from "selfsigned";
 import { setupAuth } from "./auth";
 import { storage } from "./storage";
 import webauthnRouter from "./routes/webauthn";
+import diagnosticsRouter from "./routes/diagnostics";
 import { insertPropertySchema } from "@shared/schema";
 import { normalizePhoneNumber } from "./lib/phone-utils";
 import ocrService from "./services/ocr";
@@ -35,6 +36,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
   setupAuth(app);
 
   app.use("/api", webauthnRouter);
+  app.use("/api/admin/diagnostics", diagnosticsRouter);
 
   // Health check endpoint
   app.get('/health', (req, res) => {

@@ -3,7 +3,7 @@ import { useQuery, useMutation } from "@tanstack/react-query";
 import { PropertyWithUser, insertMessageSchema, InsertMessage } from "@shared/schema";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { LogOut, MapPin, Image, ChevronLeft, Users, Plus, Trash2, MessageCircle, Loader2, DollarSign, MessageSquare, Share2, FileSpreadsheet, Bell } from "lucide-react";
+import { LogOut, MapPin, Image as ImageIcon, ChevronLeft, Users, Plus, Trash2, MessageCircle, Loader2, DollarSign, MessageSquare, Share2, FileSpreadsheet, Bell, Activity, Terminal } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { useLocation } from "wouter";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
@@ -574,6 +574,130 @@ function PropertyImagesViewer({ propertyId }: { propertyId: string }) {
           onClick={() => window.open(data.images[idx], '_blank')}
         />
       ))}
+    </div>
+  );
+}
+
+function DiagnosticCenter() {
+  const [logs, setLogs] = useState<{ status: 'OK' | 'WAIT' | 'FAIL', message: string, suggestion?: string, timestamp: string }[]>([]);
+  const [isRunning, setIsRunning] = useState(false);
+  const logsEndRef = useRef<HTMLDivElement>(null);
+
+  const addLog = (log: Omit<typeof logs[0], 'timestamp'>) => {
+    setLogs(prev => [...prev, { ...log, timestamp: new Date().toLocaleTimeString() }]);
+  };
+
+  useEffect(() => {
+    logsEndRef.current?.scrollIntoView({ behavior: 'smooth' });
+  }, [logs]);
+
+  const runTest = async (endpoint: string, testName: string) => {
+    if (isRunning) return;
+    setIsRunning(true);
+    setLogs(prev => [...prev, { status: 'WAIT', message: `=== Iniciando ${testName} ===`, timestamp: new Date().toLocaleTimeString() }]);
+    
+    try {
+      const response = await fetch(`/api/admin/diagnostics/${endpoint}`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        credentials: 'include'
+      });
+      if (!response.ok) {
+        throw new Error(`HTTP Error ${response.status}`);
+      }
+      const data = await response.json();
+      
+      data.logs.forEach((log: any, i: number) => {
+        setTimeout(() => addLog(log), i * 300); // Effect of streaming
+      });
+
+      setTimeout(() => {
+        addLog({ status: 'OK', message: `=== ${testName} Completado (${data.durationMs}ms) ===` });
+        setIsRunning(false);
+      }, data.logs.length * 300 + 300);
+
+    } catch (error: any) {
+      addLog({ status: 'FAIL', message: `Error crítico de conexión: ${error.message}` });
+      setIsRunning(false);
+    }
+  };
+
+  return (
+    <div className="space-y-6 animate-in fade-in duration-300">
+      <Card className="bg-white border-0 shadow-md">
+        <CardHeader className="bg-[#FFF5F2] border-b border-[#F05023]/10 pb-4">
+          <CardTitle className="text-[#F05023] flex items-center text-lg">
+            <Activity className="h-5 w-5 mr-2" />
+            Centro de Diagnóstico de Salud
+          </CardTitle>
+          <p className="text-sm text-gray-600 mt-1">Herramienta para simular los flujos críticos de Virtual Agent sin generar registros permanentes.</p>
+        </CardHeader>
+        <CardContent className="p-6">
+           <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-8">
+             <Button
+               onClick={() => runTest('test-ingestion', 'TEST: Captura de Propiedad')}
+               disabled={isRunning}
+               className="bg-blue-600 hover:bg-blue-700 text-white h-auto py-3 px-4 flex flex-col items-center justify-center gap-2"
+             >
+               <span className="font-bold">Test: Captura de Propiedad</span>
+               <span className="text-xs font-normal opacity-80">(Ingreso, Imagen, Conectividad)</span>
+             </Button>
+
+             <Button
+               onClick={() => runTest('test-duplicates', 'TEST: Filtro de Duplicados')}
+               disabled={isRunning}
+               className="bg-purple-600 hover:bg-purple-700 text-white h-auto py-3 px-4 flex flex-col items-center justify-center gap-2"
+             >
+               <span className="font-bold">Test: Filtro de Duplicados</span>
+               <span className="text-xs font-normal opacity-80">(Haversine 20m, Normalización +506)</span>
+             </Button>
+
+             <Button
+               onClick={() => runTest('test-crm', 'TEST: Gestión Admin y CRM')}
+               disabled={isRunning}
+               className="bg-orange-600 hover:bg-orange-700 text-white h-auto py-3 px-4 flex flex-col items-center justify-center gap-2"
+             >
+               <span className="font-bold">Test: Gestión Admin y CRM</span>
+               <span className="text-xs font-normal opacity-80">(WASI Link, Cambio de estado)</span>
+             </Button>
+           </div>
+
+           <div className="bg-[#1e1e1e] rounded-lg border-2 border-gray-800 overflow-hidden shadow-inner">
+             <div className="bg-[#2d2d2d] px-4 py-2 border-b border-gray-800 flex items-center">
+               <Terminal className="h-4 w-4 text-gray-400 mr-2" />
+               <span className="text-xs font-mono text-gray-400">Consola de Diagnóstico / Logs en Tiempo Real</span>
+               {logs.length > 0 && (
+                 <Button variant="ghost" size="sm" onClick={() => setLogs([])} className="ml-auto text-xs text-gray-400 hover:text-white h-6">
+                   Limpiar
+                 </Button>
+               )}
+             </div>
+             <div className="p-4 h-[350px] overflow-y-auto font-mono text-sm space-y-2">
+               {logs.length === 0 ? (
+                 <div className="text-gray-500 italic text-center mt-10">Esperando ejecución de pruebas...</div>
+               ) : (
+                 logs.map((log, i) => (
+                   <div key={i} className="animate-in fade-in slide-in-from-bottom-2">
+                     <span className="text-gray-500 mr-2">[{log.timestamp}]</span>
+                     <span className={
+                       log.status === 'OK' ? 'text-green-400 font-bold' :
+                       log.status === 'WAIT' ? 'text-orange-400 font-bold' :
+                       'text-red-400 font-bold'
+                     }>[{log.status}]</span>
+                     <span className="text-gray-300 ml-2">{log.message}</span>
+                     {log.suggestion && (
+                       <div className="mt-1 ml-28 text-xs text-red-300 bg-red-950/30 p-2 rounded border border-red-900/50">
+                         💡 Sugerencia técnica: {log.suggestion}
+                       </div>
+                     )}
+                   </div>
+                 ))
+               )}
+               <div ref={logsEndRef} />
+             </div>
+           </div>
+        </CardContent>
+      </Card>
     </div>
   );
 }
@@ -1156,7 +1280,7 @@ export default function AdminWebPage() {
           </div>
 
           <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
-            <TabsList className={`w-full grid ${user.isSuperAdmin ? 'grid-cols-4' : (user.isAdmin ? 'grid-cols-3' : 'grid-cols-2')} h-12 md:h-14 bg-[#FF6347] p-0 gap-0 rounded-none border-b-2 border-[#ff7a5c]`}>
+            <TabsList className={`w-full grid md:h-14 h-auto ${user.isSuperAdmin ? 'grid-cols-2 md:grid-cols-5' : (user.isAdmin ? 'grid-cols-3' : 'grid-cols-2')} bg-[#FF6347] p-0 gap-0 rounded-none border-b-2 border-[#ff7a5c] overflow-y-auto max-h-24 md:max-h-none`}>
               <TabsTrigger value="map" className="text-sm md:text-base text-white data-[state=active]:bg-[#ff7a5c] data-[state=active]:text-white data-[state=active]:shadow-none data-[state=active]:border-b-2 data-[state=active]:border-gray-800 rounded-none border-b-2 border-transparent data-[state=inactive]:bg-transparent">
                 <MapPin className="h-4 w-4 md:h-5 md:w-5 mr-2" />
                 Mapa
@@ -1180,6 +1304,12 @@ export default function AdminWebPage() {
                 <TabsTrigger value="payments" className="text-sm md:text-base text-white data-[state=active]:bg-[#ff7a5c] data-[state=active]:text-white data-[state=active]:shadow-none data-[state=active]:border-b-2 data-[state=active]:border-gray-800 rounded-none border-b-2 border-transparent data-[state=inactive]:bg-transparent">
                   <DollarSign className="h-4 w-4 md:h-5 md:w-5 mr-2" />
                   ₡ Pagos
+                </TabsTrigger>
+              )}
+              {user.isSuperAdmin && (
+                <TabsTrigger value="diagnostics" className="text-sm md:text-base text-white data-[state=active]:bg-[#ff7a5c] data-[state=active]:text-white data-[state=active]:shadow-none data-[state=active]:border-b-2 data-[state=active]:border-gray-800 rounded-none border-b-2 border-transparent data-[state=inactive]:bg-transparent">
+                  <Activity className="h-4 w-4 md:h-5 md:w-5 mr-2" />
+                  Salud
                 </TabsTrigger>
               )}
             </TabsList>
@@ -1426,6 +1556,10 @@ export default function AdminWebPage() {
                 </Table>
                 )}
               </div>
+            </TabsContent>
+
+            <TabsContent value="diagnostics">
+              <DiagnosticCenter />
             </TabsContent>
 
             <TabsContent value="users">
