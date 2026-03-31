@@ -43,16 +43,21 @@ export class WasiService {
     }
 
     try {
-      // Usar formData o qparams segun spec. WASI recomienda POST para varias APIs pero GET/json para algunas.
-      // Intentaremos GET query params
-      const url = `${this.baseUrl}/property/get/${wasiId}?id_company=${this.idCompany}&wasi_token=${this.token}`;
+      // URL Base sin parametros, se envian por POST para mayor seguridad según docs oficiales de WASI
+      const url = `${this.baseUrl}/property/get/${wasiId}`;
       console.log(`[WasiService] Buscando propiedad en WASI id: ${wasiId}...`);
       
+      const formData = new URLSearchParams();
+      formData.append('id_company', this.idCompany);
+      formData.append('wasi_token', this.token);
+      
       const response = await fetch(url, {
-        method: 'GET',
+        method: 'POST',
         headers: {
-          'Accept': 'application/json'
-        }
+          'Accept': 'application/json',
+          'Content-Type': 'application/x-www-form-urlencoded'
+        },
+        body: formData
       });
 
       if (!response.ok) {
