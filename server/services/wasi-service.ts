@@ -22,15 +22,19 @@ export interface WasiPropertyData {
   property_condition_label: string;
 }
 
+// Fallback credentials in case Railway doesn't inject env vars
+const WASI_FALLBACK_COMPANY = '22125617';
+const WASI_FALLBACK_TOKEN = '4964_0daF_9is1_Ul8Y';
+
 export class WasiService {
   private baseUrl = 'https://api.wasi.co/v1';
 
   private get idCompany(): string {
-    return process.env.WASI_ID_COMPANY || '';
+    return process.env.WASI_ID_COMPANY || WASI_FALLBACK_COMPANY;
   }
 
   private get token(): string {
-    return process.env.WASI_TOKEN || '';
+    return process.env.WASI_TOKEN || WASI_FALLBACK_TOKEN;
   }
 
   isConfigured(): boolean {
