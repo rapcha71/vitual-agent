@@ -23,13 +23,14 @@ export interface WasiPropertyData {
 }
 
 export class WasiService {
-  private idCompany: string;
-  private token: string;
   private baseUrl = 'https://api.wasi.co/v1';
 
-  constructor() {
-    this.idCompany = process.env.WASI_ID_COMPANY || '';
-    this.token = process.env.WASI_TOKEN || '';
+  private get idCompany(): string {
+    return process.env.WASI_ID_COMPANY || '';
+  }
+
+  private get token(): string {
+    return process.env.WASI_TOKEN || '';
   }
 
   isConfigured(): boolean {
