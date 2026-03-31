@@ -810,6 +810,20 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  // Endpoint de diagnóstico WASI (solo super admin)
+  app.get("/api/admin/wasi-status", requireAdmin, async (req, res) => {
+    const hasCompany = !!process.env.WASI_ID_COMPANY;
+    const hasToken = !!process.env.WASI_TOKEN;
+    const isConfigured = wasiService.isConfigured();
+    res.json({
+      configured: isConfigured,
+      hasCompanyId: hasCompany,
+      hasToken: hasToken,
+      companyIdPreview: hasCompany ? process.env.WASI_ID_COMPANY!.substring(0, 4) + '***' : 'MISSING',
+      tokenPreview: hasToken ? process.env.WASI_TOKEN!.substring(0, 4) + '***' : 'MISSING',
+    });
+  });
+
   // RUTAS DE INTEGRACION WASI
   app.get("/api/admin/properties/:propertyId/wasi", requireAdmin, async (req, res) => {
     try {
@@ -844,6 +858,12 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
       const property = await storage.getPropertyByPropertyId(propertyId);
       if (!property) return res.status(404).json({ message: "Propiedad no encontrada" });
+
+      // Verificar credenciales primero
+      if (!wasiService.isConfigured()) {
+        logger.error('[WASI] Credenciales no configuradas en Railway. Faltan WASI_ID_COMPANY o WASI_TOKEN.');
+        return res.status(500).json({ message: "Integración WASI no configurada en el servidor. Contacte al administrador." });
+      }
 
       // Verificar que existe en WASI antes de vincular
       const wasiData = await wasiService.getProperty(wasiId);
