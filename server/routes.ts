@@ -17,6 +17,7 @@ import multer from "multer";
 import { logger } from "./lib/logger";
 import { validateBody } from "./middleware/validate";
 import { mediaService } from "./services/media-service";
+import { wasiService } from "./services/wasi-service";
 
 // Configure multer for message images - use memory storage for production compatibility
 const uploadMessageImage = multer({
@@ -806,6 +807,65 @@ export async function registerRoutes(app: Express): Promise<Server> {
     } catch (error: any) {
       logger.error("Error marking properties as viewed:", error);
       res.status(500).json({ message: "Error al marcar propiedades como vistas" });
+    }
+  });
+
+  // RUTAS DE INTEGRACION WASI
+  app.get("/api/admin/properties/:propertyId/wasi", requireAdmin, async (req, res) => {
+    try {
+      const { propertyId } = req.params;
+      const property = await storage.getPropertyByPropertyId(propertyId);
+      if (!property) return res.status(404).json({ message: "Propiedad no encontrada" });
+
+      if (!property.wasiId) return res.status(400).json({ message: "La propiedad no está vinculada a WASI" });
+
+      const wasiData = await wasiService.getProperty(property.wasiId);
+      if (!wasiData) return res.status(500).json({ message: "No se pudo obtener información de WASI" });
+
+      res.json(wasiData);
+    } catch (error: any) {
+      logger.error("Error fetching WASI data:", error);
+      res.status(500).json({ message: "Error interno al consultar WASI" });
+    }
+  });
+
+  app.post("/api/admin/properties/:propertyId/link-wasi", requireAdmin, async (req, res) => {
+    try {
+      if (!req.user?.isSuperAdmin) {
+        return res.status(403).json({ message: "Requiere privilegios de super administrador" });
+      }
+
+      const { propertyId } = req.params;
+      const { wasiId } = req.body;
+
+      if (!wasiId) {
+        return res.status(400).json({ message: "wasiId es requerido" });
+      }
+
+      const property = await storage.getPropertyByPropertyId(propertyId);
+      if (!property) return res.status(404).json({ message: "Propiedad no encontrada" });
+
+      // Verificar que existe en WASI antes de vincular
+      const wasiData = await wasiService.getProperty(wasiId);
+      if (!wasiData) {
+        return res.status(400).json({ message: "No se encontró ningún inmueble en WASI con ese ID verifícalo." });
+      }
+
+      const { db } = await import("./db");
+      const { properties } = await import("../shared/schema");
+      const { eq } = await import("drizzle-orm");
+
+      await db.update(properties)
+        .set({ 
+          wasiId: wasiId.toString(),
+          tieneContrato: true
+        })
+        .where(eq(properties.propertyId, propertyId));
+
+      res.json({ success: true, message: "Propiedad vinculada a WASI exitosamente" });
+    } catch (error: any) {
+      logger.error("Error linking WASI property:", error);
+      res.status(500).json({ message: "Error interno al vincular con WASI" });
     }
   });
 

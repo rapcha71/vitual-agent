@@ -92,6 +92,8 @@ export const properties = pgTable("properties", {
   viewedByAdmin: boolean("viewed_by_admin").notNull().default(false),
   isPaid: boolean("is_paid").notNull().default(false),
   paidAt: timestamp("paid_at", { withTimezone: true }),
+  tieneContrato: boolean("tiene_contrato").notNull().default(false),
+  wasiId: text("wasi_id"),
 }, (t) => [
   index("properties_user_id_idx").on(t.userId),
   index("properties_phone_idx").on(t.signPhoneNumber)
@@ -235,7 +237,9 @@ export const propertySchema = z.object({
   blurhashes: z.array(z.string()).optional(),
   kmlData: z.string().nullable(),
   markerColor: z.string(),
-  createdAt: z.string()
+  createdAt: z.string(),
+  tieneContrato: z.boolean().default(false),
+  wasiId: z.string().nullable().optional()
 });
 
 // Modified insertPropertySchema to include createdAt
@@ -307,5 +311,7 @@ export type PropertyWithUser = {
   kmlData: string | null;
   markerColor: string;
   createdAt: string;
+  tieneContrato?: boolean;
+  wasiId?: string | null;
   user: User;
 };

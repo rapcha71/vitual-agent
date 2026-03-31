@@ -71,7 +71,16 @@ const MapComponent = memo(forwardRef(({ properties }: { properties: PropertyWith
         map: map.current,
         title: property.propertyId,
         optimized: false,
-        icon: {
+        icon: property.tieneContrato ? {
+          path: 'M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z',
+          fillColor: property.propertyType === 'house' ? '#F05023' :
+                    property.propertyType === 'land' ? '#22C55E' : '#3B82F6',
+          fillOpacity: 1,
+          strokeWeight: 2,
+          strokeColor: '#FFFFFF',
+          scale: 1.5,
+          anchor: new google.maps.Point(12, 12),
+        } : {
           path: 'M12 0C7.802 0 4 3.403 4 7.602C4 11.8 7.469 16.812 12 24C16.531 16.812 20 11.8 20 7.602C20 3.403 16.199 0 12 0ZM12 11C10.343 11 9 9.657 9 8C9 6.343 10.343 5 12 5C13.657 5 15 6.343 15 8C15 9.657 13.657 11 12 11Z',
           fillColor: property.propertyType === 'house' ? '#F05023' :
                     property.propertyType === 'land' ? '#22C55E' : '#3B82F6',
@@ -120,12 +129,108 @@ const MapComponent = memo(forwardRef(({ properties }: { properties: PropertyWith
       locEl.innerHTML = `<strong>📍 Coord:</strong> ${property.location?.lat?.toFixed(7) || '0'}, ${property.location?.lng?.toFixed(7) || '0'}${isCorrupted ? '<br/><span style="color:red;font-weight:bold;">⚠️ REVISIÓN REQUERIDA</span>' : ''}`;
       contentDiv.appendChild(locEl);
 
+      const wasiEl = document.createElement('div');
+      wasiEl.style.cssText = 'margin-top: 10px; padding-top: 10px; border-top: 1px solid #ccc;';
+      if (property.tieneContrato && property.wasiId) {
+        wasiEl.innerHTML = `
+          <div style="font-size: 11px; color: #666; margin-bottom: 5px;">
+            <strong style="color: #FFD700; font-size: 14px;">★</strong> <strong>Firmado en WASI ID:</strong> ${property.wasiId}
+          </div>
+          <button id="wasi-btn-${property.id}" style="width: 100%; padding: 6px; background: #FFD700; border: 1px solid #d4af37; border-radius: 4px; font-size: 12px; font-weight: bold; cursor: pointer; color: #555;">
+            Cargar Detalles de CRM
+          </button>
+          <div id="wasi-data-${property.id}" style="display: none; font-size: 11px; background: #fff8e1; border: 1px solid #ffe082; padding: 8px; border-radius: 4px; margin-top: 6px;"></div>
+        `;
+      } else {
+        wasiEl.innerHTML = `
+          <div style="font-size: 11px; margin-bottom: 5px; font-weight: bold; color: #F05023;">Vincular con WASI:</div>
+          <div style="display: flex; gap: 4px;">
+            <input type="text" id="wasi-input-${property.id}" placeholder="ID de WASI" style="flex: 1; padding: 4px; font-size: 11px; border: 1px solid #ccc; border-radius: 4px; outline: none;" />
+            <button id="wasi-btn-${property.id}" style="padding: 4px 8px; background: #F05023; color: white; border: none; border-radius: 4px; font-size: 11px; cursor: pointer; font-weight: bold;">
+              Vincular
+            </button>
+          </div>
+        `;
+      }
+      contentDiv.appendChild(wasiEl);
+
       const infoWindow = new google.maps.InfoWindow({
         content: contentDiv,
         maxWidth: 300
       });
 
       let imagesLoaded = false;
+
+      // WASI Event Listeners binding
+      google.maps.event.addListener(infoWindow, 'domready', () => {
+        const btn = document.getElementById(`wasi-btn-${property.id}`);
+        if (!btn) return;
+        
+        // Remove existing listeners to prevent duplicates
+        const newBtn = btn.cloneNode(true);
+        btn.parentNode?.replaceChild(newBtn, btn);
+        
+        if (property.tieneContrato) {
+          newBtn.addEventListener('click', async () => {
+             const dataDiv = document.getElementById(`wasi-data-${property.id}`);
+             if (dataDiv) {
+               dataDiv.style.display = 'block';
+               dataDiv.innerHTML = '<div style="text-align: center;"><span class="text-xs text-gray-500">Buscando...</span></div>';
+               try {
+                 const res = await fetch(`/api/admin/properties/${property.propertyId}/wasi`, { credentials: 'include' });
+                 if (res.ok) {
+                   const data = await res.json();
+                   dataDiv.innerHTML = `
+                     <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 4px;">
+                       <div><strong>Precio Venta:</strong><br/>${data.sale_price_label || 'N/A'}</div>
+                       <div><strong>Precio Alq:</strong><br/>${data.rent_price_label || 'N/A'}</div>
+                       <div><strong>Área Total:</strong><br/>${data.area || 'N/A'} ${data.area ? 'm²' : ''}</div>
+                       <div><strong>Año Const:</strong><br/>${data.year_built || 'N/A'}</div>
+                     </div>
+                     <div style="margin-top: 6px; border-top: 1px dotted #ccc; padding-top: 6px;">
+                       <strong>Tipo:</strong> ${data.property_type_label || 'N/A'}
+                     </div>
+                   `;
+                 } else {
+                   dataDiv.innerHTML = '<span style="color:red; font-weight:bold;">Error al obtener datos. ¿Token inválido?</span>';
+                 }
+               } catch (e) {
+                 dataDiv.innerHTML = '<span style="color:red; font-weight:bold;">Error de red.</span>';
+               }
+             }
+          });
+        } else {
+          newBtn.addEventListener('click', async () => {
+             const input = document.getElementById(`wasi-input-${property.id}`) as HTMLInputElement;
+             if (!input?.value) return alert('Debes ingresar un ID de WASI válido');
+             
+             newBtn.textContent = '...';
+             try {
+                 const res = await fetch(`/api/admin/properties/${property.propertyId}/link-wasi`, { 
+                   method: 'POST',
+                   headers: { 'Content-Type': 'application/json' },
+                   body: JSON.stringify({ wasiId: input.value }),
+                   credentials: 'include' 
+                 });
+                 if (res.ok) {
+                   toast({ title: "¡Vinculación Exitosa!", description: "La propiedad se ha vinculado a WASI de forma permanente." });
+                   (newBtn as HTMLButtonElement).textContent = "¡OK!";
+                   (newBtn as HTMLButtonElement).style.background = "#22C55E";
+                   setTimeout(() => {
+                     window.location.reload();
+                   }, 1000);
+                 } else {
+                   const err = await res.json();
+                   alert('Error: ' + err.message);
+                   (newBtn as HTMLButtonElement).textContent = "Vincular";
+                 }
+             } catch (e) {
+                alert('Error de conexión con el servidor.');
+                (newBtn as HTMLButtonElement).textContent = "Vincular";
+             }
+          });
+        }
+      });
 
       marker.addListener('click', async () => {
         infoWindowsRef.current.forEach(window => window.close());
