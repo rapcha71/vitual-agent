@@ -180,19 +180,1861 @@ const MapComponent = memo(forwardRef(({ properties }: { properties: PropertyWith
                  const res = await fetch(`/api/admin/properties/${property.propertyId}/wasi`, { credentials: 'include' });
                  if (res.ok) {
                    const data = await res.json();
-                    dataDiv.innerHTML = `
+                                       dataDiv.innerHTML = `
                       <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 5px; font-size: 11px;">
                         <div><strong>Precio Venta:</strong><br/>${data.sale_price_label || 'N/A'}</div>
                         <div><strong>Precio Alq:</strong><br/>${data.rent_price_label || 'N/A'}</div>
-                        <div><strong>Area Total:</strong><br/>${data.area ? data.area + ' m2' : 'N/A'}</div>
-                        <div><strong>Area Const:</strong><br/>${data.built_area ? data.built_area + ' m2' : 'N/A'}</div>
-                        <div><strong>Ano Const:</strong><br/>${data.building_date || 'N/A'}</div>
-                        <div><strong>Condicion:</strong><br/>${data.property_condition_label || 'N/A'}</div>
-                        ${data.bedrooms ? '<div><strong>Dormitorios:</strong><br/>' + data.bedrooms + '</div>' : ''}
-                        ${data.bathrooms ? '<div><strong>Banos:</strong><br/>' + data.bathrooms + '</div>' : ''}
-                        ${data.garages ? '<div><strong>Garages:</strong><br/>' + data.garages + '</div>' : ''}
+                        <div><strong>Área Total:</strong><br/>${data.area ? data.area + ' m²' : 'N/A'}</div>
+                        <div><strong>Área Const:</strong><br/>${data.built_area ? data.built_area + ' m²' : 'N/A'}</div>
+                        <div><strong>Año Const:</strong><br/>${data.building_date || 'N/A'}</div>
+                        <div><strong>Condición:</strong><br/>${data.property_condition_label || 'N/A'}</div>
+                        ${data.bedrooms ? `<div><strong>Dormitorios:</strong><br/>${data.bedrooms}</div>` : ''}
+                        ${data.bathrooms ? `<div><strong>Baños:</strong><br/>${data.bathrooms}</div>` : ''}
+                        ${data.garages ? `<div><strong>Garages:</strong><br/>${data.garages}</div>` : ''}
                       </div>
                       <div style="margin-top: 6px; border-top: 1px dotted #ccc; padding-top: 5px; font-size: 11px;">
-                        ${data.city_label ? data.city_label + (data.region_label ? ', ' + data.region_label : '') : ''}
+                        ${data.city_label ? `<strong>📍Ubicación:</strong> ${data.city_label}${data.region_label ? ', ' + data.region_label : ''}` : ''}
                       </div>
                     `;
+                 } else {
+                   dataDiv.innerHTML = '<span style="color:red; font-weight:bold;">Error al obtener datos. ¿Token inválido?</span>';
+                 }
+               } catch (e) {
+                 dataDiv.innerHTML = '<span style="color:red; font-weight:bold;">Error de red.</span>';
+               }
+             }
+          });
+        } else {
+          newBtn.addEventListener('click', async () => {
+             const input = document.getElementById(`wasi-input-${property.id}`) as HTMLInputElement;
+             if (!input?.value) return alert('Debes ingresar un ID de WASI válido');
+             
+             newBtn.textContent = '...';
+             try {
+                 const res = await fetch(`/api/admin/properties/${property.propertyId}/link-wasi`, { 
+                   method: 'POST',
+                   headers: { 'Content-Type': 'application/json' },
+                   body: JSON.stringify({ wasiId: input.value }),
+                   credentials: 'include' 
+                 });
+                 if (res.ok) {
+                   toast({ title: "¡Vinculación Exitosa!", description: "La propiedad se ha vinculado a WASI de forma permanente." });
+                   (newBtn as HTMLButtonElement).textContent = "¡OK!";
+                   (newBtn as HTMLButtonElement).style.background = "#22C55E";
+                   setTimeout(() => {
+                     window.location.reload();
+                   }, 1000);
+                 } else {
+                   const err = await res.json();
+                   alert('Error: ' + err.message);
+                   (newBtn as HTMLButtonElement).textContent = "Vincular";
+                 }
+             } catch (e) {
+                alert('Error de conexión con el servidor.');
+                (newBtn as HTMLButtonElement).textContent = "Vincular";
+             }
+          });
+        }
+      });
+
+      marker.addListener('click', async () => {
+        infoWindowsRef.current.forEach(window => window.close());
+        infoWindow.open(map.current, marker);
+        
+        if (hasImages && !imagesLoaded) {
+          try {
+            const response = await fetch(`/api/admin/properties/${property.propertyId}/images`, {
+              credentials: 'include'
+            });
+            if (response.ok) {
+              const data = await response.json();
+              // Use thumbnail for the small info window
+              const displayImg = (data.thumbnails && data.thumbnails[0]) || (data.images && data.images[0]);
+              
+              if (displayImg) {
+                imagesLoaded = true;
+                const img = document.createElement('img');
+                img.alt = 'Imagen de la propiedad';
+                img.style.cssText = 'width: 100%; height: 150px; object-fit: cover; border-radius: 4px;';
+                img.onload = () => {
+                  imgContainer.innerHTML = '';
+                  imgContainer.style.background = 'transparent';
+                  imgContainer.appendChild(img);
+                };
+                img.src = displayImg;
+              }
+            }
+          } catch (error) {
+            imgContainer.innerHTML = '<span style="color: #999; font-size: 12px;">Error al cargar imagen</span>';
+          }
+        }
+      });
+
+      bounds.extend(marker.getPosition()!);
+      markersRef.current.push(marker);
+      infoWindowsRef.current.push(infoWindow);
+
+      // GeoAudit Log
+      console.log(`[Virtual Agent GeoAudit] Property ${property.propertyId}: Saved (${lat}, ${lng}) -> Rendered (${marker.getPosition()?.lat()}, ${marker.getPosition()?.lng()})`);
+    });
+
+    if (markersRef.current.length > 0 && map.current) {
+      clustererRef.current = new MarkerClusterer({
+        map: map.current,
+        markers: markersRef.current
+      });
+    }
+
+    if (propertiesToDisplay.length > 0) {
+      map.current.fitBounds(bounds);
+    }
+  }, [cleanupMap, toast]);
+
+  useImperativeHandle(ref, () => ({
+    resizeMap: () => {
+      if (map.current) {
+        const center = map.current.getCenter();
+        google.maps.event.trigger(map.current, 'resize');
+        if (center) map.current.setCenter(center);
+      }
+    },
+    searchProperty: (propertyId: string) => {
+      if (!propertyId) {
+        addMarkers(properties); // Show all if search is cleared
+        return;
+      }
+      const foundProperty = properties.find(p => p.propertyId === propertyId);
+      if (foundProperty) {
+        // Clear existing markers first
+        cleanupMap();
+
+        // Center map on the found property with higher zoom
+        const lat = Number(foundProperty.location?.lat || 0);
+        const lng = Number(foundProperty.location?.lng || 0);
+        map.current?.setCenter({ lat, lng });
+        map.current?.setZoom(18);
+
+        // Create a special blinking marker for the found property
+        const blinkingMarker = new google.maps.Marker({
+          position: { lat, lng },
+          map: map.current,
+          title: foundProperty.propertyId,
+          optimized: false,
+          animation: google.maps.Animation.BOUNCE,
+          icon: {
+            path: 'M12 0C7.802 0 4 3.403 4 7.602C4 11.8 7.469 16.812 12 24C16.531 16.812 20 11.8 20 7.602C20 3.403 16.199 0 12 0ZM12 11C10.343 11 9 9.657 9 8C9 6.343 10.343 5 12 5C13.657 5 15 6.343 15 8C15 9.657 13.657 11 12 11Z',
+            fillColor: '#FFD700', // Gold color for special marker
+            fillOpacity: 1,
+            strokeWeight: 2,
+            strokeColor: '#FF0000', // Red border
+            scale: 2, // Larger size
+            anchor: new google.maps.Point(12, 24),
+          }
+        });
+
+        // Stop bouncing after 3 seconds and add blinking effect
+        setTimeout(() => {
+          blinkingMarker.setAnimation(null);
+
+          // Create blinking effect
+          let isVisible = true;
+          const blinkInterval = setInterval(() => {
+            blinkingMarker.setVisible(isVisible);
+            isVisible = !isVisible;
+          }, 500);
+
+          // Stop blinking after 10 seconds
+          setTimeout(() => {
+            clearInterval(blinkInterval);
+            blinkingMarker.setVisible(true);
+          }, 10000);
+        }, 3000);
+
+        const propertyImage = (foundProperty.thumbnails && foundProperty.thumbnails.length > 0)
+          ? foundProperty.thumbnails[0]
+          : (foundProperty.images && (foundProperty.images as any).length > 0 ? (foundProperty.images[0] as string) : null);
+
+        const fullImage = (foundProperty.images && (foundProperty.images as any).length > 0) ? (foundProperty.images[0] as string) : null;
+
+        // Enhanced info window with larger image and more details (optimized)
+        const infoWindow = new google.maps.InfoWindow({
+          content: `
+            <div style="padding: 16px; min-width: 280px; max-width: 350px; font-family: Arial, sans-serif;">
+              <div style="display: flex; align-items: center; margin-bottom: 12px;">
+                <div style="width: 12px; height: 12px; background: #FFD700; border-radius: 50%; margin-right: 8px; animation: pulse 1.5s infinite;"></div>
+                <h3 style="margin: 0; font-size: 16px; font-weight: bold; color: #F05023;">
+                  🎯 Propiedad Encontrada: ${foundProperty.propertyId}
+                </h3>
+              </div>
+              ${propertyImage ? `
+                <div style="margin: 12px 0; text-align: center;">
+                  <img src="${propertyImage}"
+                       alt="Imagen de la propiedad ${foundProperty.propertyId}"
+                       style="width: 100%; max-width: 280px; height: 180px; object-fit: cover; border-radius: 8px; border: 2px solid #F05023; box-shadow: 0 4px 8px rgba(0,0,0,0.2);"
+                       onclick="window.open('${fullImage}', '_blank')"
+                       title="Click para ver en tamaño completo"
+                       loading="lazy"
+                  />
+                  <p style="margin: 4px 0 0 0; font-size: 10px; color: #666; cursor: pointer;" onclick="window.open('${fullImage}', '_blank')">
+                    📸 Click en la imagen para ampliar
+                  </p>
+                </div>
+              ` : `
+                <div style="margin: 12px 0; text-align: center; padding: 40px; background: #f5f5f5; border-radius: 8px; border: 2px dashed #ccc;">
+                  <span style="font-size: 24px;">🏠</span>
+                  <p style="margin: 8px 0 0 0; font-size: 12px; color: #666;">Sin imagen disponible</p>
+                </div>
+              `}
+              <div style="background: #f8f9fa; padding: 12px; border-radius: 6px; margin: 12px 0;">
+                <p style="margin: 0 0 8px; font-size: 13px; color: #333;">
+                  <strong>🏷️ Tipo:</strong> ${
+                    foundProperty.propertyType === 'house' ? '🏠 Casa' :
+                    foundProperty.propertyType === 'land' ? '🌿 Terreno' :
+                    '🏢 Local Comercial'
+                  }
+                </p>
+                <p style="margin: 0 0 8px; font-size: 13px; color: #333;">
+                  <strong>👤 Usuario:</strong> <span style="${foundProperty.user?.isDeleted ? 'color: red; text-decoration: line-through;' : ''}">${foundProperty.user?.fullName || foundProperty.user?.username || 'Usuario Desconocido'}${foundProperty.user?.isDeleted ? ' (eliminado)' : ''}</span>
+                </p>
+                <p style="margin: 0 0 8px; font-size: 13px; color: #333;">
+                  <strong>📞 Teléfono:</strong> ${foundProperty.signPhoneNumber || 'No disponible'}
+                </p>
+                <p style="margin: 0; font-size: 12px; color: #666;">
+                  <strong>📍 Coordenadas:</strong> ${foundProperty.location?.lat?.toFixed(7) || '0'}, ${foundProperty.location?.lng?.toFixed(7) || '0'}
+                </p>
+                ${foundProperty.location?.address?.includes('[REVISIÓN REQUERIDA]') ? `
+                  <p style="margin: 4px 0 0; font-size: 12px; color: #ef4444; font-weight: bold;">
+                    ⚠️ REVISIÓN REQUERIDA (Ubicación corrupta)
+                  </p>
+                ` : ''}
+              </div>
+              <style>
+                @keyframes pulse {
+                  0% { opacity: 1; }
+                  50% { opacity: 0.5; }
+                  100% { opacity: 1; }
+                }
+              </style>
+            </div>
+          `,
+          maxWidth: 380
+        });
+
+        // Open info window immediately
+        infoWindow.open(map.current, blinkingMarker);
+
+        // Add click listener to the marker
+        blinkingMarker.addListener('click', () => {
+          infoWindowsRef.current.forEach(window => window.close());
+          infoWindow.open(map.current, blinkingMarker);
+        });
+
+        markersRef.current.push(blinkingMarker);
+        infoWindowsRef.current.push(infoWindow);
+        if (clustererRef.current) {
+          clustererRef.current.addMarker(blinkingMarker);
+        }
+
+        // GeoAudit Log
+        console.log(`[Virtual Agent GeoAudit] Selected Property ${foundProperty.propertyId}: Saved (${lat}, ${lng}) -> Rendered (${blinkingMarker.getPosition()?.lat()}, ${blinkingMarker.getPosition()?.lng()})`);
+
+        toast({
+          title: "¡Propiedad encontrada!",
+          description: `Se ha localizado la propiedad ${propertyId} en el mapa`,
+        });
+      } else {
+        toast({
+          title: "Propiedad no encontrada",
+          description: `No se encontró ninguna propiedad con el ID: ${propertyId}`,
+          variant: "destructive"
+        });
+      }
+    }
+  }));
+
+
+  // Obtener API key desde el servidor (funciona en Railway/Docker donde VITE_* no se inyecta en build)
+  useEffect(() => {
+    fetch("/api/config", { credentials: "include" })
+      .then((r) => r.json())
+      .then((data) => setApiKey(data.googleMapsApiKey || ""))
+      .catch(() => setApiKey(""));
+  }, []);
+
+  useEffect(() => {
+    if (!apiKey) return;
+    let isMounted = true;
+    let onResize: (() => void) | undefined;
+    let onOrientationChange: (() => void) | undefined;
+
+    const initMap = async () => {
+      if (!mapRef.current) {
+        setIsLoading(false);
+        return;
+      }
+
+      if (!apiKey) {
+        setIsLoading(false);
+        return;
+      }
+
+      if (!properties.length) {
+        setIsLoading(false);
+        return;
+      }
+
+      try {
+        const loader = new Loader({
+          apiKey,
+          version: "weekly",
+          libraries: ["places"]
+        });
+
+        const google = await loader.load();
+
+        if (!isMounted || !mapRef.current) return;
+
+        const mapOptions: google.maps.MapOptions = {
+          center: { lat: 9.9281, lng: -84.0907 },
+          zoom: 8,
+          mapTypeControl: false,
+          streetViewControl: false,
+          fullscreenControl: false,
+          zoomControl: true,
+          gestureHandling: 'greedy',
+          disableDefaultUI: true
+        };
+
+        map.current = new google.maps.Map(mapRef.current, mapOptions);
+
+        addMarkers(properties);
+
+        // En móvil: redibujar al rotar o cambiar tamaño (orientationchange/resize)
+        onResize = () => {
+          if (map.current) {
+            const center = map.current.getCenter();
+            google.maps.event.trigger(map.current, 'resize');
+            if (center) map.current.setCenter(center);
+          }
+        };
+        onOrientationChange = () => setTimeout(onResize, 400);
+        window.addEventListener('resize', onResize);
+        window.addEventListener('orientationchange', onOrientationChange);
+
+        if (isMounted) {
+          setIsLoading(false);
+        }
+
+      } catch (error) {
+        console.error('Error loading map:', error);
+        if (isMounted) {
+          setMapError(String(error instanceof Error ? error.message : error));
+          toast({
+            title: "Error al cargar el mapa",
+            description: "Revisá las restricciones de la API key en Google Cloud (ver instrucciones en pantalla)",
+            variant: "destructive"
+          });
+          setIsLoading(false);
+        }
+      }
+    };
+
+    initMap();
+
+    return () => {
+      isMounted = false;
+      cleanupMap();
+      if (typeof onResize === 'function') window.removeEventListener('resize', onResize);
+      if (typeof onOrientationChange === 'function') window.removeEventListener('orientationchange', onOrientationChange);
+    };
+  }, [apiKey, properties, toast, cleanupMap, addMarkers]);
+
+  const hasApiKey = !!apiKey;
+  const hasProperties = properties.length > 0;
+
+  if (!hasApiKey) {
+    return (
+      <div className="w-full h-[500px] flex flex-col items-center justify-center bg-gray-100 rounded-lg shadow-md p-6 text-center">
+        <MapPin className="h-16 w-16 text-gray-400 mb-4" />
+        <h3 className="text-lg font-semibold text-gray-700 mb-2">Mapa no disponible</h3>
+        <p className="text-sm text-gray-600 max-w-md">
+          Para ver el mapa necesitás configurar la API key de Google Maps.
+          <br />Agregá <code className="bg-gray-200 px-1 rounded">VITE_GOOGLE_MAPS_API_KEY</code> en tu archivo <code className="bg-gray-200 px-1 rounded">.env</code> o en las variables de Railway.
+        </p>
+      </div>
+    );
+  }
+
+  if (!hasProperties) {
+    return (
+      <div className="w-full h-[500px] flex flex-col items-center justify-center bg-gray-100 rounded-lg shadow-md p-6 text-center">
+        <MapPin className="h-16 w-16 text-gray-400 mb-4" />
+        <p className="text-gray-600">No hay propiedades para mostrar en el mapa</p>
+      </div>
+    );
+  }
+
+  if (mapError) {
+    const isReferrerError = /referrer|RefererNotAllowed|restriction/i.test(mapError);
+    const currentOrigin = typeof window !== 'undefined' ? window.location.origin : '';
+    const urlToAdd = currentOrigin ? `${currentOrigin}/*` : '(ej: https://tu-app.railway.app/*)';
+    return (
+      <div className="w-full h-[500px] flex flex-col items-center justify-center bg-white rounded-lg shadow-md p-6 text-center">
+        <MapPin className="h-16 w-16 text-orange-500 mb-4" />
+        <h3 className="text-lg font-semibold text-gray-800 mb-2">Error al cargar el mapa</h3>
+        <p className="text-sm text-gray-700 mb-4 max-w-md">
+          {isReferrerError
+            ? "La API key de Google Maps no permite acceder desde este dispositivo. Agregá la URL actual a las restricciones."
+            : "No se pudo cargar Google Maps. Revisá la consola del navegador para más detalles."}
+        </p>
+        {isReferrerError && (
+          <div className="bg-gray-50 rounded-lg p-4 text-left text-sm text-gray-700 max-w-md space-y-2">
+            <p className="font-medium">Solución (Google Cloud Console → Credenciales → tu API key):</p>
+            <ol className="list-decimal list-inside space-y-1 text-xs">
+              <li>Editá tu API key de Maps</li>
+              <li>En "Restricciones de sitios web" → HTTP referrers</li>
+              <li>Agregá esta URL exacta: <code className="bg-gray-200 px-1 rounded block mt-1 break-all">{urlToAdd}</code></li>
+              <li>En pruebas locales: <code className="bg-gray-200 px-1 rounded block mt-1">http://192.168.*.*/*</code></li>
+              <li>En producción: <code className="bg-gray-200 px-1 rounded block mt-1">https://tu-dominio.railway.app/*</code></li>
+            </ol>
+          </div>
+        )}
+      </div>
+    );
+  }
+
+  return (
+    <div className="w-full h-[500px] relative bg-gray-200 rounded-lg overflow-hidden shadow-md border-2 border-gray-300">
+      <div
+        ref={mapRef}
+        className="absolute inset-0"
+        style={{ width: '100%', height: '100%', minHeight: '500px' }}
+      />
+      {isLoading && (
+        <div className="absolute inset-0 flex items-center justify-center bg-gray-100/80">
+          <Loader2 className="h-8 w-8 animate-spin text-primary" />
+        </div>
+      )}
+    </div>
+  );
+}));
+
+MapComponent.displayName = 'MapComponent';
+
+function PropertyImagesViewer({ propertyId }: { propertyId: string }) {
+  const [data, setData] = useState<{
+    images: string[];
+    thumbnails: string[];
+    blurhashes: string[];
+  }>({ images: [], thumbnails: [], blurhashes: [] });
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+
+  useEffect(() => {
+    const fetchImages = async () => {
+      try {
+        const response = await fetch(`/api/admin/properties/${propertyId}/images`, {
+          credentials: 'include'
+        });
+        if (response.ok) {
+          const fetchedData = await response.json();
+          setData({
+            images: fetchedData.images || [],
+            thumbnails: fetchedData.thumbnails || [],
+            blurhashes: fetchedData.blurhashes || []
+          });
+        } else {
+          setError('Error al cargar imágenes');
+        }
+      } catch (err) {
+        setError('Error al cargar imágenes');
+      } finally {
+        setLoading(false);
+      }
+    };
+    fetchImages();
+  }, [propertyId]);
+
+  if (loading) {
+    return (
+      <div className="flex items-center justify-center py-8">
+        <Loader2 className="h-8 w-8 animate-spin text-primary" />
+      </div>
+    );
+  }
+
+  if (error) {
+    return <div className="text-center text-red-500 py-4">{error}</div>;
+  }
+
+  if (data.images.length === 0) {
+    return <div className="text-center text-gray-500 py-4">No hay imágenes disponibles</div>;
+  }
+
+  return (
+    <div className="grid grid-cols-1 md:grid-cols-2 gap-4 max-h-[70vh] overflow-y-auto p-1">
+      {data.images.map((_, idx) => (
+        <OptimizedImage
+          key={idx}
+          src={data.thumbnails?.[idx] || data.images[idx]}
+          alt={`Foto ${idx + 1}`}
+          blurhash={data.blurhashes?.[idx]}
+          className="w-full h-48"
+          aspectRatio="video"
+          onClick={() => window.open(data.images[idx], '_blank')}
+        />
+      ))}
+    </div>
+  );
+}
+
+function DiagnosticCenter() {
+  const [logs, setLogs] = useState<{ status: 'OK' | 'WAIT' | 'FAIL', message: string, suggestion?: string, timestamp: string }[]>([]);
+  const [isRunning, setIsRunning] = useState(false);
+  const logsEndRef = useRef<HTMLDivElement>(null);
+
+  const addLog = (log: Omit<typeof logs[0], 'timestamp'>) => {
+    setLogs(prev => [...prev, { ...log, timestamp: new Date().toLocaleTimeString() }]);
+  };
+
+  useEffect(() => {
+    logsEndRef.current?.scrollIntoView({ behavior: 'smooth' });
+  }, [logs]);
+
+  const runTest = async (endpoint: string, testName: string) => {
+    if (isRunning) return;
+    setIsRunning(true);
+    setLogs(prev => [...prev, { status: 'WAIT', message: `=== Iniciando ${testName} ===`, timestamp: new Date().toLocaleTimeString() }]);
+    
+    try {
+      const response = await fetch(`/api/admin/diagnostics/${endpoint}`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        credentials: 'include'
+      });
+      if (!response.ok) {
+        throw new Error(`HTTP Error ${response.status}`);
+      }
+      const data = await response.json();
+      
+      data.logs.forEach((log: any, i: number) => {
+        setTimeout(() => addLog(log), i * 300); // Effect of streaming
+      });
+
+      setTimeout(() => {
+        addLog({ status: 'OK', message: `=== ${testName} Completado (${data.durationMs}ms) ===` });
+        setIsRunning(false);
+      }, data.logs.length * 300 + 300);
+
+    } catch (error: any) {
+      addLog({ status: 'FAIL', message: `Error crítico de conexión: ${error.message}` });
+      setIsRunning(false);
+    }
+  };
+
+  return (
+    <div className="space-y-6 animate-in fade-in duration-300">
+      <Card className="bg-white border-0 shadow-md">
+        <CardHeader className="bg-[#FFF5F2] border-b border-[#F05023]/10 pb-4">
+          <CardTitle className="text-[#F05023] flex items-center text-lg">
+            <Activity className="h-5 w-5 mr-2" />
+            Centro de Diagnóstico de Salud
+          </CardTitle>
+          <p className="text-sm text-gray-600 mt-1">Herramienta para simular los flujos críticos de Virtual Agent sin generar registros permanentes.</p>
+        </CardHeader>
+        <CardContent className="p-6">
+           <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-8">
+             <Button
+               onClick={() => runTest('test-ingestion', 'TEST: Captura de Propiedad')}
+               disabled={isRunning}
+               className="bg-blue-600 hover:bg-blue-700 text-white h-auto py-3 px-4 flex flex-col items-center justify-center gap-2"
+             >
+               <span className="font-bold">Test: Captura de Propiedad</span>
+               <span className="text-xs font-normal opacity-80">(Ingreso, Imagen, Conectividad)</span>
+             </Button>
+
+             <Button
+               onClick={() => runTest('test-duplicates', 'TEST: Filtro de Duplicados')}
+               disabled={isRunning}
+               className="bg-purple-600 hover:bg-purple-700 text-white h-auto py-3 px-4 flex flex-col items-center justify-center gap-2"
+             >
+               <span className="font-bold">Test: Filtro de Duplicados</span>
+               <span className="text-xs font-normal opacity-80">(Haversine 20m, Normalización +506)</span>
+             </Button>
+
+             <Button
+               onClick={() => runTest('test-crm', 'TEST: Gestión Admin y CRM')}
+               disabled={isRunning}
+               className="bg-orange-600 hover:bg-orange-700 text-white h-auto py-3 px-4 flex flex-col items-center justify-center gap-2"
+             >
+               <span className="font-bold">Test: Gestión Admin y CRM</span>
+               <span className="text-xs font-normal opacity-80">(WASI Link, Cambio de estado)</span>
+             </Button>
+           </div>
+
+           <div className="bg-[#1e1e1e] rounded-lg border-2 border-gray-800 overflow-hidden shadow-inner">
+             <div className="bg-[#2d2d2d] px-4 py-2 border-b border-gray-800 flex items-center">
+               <Terminal className="h-4 w-4 text-gray-400 mr-2" />
+               <span className="text-xs font-mono text-gray-400">Consola de Diagnóstico / Logs en Tiempo Real</span>
+               {logs.length > 0 && (
+                 <Button variant="ghost" size="sm" onClick={() => setLogs([])} className="ml-auto text-xs text-gray-400 hover:text-white h-6">
+                   Limpiar
+                 </Button>
+               )}
+             </div>
+             <div className="p-4 h-[350px] overflow-y-auto font-mono text-sm space-y-2">
+               {logs.length === 0 ? (
+                 <div className="text-gray-500 italic text-center mt-10">Esperando ejecución de pruebas...</div>
+               ) : (
+                 logs.map((log, i) => (
+                   <div key={i} className="animate-in fade-in slide-in-from-bottom-2">
+                     <span className="text-gray-500 mr-2">[{log.timestamp}]</span>
+                     <span className={
+                       log.status === 'OK' ? 'text-green-400 font-bold' :
+                       log.status === 'WAIT' ? 'text-orange-400 font-bold' :
+                       'text-red-400 font-bold'
+                     }>[{log.status}]</span>
+                     <span className="text-gray-300 ml-2">{log.message}</span>
+                     {log.suggestion && (
+                       <div className="mt-1 ml-28 text-xs text-red-300 bg-red-950/30 p-2 rounded border border-red-900/50">
+                         💡 Sugerencia técnica: {log.suggestion}
+                       </div>
+                     )}
+                   </div>
+                 ))
+               )}
+               <div ref={logsEndRef} />
+             </div>
+           </div>
+        </CardContent>
+      </Card>
+    </div>
+  );
+}
+
+export default function AdminWebPage() {
+  const { user, logoutMutation } = useAuth();
+  const [, setLocation] = useLocation();
+  const [activeTab, setActiveTab] = useState("map");
+  const [selectedUserId, setSelectedUserId] = useState<number | "all">("all");
+  const { toast } = useToast();
+
+  const [searchPropertyId, setSearchPropertyId] = useState("");
+  const mapComponentRef = useRef<any>(null);
+  const [showNewMessageForm, setShowNewMessageForm] = useState(false);
+
+  // Redibujar el mapa cuando se vuelve a la pestaña Mapa (Google Maps no calcula dimensiones si el contenedor estuvo oculto)
+  // 350ms en móvil suele necesitar más tiempo para que el contenedor sea visible
+  useEffect(() => {
+    if (activeTab === "map") {
+      const t = setTimeout(() => mapComponentRef.current?.resizeMap?.(), 350);
+      return () => clearTimeout(t);
+    }
+  }, [activeTab]);
+  const [messageDialogOpen, setMessageDialogOpen] = useState(false);
+  const [messageImageFile, setMessageImageFile] = useState<File | null>(null);
+  const [messageImagePreview, setMessageImagePreview] = useState<string | null>(null);
+  const [isUploadingImage, setIsUploadingImage] = useState(false);
+
+
+  const { 
+    data: properties = [], 
+    isLoading: propertiesLoading, 
+    isError: propertiesError,
+    error: propertiesErrorDetail,
+    refetch: refetchProperties 
+  } = useQuery<PropertyWithUser[]>({
+    queryKey: ['/api/admin/properties'],
+    enabled: user?.isAdmin === true
+  });
+
+  const { data: unviewedCount = 0 } = useQuery<number>({
+    queryKey: ['/api/admin/properties/unviewed-count'],
+    queryFn: async () => {
+      const res = await fetch('/api/admin/properties/unviewed-count', { credentials: 'include' });
+      if (!res.ok) return 0;
+      const data = await res.json();
+      return data.count;
+    },
+    enabled: user?.isAdmin === true,
+    refetchInterval: 30000,
+  });
+
+  const { data: users = [], refetch: refetchUsers } = useQuery<any[]>({
+    queryKey: ['/api/admin/users'],
+    enabled: user?.isAdmin === true
+  });
+
+  const propertiesToDisplay = properties.filter(p => 
+    selectedUserId === "all" || p.userId === selectedUserId
+  );
+
+  // State for user profile editing
+  const [editingUserId, setEditingUserId] = useState<number | null>(null);
+  const [editForm, setEditForm] = useState({ fullName: '', nickname: '', mobile: '', paymentMobile: '', username: '' });
+
+  const deleteUserMutation = useMutation({
+    mutationFn: async (userId: number) => {
+      const response = await fetch(`/api/admin/users/${userId}`, {
+        method: 'DELETE',
+        credentials: 'include',
+      });
+      if (!response.ok) {
+        const error = await response.json();
+        throw new Error(error.message);
+      }
+      return response.json();
+    },
+    onSuccess: () => {
+      refetchUsers();
+      toast({
+        title: "Usuario eliminado",
+        description: "El usuario ha sido eliminado exitosamente",
+      });
+    },
+    onError: (error: Error) => {
+      toast({
+        title: "Error",
+        description: error.message,
+        variant: "destructive"
+      });
+    }
+  });
+
+  const updateUserProfileMutation = useMutation({
+    mutationFn: async ({ userId, data }: { userId: number; data: typeof editForm }) => {
+      const response = await fetch(`/api/admin/users/${userId}`, {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json' },
+        credentials: 'include',
+        body: JSON.stringify(data),
+      });
+      if (!response.ok) {
+        const error = await response.json();
+        throw new Error(error.message);
+      }
+      return response.json();
+    },
+    onSuccess: () => {
+      refetchUsers();
+      setEditingUserId(null);
+      toast({ title: "Perfil actualizado", description: "Información actualizada exitosamente." });
+    },
+    onError: (error: Error) => {
+      toast({ title: "Error al actualizar", description: error.message, variant: "destructive" });
+    }
+  });
+
+  const deletePropertyMutation = useMutation({
+    mutationFn: async (propertyId: string) => {
+      const response = await fetch(`/api/admin/properties/${propertyId}`, {
+        method: 'DELETE',
+      });
+      if (!response.ok) {
+        const error = await response.json();
+        throw new Error(error.message);
+      }
+      return response.json();
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries(['/api/admin/properties'])
+      toast({
+        title: "Propiedad eliminada",
+        description: "La propiedad ha sido eliminada exitosamente",
+      });
+    },
+    onError: (error: Error) => {
+      toast({
+        title: "Error",
+        description: error.message,
+        variant: "destructive"
+      });
+    }
+  });
+
+  const updateRoleMutation = useMutation({
+    mutationFn: async ({ userId, isAdmin }: { userId: string, isAdmin: boolean }) => {
+      const response = await fetch('/api/admin/roles', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ userId, isAdmin })
+      });
+      if (!response.ok) {
+        const error = await response.json();
+        throw new Error(error.message);
+      }
+      return response.json();
+    },
+    onSuccess: () => {
+      refetchUsers();
+      toast({
+        title: "Rol actualizado",
+        description: "El rol del usuario ha sido actualizado exitosamente",
+      });
+    },
+    onError: (error: Error) => {
+      toast({
+        title: "Error",
+        description: error.message,
+        variant: "destructive"
+      });
+    }
+  });
+
+  const messageForm = useForm<InsertMessage>({
+    resolver: zodResolver(insertMessageSchema),
+    defaultValues: {
+      content: "",
+      recipientId: null,
+      imageUrl: null,
+    }
+  });
+
+  const sendMessageMutation = useMutation({
+    mutationFn: async (data: InsertMessage) => {
+      const response = await fetch('/api/admin/messages', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        credentials: 'include',
+        body: JSON.stringify(data),
+      });
+      if (!response.ok) {
+        const error = await response.json();
+        throw new Error(error.message || 'Error al enviar el mensaje');
+      }
+      return response.json();
+    },
+    onSuccess: () => {
+      toast({
+        title: "Mensaje enviado",
+        description: "El mensaje ha sido enviado correctamente",
+      });
+      messageForm.reset();
+      setMessageImageFile(null);
+      setMessageImagePreview(null);
+      setMessageDialogOpen(false);
+    },
+    onError: (error: Error) => {
+      toast({
+        title: "Error",
+        description: error.message,
+        variant: "destructive"
+      });
+    }
+  });
+
+  const handleSendMessage = async (data: InsertMessage) => {
+    try {
+      let imageUrl = null;
+      
+      if (messageImageFile) {
+        setIsUploadingImage(true);
+        const formData = new FormData();
+        formData.append('image', messageImageFile);
+        
+        const uploadResponse = await fetch('/api/upload/message-image', {
+          method: 'POST',
+          credentials: 'include',
+          body: formData,
+        });
+        
+        if (!uploadResponse.ok) {
+          throw new Error('Error al subir la imagen');
+        }
+        
+        const uploadResult = await uploadResponse.json();
+        imageUrl = uploadResult.url;
+        setIsUploadingImage(false);
+      }
+      
+      await sendMessageMutation.mutateAsync({
+        ...data,
+        imageUrl,
+      });
+    } catch (error) {
+      setIsUploadingImage(false);
+      console.error('Error sending message:', error);
+    }
+  };
+  
+  const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (file) {
+      setMessageImageFile(file);
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        setMessageImagePreview(reader.result as string);
+      };
+      reader.readAsDataURL(file);
+    }
+  };
+
+  const exportToSheetsMutation = useMutation({
+    mutationFn: async () => {
+      const response = await fetch('/api/admin/export/properties', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        credentials: 'include',
+      });
+      if (!response.ok) {
+        const error = await response.json();
+        throw new Error(error.message || 'Error al exportar');
+      }
+      return response.json();
+    },
+    onSuccess: (data) => {
+      toast({
+        title: "Exportación exitosa",
+        description: `Se exportaron ${data.rowCount} propiedades a Google Sheets`,
+      });
+      if (data.spreadsheetUrl) {
+        window.open(data.spreadsheetUrl, '_blank');
+      }
+    },
+    onError: (error: Error) => {
+      toast({
+        title: "Error",
+        description: error.message,
+        variant: "destructive"
+      });
+    }
+  });
+
+  if (!user?.isAdmin) {
+    setLocation("/dashboard");
+    return null;
+  }
+
+  const propertyCounts = {
+    house: properties.filter(p => p.propertyType === 'house').length,
+    land: properties.filter(p => p.propertyType === 'land').length,
+    commercial: properties.filter(p => p.propertyType === 'commercial').length,
+  };
+
+  // Dummy unreadCount for now, as it's not related to the current changes
+  const unreadCount = 0; 
+
+  // Mark properties as viewed when switching to list tab
+  useEffect(() => {
+    if (activeTab === 'list' && user?.isAdmin && unviewedCount > 0) {
+      fetch('/api/admin/properties/mark-viewed', {
+        method: 'POST',
+        credentials: 'include',
+      }).then(() => {
+        queryClient.invalidateQueries({ queryKey: ['/api/admin/properties/unviewed-count'] });
+      }).catch(() => {});
+    }
+  }, [activeTab, user?.isAdmin, unviewedCount]);
+
+  // Query for weekly payments
+  const { data: weeklyPayments = [], isLoading: paymentsLoading } = useQuery({
+    queryKey: ['/api/admin/payments/weekly'],
+    enabled: user?.isAdmin === true && activeTab === 'payments',
+    staleTime: 300000,
+    refetchOnWindowFocus: false,
+  });
+
+  return (
+    <div style={{ minHeight: '100vh', width: '100vw', maxWidth: '100vw', display: 'flex', flexDirection: 'column', margin: 0, padding: 0 }} className="bg-gray-100">
+      <header style={{ width: '100vw', maxWidth: '100vw', backgroundColor: '#F05023', padding: '0.75rem 1rem', flexShrink: 0, margin: 0 }}>
+        <div className="flex items-center justify-between w-full">
+          <Button
+            variant="ghost"
+            className="text-white hover:text-white/80 p-0 relative z-10"
+            onClick={() => setLocation("/dashboard")}
+          >
+            <ChevronLeft className="h-5 w-5 md:h-6 md:w-6" />
+          </Button>
+          <div className="flex-1 flex justify-center">
+            <img
+              src="/assets/logo-full.png"
+              alt="Virtual Agent"
+              className="h-14 w-auto max-w-[60vw] object-contain header-logo-2x"
+            />
+          </div>
+          <Button
+            variant="ghost"
+            size="sm"
+            className="text-white hover:text-white/80 p-0 relative z-10"
+            onClick={() => logoutMutation.mutate()}
+          >
+            <LogOut className="h-5 w-5 md:h-6 md:w-6" />
+          </Button>
+        </div>
+      </header>
+
+      <main style={{ flex: 1, width: '100vw', maxWidth: '100vw', padding: '1rem', margin: 0, backgroundImage: 'url("/assets/ciudad-optimized.webp")', backgroundSize: 'cover', backgroundPosition: 'center', backgroundRepeat: 'no-repeat' }}>
+        <div style={{ width: '100%', maxWidth: '100%' }} className="space-y-4 md:space-y-6">
+          {/* Header: título + botones con fondo oscuro semitransparente */}
+          <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-3 p-3 md:p-4 rounded-lg bg-[rgba(60,50,45,0.75)]">
+            <h1 className="text-xl md:text-2xl lg:text-3xl font-bold text-white">Panel de Administración</h1>
+            <div className="flex gap-2 md:gap-3 flex-wrap">
+            <Button
+              onClick={() => setLocation("/property/new")}
+              size="sm"
+              className="w-[140px] inline-flex items-center justify-center bg-[rgba(255,255,255,0.15)] hover:bg-[rgba(255,255,255,0.25)] text-white border-0"
+            >
+              <Plus className="h-4 w-4 mr-2" />
+              Agregar Prop.
+            </Button>
+            {user.isSuperAdmin && (
+              <Dialog open={messageDialogOpen} onOpenChange={setMessageDialogOpen}>
+                <DialogTrigger asChild>
+                  <Button
+                    size="sm"
+                    className="w-[140px] inline-flex items-center justify-center bg-[rgba(255,255,255,0.15)] hover:bg-[rgba(255,255,255,0.25)] text-white border-0"
+                  >
+                    <span className="inline-flex items-center">
+                      <MessageCircle className="h-4 w-4 mr-2" />
+                      Enviar Mensaje
+                    </span>
+                  </Button>
+                </DialogTrigger>
+                <DialogContent className="max-w-md bg-white text-gray-900 [&_label]:text-gray-900">
+                  <DialogHeader>
+                    <DialogTitle className="text-gray-900">Enviar Mensaje</DialogTitle>
+                  </DialogHeader>
+                  <Form {...messageForm}>
+                    <form onSubmit={messageForm.handleSubmit(handleSendMessage)} className="space-y-4">
+                      <FormField
+                        control={messageForm.control}
+                        name="recipientId"
+                        render={({ field }) => (
+                          <FormItem>
+                            <FormLabel>Destinatario</FormLabel>
+                            <Select
+                              onValueChange={(value) => field.onChange(value === "all" ? null : parseInt(value))}
+                              defaultValue="all"
+                            >
+                              <FormControl>
+                                <SelectTrigger>
+                                  <SelectValue placeholder="Seleccionar destinatario" />
+                                </SelectTrigger>
+                              </FormControl>
+                              <SelectContent className="bg-white text-gray-900">
+                                <SelectItem value="all">Todos los usuarios</SelectItem>
+                                {users?.map((u) => (
+                                  <SelectItem key={u.id} value={u.id.toString()}>
+                                    {u.fullName || u.username}
+                                  </SelectItem>
+                                ))}
+                              </SelectContent>
+                            </Select>
+                            <FormMessage />
+                          </FormItem>
+                        )}
+                      />
+                      <FormField
+                        control={messageForm.control}
+                        name="content"
+                        render={({ field }) => (
+                          <FormItem>
+                            <FormLabel>Mensaje</FormLabel>
+                            <FormControl>
+                              <Textarea
+                                placeholder="Escriba su mensaje aquí..."
+                                className="min-h-[80px]"
+                                {...field}
+                              />
+                            </FormControl>
+                            <FormMessage />
+                          </FormItem>
+                        )}
+                      />
+                      <FormItem>
+                        <FormLabel>Imagen (opcional)</FormLabel>
+                        <FormControl>
+                          <Input
+                            type="file"
+                            accept="image/*"
+                            onChange={handleImageChange}
+                            className="cursor-pointer"
+                          />
+                        </FormControl>
+                        {messageImagePreview && (
+                          <div className="mt-2 relative">
+                            <img 
+                              src={messageImagePreview} 
+                              alt="Vista previa" 
+                              className="max-h-32 rounded-md object-cover"
+                            />
+                            <Button
+                              type="button"
+                              variant="destructive"
+                              size="sm"
+                              className="absolute top-1 right-1"
+                              onClick={() => {
+                                setMessageImageFile(null);
+                                setMessageImagePreview(null);
+                              }}
+                            >
+                              <Trash2 className="h-3 w-3" />
+                            </Button>
+                          </div>
+                        )}
+                      </FormItem>
+                      <DialogFooter>
+                        <Button
+                          type="submit"
+                          disabled={sendMessageMutation.isPending || isUploadingImage}
+                          className="min-w-[140px] transition-all duration-200 active:scale-95"
+                        >
+                          {(sendMessageMutation.isPending || isUploadingImage) ? (
+                            <>
+                              <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                              {isUploadingImage ? "Subiendo imagen..." : "Enviando..."}
+                            </>
+                          ) : (
+                            "Enviar Mensaje"
+                          )}
+                        </Button>
+                      </DialogFooter>
+                    </form>
+                  </Form>
+                </DialogContent>
+              </Dialog>
+            )}
+            <Dialog>
+              <DialogTrigger asChild>
+                <Button
+                  size="sm"
+                  className="w-[140px] inline-flex items-center justify-center bg-[rgba(255,255,255,0.15)] hover:bg-[rgba(255,255,255,0.25)] text-white border-0"
+                >
+                  <span className="inline-flex items-center">
+                    <Share2 className="h-4 w-4 mr-2" />
+                    Compartir App
+                  </span>
+                </Button>
+              </DialogTrigger>
+              <DialogContent className="sm:max-w-md bg-[#FFF5F2] border-[#F05023]/20 [&>*]:bg-[#FFF5F2] [&_button]:text-[#F05023] [&_button]:hover:bg-[#F05023]/10 [&_button]:border-[#F05023]">
+                <DialogHeader className="bg-[#FFF5F2]">
+                  <DialogTitle className="text-[#F05023]">Compartir Virtual Agent</DialogTitle>
+                </DialogHeader>
+                <div className="flex flex-col items-center space-y-4 p-6 bg-[#FFF5F2] rounded-xl border border-[#F05023]/10">
+                  <div className="bg-white p-4 rounded-2xl shadow-[0_8px_30px_rgb(240,80,35,0.1)] transition-transform hover:scale-105 duration-300">
+                    <img 
+                      src="/assets/qr-virtualagent.png"
+                      alt="Código QR de Virtual Agent"
+                      className="w-64 h-64 object-contain"
+                    />
+                  </div>
+                  <p className="text-sm text-center text-[#F05023] font-semibold tracking-tight">
+                    Escanea para acceder a Virtual Agent
+                  </p>
+                  <Button
+                    onClick={() => {
+                      navigator.clipboard.writeText(window.location.origin).then(() => {
+                        toast({
+                          title: "¡Enlace copiado!",
+                          description: "El enlace se ha copiado al portapapeles.",
+                        });
+                      });
+                    }}
+                    variant="outline"
+                    className="w-full h-12 border-[#F05023] text-[#F05023] hover:bg-[#F05023] hover:text-white transition-all duration-300 font-bold rounded-xl"
+                  >
+                    <Share2 className="mr-2 h-4 w-4" />
+                    Copiar Enlace
+                  </Button>
+                </div>
+              </DialogContent>
+            </Dialog>
+            </div>
+          </div>
+          {/* Filtro de Usuarios y Estadísticas */}
+          <div className="bg-white/90 backdrop-blur-sm p-4 rounded-xl shadow-sm border border-gray-100 mb-4">
+            <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
+              <div className="w-full md:w-64">
+                <p className="text-xs font-semibold text-gray-500 uppercase tracking-wider mb-1 px-1">Filtrar por Agente</p>
+                <Select
+                  value={selectedUserId.toString()}
+                  onValueChange={(val) => setSelectedUserId(val === "all" ? "all" : parseInt(val))}
+                >
+                  <SelectTrigger className="bg-white border-gray-200 text-gray-900 focus:ring-[#F05023]">
+                    <SelectValue placeholder="Todos los Agentes" />
+                  </SelectTrigger>
+                  <SelectContent className="bg-white text-gray-900 border-gray-200">
+                    <SelectItem value="all">Ver Todos (General)</SelectItem>
+                    {users.map((u: any) => (
+                      <SelectItem key={u.id} value={u.id.toString()}>
+                        {u.fullName || u.username}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </div>
+
+              <div className="grid grid-cols-2 md:grid-cols-4 gap-4 flex-1">
+                <div className="text-center p-2 bg-orange-50 rounded-lg border border-orange-100">
+                  <p className="text-[10px] md:text-xs font-medium text-orange-600 uppercase">Casas</p>
+                  <p className="text-lg md:text-xl font-bold text-gray-900">{propertiesToDisplay.filter(p => p.propertyType === 'house').length}</p>
+                </div>
+                <div className="text-center p-2 bg-green-50 rounded-lg border border-green-100">
+                  <p className="text-[10px] md:text-xs font-medium text-green-600 uppercase">Terrenos</p>
+                  <p className="text-lg md:text-xl font-bold text-gray-900">{propertiesToDisplay.filter(p => p.propertyType === 'land').length}</p>
+                </div>
+                <div className="text-center p-2 bg-blue-50 rounded-lg border border-blue-100">
+                  <p className="text-[10px] md:text-xs font-medium text-blue-600 uppercase">Comercial</p>
+                  <p className="text-lg md:text-xl font-bold text-gray-900">{propertiesToDisplay.filter(p => p.propertyType === 'commercial').length}</p>
+                </div>
+                <div className="text-center p-2 bg-gray-50 rounded-lg border border-gray-200">
+                  <p className="text-[10px] md:text-xs font-medium text-gray-600 uppercase">Total</p>
+                  <p className="text-lg md:text-xl font-bold text-gray-900">{propertiesToDisplay.length}</p>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
+            <TabsList className={`w-full grid md:h-14 h-auto ${user.isSuperAdmin ? 'grid-cols-2 md:grid-cols-5' : (user.isAdmin ? 'grid-cols-3' : 'grid-cols-2')} bg-[#FF6347] p-0 gap-0 rounded-none border-b-2 border-[#ff7a5c] overflow-y-auto max-h-24 md:max-h-none`}>
+              <TabsTrigger value="map" className="text-sm md:text-base text-white data-[state=active]:bg-[#ff7a5c] data-[state=active]:text-white data-[state=active]:shadow-none data-[state=active]:border-b-2 data-[state=active]:border-gray-800 rounded-none border-b-2 border-transparent data-[state=inactive]:bg-transparent">
+                <MapPin className="h-4 w-4 md:h-5 md:w-5 mr-2" />
+                Mapa
+              </TabsTrigger>
+              <TabsTrigger value="list" className="text-sm md:text-base text-white data-[state=active]:bg-[#ff7a5c] data-[state=active]:text-white data-[state=active]:shadow-none data-[state=active]:border-b-2 data-[state=active]:border-gray-800 rounded-none border-b-2 border-transparent data-[state=inactive]:bg-transparent relative">
+                <List className="h-4 w-4 md:h-5 md:w-5 mr-2" />
+                Lista
+                {unviewedCount > 0 && (
+                  <Badge variant="destructive" className="absolute -top-1 -right-1 h-5 min-w-[20px] flex items-center justify-center text-xs px-1">
+                    {unviewedCount > 99 ? '99+' : unviewedCount}
+                  </Badge>
+                )}
+              </TabsTrigger>
+              {user.isAdmin && (
+                <TabsTrigger value="users" className="text-sm md:text-base text-white data-[state=active]:bg-[#ff7a5c] data-[state=active]:text-white data-[state=active]:shadow-none data-[state=active]:border-b-2 data-[state=active]:border-gray-800 rounded-none border-b-2 border-transparent data-[state=inactive]:bg-transparent">
+                  <Users className="h-4 w-4 md:h-5 md:w-5 mr-2" />
+                  Usuarios
+                </TabsTrigger>
+              )}
+              {user.isSuperAdmin && (
+                <TabsTrigger value="payments" className="text-sm md:text-base text-white data-[state=active]:bg-[#ff7a5c] data-[state=active]:text-white data-[state=active]:shadow-none data-[state=active]:border-b-2 data-[state=active]:border-gray-800 rounded-none border-b-2 border-transparent data-[state=inactive]:bg-transparent">
+                  <DollarSign className="h-4 w-4 md:h-5 md:w-5 mr-2" />
+                  ₡ Pagos
+                </TabsTrigger>
+              )}
+              {user.isSuperAdmin && (
+                <TabsTrigger value="diagnostics" className="text-sm md:text-base text-white data-[state=active]:bg-[#ff7a5c] data-[state=active]:text-white data-[state=active]:shadow-none data-[state=active]:border-b-2 data-[state=active]:border-gray-800 rounded-none border-b-2 border-transparent data-[state=inactive]:bg-transparent">
+                  <Activity className="h-4 w-4 md:h-5 md:w-5 mr-2" />
+                  Salud
+                </TabsTrigger>
+              )}
+            </TabsList>
+
+            <TabsContent value="map">
+              <Card className="bg-white border-0 shadow-md">
+                <CardContent className="p-4 md:p-6 space-y-4">
+                  <div className="flex gap-2 w-full md:max-w-md">
+                    <input
+                      type="text"
+                      placeholder="Buscar por ID de propiedad..."
+                      className="flex-1 px-3 py-2 border border-gray-200 rounded-lg bg-white text-gray-900 placeholder:text-gray-500 text-sm md:text-base"
+                      value={searchPropertyId}
+                      onChange={(e) => setSearchPropertyId(e.target.value)}
+                    />
+                    <Button 
+                      onClick={() => {
+                        if (mapComponentRef.current) {
+                          mapComponentRef.current.searchProperty(searchPropertyId);
+                        }
+                      }}
+                      size="sm"
+                      disabled={!searchPropertyId.trim()}
+                      className="bg-[#FF6347] hover:bg-[#ff7a5c] text-white border-0 rounded-lg"
+                    >
+                      Buscar
+                    </Button>
+                  </div>
+
+                  <div className="w-full h-[400px] md:h-[500px] lg:h-[600px] rounded-lg border-2 border-[#F05023]/20 shadow-inner overflow-hidden">
+            <MapComponent 
+              ref={mapComponentRef}
+              properties={propertiesToDisplay} 
+            />
+          </div>
+                </CardContent>
+              </Card>
+            </TabsContent>
+
+            <TabsContent value="list">
+              <div className="overflow-x-auto bg-white rounded-lg shadow-lg p-4 md:p-6">
+                {user.isSuperAdmin && (
+                  <div className="flex justify-end mb-4">
+                    <Button
+                      onClick={() => exportToSheetsMutation.mutate()}
+                      disabled={exportToSheetsMutation.isPending}
+                      className="bg-green-600 hover:bg-green-700"
+                    >
+                      {exportToSheetsMutation.isPending ? (
+                        <>
+                          <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                          Exportando...
+                        </>
+                      ) : (
+                        <>
+                          <FileSpreadsheet className="mr-2 h-4 w-4" />
+                          Exportar a Google Sheets
+                        </>
+                      )}
+                    </Button>
+                  </div>
+                )}
+                {propertiesLoading ? (
+                  <div className="flex flex-col items-center justify-center py-16">
+                    <Loader2 className="h-10 w-10 animate-spin text-[#F05023] mb-4" />
+                    <p className="text-gray-600">Cargando propiedades...</p>
+                  </div>
+                ) : propertiesError ? (
+                  <div className="flex flex-col items-center justify-center py-16 text-center">
+                    <p className="text-red-600 font-medium mb-2">Error al cargar las propiedades</p>
+                    <p className="text-sm text-gray-600 mb-4 max-w-md">
+                      {(propertiesErrorDetail as { message?: string })?.message || 
+                        'No se pudo conectar con el servidor. Verificá tu sesión e intentá de nuevo.'}
+                    </p>
+                    <Button onClick={() => refetchProperties()} variant="outline" className="text-[#F05023] border-[#F05023] hover:bg-[#F05023]/10">
+                      Reintentar
+                    </Button>
+                  </div>
+                ) : properties.length === 0 ? (
+                  <div className="flex flex-col items-center justify-center py-16 text-center">
+                    <p className="text-gray-600 font-medium mb-2">No hay propiedades registradas</p>
+                    <p className="text-sm text-gray-500 mb-4">Usá "Agregar Prop." para registrar la primera propiedad.</p>
+                    <Button onClick={() => setLocation("/property/new")} className="bg-[#F05023] hover:bg-[#E04015]">
+                      <Plus className="h-4 w-4 mr-2" />
+                      Agregar Propiedad
+                    </Button>
+                  </div>
+                ) : (
+                <Table className="[&_th]:bg-white [&_th]:text-gray-800 [&_td]:bg-white [&_td]:text-gray-900">
+                  <TableHeader>
+                    <TableRow className="border-gray-200 hover:bg-gray-50">
+                      <TableHead className="w-20 md:w-28 text-gray-800">ID</TableHead>
+                      <TableHead className="md:w-32 text-gray-800">Tipo</TableHead>
+                      <TableHead className="hidden sm:table-cell md:w-48 text-gray-800">Usuario</TableHead>
+                      <TableHead className="hidden sm:table-cell md:w-40 text-gray-800">Teléfono</TableHead>
+                      <TableHead className="hidden lg:table-cell text-gray-800">Ubicación</TableHead>
+                      <TableHead className="hidden md:table-cell w-14 pl-1 text-gray-800">Foto</TableHead>
+                      <TableHead className="w-[140px] md:w-[180px] text-gray-800">Acciones</TableHead>
+                    </TableRow>
+                  </TableHeader>
+                  <TableBody>
+                    {propertiesToDisplay.map((property) => (
+                      <TableRow key={property.propertyId} className="bg-white hover:bg-gray-50 border-gray-200">
+                        <TableCell className="font-medium">
+                          <button
+                            className="text-blue-600 hover:text-blue-800 hover:underline cursor-pointer font-medium"
+                            onClick={() => {
+                              setSearchPropertyId(property.propertyId);
+                              setActiveTab("map");
+                              // Small delay to ensure tab change happens first
+                              setTimeout(() => {
+                                if (mapComponentRef.current) {
+                                  mapComponentRef.current.searchProperty(property.propertyId);
+                                }
+                              }, 100);
+                            }}
+                            title="Haz clic para ver en el mapa"
+                          >
+                            {property.propertyId}
+                          </button>
+                        </TableCell>
+                        <TableCell>
+                          {property.propertyType === 'house' ? 'Casa' :
+                            property.propertyType === 'land' ? 'Terreno' :
+                              'Comercial'}
+                        </TableCell>
+                        <TableCell className="hidden sm:table-cell">
+                          <div className="flex flex-col">
+                            <span className={property.user?.isDeleted ? "text-red-500 line-through text-xs" : "text-xs font-semibold text-gray-900"}>
+                              {property.user?.fullName || property.user?.username || "Usuario Desconocido"}
+                            </span>
+                            <span className="text-[10px] text-muted-foreground">ID: {property.userId}</span>
+                          </div>
+                        </TableCell>
+                        <TableCell className="hidden sm:table-cell">
+                          {property.signPhoneNumber || '-'}
+                        </TableCell>
+                        <TableCell className="hidden lg:table-cell text-sm">
+                          {property.location?.lat?.toFixed(4) || '0.0000'}, {property.location?.lng?.toFixed(4) || '0.0000'}
+                        </TableCell>
+                        <TableCell className="hidden md:table-cell pl-1">
+                          {(property as any).hasImages ? (
+                            <Dialog>
+                              <DialogTrigger asChild>
+                                <button className="text-blue-600 hover:text-blue-800 hover:underline text-base font-bold cursor-pointer">
+                                  Ver
+                                </button>
+                              </DialogTrigger>
+                              <DialogContent className="max-w-2xl bg-app-surface border-app-surface-border [&>*]:bg-app-surface [&_button]:text-gray-900 [&_button]:hover:bg-app-surface-hover">
+                                <DialogHeader className="bg-app-surface">
+                                  <DialogTitle className="text-gray-900">Fotos de la Propiedad {property.propertyId}</DialogTitle>
+                                </DialogHeader>
+                                <div className="bg-white rounded-lg p-4">
+                                  <PropertyImagesViewer propertyId={property.propertyId} />
+                                </div>
+                              </DialogContent>
+                            </Dialog>
+                          ) : (
+                            <span className="text-gray-400 text-xs">-</span>
+                          )}
+                        </TableCell>
+                        <TableCell>
+                          <div className="flex gap-2">
+                            <Dialog>
+                              <DialogTrigger asChild>
+                                <Button variant="outline" size="sm">
+                                  Detalles
+                                </Button>
+                              </DialogTrigger>
+                              <DialogContent className="w-[90vw] max-w-lg bg-app-surface border-app-surface-border [&>*]:bg-app-surface [&_button]:text-gray-900 [&_button]:hover:bg-app-surface-hover">
+                                <DialogHeader className="bg-app-surface">
+                                  <DialogTitle className="text-gray-900">Detalles de la Propiedad</DialogTitle>
+                                </DialogHeader>
+                                <div className="space-y-4 bg-app-surface text-gray-900">
+                                  <div className="sm:hidden">
+                                    <p><strong>Usuario:</strong> <span className={property.user?.isDeleted ? "text-red-500 line-through" : ""}>{property.user?.fullName || property.user?.username || "Usuario Desconocido"}{property.user?.isDeleted && " (eliminado)"}</span></p>
+                                    <p><strong>Teléfono:</strong> {property.signPhoneNumber || '-'}</p>
+                                  </div>
+                                  <p><strong>Ubicación:</strong> {property.location?.lat?.toFixed(7) || '0.0000000'}, {property.location?.lng?.toFixed(7) || '0.0000000'}</p>
+                                  {property.images && (property.thumbnails || property.images).length > 0 && (
+                                    <div className="mt-4">
+                                      <h4 className="font-semibold mb-2">Imágenes de la Propiedad</h4>
+                                      <div className="grid grid-cols-2 gap-2">
+                                        {(property.thumbnails || property.images || []).map((_, index) => (
+                                          <div key={index} className="relative aspect-video group">
+                                            <OptimizedImage
+                                              src={(property.thumbnails && property.thumbnails[index]) || (property.images && (property.images as any)[index]) || ''}
+                                              alt={`Foto ${index + 1}`}
+                                              blurhash={property.blurhashes?.[index]}
+                                              aspectRatio="video"
+                                              onClick={() => property.images && window.open((property.images as any)[index], '_blank')}
+                                            />
+                                            <div className="absolute inset-0 bg-black/50 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center pointer-events-none">
+                                              <span className="text-white text-xs">Click para ampliar</span>
+                                            </div>
+                                          </div>
+                                        ))}
+                                      </div>
+                                    </div>
+                                  )}
+                                </div>
+                              </DialogContent>
+                            </Dialog>
+                            {user?.isSuperAdmin && (
+                              <Dialog>
+                                <DialogTrigger asChild>
+                                  <Button
+                                    variant="destructive"
+                                    size="sm"
+                                    className="w-8 h-8 p-0"
+                                  >
+                                    <Trash2 className="h-4 w-4" />
+                                  </Button>
+                                </DialogTrigger>
+                                <DialogContent>
+                                  <DialogHeader>
+                                    <DialogTitle>Confirmar eliminación</DialogTitle>
+                                  </DialogHeader>
+                                  <p>¿Está seguro que desea eliminar esta propiedad? Esta acción no se puede deshacer.</p>
+                                  <DialogFooter>
+                                    <Button
+                                      variant="destructive"
+                                      onClick={() => deletePropertyMutation.mutate(property.propertyId)}
+                                      disabled={deletePropertyMutation.isPending}
+                                    >
+                                      {deletePropertyMutation.isPending ? (
+                                        <>
+                                          <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                                          Eliminando...
+                                        </>
+                                      ) : (
+                                        "Eliminar"
+                                      )}
+                                    </Button>
+                                  </DialogFooter>
+                                </DialogContent>
+                              </Dialog>
+                            )}
+                          </div>
+                        </TableCell>
+                      </TableRow>
+                    ))}
+                  </TableBody>
+                </Table>
+                )}
+              </div>
+            </TabsContent>
+
+            <TabsContent value="diagnostics">
+              <DiagnosticCenter />
+            </TabsContent>
+
+            <TabsContent value="users">
+                <div className="space-y-4">
+                  <Card className="bg-white border-0 shadow-md">
+                    <CardContent className="pt-6 bg-white">
+                      <div className="overflow-x-auto -mx-6 bg-white">
+                        <div className="inline-block min-w-full align-middle">
+                          <Table className="[&_th]:bg-white [&_th]:text-gray-800 [&_td]:bg-white [&_td]:text-gray-900">
+                            <TableHeader>
+                              <TableRow className="bg-white border-gray-200 hover:bg-gray-50">
+                                <TableHead className="w-40 text-gray-800">Usuario</TableHead>
+                                <TableHead className="w-32">Rol</TableHead>
+                                <TableHead className="w-24 text-right">Admin</TableHead>
+                                <TableHead className="w-32 text-right pr-6">Acciones</TableHead>
+                              </TableRow>
+                            </TableHeader>
+                            <TableBody>
+                              {users.map((adminUser) => (
+                                <TableRow key={adminUser.id} className="bg-white hover:bg-gray-50 border-gray-200">
+                                  <TableCell className="py-2">{adminUser.fullName || adminUser.username}</TableCell>
+                                  <TableCell className="py-2">
+                                    {adminUser.isSuperAdmin ? 'Super Admin' :
+                                     adminUser.isAdmin ? 'Admin' : 'Usuario'}
+                                  </TableCell>
+                                  <TableCell className="py-2 text-right">
+                                    <div className="flex flex-col items-end gap-1">
+                                      {user?.isSuperAdmin && !adminUser.isSuperAdmin && (
+                                        <div className="flex items-center gap-2">
+                                          <span className="text-[10px] text-gray-500">Admin</span>
+                                          <Switch
+                                            checked={adminUser.isAdmin}
+                                            onCheckedChange={(checked) =>
+                                              updateRoleMutation.mutate({ userId: adminUser.id, isAdmin: checked })
+                                            }
+                                            disabled={updateRoleMutation.isPending}
+                                          />
+                                        </div>
+                                      )}
+                                      {user?.isSuperAdmin && user.id !== adminUser.id && (
+                                        <div className="flex items-center gap-2">
+                                          <span className="text-[10px] text-red-500 font-bold">SUPER</span>
+                                          <Switch
+                                            checked={adminUser.isSuperAdmin}
+                                            onCheckedChange={(checked) =>
+                                              updateRoleMutation.mutate({ userId: adminUser.id, isAdmin: adminUser.isAdmin, isSuperAdmin: checked })
+                                            }
+                                            disabled={updateRoleMutation.isPending}
+                                            className="data-[state=checked]:bg-red-600"
+                                          />
+                                        </div>
+                                      )}
+                                    </div>
+                                  </TableCell>
+                                  <TableCell className="py-2 text-right pr-6 flex gap-2 justify-end">
+                                    {/* Ver Detalles button for all admins */}
+                                    <Dialog>
+                                      <DialogTrigger asChild>
+                                        <Button variant="outline" size="sm">Ver Detalles</Button>
+                                      </DialogTrigger>
+                                      <DialogContent className="sm:max-w-[500px] p-0 overflow-hidden rounded-xl border border-gray-200 bg-white">
+                                        <DialogHeader className="px-6 py-4" style={{ backgroundColor: '#F05023', borderRadius: '0.75rem 0.75rem 0 0' }}>
+                                          <DialogTitle className="text-white text-lg font-bold">Perfil de Usuario</DialogTitle>
+                                        </DialogHeader>
+                                        <div className="grid gap-4 px-6 py-4 bg-white" style={{ backgroundColor: 'white' }}>
+                                          {/* Informacion Personal */}
+                                          <div className="space-y-2">
+                                            <div className="flex items-center justify-between">
+                                              <h4 className="font-medium text-sm text-gray-500 uppercase tracking-wider">Información Personal</h4>
+                                              {user?.isSuperAdmin && editingUserId !== adminUser.id && (
+                                                <Button size="sm" variant="outline" onClick={() => {
+                                                  setEditingUserId(adminUser.id);
+                                                  setEditForm({ 
+                                                    fullName: adminUser.fullName || '', 
+                                                    nickname: adminUser.nickname || '', 
+                                                    mobile: adminUser.mobile || '', 
+                                                    paymentMobile: adminUser.paymentMobile || '',
+                                                    username: adminUser.username || ''
+                                                  });
+                                                }}>&#9998; Editar</Button>
+                                              )}
+                                              {user?.isSuperAdmin && editingUserId === adminUser.id && (
+                                                <div className="flex gap-2">
+                                                  <Button size="sm" className="bg-[#F05023] hover:bg-[#E04015] text-white" disabled={updateUserProfileMutation.isPending}
+                                                    onClick={() => updateUserProfileMutation.mutate({ userId: adminUser.id, data: editForm })}>
+                                                    {updateUserProfileMutation.isPending ? <><Loader2 className="mr-1 h-3 w-3 animate-spin" />Guardando...</> : "Guardar"}
+                                                  </Button>
+                                                  <Button size="sm" variant="outline" onClick={() => setEditingUserId(null)}>Cancelar</Button>
+                                                </div>
+                                              )}
+                                            </div>
+                                            <div className="grid grid-cols-2 gap-2 text-sm">
+                                              <div>
+                                                <span className="font-semibold text-gray-700 block">Nombre Completo:</span>
+                                                {editingUserId === adminUser.id ? (
+                                                  <Input value={editForm.fullName} onChange={e => setEditForm(f => ({ ...f, fullName: e.target.value }))} placeholder="Nombre completo" className="mt-1 h-8 text-sm" />
+                                                ) : (
+                                                  <span className={adminUser.fullName ? "text-gray-900" : "text-gray-400 italic"}>{adminUser.fullName || "No completado"}</span>
+                                                )}
+                                              </div>
+                                              <div>
+                                                <span className="font-semibold text-gray-700 block">Alias:</span>
+                                                {editingUserId === adminUser.id ? (
+                                                  <Input value={editForm.nickname} onChange={e => setEditForm(f => ({ ...f, nickname: e.target.value }))} placeholder="Alias" className="mt-1 h-8 text-sm" />
+                                                ) : (
+                                                  <span className={adminUser.nickname ? "text-gray-900" : "text-gray-400 italic"}>{adminUser.nickname || "No completado"}</span>
+                                                )}
+                                              </div>
+                                            </div>
+                                          </div>
+                                          {/* Informacion de Contacto */}
+                                          <div className="space-y-3">
+                                            <h4 className="font-medium text-sm text-gray-500 uppercase tracking-wider pt-2 border-t">Información de Contacto</h4>
+                                            <div className="grid grid-cols-1 gap-3 text-sm">
+                                              <div className="flex items-center justify-between bg-gray-50 p-2 rounded-md">
+                                                <div className="flex-1 mr-2">
+                                                  <span className="font-semibold text-gray-700 block">Correo Electrónico (Usuario):</span>
+                                                  {editingUserId === adminUser.id ? (
+                                                    <Input 
+                                                      value={editForm.username} 
+                                                      onChange={e => setEditForm(f => ({ ...f, username: e.target.value }))} 
+                                                      placeholder="correo@ejemplo.com" 
+                                                      className="mt-1 h-8 text-sm" 
+                                                    />
+                                                  ) : (
+                                                    <span className="text-gray-900">{adminUser.email || adminUser.username}</span>
+                                                  )}
+                                                </div>
+                                                {editingUserId !== adminUser.id && (
+                                                  <Button size="sm" variant="secondary" asChild>
+                                                    <a href={`mailto:${adminUser.email || adminUser.username}`}>Escribir</a>
+                                                  </Button>
+                                                )}
+                                              </div>
+                                              <div className="flex items-center justify-between bg-gray-50 p-2 rounded-md">
+                                                <div className="flex-1 mr-2">
+                                                  <span className="font-semibold text-gray-700 block">Teléfono (WhatsApp):</span>
+                                                  {editingUserId === adminUser.id ? (
+                                                    <Input value={editForm.mobile} onChange={e => setEditForm(f => ({ ...f, mobile: e.target.value }))} placeholder="Ej: 88001234" className="mt-1 h-8 text-sm" />
+                                                  ) : (
+                                                    <span className={adminUser.mobile ? "text-gray-900" : "text-gray-400 italic"}>{adminUser.mobile ? `+506 ${adminUser.mobile}` : "No completado"}</span>
+                                                  )}
+                                                </div>
+                                                {adminUser.mobile && editingUserId !== adminUser.id && (
+                                                  <Button size="sm" variant="secondary" className="bg-green-100 text-green-700 hover:bg-green-200" asChild>
+                                                    <a href={`https://wa.me/506${adminUser.mobile.replace(/\s+/g, '')}`} target="_blank" rel="noopener noreferrer">WhatsApp</a>
+                                                  </Button>
+                                                )}
+                                              </div>
+                                            </div>
+                                          </div>
+                                          {/* Datos de Facturacion */}
+                                          <div className="space-y-2">
+                                            <h4 className="font-medium text-sm text-gray-500 uppercase tracking-wider pt-2 border-t">Datos de Facturación</h4>
+                                            <div className="bg-blue-50 p-3 rounded-md border border-blue-100">
+                                              <span className="font-semibold text-blue-900 block">Número SINPE Móvil:</span>
+                                              {editingUserId === adminUser.id ? (
+                                                <Input value={editForm.paymentMobile} onChange={e => setEditForm(f => ({ ...f, paymentMobile: e.target.value }))} placeholder="Ej: 88001234" className="mt-1 h-8 text-sm bg-white" />
+                                              ) : (
+                                                <span className={adminUser.paymentMobile ? "text-blue-900 font-bold" : "text-gray-400 italic"}>{adminUser.paymentMobile || "No completado"}</span>
+                                              )}
+                                            </div>
+                                          </div>
+                                        </div>
+                                      </DialogContent>
+                                    </Dialog>
+                                    {/* Delete button — super admin only */}
+                                    {user?.isSuperAdmin && !adminUser.isSuperAdmin && (
+                                      <Dialog>
+                                        <DialogTrigger asChild>
+                                          <Button variant="destructive" size="sm" className="w-8 h-8 p-0">
+                                            <Trash2 className="h-4 w-4" />
+                                          </Button>
+                                        </DialogTrigger>
+                                        <DialogContent>
+                                          <DialogHeader>
+                                            <DialogTitle>Confirmar eliminación</DialogTitle>
+                                          </DialogHeader>
+                                          <p>¿Está seguro que desea eliminar este usuario? Esta acción no se puede deshacer.</p>
+                                          <DialogFooter>
+                                            <Button variant="destructive" onClick={() => deleteUserMutation.mutate(adminUser.id)} disabled={deleteUserMutation.isPending}>
+                                              {deleteUserMutation.isPending ? <><Loader2 className="mr-2 h-4 w-4 animate-spin" />Eliminando...</> : "Eliminar"}
+                                            </Button>
+                                          </DialogFooter>
+                                        </DialogContent>
+                                      </Dialog>
+                                    )}
+                                  </TableCell>
+                                </TableRow>
+                              ))}
+                            </TableBody>
+                          </Table>
+                        </div>
+                      </div>
+                    </CardContent>
+                  </Card>
+                </div>
+            </TabsContent>
+
+            <TabsContent value="payments">
+            <Card className="bg-white border-0 shadow-md">
+              <CardHeader className="bg-white">
+                <CardTitle className="text-gray-900">Pagos Semanales</CardTitle>
+                <p className="text-sm text-muted-foreground">
+                  Los usuarios reciben ₡250 por cada propiedad registrada durante la semana actual.
+                </p>
+              </CardHeader>
+              <CardContent className="bg-white">
+                <div className="overflow-x-auto bg-white rounded-lg shadow-sm p-4">
+                  {paymentsLoading ? (
+                    <div className="text-center py-8">
+                      <Loader2 className="h-8 w-8 animate-spin mx-auto text-primary" />
+                      <p className="mt-2">Calculando pagos...</p>
+                    </div>
+                  ) : weeklyPayments.length === 0 ? (
+                    <div className="text-center py-8 text-muted-foreground">
+                      <DollarSign className="h-12 w-12 mx-auto mb-4 opacity-50" />
+                      <p>No hay pagos pendientes esta semana.</p>
+                      <p className="text-sm">Los usuarios que registren propiedades aparecerán aquí. Los administradores no reciben pagos.</p>
+                    </div>
+                  ) : (
+                    <>
+                      <div className="mb-4 p-4 bg-green-50 border border-green-200 rounded-lg">
+                        <h3 className="font-semibold text-green-800 mb-2">Resumen de Pagos de Esta Semana</h3>
+                        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                          <div className="text-center">
+                            <p className="text-2xl font-bold text-green-600">
+                              {weeklyPayments.length}
+                            </p>
+                            <p className="text-sm text-green-700">Usuarios a Pagar</p>
+                          </div>
+                          <div className="text-center">
+                            <p className="text-2xl font-bold text-green-600">
+                              {weeklyPayments.reduce((sum, payment) => sum + payment.propertiesCount, 0)}
+                            </p>
+                            <p className="text-sm text-green-700">Propiedades Registradas</p>
+                          </div>
+                          <div className="text-center">
+                            <p className="text-2xl font-bold text-green-600">
+                              ₡{weeklyPayments.reduce((sum, payment) => sum + payment.totalPayment, 0).toLocaleString()}
+                            </p>
+                            <p className="text-sm text-green-700">Total a Pagar</p>
+                          </div>
+                        </div>
+                      </div>
+
+                      <Table className="[&_th]:bg-white [&_th]:text-gray-800 [&_td]:bg-white [&_td]:text-gray-900">
+                        <TableHeader>
+                          <TableRow className="bg-white border-gray-200 hover:bg-gray-50">
+                            <TableHead className="text-gray-800">Usuario</TableHead>
+                            <TableHead>Nombre Completo</TableHead>
+                            <TableHead>Teléfono</TableHead>
+                            <TableHead className="text-center">Propiedades</TableHead>
+                            <TableHead className="text-right">Pago Total</TableHead>
+                            <TableHead className="text-center">Período</TableHead>
+                          </TableRow>
+                        </TableHeader>
+                        <TableBody>
+                          {weeklyPayments.map((payment) => {
+                            const weekStart = new Date(payment.weekStart);
+                            const weekEnd = new Date(payment.weekEnd);
+
+                            return (
+                              <TableRow key={payment.userId} className="bg-white hover:bg-gray-50 border-gray-200">
+                                <TableCell className="font-medium">
+                                  {payment.user?.username || 'Usuario Desconocido'}
+                                </TableCell>
+                                <TableCell>
+                                  {payment.user?.fullName || '-'}
+                                </TableCell>
+                                <TableCell>
+                                  {payment.user?.mobile || '-'}
+                                </TableCell>
+                                <TableCell className="text-center">
+                                  <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-blue-100 text-blue-800">
+                                    {payment.propertiesCount} {payment.propertiesCount === 1 ? 'propiedad' : 'propiedades'}
+                                  </span>
+                                </TableCell>
+                                <TableCell className="text-right font-semibold text-green-600">
+                                  ₡{payment.totalPayment.toLocaleString()}
+                                </TableCell>
+                                <TableCell className="text-center text-sm text-muted-foreground">
+                                  {weekStart.toLocaleDateString('es-CR', { 
+                                    day: 'numeric', 
+                                    month: 'short' 
+                                  })} - {weekEnd.toLocaleDateString('es-CR', { 
+                                    day: 'numeric', 
+                                    month: 'short',
+                                    year: 'numeric'
+                                  })}
+                                </TableCell>
+                              </TableRow>
+                            );
+                          })}
+                        </TableBody>
+                      </Table>
+
+                      <div className="mt-4 p-3 bg-blue-50 border border-blue-200 rounded-lg">
+                        <p className="text-sm text-blue-700">
+                          <strong>Nota:</strong> Los pagos se calculan automáticamente cada semana (Lun–Dom, zona Costa Rica). 
+                          Cada propiedad registrada vale ₡250 colones. Solo usuarios normales (no administradores) reciben pagos.
+                        </p>
+                      </div>
+                    </>
+                  )}
+                </div>
+              </CardContent>
+            </Card>
+          </TabsContent>
+
+            <TabsContent value="messages">
+            <Card>
+              <CardHeader>
+                <div className="flex items-center justify-between">
+                  <CardTitle>Centro de Mensajes</CardTitle>
+                  <Button
+                    onClick={() => setShowNewMessageForm(!showNewMessageForm)}
+                    size="sm"
+                    className="bg-[#F05023] hover:bg-[#E04015]"
+                  >
+                    <MessageSquare className="h-4 w-4 mr-2" />
+                    {showNewMessageForm ? "Cancelar" : "Nuevo Mensaje"}
+                  </Button>
+                </div>
+              </CardHeader>
+              {showNewMessageForm && (
+                <CardContent>
+                  <Form {...messageForm}>
+                    <form onSubmit={messageForm.handleSubmit(handleSendMessage)} className="space-y-4">
+                      <FormField
+                        control={messageForm.control}
+                        name="content"
+                        render={({ field }) => (
+                          <FormItem>
+                            <FormLabel>Mensaje</FormLabel>
+                            <FormControl>
+                              <Textarea
+                                placeholder="Escriba su mensaje aquí..."
+                                className="min-h-[100px]"
+                                {...field}
+                              />
+                            </FormControl>
+                            <FormMessage />
+                          </FormItem>
+                        )}
+                      />
+                      <Button type="submit" disabled={sendMessageMutation.isPending} className="bg-[#F05023] hover:bg-[#E04015]">
+                        {sendMessageMutation.isPending ? (
+                          <>
+                            <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                            Enviando...
+                          </>
+                        ) : (
+                          "Enviar Mensaje"
+                        )}
+                      </Button>
+                    </form>
+                  </Form>
+                </CardContent>
+              )}
+            </Card>
+          </TabsContent>
+          </Tabs>
+        </div>
+      </main>
+    </div>
+  );
+}
