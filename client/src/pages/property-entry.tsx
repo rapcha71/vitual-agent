@@ -7,7 +7,7 @@ import { useForm } from "react-hook-form";
 import { useToast } from "@/hooks/use-toast";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { insertPropertySchema } from "@shared/schema";
-import { Camera, MapPin, Upload, ChevronLeft, LogOut } from "lucide-react";
+import { Camera, MapPin, Upload, ChevronLeft, LogOut, X, Maximize } from "lucide-react";
 import { useLocation } from "wouter";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from "@/components/ui/dialog";
 import imageCompression from "browser-image-compression";
@@ -28,6 +28,16 @@ export default function PropertyEntry() {
   const videoRef = useRef<HTMLVideoElement | null>(null);
   const canvasRef = useRef<HTMLCanvasElement | null>(null);
   const fileInputRef = useRef<HTMLInputElement | null>(null);
+  
+  // Immersive Camera States
+  const [zoom, setZoom] = useState(1);
+  const zoomRef = useRef(1);
+  const [minZoom, setMinZoom] = useState(1);
+  const [maxZoom, setMaxZoom] = useState(5);
+  const hasNativeZoomRef = useRef(false);
+  const [isFlashing, setIsFlashing] = useState(false);
+  const initialPinchDistanceRef = useRef<number | null>(null);
+  const currentZoomRef = useRef<number>(1);
   const [ocrTestResult, setOcrTestResult] = useState<{
     extractedText?: string;
     phoneNumbers?: string[];
@@ -161,10 +171,10 @@ export default function PropertyEntry() {
       setIsCapturing(true);
       setActiveCamera(type);
 
-      // Estrategia: primero cámara trasera (environment) para fotos de propiedades
-      // Funciona en Android e iPhone - abre la cámara principal automáticamente
+      // Estrategia: Solicitar la máxima resolución posible en cámara trasera
       const tryConstraints = [
-        { video: { facingMode: { ideal: "environment" } } },
+        { video: { facingMode: { ideal: "environment" }, width: { ideal: 3840 }, height: { ideal: 2160 } } },
+        { video: { facingMode: { ideal: "environment" }, width: { ideal: 1920 }, height: { ideal: 1080 } } },
         { video: { facingMode: "environment" } },
         { video: true }
       ];
@@ -188,6 +198,35 @@ export default function PropertyEntry() {
       if (videoRef.current) {
         videoRef.current.srcObject = mediaStream;
       }
+
+      // Check para Zoom capability
+      const track = mediaStream.getVideoTracks()[0];
+      let nativeZoomSupported = false;
+      if (track && track.getCapabilities) {
+        try {
+          const capabilities = track.getCapabilities() as any;
+          if (capabilities && capabilities.zoom) {
+            nativeZoomSupported = true;
+            setMinZoom(capabilities.zoom.min || 1);
+            setMaxZoom(capabilities.zoom.max || 5);
+            
+            const settings = track.getSettings?.() as any;
+            const currentZ = settings?.zoom || capabilities.zoom.min || 1;
+            setZoom(currentZ);
+            zoomRef.current = currentZ;
+          }
+        } catch(e) {
+          console.log("Capabilities de Zoom no permitidas por el navegador", e);
+        }
+      }
+      hasNativeZoomRef.current = nativeZoomSupported;
+      
+      if (!nativeZoomSupported) {
+        setMinZoom(1);
+        setMaxZoom(5);
+        setZoom(1);
+        zoomRef.current = 1;
+      }
     } catch (error) {
       console.error("Error accessing camera:", error);
       toast({
@@ -198,6 +237,59 @@ export default function PropertyEntry() {
       });
       cleanup();
     }
+  };
+
+  const applyZoomToCamera = (newZoom: number) => {
+      setZoom(newZoom);
+      zoomRef.current = newZoom;
+      
+    if (hasNativeZoomRef.current && stream) {
+      const track = stream.getVideoTracks()[0];
+      if (track && track.applyConstraints) {
+        try {
+          track.applyConstraints({
+            advanced: [{ zoom: newZoom }]
+          } as any);
+        } catch (err) {
+          console.warn('El dispositivo o navegador no aplicó el zoom:', err);
+        }
+      }
+    }
+  };
+
+  const handleTouchStart = (e: React.TouchEvent) => {
+    if (e.touches.length === 2) {
+      const dx = e.touches[0].clientX - e.touches[1].clientX;
+      const dy = e.touches[0].clientY - e.touches[1].clientY;
+      initialPinchDistanceRef.current = Math.sqrt(dx * dx + dy * dy);
+      currentZoomRef.current = zoomRef.current;
+    }
+  };
+
+  const handleTouchMove = (e: React.TouchEvent) => {
+    if (e.touches.length === 2 && initialPinchDistanceRef.current !== null) {
+      // Intentamos evitar scroll de pantalla nativo mientras usamos pinch
+      if (e.cancelable) e.preventDefault();
+      
+      const dx = e.touches[0].clientX - e.touches[1].clientX;
+      const dy = e.touches[0].clientY - e.touches[1].clientY;
+      const distance = Math.sqrt(dx * dx + dy * dy);
+      
+      const scale = distance / initialPinchDistanceRef.current;
+      let newZoom = currentZoomRef.current * scale;
+      
+      newZoom = Math.max(minZoom, Math.min(newZoom, maxZoom));
+      applyZoomToCamera(newZoom);
+    }
+  };
+
+  const handleTouchEnd = () => {
+    initialPinchDistanceRef.current = null;
+  };
+
+  const handleZoomSliderChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const val = parseFloat(e.target.value);
+    applyZoomToCamera(val);
   };
 
   const processFileUpload = async (file: File, type: "sign" | "property") => {
@@ -287,6 +379,10 @@ export default function PropertyEntry() {
   const capturePhoto = async () => {
     if (!videoRef.current || !canvasRef.current || !activeCamera) return;
 
+    // Efecto visual de Flash/Obturador
+    setIsFlashing(true);
+    setTimeout(() => setIsFlashing(false), 150);
+
     try {
       const video = videoRef.current;
       const canvas = canvasRef.current;
@@ -296,7 +392,26 @@ export default function PropertyEntry() {
       const context = canvas.getContext('2d');
       if (!context) return;
 
-      context.drawImage(video, 0, 0);
+      context.fillStyle = 'black';
+      context.fillRect(0, 0, canvas.width, canvas.height);
+
+      if (hasNativeZoomRef.current) {
+        context.drawImage(video, 0, 0, canvas.width, canvas.height);
+      } else {
+        // Simulated zoom (crop)
+        const currentZ = zoomRef.current || 1;
+        const sourceWidth = video.videoWidth / currentZ;
+        const sourceHeight = video.videoHeight / currentZ;
+        const sourceX = (video.videoWidth - sourceWidth) / 2;
+        const sourceY = (video.videoHeight - sourceHeight) / 2;
+        
+        context.drawImage(
+          video, 
+          sourceX, sourceY, sourceWidth, sourceHeight,
+          0, 0, canvas.width, canvas.height
+        );
+      }
+      
       const imageData = canvas.toDataURL('image/jpeg');
 
       const compressedImage = await compressImage(imageData);
@@ -899,60 +1014,87 @@ export default function PropertyEntry() {
       </div>
 
       {isCapturing && (
-        <Dialog
-          open={isCapturing}
-          onOpenChange={(open) => {
-            if (!open) cleanup();
-          }}
-        >
-          <DialogContent className="sm:max-w-lg">
-            <DialogHeader>
-              <DialogTitle>
-                {isCompressing
-                  ? "Compressing Image..."
-                  : `Capture ${activeCamera === "sign" ? "Sign" : "Property"} Photo`}
-              </DialogTitle>
-            </DialogHeader>
-            <div className="flex flex-col gap-4">
-              <div className="relative aspect-video bg-black rounded-lg overflow-hidden">
-                <video
-                  ref={videoRef}
-                  autoPlay
-                  playsInline
-                  muted
-                  className="w-full h-full object-cover"
-                />
-                <canvas ref={canvasRef} className="hidden" />
-                <div className="absolute top-2 right-2 flex gap-2">
-                  <Button
-                    variant="secondary"
-                    size="icon"
-                    onClick={capturePhoto}
-                    disabled={isCompressing}
-                  >
-                    <Camera className="h-4 w-4" />
-                  </Button>
-                  <Button
-                    variant="secondary"
-                    size="icon"
-                    onClick={() => fileInputRef.current?.click()}
-                    disabled={isCompressing}
-                  >
-                    <Upload className="h-4 w-4" />
-                  </Button>
-                </div>
-              </div>
-
-              <input
-                ref={fileInputRef}
-                type="file"
-                accept="image/*"
-                className="hidden"
-                onChange={handleFileUpload}
-              />
+        <div className="fixed inset-0 z-50 w-[100vw] h-[100vh] bg-black overflow-hidden flex flex-col items-center justify-center touch-none">
+          {/* Shutter Animation Overlay */}
+          <div className={`absolute inset-0 bg-black z-40 pointer-events-none transition-opacity duration-100 ${isFlashing ? "opacity-100" : "opacity-0"}`} />
+          
+          {/* Top Controls Overlay */}
+          <div className="absolute top-0 left-0 w-full p-4 md:p-6 z-30 flex justify-between items-start bg-gradient-to-b from-black/60 to-transparent">
+            <button 
+              onClick={cleanup}
+              className="text-white bg-black/40 backdrop-blur-md p-3 rounded-full hover:bg-black/60 active:scale-95 transition-all outline-none"
+            >
+              <X className="h-6 w-6" />
+            </button>
+            <div className="flex gap-3">
+               <button 
+                onClick={() => { cleanup(); fileInputRef.current?.click(); }}
+                className="text-white bg-black/40 backdrop-blur-md p-3 rounded-full hover:bg-black/60 active:scale-95 transition-all outline-none"
+               >
+                 <Upload className="h-6 w-6" />
+               </button>
             </div>
-          </DialogContent>
-        </Dialog>
+          </div>
+
+          {/* Video Container with Gestures */}
+          <div 
+             className="relative w-full h-full flex-1 touch-none overflow-hidden flex items-center justify-center bg-black"
+             onTouchStart={handleTouchStart}
+             onTouchMove={handleTouchMove}
+             onTouchEnd={handleTouchEnd}
+          >
+            <video
+              ref={videoRef}
+              autoPlay
+              playsInline
+              muted
+              className={`w-full h-full object-cover transition-transform duration-100 origin-center ${!hasNativeZoomRef.current ? 'will-change-transform' : ''}`}
+              style={{ 
+                 objectFit: 'cover',
+                 transform: !hasNativeZoomRef.current ? `scale(${zoomRef.current})` : 'none'
+              }}
+            />
+            <canvas ref={canvasRef} className="hidden" />
+          </div>
+
+          {/* Zoom Controls Overlay (Slider) */}
+          <div className="absolute right-4 top-1/2 -translate-y-1/2 z-30 h-1/3 min-h-[150px] flex flex-col items-center justify-between pointer-events-auto bg-black/30 backdrop-blur-sm rounded-full py-4 px-2">
+             <span className="text-white text-xs font-bold font-mono shadow-[0_0_2px_rgba(0,0,0,0.8)]">{(zoom).toFixed(1)}x</span>
+             <input 
+                type="range"
+                min={minZoom}
+                max={maxZoom}
+                step={0.1}
+                value={zoom}
+                onChange={handleZoomSliderChange}
+                style={{ writingMode: 'vertical-lr', direction: 'rtl' } as any}
+                className="h-full w-4 appearance-none my-3 bg-white/30 rounded-full outline-none [&::-webkit-slider-thumb]:appearance-none [&::-webkit-slider-thumb]:w-6 [&::-webkit-slider-thumb]:h-6 [&::-webkit-slider-thumb]:bg-white [&::-webkit-slider-thumb]:rounded-full [&::-webkit-slider-thumb]:shadow-lg active:[&::-webkit-slider-thumb]:scale-110" 
+             />
+             <Maximize className="h-4 w-4 text-white opacity-90 shadow-sm" />
+          </div>
+
+          {/* Shutter Button Overlay */}
+          <div className="absolute bottom-0 left-0 w-full p-8 z-30 flex flex-col justify-end items-center bg-gradient-to-t from-black/80 to-transparent pb-10">
+            <button
+              onClick={capturePhoto}
+              disabled={isCompressing}
+              className="w-[76px] h-[76px] rounded-full border-[3px] border-white flex items-center justify-center p-[4px] active:scale-95 transition-transform outline-none"
+            >
+               <div className={`w-full h-full bg-white rounded-full ${isCompressing ? "animate-pulse bg-gray-300" : "bg-white"} transition-colors`}></div>
+            </button>
+            <span className="mt-4 text-white/90 text-xs font-bold uppercase tracking-widest px-4 py-1.5 rounded-full bg-black/40 backdrop-blur-md">
+              {activeCamera === "sign" ? "Foto del Rótulo" : "Foto Propiedad"}
+            </span>
+          </div>
+
+          <input
+            ref={fileInputRef}
+            type="file"
+            accept="image/*"
+            className="hidden"
+            onChange={handleFileUpload}
+          />
+        </div>
       )}
 
       {showOcrDialog && (
