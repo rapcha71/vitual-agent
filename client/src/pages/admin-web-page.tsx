@@ -9,7 +9,7 @@ import { useLocation } from "wouter";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger, DialogFooter } from "@/components/ui/dialog";
-import { useEffect, useState, useRef, memo, useCallback, forwardRef, useImperativeHandle } from "react";
+import { useEffect, useState, useRef, memo, useCallback, forwardRef, useImperativeHandle, useMemo } from "react";
 import { Loader } from "@googlemaps/js-api-loader";
 import { MarkerClusterer } from "@googlemaps/markerclusterer";
 import { useToast } from "@/hooks/use-toast";
@@ -370,21 +370,24 @@ const MapComponent = memo(forwardRef(({ properties }: { properties: PropertyWith
         const lat = Number(foundProperty.location?.lat || 0);
         const lng = Number(foundProperty.location?.lng || 0);
 
-        map.current?.setZoom(18);
+        // 1. Pan first at current zoom for a smooth geographical sweep
+        map.current?.panTo({ lat, lng });
+        
+        // 2. Wait for pan to near completion, then zoom in deeply to street level
         setTimeout(() => {
-             map.current?.panTo({ lat, lng });
-        }, 50);
+             map.current?.setZoom(18);
+        }, 800);
 
         const highlightCircle = new google.maps.Circle({
           strokeColor: '#FFFF00',
           strokeOpacity: 1.0,
-          strokeWeight: 2,
+          strokeWeight: 3,
           fillColor: '#FFFF00',
-          fillOpacity: 0.3,
+          fillOpacity: 0.4,
           map: map.current,
           center: { lat, lng },
           radius: 20,
-          zIndex: 1
+          zIndex: 99999
         });
         
         highlightCircleRef.current = highlightCircle;
@@ -611,7 +614,9 @@ const MapComponent = memo(forwardRef(({ properties }: { properties: PropertyWith
           disableDefaultUI: true
         };
 
-        map.current = new google.maps.Map(mapRef.current, mapOptions);
+        if (!map.current) {
+          map.current = new google.maps.Map(mapRef.current, mapOptions);
+        }
 
         addMarkers(properties);
 
@@ -971,9 +976,9 @@ export default function AdminWebPage() {
     enabled: user?.isAdmin === true
   });
 
-  const propertiesToDisplay = properties.filter(p => 
+  const propertiesToDisplay = useMemo(() => properties.filter(p =>
     selectedUserId === "all" || p.userId === selectedUserId
-  );
+  ), [properties, selectedUserId]);
 
   // State for user profile editing
   const [editingUserId, setEditingUserId] = useState<number | null>(null);
