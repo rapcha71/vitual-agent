@@ -35,6 +35,8 @@ const MapComponent = memo(forwardRef(({ properties }: { properties: PropertyWith
   const clustererRef = useRef<MarkerClusterer | null>(null);
   const highlightCircleRef = useRef<google.maps.Circle | null>(null);
   const pulseIntervalRef = useRef<NodeJS.Timeout | null>(null);
+  // Track whether a user has zoomed to a specific property — prevents fitBounds from resetting zoom
+  const searchActiveRef = useRef<boolean>(false);
   const { toast } = useToast();
 
   // Cleanup function to remove markers and listeners
@@ -327,7 +329,8 @@ const MapComponent = memo(forwardRef(({ properties }: { properties: PropertyWith
       });
     }
 
-    if (propertiesToDisplay.length > 0) {
+    // Only fit bounds if no specific property search is active
+    if (propertiesToDisplay.length > 0 && !searchActiveRef.current) {
       map.current.fitBounds(bounds);
     }
   }, [cleanupMap, toast]);
@@ -351,6 +354,7 @@ const MapComponent = memo(forwardRef(({ properties }: { properties: PropertyWith
       }
 
       if (!propertyId) {
+        searchActiveRef.current = false;
         infoWindowsRef.current.forEach(window => window.close());
         const bounds = new google.maps.LatLngBounds();
         markersRef.current.forEach(m => {
@@ -363,6 +367,9 @@ const MapComponent = memo(forwardRef(({ properties }: { properties: PropertyWith
       }
       const foundProperty = properties.find(p => p.propertyId === propertyId);
       if (foundProperty) {
+        // Mark search as active — this prevents fitBounds from resetting the zoom
+        searchActiveRef.current = true;
+
         if (map.current) {
              google.maps.event.trigger(map.current, 'resize');
         }
@@ -370,13 +377,9 @@ const MapComponent = memo(forwardRef(({ properties }: { properties: PropertyWith
         const lat = Number(foundProperty.location?.lat || 0);
         const lng = Number(foundProperty.location?.lng || 0);
 
-        // 1. Pan first at current zoom for a smooth geographical sweep
+        // Zoom first so the tile load starts immediately, then pan to center
+        map.current?.setZoom(18);
         map.current?.panTo({ lat, lng });
-        
-        // 2. Wait for pan to near completion, then zoom in deeply to street level
-        setTimeout(() => {
-             map.current?.setZoom(18);
-        }, 800);
 
         const highlightCircle = new google.maps.Circle({
           strokeColor: '#FFFF00',
@@ -658,7 +661,14 @@ const MapComponent = memo(forwardRef(({ properties }: { properties: PropertyWith
       if (typeof onResize === 'function') window.removeEventListener('resize', onResize);
       if (typeof onOrientationChange === 'function') window.removeEventListener('orientationchange', onOrientationChange);
     };
-  }, [apiKey, properties, toast, cleanupMap, addMarkers]);
+  // Only re-run when the API key changes — markers are updated via a separate effect below
+  }, [apiKey, toast, cleanupMap, addMarkers]); // eslint-disable-line react-hooks/exhaustive-deps
+
+  // Refresh markers when properties list changes WITHOUT resetting zoom/circle
+  useEffect(() => {
+    if (!map.current) return;
+    addMarkers(properties);
+  }, [properties, addMarkers]);
 
   const hasApiKey = !!apiKey;
   const hasProperties = properties.length > 0;
