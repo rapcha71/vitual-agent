@@ -363,6 +363,10 @@ const MapComponent = memo(forwardRef(({ properties }: { properties: PropertyWith
       }
       const foundProperty = properties.find(p => p.propertyId === propertyId);
       if (foundProperty) {
+        if (map.current) {
+             google.maps.event.trigger(map.current, 'resize');
+        }
+
         const lat = Number(foundProperty.location?.lat || 0);
         const lng = Number(foundProperty.location?.lng || 0);
 
@@ -1526,7 +1530,7 @@ export default function AdminWebPage() {
               )}
             </TabsList>
 
-            <TabsContent value="map">
+            <TabsContent value="map" forceMount className="data-[state=inactive]:hidden">
               <Card className="bg-white border-0 shadow-md">
                 <CardContent className="p-4 md:p-6 space-y-4">
                   <div className="flex gap-2 w-full md:max-w-md">
