@@ -574,23 +574,20 @@ const MapComponent = memo(forwardRef(({ properties }: { properties: PropertyWith
   }, []);
 
   useEffect(() => {
-    if (!apiKey) return;
+    if (!apiKey || !properties.length) return;
     let isMounted = true;
     let onResize: (() => void) | undefined;
     let onOrientationChange: (() => void) | undefined;
 
     const initMap = async () => {
-      if (!mapRef.current) {
+      if (!mapRef.current || !apiKey || !properties.length) {
         setIsLoading(false);
         return;
       }
 
-      if (!apiKey) {
-        setIsLoading(false);
-        return;
-      }
-
-      if (!properties.length) {
+      // If map is already initialized, just add markers (avoids re-loading the script)
+      if (map.current) {
+        addMarkers(properties);
         setIsLoading(false);
         return;
       }
@@ -617,9 +614,7 @@ const MapComponent = memo(forwardRef(({ properties }: { properties: PropertyWith
           disableDefaultUI: true
         };
 
-        if (!map.current) {
-          map.current = new google.maps.Map(mapRef.current, mapOptions);
-        }
+        map.current = new google.maps.Map(mapRef.current, mapOptions);
 
         addMarkers(properties);
 
@@ -631,7 +626,7 @@ const MapComponent = memo(forwardRef(({ properties }: { properties: PropertyWith
             if (center) map.current.setCenter(center);
           }
         };
-        onOrientationChange = () => setTimeout(onResize, 400);
+        onOrientationChange = () => setTimeout(onResize!, 400);
         window.addEventListener('resize', onResize);
         window.addEventListener('orientationchange', onOrientationChange);
 
@@ -657,12 +652,11 @@ const MapComponent = memo(forwardRef(({ properties }: { properties: PropertyWith
 
     return () => {
       isMounted = false;
-      cleanupMap();
       if (typeof onResize === 'function') window.removeEventListener('resize', onResize);
       if (typeof onOrientationChange === 'function') window.removeEventListener('orientationchange', onOrientationChange);
     };
-  // Only re-run when the API key changes — markers are updated via a separate effect below
-  }, [apiKey, toast, cleanupMap, addMarkers]); // eslint-disable-line react-hooks/exhaustive-deps
+  // Re-run when apiKey arrives OR when first batch of properties arrives
+  }, [apiKey, properties.length, toast, cleanupMap, addMarkers]); // eslint-disable-line react-hooks/exhaustive-deps
 
   // Refresh markers when properties list changes WITHOUT resetting zoom/circle
   useEffect(() => {
@@ -682,15 +676,6 @@ const MapComponent = memo(forwardRef(({ properties }: { properties: PropertyWith
           Para ver el mapa necesitás configurar la API key de Google Maps.
           <br />Agregá <code className="bg-gray-200 px-1 rounded">VITE_GOOGLE_MAPS_API_KEY</code> en tu archivo <code className="bg-gray-200 px-1 rounded">.env</code> o en las variables de Railway.
         </p>
-      </div>
-    );
-  }
-
-  if (!hasProperties) {
-    return (
-      <div className="w-full h-[500px] flex flex-col items-center justify-center bg-gray-100 rounded-lg shadow-md p-6 text-center">
-        <MapPin className="h-16 w-16 text-gray-400 mb-4" />
-        <p className="text-gray-600">No hay propiedades para mostrar en el mapa</p>
       </div>
     );
   }
@@ -726,14 +711,23 @@ const MapComponent = memo(forwardRef(({ properties }: { properties: PropertyWith
 
   return (
     <div className="w-full h-[500px] relative bg-gray-200 rounded-lg overflow-hidden shadow-md border-2 border-gray-300">
+      {/* The map div must always be in the DOM so mapRef is valid when properties arrive */}
       <div
         ref={mapRef}
         className="absolute inset-0"
         style={{ width: '100%', height: '100%', minHeight: '500px' }}
       />
+      {/* Overlay: loading spinner */}
       {isLoading && (
         <div className="absolute inset-0 flex items-center justify-center bg-gray-100/80">
           <Loader2 className="h-8 w-8 animate-spin text-primary" />
+        </div>
+      )}
+      {/* Overlay: no properties yet (shown while data is fetching) */}
+      {!hasProperties && !isLoading && (
+        <div className="absolute inset-0 flex flex-col items-center justify-center bg-gray-100/90">
+          <MapPin className="h-16 w-16 text-gray-400 mb-4" />
+          <p className="text-gray-600">No hay propiedades para mostrar en el mapa</p>
         </div>
       )}
     </div>
