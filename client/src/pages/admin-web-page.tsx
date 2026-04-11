@@ -33,10 +33,21 @@ const MapComponent = memo(forwardRef(({ properties }: { properties: PropertyWith
   const markersRef = useRef<google.maps.Marker[]>([]);
   const infoWindowsRef = useRef<google.maps.InfoWindow[]>([]);
   const clustererRef = useRef<MarkerClusterer | null>(null);
+  const highlightCircleRef = useRef<google.maps.Circle | null>(null);
+  const pulseIntervalRef = useRef<NodeJS.Timeout | null>(null);
   const { toast } = useToast();
 
   // Cleanup function to remove markers and listeners
   const cleanupMap = useCallback(() => {
+    if (highlightCircleRef.current) {
+      highlightCircleRef.current.setMap(null);
+      highlightCircleRef.current = null;
+    }
+    if (pulseIntervalRef.current) {
+      clearInterval(pulseIntervalRef.current);
+      pulseIntervalRef.current = null;
+    }
+
     if (clustererRef.current) {
       clustererRef.current.clearMarkers();
       clustererRef.current = null;
@@ -153,6 +164,37 @@ const MapComponent = memo(forwardRef(({ properties }: { properties: PropertyWith
         `;
       }
       contentDiv.appendChild(wasiEl);
+
+      const deleteSection = document.createElement('div');
+      deleteSection.style.cssText = 'margin-top: 10px; padding-top: 10px; border-top: 1px solid #ffcccc; text-align: center;';
+      const deleteBtn = document.createElement('button');
+      deleteBtn.textContent = '🗑️ Borrar Propiedad';
+      deleteBtn.style.cssText = 'width: 100%; padding: 6px; background: #fee2e2; border: 1px solid #ef4444; border-radius: 4px; font-size: 12px; font-weight: bold; cursor: pointer; color: #ef4444; transition: all 0.2s ease;';
+      deleteBtn.addEventListener('click', async () => {
+        if (window.confirm(`ESTÁS A PUNTO DE BORRAR LA PROPIEDAD (CÓDIGO: ${property.propertyId}).\n¿Estás seguro de que deseas continuar?`)) {
+          deleteBtn.textContent = 'Borrando...';
+          deleteBtn.disabled = true;
+          try {
+            const res = await fetch(`/api/admin/properties/${property.propertyId}`, { method: 'DELETE', credentials: 'include' });
+            if (res.ok) {
+              toast({ title: 'Éxito', description: 'Propiedad borrada correctamente.' });
+              infoWindow.close();
+              queryClient.invalidateQueries({ queryKey: ["/api/admin/properties"] });
+              setTimeout(() => { window.location.reload(); }, 1000);
+            } else {
+              toast({ title: 'Error', description: 'No se pudo borrar', variant: 'destructive' });
+              deleteBtn.textContent = '🗑️ Borrar Propiedad';
+              deleteBtn.disabled = false;
+            }
+          } catch(e) {
+            toast({ title: 'Error', description: 'Error de conexión', variant: 'destructive' });
+            deleteBtn.textContent = '🗑️ Borrar Propiedad';
+            deleteBtn.disabled = false;
+          }
+        }
+      });
+      deleteSection.appendChild(deleteBtn);
+      contentDiv.appendChild(deleteSection);
 
       const infoWindow = new google.maps.InfoWindow({
         content: contentDiv,
@@ -299,55 +341,72 @@ const MapComponent = memo(forwardRef(({ properties }: { properties: PropertyWith
       }
     },
     searchProperty: (propertyId: string) => {
+      if (highlightCircleRef.current) {
+        highlightCircleRef.current.setMap(null);
+        highlightCircleRef.current = null;
+      }
+      if (pulseIntervalRef.current) {
+        clearInterval(pulseIntervalRef.current);
+        pulseIntervalRef.current = null;
+      }
+
       if (!propertyId) {
-        addMarkers(properties); // Show all if search is cleared
+        infoWindowsRef.current.forEach(window => window.close());
+        const bounds = new google.maps.LatLngBounds();
+        markersRef.current.forEach(m => {
+          if (m.getPosition()) bounds.extend(m.getPosition()!);
+        });
+        if (markersRef.current.length > 0 && map.current) {
+             map.current.fitBounds(bounds);
+        }
         return;
       }
       const foundProperty = properties.find(p => p.propertyId === propertyId);
       if (foundProperty) {
-        // Clear existing markers first
-        cleanupMap();
-
-        // Center map on the found property with higher zoom
         const lat = Number(foundProperty.location?.lat || 0);
         const lng = Number(foundProperty.location?.lng || 0);
-        map.current?.setCenter({ lat, lng });
+
         map.current?.setZoom(18);
-
-        // Create a special blinking marker for the found property
-        const blinkingMarker = new google.maps.Marker({
-          position: { lat, lng },
-          map: map.current,
-          title: foundProperty.propertyId,
-          optimized: false,
-          animation: google.maps.Animation.BOUNCE,
-          icon: {
-            path: 'M12 0C7.802 0 4 3.403 4 7.602C4 11.8 7.469 16.812 12 24C16.531 16.812 20 11.8 20 7.602C20 3.403 16.199 0 12 0ZM12 11C10.343 11 9 9.657 9 8C9 6.343 10.343 5 12 5C13.657 5 15 6.343 15 8C15 9.657 13.657 11 12 11Z',
-            fillColor: '#FFD700', // Gold color for special marker
-            fillOpacity: 1,
-            strokeWeight: 2,
-            strokeColor: '#FF0000', // Red border
-            scale: 2, // Larger size
-            anchor: new google.maps.Point(12, 24),
-          }
-        });
-
-        // Stop bouncing after 3 seconds and add blinking effect
         setTimeout(() => {
-          blinkingMarker.setAnimation(null);
+             map.current?.panTo({ lat, lng });
+        }, 50);
 
-          // Create blinking effect
-          let isVisible = true;
-          const blinkInterval = setInterval(() => {
-            blinkingMarker.setVisible(isVisible);
-            isVisible = !isVisible;
-          }, 500);
+        const highlightCircle = new google.maps.Circle({
+          strokeColor: '#FFFF00',
+          strokeOpacity: 1.0,
+          strokeWeight: 2,
+          fillColor: '#FFFF00',
+          fillOpacity: 0.3,
+          map: map.current,
+          center: { lat, lng },
+          radius: 20,
+          zIndex: 1
+        });
+        
+        highlightCircleRef.current = highlightCircle;
 
-          // Stop blinking after 10 seconds
-          setTimeout(() => {
-            clearInterval(blinkInterval);
-            blinkingMarker.setVisible(true);
-          }, 10000);
+        let isPulsing = true;
+        let scaleUp = true;
+        
+        pulseIntervalRef.current = setInterval(() => {
+           if (!isPulsing) return;
+           const currentRadius = highlightCircle.getRadius();
+           if (scaleUp) {
+               highlightCircle.setRadius(currentRadius + 1);
+               if (currentRadius > 25) scaleUp = false;
+           } else {
+               highlightCircle.setRadius(currentRadius - 1);
+               if (currentRadius < 15) scaleUp = true;
+           }
+        }, 50);
+
+        setTimeout(() => {
+           isPulsing = false;
+           if (pulseIntervalRef.current) {
+               clearInterval(pulseIntervalRef.current);
+               pulseIntervalRef.current = null;
+           }
+           if (highlightCircle) highlightCircle.setRadius(20);
         }, 3000);
 
         const propertyImage = (foundProperty.thumbnails && foundProperty.thumbnails.length > 0)
@@ -356,9 +415,8 @@ const MapComponent = memo(forwardRef(({ properties }: { properties: PropertyWith
 
         const fullImage = (foundProperty.images && (foundProperty.images as any).length > 0) ? (foundProperty.images[0] as string) : null;
 
-        // Enhanced info window with larger image and more details (optimized)
-        const infoWindow = new google.maps.InfoWindow({
-          content: `
+        const infoWindowDiv = document.createElement('div');
+        infoWindowDiv.innerHTML = `
             <div style="padding: 16px; min-width: 280px; max-width: 350px; font-family: Arial, sans-serif;">
               <div style="display: flex; align-items: center; margin-bottom: 12px;">
                 <div style="width: 12px; height: 12px; background: #FFD700; border-radius: 50%; margin-right: 8px; animation: pulse 1.5s infinite;"></div>
@@ -416,27 +474,71 @@ const MapComponent = memo(forwardRef(({ properties }: { properties: PropertyWith
                 }
               </style>
             </div>
-          `,
-          maxWidth: 380
+          `;
+
+        const deleteSection2 = document.createElement('div');
+        deleteSection2.style.cssText = 'margin-top: 10px; padding-top: 10px; border-top: 1px solid #ffcccc; text-align: center;';
+        const deleteBtn2 = document.createElement('button');
+        deleteBtn2.textContent = '🗑️ Borrar Propiedad';
+        deleteBtn2.style.cssText = 'width: 100%; padding: 6px; background: #fee2e2; border: 1px solid #ef4444; border-radius: 4px; font-size: 12px; font-weight: bold; cursor: pointer; color: #ef4444; transition: all 0.2s ease;';
+        deleteBtn2.addEventListener('click', async () => {
+          if (window.confirm(`ESTÁS A PUNTO DE BORRAR LA PROPIEDAD (CÓDIGO: ${foundProperty.propertyId}).\n¿Estás seguro de que deseas continuar?`)) {
+            deleteBtn2.textContent = 'Borrando...';
+            deleteBtn2.disabled = true;
+            try {
+              const res = await fetch(`/api/admin/properties/${foundProperty.propertyId}`, { method: 'DELETE', credentials: 'include' });
+              if (res.ok) {
+                toast({ title: 'Éxito', description: 'Propiedad borrada correctamente.' });
+                if (infoWindow) infoWindow.close();
+                queryClient.invalidateQueries({ queryKey: ["/api/admin/properties"] });
+                setTimeout(() => window.location.reload(), 1000);
+              } else {
+                toast({ title: 'Error', description: 'No se pudo borrar', variant: 'destructive' });
+                deleteBtn2.textContent = '🗑️ Borrar Propiedad';
+                deleteBtn2.disabled = false;
+              }
+            } catch(e) {
+              toast({ title: 'Error', description: 'Error de red', variant: 'destructive' });
+              deleteBtn2.textContent = '🗑️ Borrar Propiedad';
+              deleteBtn2.disabled = false;
+            }
+          }
+        });
+        deleteSection2.appendChild(deleteBtn2);
+        infoWindowDiv.firstElementChild?.appendChild(deleteSection2);
+
+        const infoWindow = new google.maps.InfoWindow({
+          content: infoWindowDiv,
+          maxWidth: 380,
+          disableAutoPan: true
         });
 
-        // Open info window immediately
-        infoWindow.open(map.current, blinkingMarker);
+        infoWindowsRef.current.forEach(window => window.close());
 
-        // Add click listener to the marker
-        blinkingMarker.addListener('click', () => {
-          infoWindowsRef.current.forEach(window => window.close());
-          infoWindow.open(map.current, blinkingMarker);
-        });
+        const existingMarker = markersRef.current.find(m => m.getTitle() === foundProperty.propertyId);
 
-        markersRef.current.push(blinkingMarker);
-        infoWindowsRef.current.push(infoWindow);
-        if (clustererRef.current) {
-          clustererRef.current.addMarker(blinkingMarker);
+        if (existingMarker) {
+             infoWindow.open(map.current, existingMarker);
+             existingMarker.setZIndex(google.maps.Marker.MAX_ZINDEX + 1);
+        } else {
+             infoWindow.setPosition({ lat, lng });
+             infoWindow.open(map.current);
         }
 
-        // GeoAudit Log
-        console.log(`[Virtual Agent GeoAudit] Selected Property ${foundProperty.propertyId}: Saved (${lat}, ${lng}) -> Rendered (${blinkingMarker.getPosition()?.lat()}, ${blinkingMarker.getPosition()?.lng()})`);
+        infoWindow.addListener('closeclick', () => {
+           if (highlightCircleRef.current) {
+             highlightCircleRef.current.setMap(null);
+             highlightCircleRef.current = null;
+           }
+           if (pulseIntervalRef.current) {
+             clearInterval(pulseIntervalRef.current);
+             pulseIntervalRef.current = null;
+           }
+        });
+
+        infoWindowsRef.current.push(infoWindow);
+
+        console.log(`[Virtual Agent GeoAudit] Selected Property ${foundProperty.propertyId}: Saved (${lat}, ${lng})`);
 
         toast({
           title: "¡Propiedad encontrada!",
