@@ -2,14 +2,14 @@ import { Button } from "@/components/ui/button";
 import { PWAInstallButton } from "@/components/ui/pwa-install-button";
 import { useAuth } from "@/hooks/use-auth";
 import { Link, useLocation } from "wouter";
-import { Plus, LogOut, ChevronLeft, Shield, User, Building, Share2, MessageCircle } from "lucide-react";
+import { Plus, LogOut, ChevronLeft, Shield, User, Building, Share2, MessageCircle, BellRing } from "lucide-react";
 import { useQuery } from "@tanstack/react-query";
 import { Property } from "@shared/schema";
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
 import { PhonePreview } from "@/components/ui/phone-preview";
 import { RegulationsDialog } from "@/components/ui/regulations-dialog";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Loader2 } from "lucide-react";
 
 const ITEMS_PER_PAGE = 5;
@@ -31,6 +31,18 @@ export default function HomePage() {
     refetchInterval: 30000,
   });
   const unreadCount = unreadData?.count || 0;
+  const hasUnread = unreadCount > 0;
+
+  // Badge API: muestra/limpia el contador en el ícono de la app instalada
+  // Funciona como WhatsApp/Gmail en Android y Chrome desktop
+  useEffect(() => {
+    if (!('setAppBadge' in navigator)) return;
+    if (hasUnread) {
+      (navigator as any).setAppBadge(unreadCount).catch(() => {});
+    } else {
+      (navigator as any).clearAppBadge().catch(() => {});
+    }
+  }, [hasUnread, unreadCount]);
 
   const paginatedProperties = properties.slice(0, page * ITEMS_PER_PAGE);
   const hasMore = properties.length > paginatedProperties.length;
@@ -171,13 +183,26 @@ export default function HomePage() {
                 </Link>
                 <Link href="/messages">
                   <Button
-                    variant="outline"
-                    className="w-full h-full flex flex-col items-center justify-center py-4 px-2 gap-1 text-sm bg-white nav-option-orange relative"
+                    variant={hasUnread ? "default" : "outline"}
+                    className={`w-full h-full flex flex-col items-center justify-center py-4 px-2 gap-1 text-sm relative transition-all duration-300 ${
+                      hasUnread
+                        ? 'bg-[#F05023] hover:bg-[#E04015] text-white border-0 shadow-[0_0_20px_rgba(240,80,35,0.5)] animate-pulse'
+                        : 'bg-white nav-option-orange'
+                    }`}
                   >
-                    <MessageCircle className="h-4 w-4" />
-                    <span>Mensajes</span>
-                    {unreadCount > 0 && (
-                      <span className="absolute top-1 right-1 bg-red-500 text-white text-xs font-bold rounded-full h-5 w-5 flex items-center justify-center">
+                    {hasUnread ? (
+                      <BellRing className="h-5 w-5 animate-bounce" />
+                    ) : (
+                      <MessageCircle className="h-4 w-4" />
+                    )}
+                    <span className={hasUnread ? 'font-bold text-xs' : ''}>
+                      {hasUnread
+                        ? (unreadCount === 1 ? '¡Tienes un mensaje!' : `¡${unreadCount} mensajes!`)
+                        : 'Mensajes'
+                      }
+                    </span>
+                    {hasUnread && (
+                      <span className="absolute top-1 right-1 bg-white text-[#F05023] text-xs font-bold rounded-full h-5 w-5 flex items-center justify-center shadow">
                         {unreadCount > 9 ? '9+' : unreadCount}
                       </span>
                     )}

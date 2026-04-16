@@ -25,5 +25,9 @@
   "categories": ["business", "productivity"],
   "lang": "es-ES",
   "scope": "/",
-  "id": "virtual-agent-real-estate"
+  "id": "virtual-agent-real-estate",
+  "handle_links": "preferred",
+  "launch_handler": {
+    "client_mode": "navigate-existing"
+  }
 }

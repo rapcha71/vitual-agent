@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useQuery, useMutation } from '@tanstack/react-query';
 import { useLocation } from 'wouter';
 import { useAuth } from '@/hooks/use-auth';
@@ -156,6 +156,23 @@ export default function MessagesPage() {
     
     return isSentByMe || isForMe || isBroadcast;
   });
+
+  // Al entrar a la página: limpiar Badge del ícono de la app y marcar mensajes como leídos automáticamente
+  useEffect(() => {
+    // Limpiar el badge del ícono del SO (Badge API) — funciona en Android y Chrome desktop
+    if ('clearAppBadge' in navigator) {
+      (navigator as any).clearAppBadge().catch(() => {});
+    }
+    // Marcar todos los mensajes no leídos como leídos después de 1.5 segundos de lectura
+    const unread = myMessages.filter(m => m.unreadByUsers?.includes(user?.id || 0));
+    if (unread.length === 0) return;
+    const timer = setTimeout(() => {
+      unread.forEach(message => markAsReadMutation.mutate(message.id));
+    }, 1500);
+    return () => clearTimeout(timer);
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [myMessages.length]);
+
 
   return (
     <div className="min-h-screen bg-white">

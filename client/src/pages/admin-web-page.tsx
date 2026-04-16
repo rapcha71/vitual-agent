@@ -744,6 +744,7 @@ function PropertyImagesViewer({ propertyId }: { propertyId: string }) {
   }>({ images: [], thumbnails: [], blurhashes: [] });
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [currentIdx, setCurrentIdx] = useState(0);
 
   useEffect(() => {
     const fetchImages = async () => {
@@ -772,33 +773,92 @@ function PropertyImagesViewer({ propertyId }: { propertyId: string }) {
 
   if (loading) {
     return (
-      <div className="flex items-center justify-center py-8">
-        <Loader2 className="h-8 w-8 animate-spin text-primary" />
+      <div className="flex items-center justify-center py-16">
+        <Loader2 className="h-10 w-10 animate-spin text-[#F05023]" />
       </div>
     );
   }
 
   if (error) {
-    return <div className="text-center text-red-500 py-4">{error}</div>;
+    return <div className="text-center text-red-500 py-8">{error}</div>;
   }
 
   if (data.images.length === 0) {
-    return <div className="text-center text-gray-500 py-4">No hay imágenes disponibles</div>;
+    return (
+      <div className="flex flex-col items-center justify-center py-16 text-gray-400">
+        <ImageIcon className="h-16 w-16 mb-3 opacity-30" />
+        <p>No hay imágenes disponibles</p>
+      </div>
+    );
   }
 
+  const total = data.images.length;
+  const prev = () => setCurrentIdx(i => (i - 1 + total) % total);
+  const next = () => setCurrentIdx(i => (i + 1) % total);
+
   return (
-    <div className="grid grid-cols-1 md:grid-cols-2 gap-4 max-h-[70vh] overflow-y-auto p-1">
-      {data.images.map((_, idx) => (
-        <OptimizedImage
-          key={idx}
-          src={data.thumbnails?.[idx] || data.images[idx]}
-          alt={`Foto ${idx + 1}`}
-          blurhash={data.blurhashes?.[idx]}
-          className="w-full h-48"
-          aspectRatio="video"
-          onClick={() => window.open(data.images[idx], '_blank')}
+    <div className="flex flex-col gap-3">
+      {/* Imagen principal grande */}
+      <div className="relative w-full bg-black rounded-xl overflow-hidden" style={{ aspectRatio: '16/9', maxHeight: '65vh' }}>
+        <img
+          src={data.images[currentIdx]}
+          alt={`Foto ${currentIdx + 1} de ${total}`}
+          className="w-full h-full object-contain"
+          style={{ maxHeight: '65vh' }}
         />
-      ))}
+        {/* Botón izquierda */}
+        {total > 1 && (
+          <button
+            onClick={prev}
+            className="absolute left-2 top-1/2 -translate-y-1/2 bg-black/60 hover:bg-black/80 text-white rounded-full w-10 h-10 flex items-center justify-center text-xl transition-all shadow-lg"
+            aria-label="Anterior"
+          >
+            ‹
+          </button>
+        )}
+        {/* Botón derecha */}
+        {total > 1 && (
+          <button
+            onClick={next}
+            className="absolute right-2 top-1/2 -translate-y-1/2 bg-black/60 hover:bg-black/80 text-white rounded-full w-10 h-10 flex items-center justify-center text-xl transition-all shadow-lg"
+            aria-label="Siguiente"
+          >
+            ›
+          </button>
+        )}
+        {/* Contador */}
+        <div className="absolute bottom-2 right-3 bg-black/60 text-white text-xs px-2 py-1 rounded-full">
+          {currentIdx + 1} / {total}
+        </div>
+        {/* Botón ver completa */}
+        <button
+          onClick={() => window.open(data.images[currentIdx], '_blank')}
+          className="absolute bottom-2 left-3 bg-black/60 hover:bg-black/80 text-white text-xs px-3 py-1 rounded-full transition-all"
+        >
+          🔍 Ver en tamaño completo
+        </button>
+      </div>
+
+      {/* Miniaturas */}
+      {total > 1 && (
+        <div className="flex gap-2 overflow-x-auto pb-1 px-1">
+          {data.images.map((_, idx) => (
+            <button
+              key={idx}
+              onClick={() => setCurrentIdx(idx)}
+              className={`flex-shrink-0 w-16 h-12 rounded-lg overflow-hidden border-2 transition-all ${
+                idx === currentIdx ? 'border-[#F05023] scale-105 shadow-md' : 'border-transparent opacity-60 hover:opacity-90'
+              }`}
+            >
+              <img
+                src={data.thumbnails?.[idx] || data.images[idx]}
+                alt={`Miniatura ${idx + 1}`}
+                className="w-full h-full object-cover"
+              />
+            </button>
+          ))}
+        </div>
+      )}
     </div>
   );
 }
@@ -983,6 +1043,20 @@ export default function AdminWebPage() {
   const propertiesToDisplay = useMemo(() => properties.filter(p =>
     selectedUserId === "all" || p.userId === selectedUserId
   ), [properties, selectedUserId]);
+
+  // Estado del buscador en la pestaña Lista
+  const [listSearchQuery, setListSearchQuery] = useState("");
+
+  const filteredListProperties = useMemo(() => {
+    const q = listSearchQuery.trim().toLowerCase();
+    if (!q) return propertiesToDisplay;
+    return propertiesToDisplay.filter(p =>
+      p.propertyId?.toLowerCase().includes(q) ||
+      p.signPhoneNumber?.toLowerCase().includes(q) ||
+      p.user?.fullName?.toLowerCase().includes(q) ||
+      p.user?.username?.toLowerCase().includes(q)
+    );
+  }, [propertiesToDisplay, listSearchQuery]);
 
   // State for user profile editing
   const [editingUserId, setEditingUserId] = useState<number | null>(null);
@@ -1576,12 +1650,33 @@ export default function AdminWebPage() {
 
             <TabsContent value="list">
               <div className="overflow-x-auto bg-white rounded-lg shadow-lg p-4 md:p-6">
-                {user.isSuperAdmin && (
-                  <div className="flex justify-end mb-4">
+                {/* Barra de herramientas: buscador + exportar */}
+                <div className="flex flex-col sm:flex-row gap-3 mb-4 items-stretch sm:items-center justify-between">
+                  {/* Buscador de propiedades */}
+                  <div className="flex gap-2 flex-1 max-w-md">
+                    <input
+                      type="text"
+                      placeholder="Buscar por ID, teléfono o nombre..."
+                      className="flex-1 px-3 py-2 border border-gray-200 rounded-lg bg-white text-gray-900 placeholder:text-gray-400 text-sm focus:outline-none focus:ring-2 focus:ring-[#F05023]/40 focus:border-[#F05023]"
+                      value={listSearchQuery}
+                      onChange={(e) => setListSearchQuery(e.target.value)}
+                    />
+                    {listSearchQuery && (
+                      <button
+                        onClick={() => setListSearchQuery('')}
+                        className="px-3 py-2 text-sm text-gray-500 hover:text-gray-800 border border-gray-200 rounded-lg hover:bg-gray-50 transition-colors"
+                        title="Limpiar búsqueda"
+                      >
+                        ✕
+                      </button>
+                    )}
+                  </div>
+                  {/* Exportar (solo SuperAdmin) */}
+                  {user.isSuperAdmin && (
                     <Button
                       onClick={() => exportToSheetsMutation.mutate()}
                       disabled={exportToSheetsMutation.isPending}
-                      className="bg-green-600 hover:bg-green-700"
+                      className="bg-green-600 hover:bg-green-700 shrink-0"
                     >
                       {exportToSheetsMutation.isPending ? (
                         <>
@@ -1595,8 +1690,8 @@ export default function AdminWebPage() {
                         </>
                       )}
                     </Button>
-                  </div>
-                )}
+                  )}
+                </div>
                 {propertiesLoading ? (
                   <div className="flex flex-col items-center justify-center py-16">
                     <Loader2 className="h-10 w-10 animate-spin text-[#F05023] mb-4" />
@@ -1636,7 +1731,7 @@ export default function AdminWebPage() {
                     </TableRow>
                   </TableHeader>
                   <TableBody>
-                    {propertiesToDisplay.map((property) => (
+                    {filteredListProperties.map((property) => (
                       <TableRow key={property.propertyId} className="bg-white hover:bg-gray-50 border-gray-200">
                         <TableCell className="font-medium">
                           <button
@@ -1683,11 +1778,14 @@ export default function AdminWebPage() {
                                   Ver
                                 </button>
                               </DialogTrigger>
-                              <DialogContent className="max-w-2xl bg-app-surface border-app-surface-border [&>*]:bg-app-surface [&_button]:text-gray-900 [&_button]:hover:bg-app-surface-hover">
-                                <DialogHeader className="bg-app-surface">
-                                  <DialogTitle className="text-gray-900">Fotos de la Propiedad {property.propertyId}</DialogTitle>
+                              <DialogContent className="w-[95vw] max-w-5xl bg-white border-0 shadow-2xl p-0 overflow-hidden">
+                                <DialogHeader className="px-6 pt-5 pb-3 border-b border-gray-100">
+                                  <DialogTitle className="text-gray-900 text-lg font-bold flex items-center gap-2">
+                                    <ImageIcon className="h-5 w-5 text-[#F05023]" />
+                                    Fotos de la Propiedad {property.propertyId}
+                                  </DialogTitle>
                                 </DialogHeader>
-                                <div className="bg-white rounded-lg p-4">
+                                <div className="p-4 md:p-6">
                                   <PropertyImagesViewer propertyId={property.propertyId} />
                                 </div>
                               </DialogContent>
@@ -1704,35 +1802,37 @@ export default function AdminWebPage() {
                                   Detalles
                                 </Button>
                               </DialogTrigger>
-                              <DialogContent className="w-[90vw] max-w-lg bg-app-surface border-app-surface-border [&>*]:bg-app-surface [&_button]:text-gray-900 [&_button]:hover:bg-app-surface-hover">
-                                <DialogHeader className="bg-app-surface">
-                                  <DialogTitle className="text-gray-900">Detalles de la Propiedad</DialogTitle>
+                              <DialogContent className="w-[95vw] max-w-4xl bg-white border-0 shadow-2xl p-0 overflow-hidden">
+                                <DialogHeader className="px-6 pt-5 pb-3 border-b border-gray-100" style={{ background: 'linear-gradient(135deg, #F05023, #FF6347)' }}>
+                                  <DialogTitle className="text-white text-lg font-bold">Detalles de la Propiedad {property.propertyId}</DialogTitle>
                                 </DialogHeader>
-                                <div className="space-y-4 bg-app-surface text-gray-900">
-                                  <div className="sm:hidden">
-                                    <p><strong>Usuario:</strong> <span className={property.user?.isDeleted ? "text-red-500 line-through" : ""}>{property.user?.fullName || property.user?.username || "Usuario Desconocido"}{property.user?.isDeleted && " (eliminado)"}</span></p>
-                                    <p><strong>Teléfono:</strong> {property.signPhoneNumber || '-'}</p>
+                                <div className="p-5 space-y-4 text-gray-900 overflow-y-auto max-h-[85vh]">
+                                  {/* Info general */}
+                                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 text-sm bg-gray-50 rounded-xl p-4">
+                                    <div>
+                                      <span className="text-gray-500 text-xs font-semibold uppercase tracking-wider">Tipo</span>
+                                      <p className="font-semibold mt-0.5">{property.propertyType === 'house' ? '🏠 Casa' : property.propertyType === 'land' ? '🌿 Terreno' : '🏢 Comercial'}</p>
+                                    </div>
+                                    <div>
+                                      <span className="text-gray-500 text-xs font-semibold uppercase tracking-wider">Usuario</span>
+                                      <p className={`font-semibold mt-0.5 ${property.user?.isDeleted ? 'text-red-500 line-through' : ''}`}>
+                                        {property.user?.fullName || property.user?.username || 'Usuario Desconocido'}{property.user?.isDeleted && ' (eliminado)'}
+                                      </p>
+                                    </div>
+                                    <div>
+                                      <span className="text-gray-500 text-xs font-semibold uppercase tracking-wider">Teléfono</span>
+                                      <p className="font-semibold mt-0.5">{property.signPhoneNumber || '-'}</p>
+                                    </div>
+                                    <div>
+                                      <span className="text-gray-500 text-xs font-semibold uppercase tracking-wider">Coordenadas</span>
+                                      <p className="font-mono text-xs mt-0.5 text-gray-700">{property.location?.lat?.toFixed(7) || '0'}, {property.location?.lng?.toFixed(7) || '0'}</p>
+                                    </div>
                                   </div>
-                                  <p><strong>Ubicación:</strong> {property.location?.lat?.toFixed(7) || '0.0000000'}, {property.location?.lng?.toFixed(7) || '0.0000000'}</p>
-                                  {property.images && (property.thumbnails || property.images).length > 0 && (
-                                    <div className="mt-4">
-                                      <h4 className="font-semibold mb-2">Imágenes de la Propiedad</h4>
-                                      <div className="grid grid-cols-2 gap-2">
-                                        {(property.thumbnails || property.images || []).map((_, index) => (
-                                          <div key={index} className="relative aspect-video group">
-                                            <OptimizedImage
-                                              src={(property.thumbnails && property.thumbnails[index]) || (property.images && (property.images as any)[index]) || ''}
-                                              alt={`Foto ${index + 1}`}
-                                              blurhash={property.blurhashes?.[index]}
-                                              aspectRatio="video"
-                                              onClick={() => property.images && window.open((property.images as any)[index], '_blank')}
-                                            />
-                                            <div className="absolute inset-0 bg-black/50 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center pointer-events-none">
-                                              <span className="text-white text-xs">Click para ampliar</span>
-                                            </div>
-                                          </div>
-                                        ))}
-                                      </div>
+                                  {/* Galería de fotos a pantalla casi completa */}
+                                  {(property as any).hasImages && (
+                                    <div>
+                                      <h4 className="font-semibold text-sm text-gray-600 uppercase tracking-wider mb-3">📸 Fotografías</h4>
+                                      <PropertyImagesViewer propertyId={property.propertyId} />
                                     </div>
                                   )}
                                 </div>
