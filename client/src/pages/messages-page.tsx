@@ -9,7 +9,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
 import { Label } from '@/components/ui/label';
 import { useToast } from '@/hooks/use-toast';
-import { ChevronLeft, Send, MessageCircle, Loader2, Users, User as UserIcon } from 'lucide-react';
+import { ChevronLeft, Send, MessageCircle, Loader2, Users, User as UserIcon, X } from 'lucide-react';
 import { queryClient, apiRequest } from '@/lib/queryClient';
 import type { Message, User } from '@shared/schema';
 
@@ -22,6 +22,7 @@ export default function MessagesPage() {
   const [newMessage, setNewMessage] = useState('');
   const [selectedUserId, setSelectedUserId] = useState<string>('');
   const [sendMode, setSendMode] = useState<'all' | 'specific'>('all');
+  const [lightboxUrl, setLightboxUrl] = useState<string | null>(null);
 
   const { data: messages = [], isLoading: messagesLoading } = useQuery<MessageWithSender[]>({
     queryKey: ['/api/messages'],
@@ -328,6 +329,17 @@ export default function MessagesPage() {
                       </span>
                     </div>
                     <p className="text-sm">{message.content}</p>
+                    {message.imageUrl && (
+                      <div className="mt-2">
+                        <img
+                          src={message.imageUrl}
+                          alt="Imagen adjunta"
+                          className="max-h-48 rounded-lg object-cover border border-gray-200 cursor-pointer hover:opacity-90 transition-opacity"
+                          onClick={(e) => { e.stopPropagation(); setLightboxUrl(message.imageUrl!); }}
+                        />
+                        <p className="text-xs text-muted-foreground mt-1">Toca la imagen para verla en pantalla completa</p>
+                      </div>
+                    )}
                     {isUnread(message) && (
                       <span className="inline-block mt-1 text-xs bg-orange-500 text-white px-2 py-0.5 rounded-full">
                         Nuevo
@@ -340,6 +352,29 @@ export default function MessagesPage() {
           </CardContent>
         </Card>
       </main>
+
+      {/* Lightbox para ver imagen completa */}
+      {lightboxUrl && (
+        <div
+          className="fixed inset-0 z-50 flex items-center justify-center bg-black/80 p-4"
+          onClick={() => setLightboxUrl(null)}
+        >
+          <div className="relative max-w-full max-h-full" onClick={(e) => e.stopPropagation()}>
+            <img
+              src={lightboxUrl}
+              alt="Imagen completa"
+              className="max-w-[90vw] max-h-[85vh] rounded-xl object-contain shadow-2xl"
+            />
+            <button
+              onClick={() => setLightboxUrl(null)}
+              className="absolute -top-3 -right-3 bg-white rounded-full p-1 shadow-lg hover:bg-gray-100 transition-colors"
+              aria-label="Cerrar"
+            >
+              <X className="h-5 w-5 text-gray-800" />
+            </button>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

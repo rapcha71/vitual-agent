@@ -240,7 +240,92 @@ export class DatabaseStorage implements IStorage {
       .returning();
 
     logger.debug("Message created successfully");
+
+    // Prune old messages after each new one (keep last 3 per user)
+    try {
+      await this.pruneMessagesPerUser(3);
+    } catch (pruneErr) {
+      logger.warn("pruneMessagesPerUser failed (non-critical):", pruneErr);
+    }
+
     return createdMessage;
+  }
+
+  /**
+   * Keeps only the `limit` most recent messages visible to each user.
+   * A message is "visible" to user U if:
+   *   - U is the sender, OR
+   *   - U is the explicit recipient, OR
+   *   - The message is a broadcast (recipientId IS NULL) and U is not the sender.
+   *
+   * Broadcast messages older than the newest `limit` broadcasts are also deleted.
+   * The deletion is safe and never removes messages that are still within the
+   * retention window for any user.
+   */
+  async pruneMessagesPerUser(limit: number = 3): Promise<void> {
+    // Step 1: Collect IDs to KEEP using raw SQL that efficiently ranks messages per user.
+    // We union four perspectives:
+    //   a) As sender   (sender_id = U)
+    //   b) As recipient (recipient_id = U)
+    //   c) As broadcast audience (recipient_id IS NULL, sender_id != U) — uses every non-sender user
+    //
+    // For broadcasts we just keep the newest `limit` broadcast rows globally (they appear
+    // in every user's feed, so we use the most conservative global window).
+
+    const keepResult = await pool.query<{ id: number }>(`
+      WITH ranked_direct AS (
+        -- Rank messages per user from their perspective (sent OR received)
+        SELECT
+          m.id,
+          ROW_NUMBER() OVER (
+            PARTITION BY
+              CASE
+                WHEN m.sender_id    = u.id THEN u.id
+                WHEN m.recipient_id = u.id THEN u.id
+              END
+            ORDER BY m.created_at DESC, m.id DESC
+          ) AS rn
+        FROM messages m
+        JOIN users u
+          ON (m.sender_id = u.id OR m.recipient_id = u.id)
+          AND u.is_deleted = false
+        WHERE m.recipient_id IS NOT NULL
+      ),
+      keep_direct AS (
+        SELECT DISTINCT id FROM ranked_direct WHERE rn <= $1
+      ),
+      ranked_broadcast AS (
+        -- Broadcasts: keep the newest $1 rows globally
+        SELECT id,
+               ROW_NUMBER() OVER (ORDER BY created_at DESC, id DESC) AS rn
+        FROM messages
+        WHERE recipient_id IS NULL
+      ),
+      keep_broadcast AS (
+        SELECT id FROM ranked_broadcast WHERE rn <= $1
+      )
+      SELECT id FROM keep_direct
+      UNION
+      SELECT id FROM keep_broadcast
+    `, [limit]);
+
+    const keepIds: number[] = keepResult.rows.map(r => r.id);
+
+    if (keepIds.length === 0) {
+      // Nothing to keep - safety guard, do nothing
+      return;
+    }
+
+    // Step 2: Delete everything NOT in keepIds
+    const deletedResult = await pool.query<{ id: number }>(`
+      DELETE FROM messages
+      WHERE id NOT IN (${keepIds.join(',')})
+      RETURNING id
+    `);
+
+    if (deletedResult.rowCount && deletedResult.rowCount > 0) {
+      logger.info(`[pruneMessagesPerUser] Deleted ${deletedResult.rowCount} old messages (limit=${limit} per user)`);
+    }
   }
 
   async getMessages(): Promise<(Message & { sender: User })[]> {

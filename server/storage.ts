@@ -36,6 +36,7 @@ export interface IStorage {
   markMessageAsRead(messageId: number, userId: number): Promise<void>;
   getUnreadMessageCount(userId: number): Promise<number>;
   deleteOldMessages(daysOld: number): Promise<number>;
+  pruneMessagesPerUser(limit?: number): Promise<void>;
   // Payment calculation methods
   getWeeklyPayments(): Promise<Array<{
     userId: number;
