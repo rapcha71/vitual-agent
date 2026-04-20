@@ -1952,7 +1952,7 @@ export default function AdminWebPage() {
                       <TableHead className="md:w-32 text-gray-800">Tipo</TableHead>
                       <TableHead className="hidden sm:table-cell md:w-48 text-gray-800">Usuario</TableHead>
                       <TableHead className="hidden sm:table-cell md:w-40 text-gray-800">Teléfono</TableHead>
-                      <TableHead className="hidden lg:table-cell text-gray-800">Ubicación</TableHead>
+                      <TableHead className="hidden lg:table-cell text-gray-800">Provincia / Zona</TableHead>
                       <TableHead className="hidden md:table-cell text-gray-800">Fecha Ingreso</TableHead>
                       <TableHead className="hidden md:table-cell w-14 pl-1 text-gray-800">Foto</TableHead>
                       <TableHead className="w-[140px] md:w-[180px] text-gray-800">Acciones</TableHead>
@@ -2010,8 +2010,32 @@ export default function AdminWebPage() {
                         <TableCell className={`hidden sm:table-cell ${textColor}`}>
                           {property.signPhoneNumber || '-'}
                         </TableCell>
-                        <TableCell className="hidden lg:table-cell text-sm">
-                          {property.location?.lat?.toFixed(4) || '0.0000'}, {property.location?.lng?.toFixed(4) || '0.0000'}
+                        <TableCell className="hidden lg:table-cell text-xs">
+                          {(() => {
+                            const PROV: Record<string, string> = {
+                              '01': 'San José', '02': 'Cartago', '03': 'Heredia',
+                              '04': 'Alajuela', '05': 'Puntarenas', '06': 'Guanacaste', '07': 'Limón'
+                            };
+                            const provCode = (property as any).province;
+                            const provName = provCode ? PROV[provCode] || provCode : null;
+                            const addr = property.location?.address;
+                            return (
+                              <div className="flex flex-col gap-0.5">
+                                {provName && (
+                                  <span className="font-semibold text-gray-800 flex items-center gap-1">
+                                    📍 {provName}
+                                  </span>
+                                )}
+                                {addr ? (
+                                  <span className="text-[10px] text-gray-500 leading-tight line-clamp-2">{addr}</span>
+                                ) : (
+                                  <span className="text-[10px] text-gray-400 font-mono">
+                                    {property.location?.lat?.toFixed(5)}, {property.location?.lng?.toFixed(5)}
+                                  </span>
+                                )}
+                              </div>
+                            );
+                          })()}
                         </TableCell>
                         <TableCell className="hidden md:table-cell text-xs text-gray-600">
                           {property.createdAt ? (
@@ -2079,7 +2103,26 @@ export default function AdminWebPage() {
                                       <p className="font-semibold mt-0.5">{property.signPhoneNumber || '-'}</p>
                                     </div>
                                     <div>
-                                      <span className="text-gray-500 text-xs font-semibold uppercase tracking-wider">Coordenadas</span>
+                                      <span className="text-gray-500 text-xs font-semibold uppercase tracking-wider">Provincia</span>
+                                      <p className="font-semibold mt-0.5">
+                                        {(() => {
+                                          const PROV: Record<string, string> = {
+                                            '01': 'San José', '02': 'Cartago', '03': 'Heredia',
+                                            '04': 'Alajuela', '05': 'Puntarenas', '06': 'Guanacaste', '07': 'Limón'
+                                          };
+                                          const code = (property as any).province;
+                                          return code ? (PROV[code] || code) : 'No especificada';
+                                        })()}
+                                      </p>
+                                    </div>
+                                    {property.location?.address && (
+                                      <div className="col-span-2">
+                                        <span className="text-gray-500 text-xs font-semibold uppercase tracking-wider">Dirección / Zona</span>
+                                        <p className="font-semibold mt-0.5 text-sm">{property.location.address}</p>
+                                      </div>
+                                    )}
+                                    <div>
+                                      <span className="text-gray-500 text-xs font-semibold uppercase tracking-wider">Coordenadas GPS</span>
                                       <p className="font-mono text-xs mt-0.5 text-gray-700">{property.location?.lat?.toFixed(7) || '0'}, {property.location?.lng?.toFixed(7) || '0'}</p>
                                     </div>
                                   </div>
