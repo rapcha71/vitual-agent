@@ -768,6 +768,91 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  // Route to mark a specific user's weekly properties as paid (super admin only)
+  app.post("/api/admin/payments/mark-paid/:userId", requireAdmin, async (req, res) => {
+    try {
+      if (!req.user?.isSuperAdmin) {
+        return res.status(403).json({ message: "Requiere privilegios de super administrador" });
+      }
+      const userId = parseInt(req.params.userId);
+      if (isNaN(userId)) return res.status(400).json({ message: "ID de usuario inválido" });
+
+      const { db } = await import("./db");
+      const { properties } = await import("../shared/schema");
+      const { eq, and, gte, lte } = await import("drizzle-orm");
+
+      // Calculate current CR week boundaries (same logic as getWeeklyPayments)
+      const crOffsetMs = -6 * 60 * 60 * 1000;
+      const crEquiv = new Date(Date.now() + crOffsetMs);
+      const dayOfWeekCR = crEquiv.getUTCDay();
+      const daysToMonday = dayOfWeekCR === 0 ? 6 : dayOfWeekCR - 1;
+      const weekStart = new Date(Date.UTC(
+        crEquiv.getUTCFullYear(), crEquiv.getUTCMonth(),
+        crEquiv.getUTCDate() - daysToMonday, 6, 0, 0, 0
+      ));
+      const weekEnd = new Date(weekStart.getTime() + 7 * 24 * 60 * 60 * 1000 - 1);
+
+      await db.update(properties)
+        .set({ isPaid: true, paidAt: new Date() })
+        .where(and(
+          eq(properties.userId, userId),
+          eq(properties.isPaid, false),
+          gte(properties.createdAt, weekStart.toISOString()),
+          lte(properties.createdAt, weekEnd.toISOString())
+        ));
+
+      res.json({ success: true, message: "Propiedades marcadas como pagadas" });
+    } catch (error: any) {
+      logger.error("Error marking user paid:", error);
+      res.status(500).json({ message: error.message || "Error al registrar el pago" });
+    }
+  });
+
+  // Route to mark ALL current-week properties as paid (super admin only)
+  app.post("/api/admin/payments/mark-all-paid", requireAdmin, async (req, res) => {
+    try {
+      if (!req.user?.isSuperAdmin) {
+        return res.status(403).json({ message: "Requiere privilegios de super administrador" });
+      }
+
+      const { db } = await import("./db");
+      const { properties } = await import("../shared/schema");
+      const { eq, and, gte, lte, inArray } = await import("drizzle-orm");
+
+      const crOffsetMs = -6 * 60 * 60 * 1000;
+      const crEquiv = new Date(Date.now() + crOffsetMs);
+      const dayOfWeekCR = crEquiv.getUTCDay();
+      const daysToMonday = dayOfWeekCR === 0 ? 6 : dayOfWeekCR - 1;
+      const weekStart = new Date(Date.UTC(
+        crEquiv.getUTCFullYear(), crEquiv.getUTCMonth(),
+        crEquiv.getUTCDate() - daysToMonday, 6, 0, 0, 0
+      ));
+      const weekEnd = new Date(weekStart.getTime() + 7 * 24 * 60 * 60 * 1000 - 1);
+
+      // Only mark properties of non-admin users
+      const allUsers = await storage.getAllUsers();
+      const normalUserIds = allUsers.filter(u => !u.isAdmin && !u.isSuperAdmin).map(u => u.id);
+
+      if (normalUserIds.length === 0) {
+        return res.json({ success: true, message: "No hay usuarios normales con propiedades esta semana" });
+      }
+
+      await db.update(properties)
+        .set({ isPaid: true, paidAt: new Date() })
+        .where(and(
+          eq(properties.isPaid, false),
+          gte(properties.createdAt, weekStart.toISOString()),
+          lte(properties.createdAt, weekEnd.toISOString()),
+          inArray(properties.userId, normalUserIds)
+        ));
+
+      res.json({ success: true, message: "Todos los pagos de la semana registrados" });
+    } catch (error: any) {
+      logger.error("Error marking all paid:", error);
+      res.status(500).json({ message: error.message || "Error al registrar los pagos" });
+    }
+  });
+
   // Route to get unviewed properties count (admin only)
   app.get("/api/admin/properties/unviewed-count", requireAdmin, async (req, res) => {
     try {

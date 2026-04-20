@@ -3,7 +3,7 @@ import { useQuery, useMutation } from "@tanstack/react-query";
 import { PropertyWithUser, insertMessageSchema, InsertMessage } from "@shared/schema";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { LogOut, MapPin, Image as ImageIcon, ChevronLeft, Users, Plus, Trash2, MessageCircle, Loader2, DollarSign, MessageSquare, Share2, FileSpreadsheet, Bell, Activity, Terminal } from "lucide-react";
+import { LogOut, MapPin, Image as ImageIcon, ChevronLeft, Users, Plus, Trash2, MessageCircle, Loader2, DollarSign, MessageSquare, Share2, FileSpreadsheet, Bell, Activity, Terminal, CheckCircle2, Calendar } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { useLocation } from "wouter";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
@@ -987,6 +987,233 @@ function DiagnosticCenter() {
   );
 }
 
+// ──────────────────────────────────────────────────────────────────────────────
+// PaymentsTab: weekly payments summary with per-user & bulk "mark paid" actions
+// ──────────────────────────────────────────────────────────────────────────────
+type WeeklyPaymentEntry = {
+  userId: number;
+  user: any;
+  propertiesCount: number;
+  totalPayment: number;
+  weekStart: string;
+  weekEnd: string;
+};
+
+function PaymentsTab({
+  weeklyPayments,
+  paymentsLoading,
+  isSuperAdmin,
+  onRefresh,
+}: {
+  weeklyPayments: WeeklyPaymentEntry[];
+  paymentsLoading: boolean;
+  isSuperAdmin: boolean;
+  onRefresh: () => void;
+}) {
+  const { toast } = useToast();
+  const [paidUsers, setPaidUsers] = useState<Set<number>>(new Set());
+  const [loadingUsers, setLoadingUsers] = useState<Set<number>>(new Set());
+  const [markingAll, setMarkingAll] = useState(false);
+
+  const markUserPaid = async (userId: number, userName: string) => {
+    setLoadingUsers(prev => new Set(prev).add(userId));
+    try {
+      const res = await fetch(`/api/admin/payments/mark-paid/${userId}`, {
+        method: 'POST',
+        credentials: 'include',
+      });
+      if (res.ok) {
+        setPaidUsers(prev => new Set(prev).add(userId));
+        toast({
+          title: '✅ Pago registrado',
+          description: `Se marcó como pagado a ${userName}`,
+        });
+      } else {
+        const err = await res.json();
+        toast({ title: 'Error', description: err.message || 'No se pudo registrar el pago', variant: 'destructive' });
+      }
+    } catch {
+      toast({ title: 'Error de conexión', description: 'No se pudo conectar con el servidor', variant: 'destructive' });
+    } finally {
+      setLoadingUsers(prev => { const s = new Set(prev); s.delete(userId); return s; });
+    }
+  };
+
+  const markAllPaid = async () => {
+    if (!window.confirm('¿Confirmas que ya se realizaron TODOS los pagos de esta semana?')) return;
+    setMarkingAll(true);
+    try {
+      const res = await fetch('/api/admin/payments/mark-all-paid', {
+        method: 'POST',
+        credentials: 'include',
+      });
+      if (res.ok) {
+        const ids = new Set(weeklyPayments.map(p => p.userId));
+        setPaidUsers(ids);
+        toast({ title: '✅ Todos los pagos registrados', description: 'Se marcó toda la semana como pagada.' });
+        onRefresh();
+      } else {
+        const err = await res.json();
+        toast({ title: 'Error', description: err.message || 'No se pudieron registrar los pagos', variant: 'destructive' });
+      }
+    } catch {
+      toast({ title: 'Error de conexión', variant: 'destructive' });
+    } finally {
+      setMarkingAll(false);
+    }
+  };
+
+  if (paymentsLoading) {
+    return (
+      <Card className="bg-white border-0 shadow-md">
+        <CardContent className="pt-8 flex flex-col items-center justify-center py-16">
+          <Loader2 className="h-10 w-10 animate-spin text-primary mb-4" />
+          <p className="text-gray-600">Calculando pagos de la semana...</p>
+        </CardContent>
+      </Card>
+    );
+  }
+
+  const totalProperties = weeklyPayments.reduce((s, p) => s + p.propertiesCount, 0);
+  const totalAmount = weeklyPayments.reduce((s, p) => s + p.totalPayment, 0);
+  const weekLabel = weeklyPayments[0]
+    ? `${new Date(weeklyPayments[0].weekStart).toLocaleDateString('es-CR', { day: 'numeric', month: 'short' })} – ${new Date(weeklyPayments[0].weekEnd).toLocaleDateString('es-CR', { day: 'numeric', month: 'short', year: 'numeric' })}`
+    : '';
+
+  return (
+    <Card className="bg-white border-0 shadow-md">
+      <CardHeader className="bg-white pb-3">
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+          <div>
+            <CardTitle className="text-gray-900 flex items-center gap-2">
+              <DollarSign className="h-5 w-5 text-green-600" />
+              Pagos Semanales
+            </CardTitle>
+            <p className="text-sm text-muted-foreground mt-1">
+              Semana actual (Lun–Dom, zona CR): <span className="font-semibold text-gray-700">{weekLabel}</span>
+              &nbsp;·&nbsp;₡250 por propiedad registrada.
+            </p>
+          </div>
+          {isSuperAdmin && weeklyPayments.length > 0 && (
+            <Button
+              onClick={markAllPaid}
+              disabled={markingAll || weeklyPayments.every(p => paidUsers.has(p.userId))}
+              className="bg-green-600 hover:bg-green-700 text-white gap-2 shrink-0"
+            >
+              {markingAll ? <Loader2 className="h-4 w-4 animate-spin" /> : <CheckCircle2 className="h-4 w-4" />}
+              Marcar Todos Pagados
+            </Button>
+          )}
+        </div>
+      </CardHeader>
+      <CardContent className="bg-white">
+        {weeklyPayments.length === 0 ? (
+          <div className="text-center py-16 text-muted-foreground">
+            <DollarSign className="h-14 w-14 mx-auto mb-4 opacity-30" />
+            <p className="font-medium">No hay pagos pendientes esta semana.</p>
+            <p className="text-sm mt-1">Los usuarios que registren propiedades aparecerán aquí.</p>
+            <p className="text-xs mt-1 text-gray-400">El conteo se reinicia automáticamente cada lunes a las 00:00 hora de Costa Rica.</p>
+          </div>
+        ) : (
+          <>
+            {/* Resumen */}
+            <div className="grid grid-cols-3 gap-3 mb-5 p-4 bg-gradient-to-r from-green-50 to-emerald-50 border border-green-200 rounded-xl">
+              <div className="text-center">
+                <p className="text-2xl font-bold text-green-700">{weeklyPayments.length}</p>
+                <p className="text-xs text-green-600 font-medium uppercase tracking-wide">Usuarios</p>
+              </div>
+              <div className="text-center border-x border-green-200">
+                <p className="text-2xl font-bold text-green-700">{totalProperties}</p>
+                <p className="text-xs text-green-600 font-medium uppercase tracking-wide">Propiedades</p>
+              </div>
+              <div className="text-center">
+                <p className="text-2xl font-bold text-green-700">₡{totalAmount.toLocaleString()}</p>
+                <p className="text-xs text-green-600 font-medium uppercase tracking-wide">Total</p>
+              </div>
+            </div>
+
+            {/* Tabla de pagos individuales */}
+            <div className="overflow-x-auto rounded-lg border border-gray-100">
+              <Table className="[&_th]:bg-gray-50 [&_th]:text-gray-700 [&_td]:bg-white [&_td]:text-gray-900">
+                <TableHeader>
+                  <TableRow className="border-gray-200">
+                    <TableHead>Usuario</TableHead>
+                    <TableHead className="hidden sm:table-cell">Nombre</TableHead>
+                    <TableHead className="hidden md:table-cell">SINPE / Teléfono</TableHead>
+                    <TableHead className="text-center">Propiedades</TableHead>
+                    <TableHead className="text-right">Monto</TableHead>
+                    {isSuperAdmin && <TableHead className="text-center">Estado</TableHead>}
+                  </TableRow>
+                </TableHeader>
+                <TableBody>
+                  {weeklyPayments.map((payment) => {
+                    const isPaid = paidUsers.has(payment.userId);
+                    const isLoading = loadingUsers.has(payment.userId);
+                    return (
+                      <TableRow key={payment.userId} className={`border-gray-100 ${isPaid ? 'opacity-60' : ''}`}>
+                        <TableCell className="font-medium">
+                          <div className="flex flex-col">
+                            <span>{payment.user?.username || 'N/D'}</span>
+                            <span className="text-[10px] text-gray-400">ID: {payment.userId}</span>
+                          </div>
+                        </TableCell>
+                        <TableCell className="hidden sm:table-cell">{payment.user?.fullName || '-'}</TableCell>
+                        <TableCell className="hidden md:table-cell">
+                          <div className="flex flex-col">
+                            <span className="font-mono font-semibold text-blue-700">{payment.user?.paymentMobile || '—'}</span>
+                            {payment.user?.mobile && (
+                              <span className="text-xs text-gray-400">Tel: {payment.user.mobile}</span>
+                            )}
+                          </div>
+                        </TableCell>
+                        <TableCell className="text-center">
+                          <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-semibold bg-blue-100 text-blue-800">
+                            {payment.propertiesCount} {payment.propertiesCount === 1 ? 'prop.' : 'props.'}
+                          </span>
+                        </TableCell>
+                        <TableCell className="text-right font-bold text-green-700">
+                          ₡{payment.totalPayment.toLocaleString()}
+                        </TableCell>
+                        {isSuperAdmin && (
+                          <TableCell className="text-center">
+                            {isPaid ? (
+                              <span className="inline-flex items-center gap-1 text-xs font-semibold text-green-600 bg-green-50 px-2 py-1 rounded-full border border-green-200">
+                                <CheckCircle2 className="h-3 w-3" /> Pagado
+                              </span>
+                            ) : (
+                              <Button
+                                size="sm"
+                                variant="outline"
+                                onClick={() => markUserPaid(payment.userId, payment.user?.fullName || payment.user?.username || 'usuario')}
+                                disabled={isLoading}
+                                className="h-7 text-xs border-green-400 text-green-700 hover:bg-green-50 gap-1"
+                              >
+                                {isLoading ? <Loader2 className="h-3 w-3 animate-spin" /> : <CheckCircle2 className="h-3 w-3" />}
+                                Marcar Pagado
+                              </Button>
+                            )}
+                          </TableCell>
+                        )}
+                      </TableRow>
+                    );
+                  })}
+                </TableBody>
+              </Table>
+            </div>
+
+            <div className="mt-4 p-3 bg-amber-50 border border-amber-200 rounded-lg">
+              <p className="text-sm text-amber-800">
+                <strong>ℹ️ Nota:</strong> El conteo de propiedades se reinicia automáticamente cada semana (lunes 00:00 hora de Costa Rica).
+                Al hacer clic en "Marcar Pagado" solo se registra el estado localmente en esta sesión — el historial de pagos se gestiona en la base de datos con <code>isPaid</code>.
+              </p>
+            </div>
+          </>
+        )}
+      </CardContent>
+    </Card>
+  );
+}
+
 export default function AdminWebPage() {
   const { user, logoutMutation } = useAuth();
   const [, setLocation] = useLocation();
@@ -1320,7 +1547,7 @@ export default function AdminWebPage() {
   }, [activeTab, user?.isAdmin, unviewedCount]);
 
   // Query for weekly payments
-  const { data: weeklyPayments = [], isLoading: paymentsLoading } = useQuery({
+  const { data: weeklyPayments = [], isLoading: paymentsLoading } = useQuery<WeeklyPaymentEntry[]>({
     queryKey: ['/api/admin/payments/weekly'],
     enabled: user?.isAdmin === true && activeTab === 'payments',
     staleTime: 300000,
@@ -1721,37 +1948,53 @@ export default function AdminWebPage() {
                 <Table className="[&_th]:bg-white [&_th]:text-gray-800 [&_td]:bg-white [&_td]:text-gray-900">
                   <TableHeader>
                     <TableRow className="border-gray-200 hover:bg-gray-50">
-                      <TableHead className="w-20 md:w-28 text-gray-800">ID</TableHead>
+                      <TableHead className="w-20 md:w-28 text-gray-800">ID / Estado</TableHead>
                       <TableHead className="md:w-32 text-gray-800">Tipo</TableHead>
                       <TableHead className="hidden sm:table-cell md:w-48 text-gray-800">Usuario</TableHead>
                       <TableHead className="hidden sm:table-cell md:w-40 text-gray-800">Teléfono</TableHead>
                       <TableHead className="hidden lg:table-cell text-gray-800">Ubicación</TableHead>
+                      <TableHead className="hidden md:table-cell text-gray-800">Fecha Ingreso</TableHead>
                       <TableHead className="hidden md:table-cell w-14 pl-1 text-gray-800">Foto</TableHead>
                       <TableHead className="w-[140px] md:w-[180px] text-gray-800">Acciones</TableHead>
                     </TableRow>
                   </TableHeader>
                   <TableBody>
-                    {filteredListProperties.map((property) => (
-                      <TableRow key={property.propertyId} className="bg-white hover:bg-gray-50 border-gray-200">
-                        <TableCell className="font-medium">
-                          <button
-                            className="text-blue-600 hover:text-blue-800 hover:underline cursor-pointer font-medium"
-                            onClick={() => {
-                              setSearchPropertyId(property.propertyId);
-                              setActiveTab("map");
-                              // Small delay to ensure tab change happens first
-                              setTimeout(() => {
-                                if (mapComponentRef.current) {
-                                  mapComponentRef.current.searchProperty(property.propertyId);
-                                }
-                              }, 100);
-                            }}
-                            title="Haz clic para ver en el mapa"
-                          >
-                            {property.propertyId}
-                          </button>
+                    {filteredListProperties.map((property) => {
+                      const isPaid = (property as any).isPaid === true;
+                      const rowColor = isPaid
+                        ? 'bg-blue-50 hover:bg-blue-100 border-blue-100'
+                        : 'bg-red-50 hover:bg-red-100 border-red-100';
+                      const textColor = isPaid ? 'text-blue-800' : 'text-red-800';
+                      return (
+                      <TableRow key={property.propertyId} className={`${rowColor} border-gray-200`}>
+                        <TableCell className={`font-medium ${textColor}`}>
+                          <div className="flex flex-col gap-0.5">
+                            <button
+                              className={`${isPaid ? 'text-blue-600 hover:text-blue-800' : 'text-red-600 hover:text-red-800'} hover:underline cursor-pointer font-medium text-left`}
+                              onClick={() => {
+                                setSearchPropertyId(property.propertyId);
+                                setActiveTab("map");
+                                // Small delay to ensure tab change happens first
+                                setTimeout(() => {
+                                  if (mapComponentRef.current) {
+                                    mapComponentRef.current.searchProperty(property.propertyId);
+                                  }
+                                }, 100);
+                              }}
+                              title="Haz clic para ver en el mapa"
+                            >
+                              {property.propertyId}
+                            </button>
+                            <span className={`text-[10px] font-semibold px-1.5 py-0.5 rounded-full w-fit hidden sm:inline-block ${
+                              isPaid
+                                ? 'bg-blue-100 text-blue-700'
+                                : 'bg-red-100 text-red-700'
+                            }`}>
+                              {isPaid ? '✓ Pagado' : '● Por pagar'}
+                            </span>
+                          </div>
                         </TableCell>
-                        <TableCell>
+                        <TableCell className={textColor}>
                           {property.propertyType === 'house' ? 'Casa' :
                             property.propertyType === 'land' ? 'Terreno' :
                               'Comercial'}
@@ -1764,11 +2007,23 @@ export default function AdminWebPage() {
                             <span className="text-[10px] text-muted-foreground">ID: {property.userId}</span>
                           </div>
                         </TableCell>
-                        <TableCell className="hidden sm:table-cell">
+                        <TableCell className={`hidden sm:table-cell ${textColor}`}>
                           {property.signPhoneNumber || '-'}
                         </TableCell>
                         <TableCell className="hidden lg:table-cell text-sm">
                           {property.location?.lat?.toFixed(4) || '0.0000'}, {property.location?.lng?.toFixed(4) || '0.0000'}
+                        </TableCell>
+                        <TableCell className="hidden md:table-cell text-xs text-gray-600">
+                          {property.createdAt ? (
+                            <div className="flex flex-col">
+                              <span className="font-medium">
+                                {new Date(property.createdAt).toLocaleDateString('es-CR', { day: '2-digit', month: 'short', year: 'numeric' })}
+                              </span>
+                              <span className="text-[10px] text-gray-400">
+                                {new Date(property.createdAt).toLocaleTimeString('es-CR', { hour: '2-digit', minute: '2-digit' })}
+                              </span>
+                            </div>
+                          ) : '-'}
                         </TableCell>
                         <TableCell className="hidden md:table-cell pl-1">
                           {(property as any).hasImages ? (
@@ -1876,7 +2131,8 @@ export default function AdminWebPage() {
                           </div>
                         </TableCell>
                       </TableRow>
-                    ))}
+                      );
+                    })}
                   </TableBody>
                 </Table>
                 )}
@@ -2085,114 +2341,7 @@ export default function AdminWebPage() {
             </TabsContent>
 
             <TabsContent value="payments">
-            <Card className="bg-white border-0 shadow-md">
-              <CardHeader className="bg-white">
-                <CardTitle className="text-gray-900">Pagos Semanales</CardTitle>
-                <p className="text-sm text-muted-foreground">
-                  Los usuarios reciben ₡250 por cada propiedad registrada durante la semana actual.
-                </p>
-              </CardHeader>
-              <CardContent className="bg-white">
-                <div className="overflow-x-auto bg-white rounded-lg shadow-sm p-4">
-                  {paymentsLoading ? (
-                    <div className="text-center py-8">
-                      <Loader2 className="h-8 w-8 animate-spin mx-auto text-primary" />
-                      <p className="mt-2">Calculando pagos...</p>
-                    </div>
-                  ) : weeklyPayments.length === 0 ? (
-                    <div className="text-center py-8 text-muted-foreground">
-                      <DollarSign className="h-12 w-12 mx-auto mb-4 opacity-50" />
-                      <p>No hay pagos pendientes esta semana.</p>
-                      <p className="text-sm">Los usuarios que registren propiedades aparecerán aquí. Los administradores no reciben pagos.</p>
-                    </div>
-                  ) : (
-                    <>
-                      <div className="mb-4 p-4 bg-green-50 border border-green-200 rounded-lg">
-                        <h3 className="font-semibold text-green-800 mb-2">Resumen de Pagos de Esta Semana</h3>
-                        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                          <div className="text-center">
-                            <p className="text-2xl font-bold text-green-600">
-                              {weeklyPayments.length}
-                            </p>
-                            <p className="text-sm text-green-700">Usuarios a Pagar</p>
-                          </div>
-                          <div className="text-center">
-                            <p className="text-2xl font-bold text-green-600">
-                              {weeklyPayments.reduce((sum, payment) => sum + payment.propertiesCount, 0)}
-                            </p>
-                            <p className="text-sm text-green-700">Propiedades Registradas</p>
-                          </div>
-                          <div className="text-center">
-                            <p className="text-2xl font-bold text-green-600">
-                              ₡{weeklyPayments.reduce((sum, payment) => sum + payment.totalPayment, 0).toLocaleString()}
-                            </p>
-                            <p className="text-sm text-green-700">Total a Pagar</p>
-                          </div>
-                        </div>
-                      </div>
-
-                      <Table className="[&_th]:bg-white [&_th]:text-gray-800 [&_td]:bg-white [&_td]:text-gray-900">
-                        <TableHeader>
-                          <TableRow className="bg-white border-gray-200 hover:bg-gray-50">
-                            <TableHead className="text-gray-800">Usuario</TableHead>
-                            <TableHead>Nombre Completo</TableHead>
-                            <TableHead>Teléfono</TableHead>
-                            <TableHead className="text-center">Propiedades</TableHead>
-                            <TableHead className="text-right">Pago Total</TableHead>
-                            <TableHead className="text-center">Período</TableHead>
-                          </TableRow>
-                        </TableHeader>
-                        <TableBody>
-                          {weeklyPayments.map((payment) => {
-                            const weekStart = new Date(payment.weekStart);
-                            const weekEnd = new Date(payment.weekEnd);
-
-                            return (
-                              <TableRow key={payment.userId} className="bg-white hover:bg-gray-50 border-gray-200">
-                                <TableCell className="font-medium">
-                                  {payment.user?.username || 'Usuario Desconocido'}
-                                </TableCell>
-                                <TableCell>
-                                  {payment.user?.fullName || '-'}
-                                </TableCell>
-                                <TableCell>
-                                  {payment.user?.mobile || '-'}
-                                </TableCell>
-                                <TableCell className="text-center">
-                                  <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-blue-100 text-blue-800">
-                                    {payment.propertiesCount} {payment.propertiesCount === 1 ? 'propiedad' : 'propiedades'}
-                                  </span>
-                                </TableCell>
-                                <TableCell className="text-right font-semibold text-green-600">
-                                  ₡{payment.totalPayment.toLocaleString()}
-                                </TableCell>
-                                <TableCell className="text-center text-sm text-muted-foreground">
-                                  {weekStart.toLocaleDateString('es-CR', { 
-                                    day: 'numeric', 
-                                    month: 'short' 
-                                  })} - {weekEnd.toLocaleDateString('es-CR', { 
-                                    day: 'numeric', 
-                                    month: 'short',
-                                    year: 'numeric'
-                                  })}
-                                </TableCell>
-                              </TableRow>
-                            );
-                          })}
-                        </TableBody>
-                      </Table>
-
-                      <div className="mt-4 p-3 bg-blue-50 border border-blue-200 rounded-lg">
-                        <p className="text-sm text-blue-700">
-                          <strong>Nota:</strong> Los pagos se calculan automáticamente cada semana (Lun–Dom, zona Costa Rica). 
-                          Cada propiedad registrada vale ₡250 colones. Solo usuarios normales (no administradores) reciben pagos.
-                        </p>
-                      </div>
-                    </>
-                  )}
-                </div>
-              </CardContent>
-            </Card>
+            <PaymentsTab weeklyPayments={weeklyPayments} paymentsLoading={paymentsLoading} isSuperAdmin={!!user.isSuperAdmin} onRefresh={() => queryClient.invalidateQueries({ queryKey: ['/api/admin/payments/weekly'] })} />
           </TabsContent>
 
             <TabsContent value="messages">
