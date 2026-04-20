@@ -1952,7 +1952,7 @@ export default function AdminWebPage() {
                       <TableHead className="md:w-32 text-gray-800">Tipo</TableHead>
                       <TableHead className="hidden sm:table-cell md:w-48 text-gray-800">Usuario</TableHead>
                       <TableHead className="hidden sm:table-cell md:w-40 text-gray-800">Teléfono</TableHead>
-                      <TableHead className="hidden lg:table-cell text-gray-800">Provincia / Zona</TableHead>
+                      <TableHead className="hidden lg:table-cell text-gray-800">Provincia / Distrito</TableHead>
                       <TableHead className="hidden md:table-cell text-gray-800">Fecha Ingreso</TableHead>
                       <TableHead className="hidden md:table-cell w-14 pl-1 text-gray-800">Foto</TableHead>
                       <TableHead className="w-[140px] md:w-[180px] text-gray-800">Acciones</TableHead>
@@ -2016,8 +2016,35 @@ export default function AdminWebPage() {
                               '01': 'San José', '02': 'Cartago', '03': 'Heredia',
                               '04': 'Alajuela', '05': 'Puntarenas', '06': 'Guanacaste', '07': 'Limón'
                             };
+                            const DIST: Record<string, string> = {
+                              '01-01': 'San José', '01-02': 'Escazú', '01-03': 'Desamparados', '01-04': 'Puriscal',
+                              '01-05': 'Tarrazú', '01-06': 'Aser rí', '01-07': 'Mora', '01-08': 'Goicoechea',
+                              '01-09': 'Santa Ana', '01-10': 'Alajuelita', '01-11': 'Vásquez de Coronado',
+                              '01-12': 'Acosta', '01-13': 'Tibás', '01-14': 'Moravia', '01-15': 'Montes de Oca',
+                              '01-16': 'Turrubares', '01-17': 'Dota', '01-18': 'Curridabat',
+                              '01-19': 'Pérez Zeledón', '01-20': 'León Cortés Castro',
+                              '02-01': 'Cartago', '02-02': 'Paraíso', '02-03': 'La Unión', '02-04': 'Jiménez',
+                              '02-05': 'Turrialba', '02-06': 'Alvarado', '02-07': 'Oreamuno', '02-08': 'El Guarco',
+                              '03-01': 'Heredia', '03-02': 'Barva', '03-03': 'Santo Domingo', '03-04': 'Santa Bárbara',
+                              '03-05': 'San Rafael', '03-06': 'San Isidro', '03-07': 'Belén', '03-08': 'Flores',
+                              '03-09': 'San Pablo', '03-10': 'Sarapiquí',
+                              '04-01': 'Alajuela', '04-02': 'San Ramón', '04-03': 'Grecia', '04-04': 'San Mateo',
+                              '04-05': 'Atenas', '04-06': 'Naranjo', '04-07': 'Palmares', '04-08': 'Poás',
+                              '04-09': 'Orotina', '04-10': 'San Carlos', '04-11': 'Zarcero', '04-12': 'Sarchí',
+                              '04-13': 'Upala', '04-14': 'Los Chiles', '04-15': 'Guatuso', '04-16': 'Río Cuarto',
+                              '05-01': 'Puntarenas', '05-02': 'Esparza', '05-03': 'Buenos Aires', '05-04': 'Montes de Oro',
+                              '05-05': 'Osa', '05-06': 'Quepos', '05-07': 'Golfito', '05-08': 'Coto Brus',
+                              '05-09': 'Parrita', '05-10': 'Corredores', '05-11': 'Garabito',
+                              '06-01': 'Liberia', '06-02': 'Nicoya', '06-03': 'Santa Cruz', '06-04': 'Bagaces',
+                              '06-05': 'Carrillo', '06-06': 'Cañas', '06-07': 'Abangares', '06-08': 'Tilarán',
+                              '06-09': 'Nandayure', '06-10': 'La Cruz', '06-11': 'Hojancha',
+                              '07-01': 'Limón', '07-02': 'Pococí', '07-03': 'Siquirres', '07-04': 'Talamanca',
+                              '07-05': 'Matina', '07-06': 'Guácimo',
+                            };
                             const provCode = (property as any).province;
+                            const distCode = (property as any).district;
                             const provName = provCode ? PROV[provCode] || provCode : null;
+                            const distName = distCode ? DIST[distCode] || distCode : null;
                             const addr = property.location?.address;
                             return (
                               <div className="flex flex-col gap-0.5">
@@ -2026,7 +2053,9 @@ export default function AdminWebPage() {
                                     📍 {provName}
                                   </span>
                                 )}
-                                {addr ? (
+                                {distName ? (
+                                  <span className="text-[10px] text-gray-600 font-medium">{distName}</span>
+                                ) : addr ? (
                                   <span className="text-[10px] text-gray-500 leading-tight line-clamp-2">{addr}</span>
                                 ) : (
                                   <span className="text-[10px] text-gray-400 font-mono">
