@@ -80,6 +80,7 @@ export const properties = pgTable("properties", {
   userId: integer("user_id").notNull().references(() => users.id),
   propertyType: text("property_type").notNull(),
   province: text("province"),
+  district: text("district"),
   signPhoneNumber: text("sign_phone_number"),
   location: jsonb("location").notNull().$type<LocationType>(),
   propertyId: text("property_id").notNull().unique(),
@@ -247,6 +248,7 @@ export const insertPropertySchema = createInsertSchema(properties)
   .pick({
     propertyType: true,
     province: true,
+    district: true,
     signPhoneNumber: true,
     location: true,
     images: true,
@@ -258,6 +260,7 @@ export const insertPropertySchema = createInsertSchema(properties)
   .extend({
     propertyType: z.enum([PropertyType.house, PropertyType.land, PropertyType.commercial]),
     province: z.enum(["01", "02", "03", "04", "05", "06", "07"]).optional().default("01"),
+    district: z.string().optional(),
     location: LocationSchema,
     kmlData: z.string().optional(),
     markerColor: z.string().optional().default(""),

@@ -54,12 +54,113 @@ export default function PropertyEntry() {
   const [manualLng, setManualLng] = useState("");
   const signFileInputRef = useRef<HTMLInputElement>(null);
   const propertyFileInputRef = useRef<HTMLInputElement>(null);
+  const [selectedDistrict, setSelectedDistrict] = useState("");
+
+  const districtsByProvince: Record<string, { value: string; label: string }[]> = {
+    "01": [
+      { value: "01-01", label: "San José" },
+      { value: "01-02", label: "Escazú" },
+      { value: "01-03", label: "Desamparados" },
+      { value: "01-04", label: "Puriscal" },
+      { value: "01-05", label: "Tarrazú" },
+      { value: "01-06", label: "Aserrí" },
+      { value: "01-07", label: "Mora" },
+      { value: "01-08", label: "Goicoechea" },
+      { value: "01-09", label: "Santa Ana" },
+      { value: "01-10", label: "Alajuelita" },
+      { value: "01-11", label: "Vásquez de Coronado" },
+      { value: "01-12", label: "Acosta" },
+      { value: "01-13", label: "Tibás" },
+      { value: "01-14", label: "Moravia" },
+      { value: "01-15", label: "Montes de Oca" },
+      { value: "01-16", label: "Turrubares" },
+      { value: "01-17", label: "Dota" },
+      { value: "01-18", label: "Curridabat" },
+      { value: "01-19", label: "Pérez Zeledón" },
+      { value: "01-20", label: "León Cortés Castro" },
+    ],
+    "02": [
+      { value: "02-01", label: "Cartago" },
+      { value: "02-02", label: "Paraíso" },
+      { value: "02-03", label: "La Unión" },
+      { value: "02-04", label: "Jiménez" },
+      { value: "02-05", label: "Turrialba" },
+      { value: "02-06", label: "Alvarado" },
+      { value: "02-07", label: "Oreamuno" },
+      { value: "02-08", label: "El Guarco" },
+    ],
+    "03": [
+      { value: "03-01", label: "Heredia" },
+      { value: "03-02", label: "Barva" },
+      { value: "03-03", label: "Santo Domingo" },
+      { value: "03-04", label: "Santa Bárbara" },
+      { value: "03-05", label: "San Rafael" },
+      { value: "03-06", label: "San Isidro" },
+      { value: "03-07", label: "Belén" },
+      { value: "03-08", label: "Flores" },
+      { value: "03-09", label: "San Pablo" },
+      { value: "03-10", label: "Sarapiquí" },
+    ],
+    "04": [
+      { value: "04-01", label: "Alajuela" },
+      { value: "04-02", label: "San Ramón" },
+      { value: "04-03", label: "Grecia" },
+      { value: "04-04", label: "San Mateo" },
+      { value: "04-05", label: "Atenas" },
+      { value: "04-06", label: "Naranjo" },
+      { value: "04-07", label: "Palmares" },
+      { value: "04-08", label: "Poás" },
+      { value: "04-09", label: "Orotina" },
+      { value: "04-10", label: "San Carlos" },
+      { value: "04-11", label: "Zarcero" },
+      { value: "04-12", label: "Sarchí" },
+      { value: "04-13", label: "Upala" },
+      { value: "04-14", label: "Los Chiles" },
+      { value: "04-15", label: "Guatuso" },
+      { value: "04-16", label: "Río Cuarto" },
+    ],
+    "05": [
+      { value: "05-01", label: "Puntarenas" },
+      { value: "05-02", label: "Esparza" },
+      { value: "05-03", label: "Buenos Aires" },
+      { value: "05-04", label: "Montes de Oro" },
+      { value: "05-05", label: "Osa" },
+      { value: "05-06", label: "Quepos" },
+      { value: "05-07", label: "Golfito" },
+      { value: "05-08", label: "Coto Brus" },
+      { value: "05-09", label: "Parrita" },
+      { value: "05-10", label: "Corredores" },
+      { value: "05-11", label: "Garabito" },
+    ],
+    "06": [
+      { value: "06-01", label: "Liberia" },
+      { value: "06-02", label: "Nicoya" },
+      { value: "06-03", label: "Santa Cruz" },
+      { value: "06-04", label: "Bagaces" },
+      { value: "06-05", label: "Carrillo" },
+      { value: "06-06", label: "Cañas" },
+      { value: "06-07", label: "Abangares" },
+      { value: "06-08", label: "Tilarán" },
+      { value: "06-09", label: "Nandayure" },
+      { value: "06-10", label: "La Cruz" },
+      { value: "06-11", label: "Hojancha" },
+    ],
+    "07": [
+      { value: "07-01", label: "Limón" },
+      { value: "07-02", label: "Pococí" },
+      { value: "07-03", label: "Siquirres" },
+      { value: "07-04", label: "Talamanca" },
+      { value: "07-05", label: "Matina" },
+      { value: "07-06", label: "Guácimo" },
+    ],
+  };
 
   const form = useForm({
     resolver: zodResolver(insertPropertySchema),
     defaultValues: {
       propertyType: "",
       province: "01",
+      district: "",
       signPhoneNumber: "",
       location: { lat: 0, lng: 0 },
       images: { sign: "", property: "" },
@@ -800,7 +901,7 @@ export default function PropertyEntry() {
                         render={({ field }) => (
                           <FormItem>
                             <FormLabel className="text-lg">Provincia</FormLabel>
-                            <Select onValueChange={field.onChange} defaultValue={field.value}>
+                            <Select onValueChange={(val) => { field.onChange(val); setSelectedDistrict(""); form.setValue("district", ""); }} defaultValue={field.value}>
                               <FormControl>
                                 <SelectTrigger className="bg-white border-gray-200 text-gray-900">
                                   <SelectValue placeholder="Seleccione provincia" />
@@ -814,6 +915,34 @@ export default function PropertyEntry() {
                                 <SelectItem value="05" className="text-gray-900 focus:bg-gray-100 focus:text-gray-900">Puntarenas</SelectItem>
                                 <SelectItem value="06" className="text-gray-900 focus:bg-gray-100 focus:text-gray-900">Guanacaste</SelectItem>
                                 <SelectItem value="07" className="text-gray-900 focus:bg-gray-100 focus:text-gray-900">Limón</SelectItem>
+                              </SelectContent>
+                            </Select>
+                            <FormMessage />
+                          </FormItem>
+                        )}
+                      />
+
+                      <FormField
+                        control={form.control}
+                        name="district"
+                        render={({ field }) => (
+                          <FormItem>
+                            <FormLabel className="text-lg">Distrito</FormLabel>
+                            <Select
+                              onValueChange={(val) => { field.onChange(val); setSelectedDistrict(val); }}
+                              value={field.value || ""}
+                            >
+                              <FormControl>
+                                <SelectTrigger className="bg-white border-gray-200 text-gray-900">
+                                  <SelectValue placeholder="Seleccione distrito" />
+                                </SelectTrigger>
+                              </FormControl>
+                              <SelectContent className="bg-white border border-gray-200 text-gray-900 [&_[data-highlighted]]:bg-gray-100">
+                                {(districtsByProvince[form.watch("province")] || []).map((d) => (
+                                  <SelectItem key={d.value} value={d.value} className="text-gray-900 focus:bg-gray-100 focus:text-gray-900">
+                                    {d.label}
+                                  </SelectItem>
+                                ))}
                               </SelectContent>
                             </Select>
                             <FormMessage />
@@ -852,7 +981,7 @@ export default function PropertyEntry() {
                                 disabled={isCompressing}
                               >
                                 <Camera className="h-8 w-8 mb-2" />
-                                <span>Tomar foto</span>
+                                <span className="text-xs text-center leading-tight px-1">Tomar foto<br />de rótulo</span>
                               </button>
                               <button
                                 type="button"
@@ -894,7 +1023,7 @@ export default function PropertyEntry() {
                                 disabled={isCompressing}
                               >
                                 <Camera className="h-8 w-8 mb-2" />
-                                <span>Tomar foto</span>
+                                <span className="text-xs text-center leading-tight px-1">Tomar foto<br />de propiedad</span>
                               </button>
                               <button
                                 type="button"
