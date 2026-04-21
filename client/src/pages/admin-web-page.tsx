@@ -863,126 +863,286 @@ function PropertyImagesViewer({ propertyId }: { propertyId: string }) {
   );
 }
 
+// ─────────────────────────── HEALTH MONITOR ──────────────────────────────────
+
+type TestStatus = 'idle' | 'running' | 'ok' | 'fail';
+
+interface TestCard {
+  id: string;
+  endpoint: string;
+  label: string;
+  description: string;
+  icon: string;
+  color: string;
+  bgColor: string;
+  borderColor: string;
+}
+
+const HEALTH_TESTS: TestCard[] = [
+  {
+    id: 'capture',
+    endpoint: 'test-capture-flow',
+    label: 'Flujo de Captura',
+    description: 'Datos técnicos completos, GPS, province, district',
+    icon: '🏠',
+    color: 'text-blue-700',
+    bgColor: 'bg-blue-50 hover:bg-blue-100',
+    borderColor: 'border-blue-300',
+  },
+  {
+    id: 'photo',
+    endpoint: 'test-photo-upload',
+    label: 'Subida de Fotos',
+    description: 'Verificación de límite de peso (~500 KB)',
+    icon: '📷',
+    color: 'text-purple-700',
+    bgColor: 'bg-purple-50 hover:bg-purple-100',
+    borderColor: 'border-purple-300',
+  },
+  {
+    id: 'wasi',
+    endpoint: 'test-wasi',
+    label: 'Conexión WASI',
+    description: 'API real wasi.co — token, latencia, estructura',
+    icon: '🔗',
+    color: 'text-orange-700',
+    bgColor: 'bg-orange-50 hover:bg-orange-100',
+    borderColor: 'border-orange-300',
+  },
+];
+
 function DiagnosticCenter() {
-  const [logs, setLogs] = useState<{ status: 'OK' | 'WAIT' | 'FAIL', message: string, suggestion?: string, timestamp: string }[]>([]);
-  const [isRunning, setIsRunning] = useState(false);
+  type LogEntry = { status: 'OK' | 'WAIT' | 'FAIL'; message: string; suggestion?: string; timestamp: string };
+  const [logs, setLogs] = useState<LogEntry[]>([]);
+  const [runningTest, setRunningTest] = useState<string | null>(null);
+  const [testStatuses, setTestStatuses] = useState<Record<string, TestStatus>>({});
   const logsEndRef = useRef<HTMLDivElement>(null);
 
-  const addLog = (log: Omit<typeof logs[0], 'timestamp'>) => {
-    setLogs(prev => [...prev, { ...log, timestamp: new Date().toLocaleTimeString() }]);
+  const isAnyRunning = runningTest !== null;
+
+  const addLog = (log: Omit<LogEntry, 'timestamp'>) => {
+    setLogs(prev => [...prev, { ...log, timestamp: new Date().toLocaleTimeString('es-CR', { hour12: false }) }]);
   };
 
   useEffect(() => {
     logsEndRef.current?.scrollIntoView({ behavior: 'smooth' });
   }, [logs]);
 
-  const runTest = async (endpoint: string, testName: string) => {
-    if (isRunning) return;
-    setIsRunning(true);
-    setLogs(prev => [...prev, { status: 'WAIT', message: `=== Iniciando ${testName} ===`, timestamp: new Date().toLocaleTimeString() }]);
-    
+  const runTest = async (test: TestCard) => {
+    if (isAnyRunning) return;
+    setRunningTest(test.id);
+    setTestStatuses(prev => ({ ...prev, [test.id]: 'running' }));
+
+    addLog({ status: 'WAIT', message: `━━━ Iniciando: ${test.label} ━━━` });
+
     try {
-      const response = await fetch(`/api/admin/diagnostics/${endpoint}`, {
+      const res = await fetch(`/api/admin/diagnostics/${test.endpoint}`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        credentials: 'include'
+        credentials: 'include',
       });
-      if (!response.ok) {
-        throw new Error(`HTTP Error ${response.status}`);
-      }
-      const data = await response.json();
-      
-      data.logs.forEach((log: any, i: number) => {
-        setTimeout(() => addLog(log), i * 300); // Effect of streaming
+
+      if (!res.ok) throw new Error(`HTTP ${res.status}`);
+      const data = await res.json();
+
+      let hasFailure = false;
+      data.logs.forEach((log: LogEntry, i: number) => {
+        setTimeout(() => {
+          addLog(log);
+          if (log.status === 'FAIL') hasFailure = true;
+        }, i * 280);
       });
 
       setTimeout(() => {
-        addLog({ status: 'OK', message: `=== ${testName} Completado (${data.durationMs}ms) ===` });
-        setIsRunning(false);
-      }, data.logs.length * 300 + 300);
+        const finalStatus = hasFailure ? 'FAIL' : 'OK';
+        addLog({
+          status: finalStatus,
+          message: `━━━ ${test.label}: ${finalStatus === 'OK' ? 'COMPLETADO ✓' : 'CON ERRORES ✗'} (${data.durationMs}ms) ━━━`,
+        });
+        setTestStatuses(prev => ({ ...prev, [test.id]: finalStatus === 'OK' ? 'ok' : 'fail' }));
+        setRunningTest(null);
+      }, data.logs.length * 280 + 350);
 
     } catch (error: any) {
-      addLog({ status: 'FAIL', message: `Error crítico de conexión: ${error.message}` });
-      setIsRunning(false);
+      addLog({ status: 'FAIL', message: `Error de conexión con el servidor: ${error.message}` });
+      setTestStatuses(prev => ({ ...prev, [test.id]: 'fail' }));
+      setRunningTest(null);
     }
   };
 
+  const runCleanup = async () => {
+    if (isAnyRunning) return;
+    setRunningTest('cleanup');
+    addLog({ status: 'WAIT', message: '🗑️  Ejecutando limpieza de registros TEST_...' });
+    try {
+      const res = await fetch('/api/admin/diagnostics/cleanup', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        credentials: 'include',
+      });
+      if (!res.ok) throw new Error(`HTTP ${res.status}`);
+      const data = await res.json();
+      data.logs.forEach((log: LogEntry, i: number) => {
+        setTimeout(() => addLog(log), i * 200);
+      });
+      setTimeout(() => setRunningTest(null), data.logs.length * 200 + 200);
+    } catch (err: any) {
+      addLog({ status: 'FAIL', message: `Error en limpieza: ${err.message}` });
+      setRunningTest(null);
+    }
+  };
+
+  const getStatusBadge = (status: TestStatus) => {
+    if (status === 'idle') return null;
+    if (status === 'running') return <span className="text-[10px] font-bold px-1.5 py-0.5 rounded bg-orange-100 text-orange-700 animate-pulse">CORRIENDO</span>;
+    if (status === 'ok') return <span className="text-[10px] font-bold px-1.5 py-0.5 rounded bg-green-100 text-green-700">✓ OK</span>;
+    return <span className="text-[10px] font-bold px-1.5 py-0.5 rounded bg-red-100 text-red-700">✗ ERROR</span>;
+  };
+
+  const okCount = Object.values(testStatuses).filter(s => s === 'ok').length;
+  const failCount = Object.values(testStatuses).filter(s => s === 'fail').length;
+  const totalRun = okCount + failCount;
+
   return (
-    <div className="space-y-6 animate-in fade-in duration-300">
-      <Card className="bg-white border-0 shadow-md">
-        <CardHeader className="bg-[#FFF5F2] border-b border-[#F05023]/10 pb-4">
-          <CardTitle className="text-[#F05023] flex items-center text-lg">
-            <Activity className="h-5 w-5 mr-2" />
-            Centro de Diagnóstico de Salud
-          </CardTitle>
-          <p className="text-sm text-gray-600 mt-1">Herramienta para simular los flujos críticos de Virtual Agent sin generar registros permanentes.</p>
+    <div className="space-y-5 animate-in fade-in duration-300">
+
+      {/* Header card */}
+      <Card className="bg-gradient-to-br from-[#FFF5F2] to-white border border-[#F05023]/15 shadow-sm">
+        <CardHeader className="pb-3 pt-5 px-6">
+          <div className="flex items-center justify-between flex-wrap gap-3">
+            <div className="flex items-center gap-2">
+              <div className="w-8 h-8 rounded-lg bg-[#F05023]/10 flex items-center justify-center">
+                <Activity className="h-4 w-4 text-[#F05023]" />
+              </div>
+              <div>
+                <CardTitle className="text-[#F05023] text-base leading-tight">Monitor de Salud del Sistema</CardTitle>
+                <p className="text-xs text-gray-500 mt-0.5">Tests de un clic — los registros TEST_ se limpian automáticamente</p>
+              </div>
+            </div>
+            {totalRun > 0 && (
+              <div className="flex items-center gap-2 text-xs">
+                {okCount > 0 && <span className="bg-green-100 text-green-700 font-bold px-2 py-1 rounded-full">{okCount} OK</span>}
+                {failCount > 0 && <span className="bg-red-100 text-red-700 font-bold px-2 py-1 rounded-full">{failCount} ERROR</span>}
+                <span className="text-gray-400">/ {HEALTH_TESTS.length} tests</span>
+              </div>
+            )}
+          </div>
         </CardHeader>
-        <CardContent className="p-6">
-           <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-8">
-             <Button
-               onClick={() => runTest('test-ingestion', 'TEST: Captura de Propiedad')}
-               disabled={isRunning}
-               className="bg-blue-600 hover:bg-blue-700 text-white h-auto py-3 px-4 flex flex-col items-center justify-center gap-2"
-             >
-               <span className="font-bold">Test: Captura de Propiedad</span>
-               <span className="text-xs font-normal opacity-80">(Ingreso, Imagen, Conectividad)</span>
-             </Button>
-
-             <Button
-               onClick={() => runTest('test-duplicates', 'TEST: Filtro de Duplicados')}
-               disabled={isRunning}
-               className="bg-purple-600 hover:bg-purple-700 text-white h-auto py-3 px-4 flex flex-col items-center justify-center gap-2"
-             >
-               <span className="font-bold">Test: Filtro de Duplicados</span>
-               <span className="text-xs font-normal opacity-80">(Haversine 20m, Normalización +506)</span>
-             </Button>
-
-             <Button
-               onClick={() => runTest('test-crm', 'TEST: Gestión Admin y CRM')}
-               disabled={isRunning}
-               className="bg-orange-600 hover:bg-orange-700 text-white h-auto py-3 px-4 flex flex-col items-center justify-center gap-2"
-             >
-               <span className="font-bold">Test: Gestión Admin y CRM</span>
-               <span className="text-xs font-normal opacity-80">(WASI Link, Cambio de estado)</span>
-             </Button>
-           </div>
-
-           <div className="bg-[#1e1e1e] rounded-lg border-2 border-gray-800 overflow-hidden shadow-inner">
-             <div className="bg-[#2d2d2d] px-4 py-2 border-b border-gray-800 flex items-center">
-               <Terminal className="h-4 w-4 text-gray-400 mr-2" />
-               <span className="text-xs font-mono text-gray-400">Consola de Diagnóstico / Logs en Tiempo Real</span>
-               {logs.length > 0 && (
-                 <Button variant="ghost" size="sm" onClick={() => setLogs([])} className="ml-auto text-xs text-gray-400 hover:text-white h-6">
-                   Limpiar
-                 </Button>
-               )}
-             </div>
-             <div className="p-4 h-[350px] overflow-y-auto font-mono text-sm space-y-2">
-               {logs.length === 0 ? (
-                 <div className="text-gray-500 italic text-center mt-10">Esperando ejecución de pruebas...</div>
-               ) : (
-                 logs.map((log, i) => (
-                   <div key={i} className="animate-in fade-in slide-in-from-bottom-2">
-                     <span className="text-gray-500 mr-2">[{log.timestamp}]</span>
-                     <span className={
-                       log.status === 'OK' ? 'text-green-400 font-bold' :
-                       log.status === 'WAIT' ? 'text-orange-400 font-bold' :
-                       'text-red-400 font-bold'
-                     }>[{log.status}]</span>
-                     <span className="text-gray-300 ml-2">{log.message}</span>
-                     {log.suggestion && (
-                       <div className="mt-1 ml-28 text-xs text-red-300 bg-red-950/30 p-2 rounded border border-red-900/50">
-                         💡 Sugerencia técnica: {log.suggestion}
-                       </div>
-                     )}
-                   </div>
-                 ))
-               )}
-               <div ref={logsEndRef} />
-             </div>
-           </div>
-        </CardContent>
       </Card>
+
+      {/* Test cards */}
+      <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+        {HEALTH_TESTS.map(test => {
+          const status = testStatuses[test.id] ?? 'idle';
+          const isThisRunning = runningTest === test.id;
+          return (
+            <button
+              key={test.id}
+              onClick={() => runTest(test)}
+              disabled={isAnyRunning}
+              className={`
+                relative w-full text-left rounded-xl border-2 p-4 transition-all duration-150
+                ${test.bgColor} ${test.borderColor}
+                disabled:opacity-50 disabled:cursor-not-allowed
+                active:scale-[0.98] group
+              `}
+            >
+              {/* Status badge top-right */}
+              <div className="absolute top-3 right-3">
+                {getStatusBadge(status)}
+              </div>
+
+              <div className="text-2xl mb-2">{test.icon}</div>
+              <div className={`font-bold text-sm ${test.color} mb-1`}>{test.label}</div>
+              <p className="text-xs text-gray-500 leading-snug">{test.description}</p>
+
+              {isThisRunning && (
+                <div className="mt-3 flex items-center gap-1.5">
+                  <Loader2 className="h-3 w-3 animate-spin text-gray-500" />
+                  <span className="text-[11px] text-gray-500">Ejecutando...</span>
+                </div>
+              )}
+            </button>
+          );
+        })}
+      </div>
+
+      {/* Console */}
+      <Card className="border-0 shadow-md overflow-hidden">
+        <div className="bg-[#1a1a2e] rounded-t-lg px-4 py-2.5 flex items-center gap-2 border-b border-white/5">
+          {/* Traffic lights */}
+          <div className="flex gap-1.5">
+            <div className="w-3 h-3 rounded-full bg-red-500/70" />
+            <div className="w-3 h-3 rounded-full bg-yellow-500/70" />
+            <div className="w-3 h-3 rounded-full bg-green-500/70" />
+          </div>
+          <Terminal className="h-3.5 w-3.5 text-gray-500 ml-1" />
+          <span className="text-[11px] font-mono text-gray-400 tracking-wide">monitor@virtual-agent ~ consola de diagnóstico</span>
+          <div className="ml-auto flex items-center gap-2">
+            {isAnyRunning && runningTest !== 'cleanup' && (
+              <span className="text-[10px] text-orange-400 font-mono animate-pulse">● ejecutando...</span>
+            )}
+            {logs.length > 0 && (
+              <button
+                onClick={() => { setLogs([]); setTestStatuses({}); }}
+                className="text-[10px] text-gray-500 hover:text-white font-mono transition-colors px-2 py-0.5 rounded border border-gray-700 hover:border-gray-500"
+              >
+                limpiar consola
+              </button>
+            )}
+          </div>
+        </div>
+
+        <div className="bg-[#0f0f1a] p-5 h-[380px] overflow-y-auto font-mono text-[12px] space-y-1.5">
+          {logs.length === 0 ? (
+            <div className="text-gray-600 italic text-center mt-16 select-none">
+              <Terminal className="inline h-6 w-6 mb-2 opacity-30" />
+              <br />
+              Esperando ejecución de pruebas...
+            </div>
+          ) : (
+            logs.map((log, i) => (
+              <div key={i} className="flex gap-2 items-start animate-in fade-in slide-in-from-bottom-1">
+                <span className="text-gray-600 shrink-0 mt-px">{log.timestamp}</span>
+                <span className={`shrink-0 font-bold mt-px ${
+                  log.status === 'OK' ? 'text-green-400' :
+                  log.status === 'WAIT' ? 'text-yellow-400' :
+                  'text-red-400'
+                }`}>
+                  [{log.status === 'OK' ? ' OK ' : log.status === 'WAIT' ? 'WAIT' : 'FAIL'}]
+                </span>
+                <span className={`leading-relaxed ${
+                  log.status === 'OK' ? 'text-gray-200' :
+                  log.status === 'WAIT' ? 'text-gray-300' :
+                  'text-red-300'
+                }`}>{log.message}</span>
+              </div>
+            ))
+          )}
+          {logs.filter(l => l.suggestion).map((log, i) => log.suggestion && (
+            <div key={`sug-${i}`} className="ml-36 text-[11px] text-amber-300 bg-amber-950/25 border border-amber-800/30 px-3 py-1.5 rounded mt-0.5">
+              💡 {log.suggestion}
+            </div>
+          ))}
+          <div ref={logsEndRef} />
+        </div>
+
+        {/* Footer actions */}
+        <div className="bg-[#111122] px-4 py-2.5 border-t border-white/5 flex items-center gap-3 flex-wrap">
+          <button
+            onClick={runCleanup}
+            disabled={isAnyRunning}
+            className="flex items-center gap-1.5 text-[11px] text-gray-400 hover:text-orange-400 transition-colors disabled:opacity-40 font-mono"
+          >
+            <Trash2 className="h-3 w-3" />
+            Limpiar registros TEST_
+          </button>
+          <div className="ml-auto text-[10px] text-gray-600 font-mono">
+            {logs.length} línea{logs.length !== 1 ? 's' : ''} · Virtual Agent Health Monitor v2
+          </div>
+        </div>
+      </Card>
+
     </div>
   );
 }
