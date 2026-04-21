@@ -396,24 +396,37 @@ export default function PropertyEntry() {
   const processFileUpload = async (file: File, type: "sign" | "property") => {
     try {
       setIsCompressing(true);
-      const compressedFile = await imageCompression(file, {
-        maxSizeMB: 5,
-        maxWidthOrHeight: 2560,
-        useWebWorker: true
+      const originalSize = Math.round(file.size / 1024);
+
+      // Target: ~500 KB, max 1920px — first pass
+      let compressedFile = await imageCompression(file, {
+        maxSizeMB: 0.5,
+        maxWidthOrHeight: 1920,
+        useWebWorker: true,
+        initialQuality: 0.82,
+        fileType: 'image/jpeg',
       });
+
+      // Second pass if still above 600 KB
+      if (compressedFile.size > 614400) {
+        compressedFile = await imageCompression(compressedFile, {
+          maxSizeMB: 0.5,
+          maxWidthOrHeight: 1600,
+          useWebWorker: true,
+          initialQuality: 0.72,
+          fileType: 'image/jpeg',
+        });
+      }
 
       const reader = new FileReader();
       reader.onloadend = async () => {
         const base64data = reader.result as string;
         form.setValue(`images.${type}`, base64data);
-
-        const originalSize = Math.round(file.size / 1024);
         const compressedSize = Math.round(compressedFile.size / 1024);
-        const savings = Math.round(((originalSize - compressedSize) / originalSize) * 100);
-
+        const savings = originalSize > 0 ? Math.round(((originalSize - compressedSize) / originalSize) * 100) : 0;
         toast({
-          title: "Imagen subida",
-          description: `Comprimida de ${originalSize}KB a ${compressedSize}KB (${savings}% menos)`,
+          title: "✅ Imagen lista",
+          description: `${originalSize} KB → ${compressedSize} KB (${savings > 0 ? savings + '% menos' : 'sin reducción'})`,
           duration: 3000,
         });
         cleanup();
@@ -513,7 +526,20 @@ export default function PropertyEntry() {
         );
       }
       
-      const imageData = canvas.toDataURL('image/jpeg');
+      // Redimensionar en canvas a máximo 1920px antes de comprimir
+      const MAX_PX = 1920;
+      let targetW = canvas.width;
+      let targetH = canvas.height;
+      if (targetW > MAX_PX) {
+        targetH = Math.round((targetH * MAX_PX) / targetW);
+        targetW = MAX_PX;
+      }
+      const resizeCanvas = document.createElement('canvas');
+      resizeCanvas.width = targetW;
+      resizeCanvas.height = targetH;
+      const rCtx = resizeCanvas.getContext('2d')!;
+      rCtx.drawImage(canvas, 0, 0, targetW, targetH);
+      const imageData = resizeCanvas.toDataURL('image/jpeg', 0.9);
 
       const compressedImage = await compressImage(imageData);
       form.setValue(`images.${activeCamera}`, compressedImage);
@@ -523,8 +549,8 @@ export default function PropertyEntry() {
       const savings = Math.round(((originalSize - compressedSize) / originalSize) * 100);
 
       toast({
-        title: "Photo Captured",
-        description: `Image compressed from ${originalSize}KB to ${compressedSize}KB (${savings}% reduction)`,
+        title: "📸 Foto capturada",
+        description: `${originalSize} KB → ${compressedSize} KB (${savings}% optimizada)`,
       });
 
       cleanup();
@@ -538,49 +564,42 @@ export default function PropertyEntry() {
     }
   };
 
+  // Compresión objetivo ~500 KB, máx 1920px
   const compressImage = async (imageDataUrl: string): Promise<string> => {
     try {
       setIsCompressing(true);
+      const blob = await fetch(imageDataUrl).then(r => r.blob());
+      const file = new File([blob], 'photo.jpg', { type: 'image/jpeg' });
 
-      const response = await fetch(imageDataUrl);
-      const blob = await response.blob();
-      const file = new File([blob], "image.jpg", { type: "image/jpeg" });
-
-      const options = {
-        maxSizeMB: 1,
+      let compressed = await imageCompression(file, {
+        maxSizeMB: 0.5,
         maxWidthOrHeight: 1920,
         useWebWorker: true,
-        initialQuality: 0.8,
-        alwaysKeepResolution: false,
-      };
+        initialQuality: 0.82,
+        fileType: 'image/jpeg',
+      });
 
-      const compressedFile = await imageCompression(file, options);
-
-      if (compressedFile.size > 1024 * 1024) {
-        const secondPassOptions = {
-          ...options,
-          maxSizeMB: 0.8,
+      // Second pass if still above 600 KB
+      if (compressed.size > 614400) {
+        compressed = await imageCompression(compressed, {
+          maxSizeMB: 0.5,
           maxWidthOrHeight: 1600,
-          initialQuality: 0.7
-        };
-        const furtherCompressedFile = await imageCompression(compressedFile, secondPassOptions);
-        return new Promise((resolve) => {
-          const reader = new FileReader();
-          reader.onloadend = () => resolve(reader.result as string);
-          reader.readAsDataURL(furtherCompressedFile);
+          useWebWorker: true,
+          initialQuality: 0.70,
+          fileType: 'image/jpeg',
         });
       }
 
       return new Promise((resolve) => {
         const reader = new FileReader();
         reader.onloadend = () => resolve(reader.result as string);
-        reader.readAsDataURL(compressedFile);
+        reader.readAsDataURL(compressed);
       });
     } catch (error) {
       console.error('Error compressing image:', error);
       toast({
-        title: "Compression Error",
-        description: "Failed to compress image. Using original size.",
+        title: "Error de compresión",
+        description: "No se pudo comprimir la imagen. Se usará el tamaño original.",
         variant: "destructive",
         duration: 5000
       });
@@ -1165,55 +1184,112 @@ export default function PropertyEntry() {
             </div>
           </div>
 
-          {/* Video Container with Gestures */}
-          <div 
-             className="relative w-full h-full flex-1 touch-none overflow-hidden flex items-center justify-center bg-black"
-             onTouchStart={handleTouchStart}
-             onTouchMove={handleTouchMove}
-             onTouchEnd={handleTouchEnd}
+          {/* Video Container with Gestures + Rule of Thirds Grid */}
+          <div
+            className="relative w-full h-full flex-1 touch-none overflow-hidden flex items-center justify-center bg-black"
+            onTouchStart={handleTouchStart}
+            onTouchMove={handleTouchMove}
+            onTouchEnd={handleTouchEnd}
           >
+            {/* Live video feed — fullscreen, object-cover */}
             <video
               ref={videoRef}
               autoPlay
               playsInline
               muted
-              className={`w-full h-full object-cover transition-transform duration-100 origin-center ${!hasNativeZoomRef.current ? 'will-change-transform' : ''}`}
-              style={{ 
-                 objectFit: 'cover',
-                 transform: !hasNativeZoomRef.current ? `scale(${zoomRef.current})` : 'none'
+              className="absolute inset-0 w-full h-full object-cover"
+              style={{
+                transform: !hasNativeZoomRef.current ? `scale(${zoomRef.current})` : 'none',
+                transformOrigin: 'center center',
+                willChange: 'transform',
               }}
             />
+
+            {/* Rule-of-Thirds Grid Overlay */}
+            <div
+              className="absolute inset-0 pointer-events-none z-10"
+              style={{
+                backgroundImage: [
+                  // 2 vertical lines at 33.33% and 66.66%
+                  'linear-gradient(to right, transparent calc(33.33% - 0.5px), rgba(255,255,255,0.25) calc(33.33% - 0.5px), rgba(255,255,255,0.25) calc(33.33% + 0.5px), transparent calc(33.33% + 0.5px))',
+                  'linear-gradient(to right, transparent calc(66.66% - 0.5px), rgba(255,255,255,0.25) calc(66.66% - 0.5px), rgba(255,255,255,0.25) calc(66.66% + 0.5px), transparent calc(66.66% + 0.5px))',
+                  // 2 horizontal lines at 33.33% and 66.66%
+                  'linear-gradient(to bottom, transparent calc(33.33% - 0.5px), rgba(255,255,255,0.25) calc(33.33% - 0.5px), rgba(255,255,255,0.25) calc(33.33% + 0.5px), transparent calc(33.33% + 0.5px))',
+                  'linear-gradient(to bottom, transparent calc(66.66% - 0.5px), rgba(255,255,255,0.25) calc(66.66% - 0.5px), rgba(255,255,255,0.25) calc(66.66% + 0.5px), transparent calc(66.66% + 0.5px))',
+                ].join(', '),
+              }}
+            />
+
+            {/* Corner brackets for framing guidance */}
+            <div className="absolute inset-0 pointer-events-none z-10">
+              {/* Top-left */}
+              <div className="absolute top-8 left-8 w-8 h-8 border-t-2 border-l-2 border-white/60 rounded-tl-sm" />
+              {/* Top-right */}
+              <div className="absolute top-8 right-8 w-8 h-8 border-t-2 border-r-2 border-white/60 rounded-tr-sm" />
+              {/* Bottom-left */}
+              <div className="absolute bottom-28 left-8 w-8 h-8 border-b-2 border-l-2 border-white/60 rounded-bl-sm" />
+              {/* Bottom-right */}
+              <div className="absolute bottom-28 right-8 w-8 h-8 border-b-2 border-r-2 border-white/60 rounded-br-sm" />
+            </div>
+
+            {/* Mode label badge in center-top area */}
+            <div className="absolute top-20 left-1/2 -translate-x-1/2 z-20 pointer-events-none">
+              <span className={`text-xs font-bold uppercase tracking-widest px-3 py-1 rounded-full backdrop-blur-md ${
+                activeCamera === 'sign'
+                  ? 'bg-[#F05023]/80 text-white'
+                  : 'bg-white/20 text-white'
+              }`}>
+                {activeCamera === 'sign' ? '🪧 Foto del Rótulo' : '🏠 Foto de Propiedad'}
+              </span>
+            </div>
+
             <canvas ref={canvasRef} className="hidden" />
           </div>
 
-          {/* Zoom Controls Overlay (Slider) */}
-          <div className="absolute right-4 top-1/2 -translate-y-1/2 z-30 h-1/3 min-h-[150px] flex flex-col items-center justify-between pointer-events-auto bg-black/30 backdrop-blur-sm rounded-full py-4 px-2">
-             <span className="text-white text-xs font-bold font-mono shadow-[0_0_2px_rgba(0,0,0,0.8)]">{(zoom).toFixed(1)}x</span>
-             <input 
+          {/* Zoom Slider — right side, discrete pill */}
+          <div className="absolute right-3 top-1/2 -translate-y-1/2 z-30 flex flex-col items-center gap-1 pointer-events-auto">
+            <div className="bg-black/40 backdrop-blur-md rounded-full py-4 px-2 flex flex-col items-center gap-2 shadow-lg">
+              <span className="text-white text-[11px] font-bold font-mono tabular-nums">{zoom.toFixed(1)}x</span>
+              <input
                 type="range"
                 min={minZoom}
                 max={maxZoom}
-                step={0.1}
+                step={0.05}
                 value={zoom}
                 onChange={handleZoomSliderChange}
-                style={{ writingMode: 'vertical-lr', direction: 'rtl' } as any}
-                className="h-full w-4 appearance-none my-3 bg-white/30 rounded-full outline-none [&::-webkit-slider-thumb]:appearance-none [&::-webkit-slider-thumb]:w-6 [&::-webkit-slider-thumb]:h-6 [&::-webkit-slider-thumb]:bg-white [&::-webkit-slider-thumb]:rounded-full [&::-webkit-slider-thumb]:shadow-lg active:[&::-webkit-slider-thumb]:scale-110" 
-             />
-             <Maximize className="h-4 w-4 text-white opacity-90 shadow-sm" />
+                style={{ writingMode: 'vertical-lr', direction: 'rtl', height: '130px' } as any}
+                className="w-1.5 appearance-none bg-white/20 rounded-full outline-none cursor-pointer
+                  [&::-webkit-slider-thumb]:appearance-none [&::-webkit-slider-thumb]:w-5 [&::-webkit-slider-thumb]:h-5
+                  [&::-webkit-slider-thumb]:bg-white [&::-webkit-slider-thumb]:rounded-full
+                  [&::-webkit-slider-thumb]:shadow-[0_0_6px_rgba(0,0,0,0.5)]
+                  active:[&::-webkit-slider-thumb]:scale-125 transition-transform"
+              />
+              <Maximize className="h-3.5 w-3.5 text-white/70" />
+            </div>
           </div>
 
-          {/* Shutter Button Overlay */}
-          <div className="absolute bottom-0 left-0 w-full p-8 z-30 flex flex-col justify-end items-center bg-gradient-to-t from-black/80 to-transparent pb-10">
+          {/* Shutter + compression indicator */}
+          <div className="absolute bottom-0 left-0 w-full z-30 flex flex-col items-center pb-10 pt-6 bg-gradient-to-t from-black/85 via-black/40 to-transparent">
+            {isCompressing && (
+              <span className="mb-3 text-[11px] text-white/80 font-medium bg-black/40 px-3 py-1 rounded-full animate-pulse">
+                ⏳ Optimizando imagen...
+              </span>
+            )}
             <button
               onClick={capturePhoto}
               disabled={isCompressing}
-              className="w-[76px] h-[76px] rounded-full border-[3px] border-white flex items-center justify-center p-[4px] active:scale-95 transition-transform outline-none"
+              aria-label="Capturar foto"
+              className="w-[78px] h-[78px] rounded-full border-4 border-white/90 flex items-center justify-center
+                p-[5px] active:scale-90 transition-transform duration-100 outline-none
+                shadow-[0_0_20px_rgba(255,255,255,0.3)] disabled:opacity-40"
             >
-               <div className={`w-full h-full bg-white rounded-full ${isCompressing ? "animate-pulse bg-gray-300" : "bg-white"} transition-colors`}></div>
+              <div className={`w-full h-full rounded-full transition-colors duration-150 ${
+                isCompressing ? 'bg-gray-400 animate-pulse' : 'bg-white'
+              }`} />
             </button>
-            <span className="mt-4 text-white/90 text-xs font-bold uppercase tracking-widest px-4 py-1.5 rounded-full bg-black/40 backdrop-blur-md">
-              {activeCamera === "sign" ? "Foto del Rótulo" : "Foto Propiedad"}
-            </span>
+            <p className="mt-3 text-white/60 text-[10px] font-medium tracking-wider">
+              Pellizca para hacer zoom
+            </p>
           </div>
 
           <input
