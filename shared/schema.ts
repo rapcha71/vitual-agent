@@ -95,6 +95,16 @@ export const properties = pgTable("properties", {
   paidAt: timestamp("paid_at", { withTimezone: true }),
   tieneContrato: boolean("tiene_contrato").notNull().default(false),
   wasiId: text("wasi_id"),
+  // ── Inventario Inmobiliario (recolectados por Daniel / admin) ─────────────
+  precio: numeric("precio", { precision: 14, scale: 2 }),
+  areaM2: numeric("area_m2", { precision: 10, scale: 2 }),
+  anioConst: integer("anio_const"),
+  habitaciones: integer("habitaciones"),
+  banos: numeric("banos", { precision: 4, scale: 1 }),
+  cocheras: integer("cocheras"),
+  numPisos: integer("num_pisos"),
+  // ── Fuente de datos ────────────────────────────────────────────────────────
+  danielSource: boolean("daniel_source").notNull().default(false),
 }, (t) => [
   index("properties_user_id_idx").on(t.userId),
   index("properties_phone_idx").on(t.signPhoneNumber)
@@ -305,6 +315,8 @@ export type PropertyWithUser = {
   id: number;
   userId: number;
   propertyType: string;
+  province?: string | null;
+  district?: string | null;
   signPhoneNumber: string | null;
   location: LocationType;
   propertyId: string;
@@ -316,5 +328,16 @@ export type PropertyWithUser = {
   createdAt: string;
   tieneContrato?: boolean;
   wasiId?: string | null;
+  // Inventario
+  precio?: string | null;
+  areaM2?: string | null;
+  anioConst?: number | null;
+  habitaciones?: number | null;
+  banos?: string | null;
+  cocheras?: number | null;
+  numPisos?: number | null;
+  danielSource?: boolean;
   user: User;
+  // runtime helpers
+  hasImages?: boolean;
 };

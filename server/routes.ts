@@ -6,6 +6,7 @@ import { setupAuth } from "./auth";
 import { storage } from "./storage";
 import webauthnRouter from "./routes/webauthn";
 import diagnosticsRouter from "./routes/diagnostics";
+import danielRouter from "./routes/daniel";
 import { insertPropertySchema } from "@shared/schema";
 import { normalizePhoneNumber } from "./lib/phone-utils";
 import ocrService from "./services/ocr";
@@ -38,6 +39,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
   app.use("/api", webauthnRouter);
   app.use("/api/admin/diagnostics", diagnosticsRouter);
+  app.use("/api/daniel", danielRouter);
 
   // Health check endpoint
   app.get('/health', (req, res) => {
