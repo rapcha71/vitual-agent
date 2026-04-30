@@ -3,7 +3,7 @@ import { useQuery, useMutation } from "@tanstack/react-query";
 import { PropertyWithUser, insertMessageSchema, InsertMessage } from "@shared/schema";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { LogOut, MapPin, Image as ImageIcon, ChevronLeft, Users, Plus, Trash2, MessageCircle, Loader2, DollarSign, MessageSquare, Share2, FileSpreadsheet, Bell, Activity, Terminal, CheckCircle2, Calendar } from "lucide-react";
+import { LogOut, MapPin, Image as ImageIcon, ChevronLeft, Users, Plus, Trash2, MessageCircle, Loader2, DollarSign, MessageSquare, Share2, FileSpreadsheet, Bell, Activity, Terminal, CheckCircle2, Calendar, Download } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { useLocation } from "wouter";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
@@ -2379,6 +2379,157 @@ export default function AdminWebPage() {
                 <div className="space-y-4">
                   <Card className="bg-white border-0 shadow-md">
                     <CardContent className="pt-6 bg-white">
+                      {/* Barra de herramientas: título + botón exportar CSV (con memoria de exportados) */}
+                      {(() => {
+                        const LS_KEY = 'va_exported_user_ids';
+
+                        // IDs ya exportados previamente (leídos de localStorage en cada render)
+                        const exportedIds: number[] = (() => {
+                          try {
+                            return JSON.parse(localStorage.getItem(LS_KEY) || '[]');
+                          } catch { return []; }
+                        })();
+
+                        const exportedSet = new Set(exportedIds);
+                        const newUsers = (users as any[]).filter((u: any) => !exportedSet.has(u.id));
+                        const lastExportDate: string | null = localStorage.getItem('va_last_export_date');
+
+                        const escapeCSV = (val: string | null | undefined): string => {
+                          if (val == null) return '';
+                          const s = String(val);
+                          if (s.includes(',') || s.includes('"') || s.includes('\n')) {
+                            return '"' + s.replace(/"/g, '""') + '"';
+                          }
+                          return s;
+                        };
+
+                        const handleExport = () => {
+                          if (newUsers.length === 0) {
+                            toast({
+                              title: '📋 Sin contactos nuevos',
+                              description: 'Todos los usuarios ya fueron exportados anteriormente. Usa "Reiniciar historial" para exportar todos de nuevo.',
+                            });
+                            return;
+                          }
+
+                          const headers = [
+                            'Name', 'Given Name', 'Family Name',
+                            'Phone 1 - Type', 'Phone 1 - Value',
+                            'E-mail 1 - Type', 'E-mail 1 - Value',
+                          ];
+
+                          const rows = newUsers.map((u: any) => {
+                            const full = (u.fullName || u.username || '').trim();
+                            const parts = full.split(' ');
+                            const givenName = parts[0] || '';
+                            const familyName = parts.slice(1).join(' ') || '';
+                            const phone = u.mobile
+                              ? (u.mobile.startsWith('+') ? u.mobile : `+506 ${u.mobile}`)
+                              : '';
+                            const email = u.email || u.username || '';
+                            return [
+                              escapeCSV(full),
+                              escapeCSV(givenName),
+                              escapeCSV(familyName),
+                              phone ? 'Mobile' : '',
+                              escapeCSV(phone),
+                              email ? 'Work' : '',
+                              escapeCSV(email),
+                            ];
+                          });
+
+                          const csvContent = [headers, ...rows]
+                            .map(row => row.join(','))
+                            .join('\n');
+
+                          const BOM = '\uFEFF';
+                          const blob = new Blob([BOM + csvContent], { type: 'text/csv;charset=utf-8;' });
+                          const url = URL.createObjectURL(blob);
+                          const link = document.createElement('a');
+                          const fecha = new Date().toISOString().split('T')[0];
+                          link.href = url;
+                          link.download = `contactos_nuevos_${fecha}.csv`;
+                          document.body.appendChild(link);
+                          link.click();
+                          document.body.removeChild(link);
+                          URL.revokeObjectURL(url);
+
+                          // Guardar los IDs exportados en localStorage
+                          const updatedIds = [...exportedIds, ...newUsers.map((u: any) => u.id)];
+                          localStorage.setItem(LS_KEY, JSON.stringify(updatedIds));
+                          localStorage.setItem('va_last_export_date', new Date().toLocaleString('es-CR'));
+
+                          toast({
+                            title: `✅ ${newUsers.length} contacto(s) nuevos exportados`,
+                            description: 'Importa el CSV en contacts.google.com → Importar. Los próximos exports solo incluirán usuarios aún más nuevos.',
+                          });
+                        };
+
+                        const handleReset = () => {
+                          localStorage.removeItem(LS_KEY);
+                          localStorage.removeItem('va_last_export_date');
+                          toast({
+                            title: '🔄 Historial reiniciado',
+                            description: 'El próximo export incluirá todos los usuarios.',
+                          });
+                        };
+
+                        return (
+                          <div className="mb-4">
+                            <div className="flex items-center justify-between">
+                              <h3 className="text-base font-semibold text-gray-700 flex items-center gap-2">
+                                <Users className="h-4 w-4 text-[#F05023]" />
+                                Listado de Usuarios ({users.length})
+                              </h3>
+                              <div className="flex items-center gap-2">
+                                <Button
+                                  onClick={handleExport}
+                                  size="sm"
+                                  className={`text-white flex items-center gap-2 shrink-0 transition-colors ${
+                                    newUsers.length === 0
+                                      ? 'bg-gray-400 hover:bg-gray-500 cursor-not-allowed'
+                                      : 'bg-emerald-600 hover:bg-emerald-700'
+                                  }`}
+                                >
+                                  <Download className="h-4 w-4" />
+                                  Exportar CSV
+                                  {newUsers.length > 0 && (
+                                    <span className="ml-1 bg-white text-emerald-700 text-[11px] font-bold px-1.5 py-0.5 rounded-full">
+                                      {newUsers.length} nuevo{newUsers.length !== 1 ? 's' : ''}
+                                    </span>
+                                  )}
+                                </Button>
+                              </div>
+                            </div>
+                            {/* Info de historial */}
+                            <div className="mt-2 flex items-center gap-3 text-xs text-gray-500">
+                              {lastExportDate ? (
+                                <>
+                                  <span>
+                                    📅 Última exportación: <strong>{lastExportDate}</strong>
+                                    {' '}·{' '}
+                                    <span className="text-emerald-700 font-semibold">{exportedIds.length} ya exportado(s)</span>
+                                    {newUsers.length > 0 && (
+                                      <span className="text-orange-600 font-semibold"> · {newUsers.length} nuevo(s) pendiente(s)</span>
+                                    )}
+                                  </span>
+                                  <button
+                                    onClick={handleReset}
+                                    className="text-red-500 hover:text-red-700 underline text-[11px] font-medium transition-colors"
+                                    title="Reinicia el historial para volver a exportar todos los usuarios"
+                                  >
+                                    Reiniciar historial
+                                  </button>
+                                </>
+                              ) : (
+                                <span className="text-gray-400 italic">
+                                  Primera exportación — se incluirán todos los {users.length} usuario(s).
+                                </span>
+                              )}
+                            </div>
+                          </div>
+                        );
+                      })()}
                       <div className="overflow-x-auto -mx-6 bg-white">
                         <div className="inline-block min-w-full align-middle">
                           <Table className="[&_th]:bg-white [&_th]:text-gray-800 [&_td]:bg-white [&_td]:text-gray-900">
