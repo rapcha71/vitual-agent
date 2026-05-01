@@ -2,20 +2,51 @@ import { Button } from "@/components/ui/button";
 import { PWAInstallButton } from "@/components/ui/pwa-install-button";
 import { useAuth } from "@/hooks/use-auth";
 import { Link, useLocation } from "wouter";
-import { Plus, LogOut, ChevronLeft, Shield, User, Building, Share2, MessageCircle, BellRing } from "lucide-react";
+import { Plus, LogOut, ChevronLeft, Shield, User, Building, Share2, MessageCircle, BellRing, QrCode } from "lucide-react";
 import { useQuery } from "@tanstack/react-query";
 import { Property } from "@shared/schema";
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
-import { PhonePreview } from "@/components/ui/phone-preview";
 import { RegulationsDialog } from "@/components/ui/regulations-dialog";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { useState, useEffect } from "react";
 import { Loader2 } from "lucide-react";
+import { useToast } from "@/hooks/use-toast";
+
+/** Genera el QR dinámicamente con la URL real del navegador — sin librería extra */
+function QrCodeDisplay() {
+  const [imgError, setImgError] = useState(false);
+  const appUrl = typeof window !== 'undefined' ? window.location.origin : '';
+  const qrSrc = `https://chart.googleapis.com/chart?chs=256x256&cht=qr&chl=${encodeURIComponent(appUrl)}&choe=UTF-8&chld=M|2`;
+
+  if (imgError) {
+    return (
+      <div className="w-64 h-64 rounded-lg border-2 border-[#F05023]/30 flex flex-col items-center justify-center gap-2 bg-white">
+        <QrCode className="w-12 h-12 text-[#F05023]/50" />
+        <p className="text-xs text-center text-gray-500 px-4">
+          QR no disponible.<br />Usa el botón "Copiar Enlace".
+        </p>
+        <code className="text-xs text-[#F05023] font-mono px-2 text-center break-all">{appUrl}</code>
+      </div>
+    );
+  }
+
+  return (
+    <div className="bg-white p-3 rounded-2xl shadow-[0_4px_20px_rgba(240,80,35,0.12)] transition-transform hover:scale-105 duration-300">
+      <img
+        src={qrSrc}
+        alt="Código QR de Virtual Agent"
+        className="w-56 h-56 object-contain"
+        onError={() => setImgError(true)}
+      />
+    </div>
+  );
+}
 
 const ITEMS_PER_PAGE = 5;
 
 export default function HomePage() {
   const { user, logoutMutation } = useAuth();
+  const { toast } = useToast();
   const [, setLocation] = useLocation();
   const [page, setPage] = useState(1);
 
@@ -223,18 +254,14 @@ export default function HomePage() {
                       <DialogTitle className="text-[#F05023]">Compartir Virtual Agent</DialogTitle>
                     </DialogHeader>
                     <div className="flex flex-col items-center space-y-4 p-4 bg-[#FFF5F2]">
-                      <img 
-                        src="/assets/qr-virtualagent.png"
-                        alt="Código QR de Virtual Agent"
-                        className="w-64 h-64 rounded-lg p-2"
-                      />
+                      <QrCodeDisplay />
                       <p className="text-sm text-center text-[#F05023] font-medium">
                         Escanea este código QR para acceder a Virtual Agent
                       </p>
                       <Button
                         onClick={() => {
                           navigator.clipboard.writeText(window.location.origin).then(() => {
-                            alert('Enlace copiado al portapapeles');
+                            toast({ title: "¡Enlace copiado!", description: "El enlace se ha copiado al portapapeles." });
                           });
                         }}
                         variant="outline"

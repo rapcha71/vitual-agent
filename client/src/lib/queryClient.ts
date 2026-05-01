@@ -145,11 +145,14 @@ export const getQueryFn: <T>(options: {
 export const queryClient = new QueryClient({
   defaultOptions: {
     queries: {
-      queryFn: getQueryFn({ on401: "throw" }),
+      // returnNull on 401 prevents app-wide crashes when session expires mid-use
+      queryFn: getQueryFn({ on401: "returnNull" }),
       refetchInterval: false,
-      refetchOnWindowFocus: false,
-      staleTime: 5 * 60 * 1000,
+      refetchOnWindowFocus: true,    // refresca al volver a la pestaña
+      refetchOnReconnect: true,       // refresca al recuperar conexión
+      staleTime: 2 * 60 * 1000,      // 2 min — datos siempre frescos sin exceso de requests
       retry: (failureCount, error: any) => {
+        // No reintentar en errores de autenticación o recursos no encontrados
         if (error?.status === 401 || error?.status === 403 || error?.status === 404) {
           return false;
         }

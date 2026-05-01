@@ -30,8 +30,19 @@ export default defineConfig(async () => {
     ...cartographerPlugin,
   ],
   optimizeDeps: {
-    exclude: ["qrcode.react", "@radix-ui/react-dialog", "@radix-ui/react-popover", "@radix-ui/react-select"],
-    include: ["react", "react-dom", "lucide-react", "wouter"]
+    // NOTE: Do NOT exclude @radix-ui components — doing so causes first-render failures
+    // because Vite serves them un-bundled, creating race conditions on initial mount.
+    include: [
+      "react",
+      "react-dom",
+      "lucide-react",
+      "wouter",
+      "@tanstack/react-query",
+      "react-hook-form",
+      "@hookform/resolvers/zod",
+      "zod",
+      "date-fns",
+    ],
   },
   resolve: {
     alias: {

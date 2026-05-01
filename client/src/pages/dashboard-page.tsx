@@ -3,7 +3,7 @@ import { useQuery, useMutation } from "@tanstack/react-query";
 import { Property, Message, insertMessageSchema, InsertMessage } from "@shared/schema";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { ChevronLeft, LogOut, Plus, MessageCircle, Share2, Home, User, BarChart, Send, Loader2 } from "lucide-react";
+import { ChevronLeft, LogOut, Plus, MessageCircle, Share2, Home, User, BarChart, Send, Loader2, QrCode } from "lucide-react";
 import { useLocation } from "wouter";
 import { Badge } from "@/components/ui/badge";
 import { format } from "date-fns";
@@ -17,6 +17,36 @@ import { Textarea } from "@/components/ui/textarea";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useState } from "react";
+
+/** Genera el QR dinámicamente con la URL real del navegador — sin librería extra */
+function QrCodeDisplay() {
+  const [imgError, setImgError] = useState(false);
+  const appUrl = typeof window !== 'undefined' ? window.location.origin : '';
+  const qrSrc = `https://chart.googleapis.com/chart?chs=256x256&cht=qr&chl=${encodeURIComponent(appUrl)}&choe=UTF-8&chld=M|2`;
+
+  if (imgError) {
+    return (
+      <div className="w-64 h-64 rounded-lg border-2 border-[#F05023]/30 flex flex-col items-center justify-center gap-2 bg-white">
+        <QrCode className="w-12 h-12 text-[#F05023]/50" />
+        <p className="text-xs text-center text-gray-500 px-4">
+          QR no disponible.<br />Usa el botón "Copiar Enlace".
+        </p>
+        <code className="text-xs text-[#F05023] font-mono px-2 text-center break-all">{appUrl}</code>
+      </div>
+    );
+  }
+
+  return (
+    <div className="bg-white p-4 rounded-2xl shadow-[0_8px_30px_rgb(240,80,35,0.1)] transition-transform hover:scale-105 duration-300">
+      <img
+        src={qrSrc}
+        alt="Código QR de Virtual Agent"
+        className="w-56 h-56 object-contain"
+        onError={() => setImgError(true)}
+      />
+    </div>
+  );
+}
 
 export default function DashboardPage() {
   const { user, logoutMutation } = useAuth();
@@ -32,9 +62,12 @@ export default function DashboardPage() {
     queryKey: ['/api/messages'],
   });
 
-  const { data: unreadCount = 0 } = useQuery<{ count: number }>({
+  const { data: unreadData } = useQuery<{ count: number }>({
     queryKey: ['/api/messages/unread/count'],
+    enabled: !!user,
+    refetchInterval: 30000,
   });
+  const unreadMsgCount = unreadData?.count ?? 0;
 
   const markAsReadMutation = useMutation({
     mutationFn: async (messageId: number) => {
@@ -173,12 +206,12 @@ export default function DashboardPage() {
               >
                 <MessageCircle className="h-6 w-6" />
                 <span className="text-sm">Mensajes</span>
-                {unreadCount?.count > 0 && (
+                {unreadMsgCount > 0 && (
                   <Badge
                     variant="destructive"
                     className="absolute top-1 right-1 h-5 w-5 flex items-center justify-center p-0 text-xs"
                   >
-                    {unreadCount?.count > 9 ? "9+" : unreadCount?.count}
+                    {unreadMsgCount > 9 ? "9+" : unreadMsgCount}
                   </Badge>
                 )}
               </Button>
@@ -209,7 +242,7 @@ export default function DashboardPage() {
                             {message.sender.fullName}
                           </CardTitle>
                           <span className="text-xs text-muted-foreground">
-                            {format(new Date(message.createdAt), "d 'de' MMMM, HH:mm", { locale: es })}
+                            {format(new Date(message.createdAt ?? Date.now()), "d 'de' MMMM, HH:mm", { locale: es })}
                           </span>
                         </div>
                       </CardHeader>
@@ -248,13 +281,7 @@ export default function DashboardPage() {
               <DialogTitle className="text-[#F05023]">Compartir Virtual Agent</DialogTitle>
             </DialogHeader>
             <div className="flex flex-col items-center space-y-4 p-6 bg-[#FFF5F2] rounded-xl border border-[#F05023]/10 text-gray-900">
-              <div className="bg-white p-4 rounded-2xl shadow-[0_8px_30px_rgb(240,80,35,0.1)] transition-transform hover:scale-105 duration-300">
-                <img 
-                  src="/assets/qr-virtualagent.png"
-                  alt="Código QR de Virtual Agent"
-                  className="w-64 h-64 object-contain"
-                />
-              </div>
+              <QrCodeDisplay />
               <p className="text-sm text-center text-[#F05023] font-semibold tracking-tight">
                 Escanea para acceder a Virtual Agent
               </p>
@@ -292,8 +319,9 @@ export default function DashboardPage() {
             <DialogHeader className="bg-white">
               <DialogTitle className="text-gray-900">Enviar Mensaje al Administrador</DialogTitle>
             </DialogHeader>
-            <Form {...contactAdminForm} className="bg-white">
-              <form onSubmit={contactAdminForm.handleSubmit(handleSendToAdmin)} className="space-y-4 text-gray-900">
+            <div className="bg-white">
+              <Form {...contactAdminForm}>
+                <form onSubmit={contactAdminForm.handleSubmit(handleSendToAdmin)} className="space-y-4 text-gray-900">
                 <FormField
                   control={contactAdminForm.control}
                   name="content"
@@ -331,7 +359,8 @@ export default function DashboardPage() {
                   </Button>
                 </DialogFooter>
               </form>
-            </Form>
+              </Form>
+            </div>
           </DialogContent>
         </Dialog>
 

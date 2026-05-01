@@ -18,6 +18,7 @@ import ProfilePage from "@/pages/profile-page";
 import MessagesPage from "@/pages/messages-page";
 import { ProtectedRoute } from "./lib/protected-route";
 
+// Heavy pages: code-split so they don't bloat the initial bundle
 const AdminWebPage = lazy(() => import("@/pages/admin-web-page"));
 const PropertyEntry = lazy(() => import("@/pages/property-entry"));
 
@@ -29,20 +30,30 @@ function PageFallback() {
   );
 }
 
+// Stable named wrappers avoid inline-lambda remount issues (new ref on every render)
+const HomePageWrapped      = () => <ErrorBoundary><HomePage /></ErrorBoundary>;
+const DashboardWrapped     = () => <ErrorBoundary><DashboardPage /></ErrorBoundary>;
+const ProfileWrapped       = () => <ErrorBoundary><ProfilePage /></ErrorBoundary>;
+const PropertyEntryWrapped = () => <ErrorBoundary><PropertyEntry /></ErrorBoundary>;
+const ConfirmationWrapped  = () => <ErrorBoundary><PropertyConfirmation /></ErrorBoundary>;
+const PropertiesWrapped    = () => <ErrorBoundary><PropertiesPage /></ErrorBoundary>;
+const AdminWrapped         = () => <ErrorBoundary><AdminWebPage /></ErrorBoundary>;
+const MessagesWrapped      = () => <ErrorBoundary><MessagesPage /></ErrorBoundary>;
+
 function Router() {
   return (
     <Suspense fallback={<PageFallback />}>
       <Switch>
         <Route path="/auth" component={AuthPage} />
-        <ProtectedRoute path="/" component={HomePage} />
-        <ProtectedRoute path="/dashboard" component={DashboardPage} />
-        <ProtectedRoute path="/profile" component={ProfilePage} />
-        <ProtectedRoute path="/property/new" component={PropertyEntry} />
-        <ProtectedRoute path="/property-confirmation/:id" component={PropertyConfirmation} />
-        <ProtectedRoute path="/properties" component={PropertiesPage} />
-        <ProtectedRoute path="/admin" component={AdminWebPage} />
-        <ProtectedRoute path="/admin/web" component={AdminWebPage} />
-        <ProtectedRoute path="/messages" component={MessagesPage} />
+        <ProtectedRoute path="/" component={HomePageWrapped} />
+        <ProtectedRoute path="/dashboard" component={DashboardWrapped} />
+        <ProtectedRoute path="/profile" component={ProfileWrapped} />
+        <ProtectedRoute path="/property/new" component={PropertyEntryWrapped} />
+        <ProtectedRoute path="/property-confirmation/:id" component={ConfirmationWrapped} />
+        <ProtectedRoute path="/properties" component={PropertiesWrapped} />
+        <ProtectedRoute path="/admin" component={AdminWrapped} />
+        <ProtectedRoute path="/admin/web" component={AdminWrapped} />
+        <ProtectedRoute path="/messages" component={MessagesWrapped} />
         <Route component={NotFound} />
       </Switch>
     </Suspense>

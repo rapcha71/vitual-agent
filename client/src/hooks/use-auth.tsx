@@ -126,11 +126,12 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         return null;
       }
     },
-    staleTime: 30000,
-    retry: false,
+    staleTime: 5000,         // refresca máximo a los 5 s de inactividad
+    gcTime: 60000,           // limpia caché a los 60 s sin suscriptores
+    retry: 1,                // un reintento si hay error de red transitorio
     refetchOnWindowFocus: true,
     refetchOnMount: true,
-    refetchInterval: 60000,
+    refetchOnReconnect: true,
   });
 
   useEffect(() => {

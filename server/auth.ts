@@ -66,8 +66,8 @@ export function setupAuth(app: Express) {
         logger.debug("Login attempt", username);
         const user = await storage.getUserByUsername(username);
 
-        if (!user) {
-          logger.debug("User not found");
+        if (!user || user.isDeleted) {
+          logger.debug("User not found or deleted");
           return done(null, false, { message: "Usuario o contraseña inválidos" });
         }
 
@@ -94,7 +94,7 @@ export function setupAuth(app: Express) {
   passport.deserializeUser(async (id: number, done) => {
     try {
       const user = await storage.getUser(id);
-      if (!user) {
+      if (!user || user.isDeleted) {
         return done(null, false);
       }
       done(null, user);
