@@ -7,10 +7,11 @@ import { storage } from "./storage";
 import webauthnRouter from "./routes/webauthn";
 import diagnosticsRouter from "./routes/diagnostics";
 import danielRouter from "./routes/daniel";
+import geoAuditRouter from "./routes/geo-audit";
 import { insertPropertySchema } from "@shared/schema";
 import { normalizePhoneNumber } from "./lib/phone-utils";
 import ocrService from "./services/ocr";
-import { isWithinRadius } from "./lib/geo-utils";
+import { isWithinRadius, detectLocationFromCoords } from "./lib/geo-utils";
 import { pool } from "./db";
 import { requireAdmin } from "./middleware/admin";
 import { insertMessageSchema } from "@shared/schema";
@@ -40,6 +41,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
   app.use("/api", webauthnRouter);
   app.use("/api/admin/diagnostics", diagnosticsRouter);
   app.use("/api/daniel", danielRouter);
+  app.use("/api/admin/geo-audit", geoAuditRouter);
 
   // Health check endpoint
   app.get('/health', (req, res) => {
@@ -377,6 +379,38 @@ export async function registerRoutes(app: Express): Promise<Server> {
         }
       }
 
+      // ── BLINDAJE GEOESPACIAL: Detección automática de cantón desde coordenadas ──
+      // El campo seleccionado por el usuario (province/district) es IGNORADO.
+      // Las coordenadas GPS son la fuente de verdad. El sistema resuelve el cantón.
+      const { lat: gpsLat, lng: gpsLng } = propertyData.location ?? {};
+      const geoResult = detectLocationFromCoords(
+        typeof gpsLat === "number" ? gpsLat : Number(gpsLat ?? 0),
+        typeof gpsLng === "number" ? gpsLng : Number(gpsLng ?? 0)
+      );
+
+      if (!geoResult.valid) {
+        logger.warn(`[GeoShield] Propiedad rechazada por coordenadas inválidas:`, {
+          lat: gpsLat, lng: gpsLng, reason: geoResult.reason, userId: req.user.id
+        });
+        return res.status(422).json({
+          success: false,
+          message: geoResult.reason,
+          code: "INVALID_GPS_COORDINATES",
+        });
+      }
+
+      // Auto-resolver province y district desde GPS (sobreescribe selección del usuario)
+      const resolvedProvince = geoResult.province ?? propertyData.province ?? "01";
+      const resolvedDistrict = geoResult.district ?? propertyData.district ?? "";
+
+      logger.info(`[GeoShield] Cantón resuelto automáticamente desde GPS:`, {
+        lat: gpsLat, lng: gpsLng,
+        canton: geoResult.cantonLabel ?? "(sin match exacto, dentro de CR)",
+        province: resolvedProvince,
+        district: resolvedDistrict,
+        userHadSelected: propertyData.district ?? "(ninguno)",
+      });
+
       // Process and convert images to optimized formats and generate metadata
       const imagesArray = [];
       const thumbnailsArray = [];
@@ -404,8 +438,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
       };
       const markerColor = propertyData.markerColor || markerColorMap[propertyData.propertyType] || "blue";
 
-      // Property ID format: XX + T + NNNNN (provincia 01-07, tipo 1-3, consecutivo global)
-      const provinceCode = propertyData.province || "01";
+      // Property ID format: XX + T + NNNNN — usa la PROVINCIA RESUELTA por GPS
       const typeMap: Record<string, string> = { house: "1", land: "2", commercial: "3" };
       const typeCode = typeMap[propertyData.propertyType as string] || "1";
       let nextConsecutive = 1;
@@ -417,12 +450,15 @@ export async function registerRoutes(app: Express): Promise<Server> {
         const countResult = await pool.query("SELECT COUNT(*)::int as count FROM properties");
         nextConsecutive = (countResult.rows?.[0]?.count ?? 0) + 1;
       }
-      const propertyId = `${provinceCode}${typeCode}${String(nextConsecutive).padStart(5, "0")}`;
+      const propertyId = `${resolvedProvince}${typeCode}${String(nextConsecutive).padStart(5, "0")}`;
 
       const property = await storage.createProperty({
         ...propertyData,
         userId: req.user.id,
         propertyId,
+        // GPS determina province y district — nunca el campo del formulario
+        province: resolvedProvince,
+        district: resolvedDistrict,
         signPhoneNumber: phoneToCheck || propertyData.signPhoneNumber,
         images: imagesArray as any,
         thumbnails: thumbnailsArray as any,

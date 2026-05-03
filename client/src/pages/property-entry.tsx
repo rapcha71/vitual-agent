@@ -17,6 +17,7 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 
 
+
 export default function PropertyEntry() {
   const [, setLocation] = useLocation();
   const { toast } = useToast();
@@ -480,9 +481,46 @@ export default function PropertyEntry() {
       });
       return;
     }
+
+    // ── Blindaje: Detectar posible inversión lat/lng ───────────────────────────
+    // En Costa Rica lat es positiva (~8-11) y lng es negativa (~-82 a -85)
+    if (lat < 0 && lng > 0) {
+      toast({
+        title: "⚠️ Posible inversión de coordenadas",
+        description: `¿Invertiste lat y lng? En Costa Rica, la latitud es positiva (~9-10) y la longitud es negativa (~-84). Revisá y corregí antes de guardar.`,
+        variant: "destructive",
+        duration: 12000
+      });
+      return;
+    }
+
+    // ── Blindaje: Fuera de Costa Rica ─────────────────────────────────────────
+    const geoCheck = checkGeoSuspicion(lat, lng, form.getValues("district") || "");
+    if (geoCheck.suspicious) {
+      // Para coordenadas manuales, sí bloqueamos si está fuera de CR
+      const outsideCR = lat < CR_BOUNDS.lat.min || lat > CR_BOUNDS.lat.max ||
+                        lng < CR_BOUNDS.lng.min || lng > CR_BOUNDS.lng.max;
+      if (outsideCR) {
+        toast({
+          title: "❌ Coordenadas fuera de Costa Rica",
+          description: geoCheck.reason,
+          variant: "destructive",
+          duration: 12000
+        });
+        return;
+      }
+      // Solo alerta de cantón pero no bloquea
+      toast({
+        title: "⚠️ Ubicación sospechosa",
+        description: geoCheck.reason,
+        variant: "destructive",
+        duration: 12000
+      });
+    }
+
     form.setValue("location", { lat, lng });
     toast({
-      title: "Ubicación guardada",
+      title: "📍 Ubicación guardada",
       description: `Coordenadas: ${lat.toFixed(7)}, ${lng.toFixed(7)}`
     });
     setShowManualCoords(false);
@@ -676,22 +714,20 @@ export default function PropertyEntry() {
       const accuracy = position.coords.accuracy;
       const accuracyWarning = accuracy > 60;
 
-      // Actualizar el formulario con la ubicación
-      form.setValue("location", {
-        lat: position.coords.latitude,
-        lng: position.coords.longitude
-      });
+      const lat = position.coords.latitude;
+      const lng = position.coords.longitude;
 
-      // Mostrar mensaje de éxito con advertencia si la precisión es baja
+      // Guardar coordenadas raw del GPS — el servidor valida y resuelve el cantón
+      form.setValue("location", { lat, lng });
+
       toast({
-        title: accuracyWarning ? "⚠️ Baja Precisión detectada" : "🎯 Ubicación capturada",
+        title: accuracyWarning ? "⚠️ GPS con baja precisión" : "🎯 Ubicación capturada",
         description: (
           <div className="space-y-1">
-            <p>Ubicación registrada: {position.coords.latitude.toFixed(7)}, {position.coords.longitude.toFixed(7)}</p>
+            <p>GPS: {lat.toFixed(6)}, {lng.toFixed(6)}</p>
             {accuracyWarning && (
               <p className="text-destructive font-bold text-sm">
-                Nota: La señal de GPS es débil (margen de error: {Math.round(accuracy)}m). 
-                Se recomienda moverse a un lugar más despejado y capturar de nuevo.
+                Señal débil (margen ±{Math.round(accuracy)}m). Movete al exterior y capturá de nuevo.
               </p>
             )}
           </div>
@@ -946,14 +982,14 @@ export default function PropertyEntry() {
                         name="district"
                         render={({ field }) => (
                           <FormItem>
-                            <FormLabel className="text-lg">Distrito</FormLabel>
+                            <FormLabel className="text-lg">Cantón</FormLabel>
                             <Select
                               onValueChange={(val) => { field.onChange(val); setSelectedDistrict(val); }}
                               value={field.value || ""}
                             >
                               <FormControl>
                                 <SelectTrigger className="bg-white border-gray-200 text-gray-900">
-                                  <SelectValue placeholder="Seleccione distrito" />
+                                  <SelectValue placeholder="Seleccione cantón" />
                                 </SelectTrigger>
                               </FormControl>
                               <SelectContent className="bg-white border border-gray-200 text-gray-900 [&_[data-highlighted]]:bg-gray-100">
