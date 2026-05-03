@@ -1966,7 +1966,7 @@ export default function AdminWebPage() {
           </div>
 
           <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
-            <TabsList className={`w-full grid md:h-14 h-auto ${user.isSuperAdmin ? 'grid-cols-2 md:grid-cols-5' : (user.isAdmin ? 'grid-cols-3' : 'grid-cols-2')} bg-[#FF6347] p-0 gap-0 rounded-none border-b-2 border-[#ff7a5c] overflow-y-auto max-h-24 md:max-h-none`}>
+            <TabsList className={`w-full grid md:h-14 h-auto ${user.isSuperAdmin ? 'grid-cols-3 md:grid-cols-6' : (user.isAdmin ? 'grid-cols-3 md:grid-cols-4' : 'grid-cols-3')} bg-[#FF6347] p-0 gap-0 rounded-none border-b-2 border-[#ff7a5c] overflow-y-auto max-h-24 md:max-h-none`}>
               <TabsTrigger value="map" className="text-sm md:text-base text-white data-[state=active]:bg-[#ff7a5c] data-[state=active]:text-white data-[state=active]:shadow-none data-[state=active]:border-b-2 data-[state=active]:border-gray-800 rounded-none border-b-2 border-transparent data-[state=inactive]:bg-transparent">
                 <MapPin className="h-4 w-4 md:h-5 md:w-5 mr-2" />
                 Mapa
@@ -1979,6 +1979,10 @@ export default function AdminWebPage() {
                     {unviewedCount > 99 ? '99+' : unviewedCount}
                   </Badge>
                 )}
+              </TabsTrigger>
+              <TabsTrigger value="gallery" className="text-sm md:text-base text-white data-[state=active]:bg-[#ff7a5c] data-[state=active]:text-white data-[state=active]:shadow-none data-[state=active]:border-b-2 data-[state=active]:border-gray-800 rounded-none border-b-2 border-transparent data-[state=inactive]:bg-transparent">
+                <ImageIcon className="h-4 w-4 md:h-5 md:w-5 mr-2" />
+                Galería
               </TabsTrigger>
               {user.isAdmin && (
                 <TabsTrigger value="users" className="text-sm md:text-base text-white data-[state=active]:bg-[#ff7a5c] data-[state=active]:text-white data-[state=active]:shadow-none data-[state=active]:border-b-2 data-[state=active]:border-gray-800 rounded-none border-b-2 border-transparent data-[state=inactive]:bg-transparent">
@@ -2367,6 +2371,110 @@ export default function AdminWebPage() {
                     })}
                   </TableBody>
                 </Table>
+                )}
+              </div>
+            </TabsContent>
+
+            <TabsContent value="gallery">
+              <div className="bg-white rounded-lg shadow-lg p-4 md:p-6 min-h-[500px]">
+                <div className="flex flex-col sm:flex-row gap-3 mb-6 items-stretch sm:items-center justify-between">
+                  <div className="flex gap-2 flex-1 max-w-md">
+                    <input
+                      type="text"
+                      placeholder="Filtrar por teléfono o ID..."
+                      className="flex-1 px-3 py-2 border border-gray-200 rounded-lg bg-white text-gray-900 placeholder:text-gray-400 text-sm focus:outline-none focus:ring-2 focus:ring-[#F05023]/40 focus:border-[#F05023]"
+                      value={listSearchQuery}
+                      onChange={(e) => setListSearchQuery(e.target.value)}
+                    />
+                    {listSearchQuery && (
+                      <button
+                        onClick={() => setListSearchQuery('')}
+                        className="px-3 py-2 text-sm text-gray-500 hover:text-gray-800 border border-gray-200 rounded-lg hover:bg-gray-50 transition-colors"
+                        title="Limpiar búsqueda"
+                      >
+                        ✕
+                      </button>
+                    )}
+                  </div>
+                  <div className="text-sm text-gray-500 font-medium">
+                    Mostrando {filteredListProperties.length} propiedades
+                  </div>
+                </div>
+
+                {propertiesLoading ? (
+                  <div className="flex flex-col items-center justify-center py-16">
+                    <Loader2 className="h-10 w-10 animate-spin text-[#F05023] mb-4" />
+                    <p className="text-gray-600">Cargando galería...</p>
+                  </div>
+                ) : filteredListProperties.length === 0 ? (
+                  <div className="flex flex-col items-center justify-center py-16 text-center">
+                    <ImageIcon className="h-16 w-16 text-gray-300 mb-4" />
+                    <p className="text-gray-600 font-medium mb-2">No hay propiedades que coincidan</p>
+                  </div>
+                ) : (
+                  <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-4">
+                    {/* Ordenamos las propiedades filtradas por teléfono para que los iguales queden juntos */}
+                    {[...filteredListProperties]
+                      .sort((a, b) => {
+                        const phoneA = (a.signPhoneNumber || '').replace(/\D/g, '');
+                        const phoneB = (b.signPhoneNumber || '').replace(/\D/g, '');
+                        return phoneA.localeCompare(phoneB);
+                      })
+                      .map((property) => {
+                      const displayImg = (property.thumbnails && property.thumbnails[0]) || null;
+                      return (
+                        <div key={property.propertyId} className="relative group border border-gray-200 rounded-lg overflow-hidden bg-white hover:shadow-md transition-shadow flex flex-col">
+                          <div className="aspect-[4/3] bg-gray-100 relative">
+                            {displayImg ? (
+                              <img src={displayImg} alt={property.propertyId} className="w-full h-full object-cover" loading="lazy" />
+                            ) : (
+                              <div className="w-full h-full flex flex-col items-center justify-center text-gray-400">
+                                <ImageIcon className="h-8 w-8 mb-2 opacity-50" />
+                                <span className="text-[10px] uppercase">Sin Imagen</span>
+                              </div>
+                            )}
+                            <div className="absolute top-1 right-1 bg-black/60 text-white text-[10px] px-1.5 py-0.5 rounded font-mono">
+                              {property.propertyId}
+                            </div>
+                          </div>
+                          
+                          <div className="p-2 flex-1 flex flex-col gap-1">
+                            <div className="flex justify-between items-start">
+                              <span className="font-bold text-[#F05023] text-xs">
+                                📞 {property.signPhoneNumber || '-'}
+                              </span>
+                            </div>
+                            
+                            <div className="text-[10px] text-gray-500 line-clamp-1" title={property.user?.fullName || property.user?.username}>
+                              👤 {property.user?.fullName || property.user?.username || 'Desconocido'}
+                            </div>
+
+                            <div className="text-[9px] text-gray-400 font-mono mt-auto pt-1">
+                              {property.location?.lat?.toFixed(5)}, {property.location?.lng?.toFixed(5)}
+                            </div>
+                          </div>
+
+                          {user?.isSuperAdmin && (
+                            <div className="absolute top-1 left-1 opacity-0 group-hover:opacity-100 transition-opacity">
+                              <Button
+                                variant="destructive"
+                                size="sm"
+                                className="h-6 w-6 p-0 bg-red-600 hover:bg-red-700"
+                                onClick={() => {
+                                  if (window.confirm(`ESTÁS A PUNTO DE BORRAR LA PROPIEDAD (CÓDIGO: ${property.propertyId}).\n¿Estás seguro de que deseas continuar?`)) {
+                                    deletePropertyMutation.mutate(property.propertyId);
+                                  }
+                                }}
+                                disabled={deletePropertyMutation.isPending}
+                              >
+                                {deletePropertyMutation.isPending ? <Loader2 className="h-3 w-3 animate-spin" /> : <Trash2 className="h-3 w-3" />}
+                              </Button>
+                            </div>
+                          )}
+                        </div>
+                      );
+                    })}
+                  </div>
                 )}
               </div>
             </TabsContent>
