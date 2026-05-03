@@ -48,7 +48,6 @@ export default function PropertyEntry() {
   const [duplicateErrorDetails, setDuplicateErrorDetails] = useState<{
     message: string;
     existingPropertyId?: string;
-    distance?: string;
   } | null>(null);
   const [showManualCoords, setShowManualCoords] = useState(false);
   const [manualLat, setManualLat] = useState("");
@@ -778,8 +777,7 @@ export default function PropertyEntry() {
         if (result.details?.existingPropertyId) {
           setDuplicateErrorDetails({
             message: result.message,
-            existingPropertyId: result.details.existingPropertyId,
-            distance: result.details.distance
+            existingPropertyId: result.details.existingPropertyId
           });
           setShowDuplicateError(true);
           throw new Error('DUPLICATE_PROPERTY');
@@ -1181,7 +1179,6 @@ export default function PropertyEntry() {
                 </p>
                 <div className="text-xs text-gray-500 space-y-1">
                   <p>ID de propiedad existente: {duplicateErrorDetails?.existingPropertyId}</p>
-                  <p>Distancia: {duplicateErrorDetails?.distance}</p>
                 </div>
                 <div className="flex justify-center pt-2">
                   <Button

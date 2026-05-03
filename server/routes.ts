@@ -372,8 +372,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
             success: false,
             message: "Esta propiedad ya ha sido ingresada por otro usuario.",
             details: {
-              existingPropertyId: duplicateProperty.propertyId,
-              distance: "menos de 20 metros"
+              existingPropertyId: duplicateProperty.propertyId
             }
           });
         }
