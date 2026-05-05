@@ -1337,7 +1337,7 @@ export default function PropertyEntry() {
 
       {showOcrDialog && (
         <Dialog open={showOcrDialog} onOpenChange={setShowOcrDialog}>
-          <DialogContent className="sm:max-w-md">
+          <DialogContent className="sm:max-w-md bg-white text-gray-900">
             <DialogHeader>
               <DialogTitle>Resultados del OCR</DialogTitle>
               <DialogDescription>

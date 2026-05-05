@@ -216,9 +216,9 @@ export default function DashboardPage() {
                 )}
               </Button>
             </DialogTrigger>
-            <DialogContent>
+            <DialogContent className="sm:max-w-md bg-white text-gray-900">
               <DialogHeader>
-                <DialogTitle>Mensajes del Administrador</DialogTitle>
+                <DialogTitle className="text-gray-900">Mensajes del Administrador</DialogTitle>
               </DialogHeader>
               <ScrollArea className="h-[400px] pr-4">
                 <div className="space-y-4">

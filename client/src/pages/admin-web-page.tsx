@@ -2340,9 +2340,9 @@ export default function AdminWebPage() {
                                     <Trash2 className="h-4 w-4" />
                                   </Button>
                                 </DialogTrigger>
-                                <DialogContent>
+                                <DialogContent className="bg-white text-gray-900">
                                   <DialogHeader>
-                                    <DialogTitle>Confirmar eliminación</DialogTitle>
+                                    <DialogTitle className="text-gray-900">Confirmar eliminación</DialogTitle>
                                   </DialogHeader>
                                   <p>¿Está seguro que desea eliminar esta propiedad? Esta acción no se puede deshacer.</p>
                                   <DialogFooter>
@@ -2806,9 +2806,9 @@ export default function AdminWebPage() {
                                             <Trash2 className="h-4 w-4" />
                                           </Button>
                                         </DialogTrigger>
-                                        <DialogContent>
+                                        <DialogContent className="bg-white text-gray-900">
                                           <DialogHeader>
-                                            <DialogTitle>Confirmar eliminación</DialogTitle>
+                                            <DialogTitle className="text-gray-900">Confirmar eliminación</DialogTitle>
                                           </DialogHeader>
                                           <p>¿Está seguro que desea eliminar este usuario? Esta acción no se puede deshacer.</p>
                                           <DialogFooter>
