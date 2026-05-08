@@ -363,23 +363,13 @@ export class DatabaseStorage implements IStorage {
 
   async getUnreadMessageCount(userId: number): Promise<number> {
     logger.debug("Getting unread message count for user:", userId);
-    const allMessages = await db.select().from(messages);
     
-    // Debug: Log first message to check array type
-    if (allMessages.length > 0) {
-      const firstMsg = allMessages[0];
-      logger.debug("First message unreadByUsers:", firstMsg.unreadByUsers, "type:", typeof firstMsg.unreadByUsers, "Array.isArray:", Array.isArray(firstMsg.unreadByUsers));
-    }
-    
-    const unreadCount = allMessages.filter(msg => {
-      // Ensure unreadByUsers is an array before using includes
-      const unreadList = Array.isArray(msg.unreadByUsers) ? msg.unreadByUsers : [];
-      const isUnread = unreadList.includes(userId);
-      if (msg.recipientId === userId || (msg.recipientId === null && msg.senderId !== userId)) {
-        logger.debug(`Message ${msg.id} - recipientId: ${msg.recipientId}, userId: ${userId}, unreadByUsers: [${unreadList.join(',')}], isUnread: ${isUnread}`);
-      }
-      return isUnread;
-    }).length;
+    const result = await db
+      .select({ count: sql<number>`count(*)` })
+      .from(messages)
+      .where(sql`${userId} = ANY(${messages.unreadByUsers})`);
+      
+    const unreadCount = Number(result[0]?.count || 0);
     logger.debug("Unread message count:", unreadCount);
     return unreadCount;
   }

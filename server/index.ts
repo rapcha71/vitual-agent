@@ -156,7 +156,7 @@ try {
         try {
           await pool.query(`ALTER TABLE "properties" ADD COLUMN IF NOT EXISTS "province" text DEFAULT '01'`);
           await pool.query(`CREATE SEQUENCE IF NOT EXISTS "property_consecutive_seq"`);
-          await pool.query(`SELECT setval('property_consecutive_seq', (SELECT COALESCE(COUNT(*), 0) FROM properties))`);
+          await pool.query(`SELECT setval('property_consecutive_seq', (SELECT COALESCE(MAX(id), 0) FROM properties))`);
           debugLog("Schema migration (province, sequence) verified");
         } catch (migErr) {
           logger.warn("Startup migration check:", migErr);

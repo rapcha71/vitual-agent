@@ -12,31 +12,13 @@ import { useState, useEffect } from "react";
 import { Loader2 } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 
-/** Genera el QR dinámicamente con la URL real del navegador — sin librería extra */
 function QrCodeDisplay() {
-  const [imgError, setImgError] = useState(false);
-  const appUrl = typeof window !== 'undefined' ? window.location.origin : '';
-  const qrSrc = `https://chart.googleapis.com/chart?chs=256x256&cht=qr&chl=${encodeURIComponent(appUrl)}&choe=UTF-8&chld=M|2`;
-
-  if (imgError) {
-    return (
-      <div className="w-64 h-64 rounded-lg border-2 border-[#F05023]/30 flex flex-col items-center justify-center gap-2 bg-white">
-        <QrCode className="w-12 h-12 text-[#F05023]/50" />
-        <p className="text-xs text-center text-gray-500 px-4">
-          QR no disponible.<br />Usa el botón "Copiar Enlace".
-        </p>
-        <code className="text-xs text-[#F05023] font-mono px-2 text-center break-all">{appUrl}</code>
-      </div>
-    );
-  }
-
   return (
     <div className="bg-white p-3 rounded-2xl shadow-[0_4px_20px_rgba(240,80,35,0.12)] transition-transform hover:scale-105 duration-300">
       <img
-        src={qrSrc}
+        src="/assets/qr-virtualagent.png"
         alt="Código QR de Virtual Agent"
         className="w-56 h-56 object-contain"
-        onError={() => setImgError(true)}
       />
     </div>
   );
