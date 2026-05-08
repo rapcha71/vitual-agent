@@ -340,4 +340,6 @@ export type PropertyWithUser = {
   user: User;
   // runtime helpers
   hasImages?: boolean;
+  isPaid?: boolean;
+  paidAt?: string | null;
 };

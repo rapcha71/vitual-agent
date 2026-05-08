@@ -1254,16 +1254,7 @@ function PaymentsTab({
               &nbsp;·&nbsp;₡250 por propiedad registrada.
             </p>
           </div>
-          {isSuperAdmin && weeklyPayments.length > 0 && (
-            <Button
-              onClick={markAllPaid}
-              disabled={markingAll || weeklyPayments.every(p => paidUsers.has(p.userId))}
-              className="bg-green-600 hover:bg-green-700 text-white gap-2 shrink-0"
-            >
-              {markingAll ? <Loader2 className="h-4 w-4 animate-spin" /> : <CheckCircle2 className="h-4 w-4" />}
-              Marcar Todos Pagados
-            </Button>
-          )}
+          {/* Botón "Marcar Todos Pagados" eliminado — usaba endpoint que marcaba todas las propiedades en masa */}
         </div>
       </CardHeader>
       <CardContent className="bg-white">
@@ -2154,7 +2145,7 @@ export default function AdminWebPage() {
                   </TableHeader>
                   <TableBody>
                     {filteredListProperties.map((property) => {
-                      const isPaid = (property as any).isPaid === true;
+                      const isPaid = property.isPaid === true;
                       const rowColor = isPaid
                         ? 'bg-blue-50 hover:bg-blue-100 border-blue-100'
                         : 'bg-red-50 hover:bg-red-100 border-red-100';
