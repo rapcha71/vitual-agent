@@ -156,7 +156,8 @@ export class DatabaseStorage implements IStorage {
         blurhashes: properties.blurhashes,
       })
       .from(properties)
-      .where(eq(properties.userId, userId));
+      .where(eq(properties.userId, userId))
+      .orderBy(desc(properties.createdAt));
 
     return rows.map((r) => {
       let hasImagesFlag = false;
@@ -178,11 +179,13 @@ export class DatabaseStorage implements IStorage {
   }
 
   async getAllPropertiesWithUsers(): Promise<(Property & { user: User })[]> {
+    const { desc } = await import("drizzle-orm");
     const result = await db.select({
       property: properties,
       user: users
     }).from(properties)
-      .leftJoin(users, eq(properties.userId, users.id));
+      .leftJoin(users, eq(properties.userId, users.id))
+      .orderBy(desc(properties.createdAt));
 
     return result.map(({ property, user }) => ({
       ...property,
