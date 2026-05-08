@@ -1436,18 +1436,48 @@ export default function AdminWebPage() {
 
   const filteredListProperties = useMemo(() => {
     const q = listSearchQuery.trim().toLowerCase();
-    if (!q) return propertiesToDisplay;
-    return propertiesToDisplay.filter(p =>
-      p.propertyId?.toLowerCase().includes(q) ||
-      p.signPhoneNumber?.toLowerCase().includes(q) ||
-      p.user?.fullName?.toLowerCase().includes(q) ||
-      p.user?.username?.toLowerCase().includes(q)
-    );
+    let result = propertiesToDisplay;
+    if (q) {
+      result = propertiesToDisplay.filter(p =>
+        p.propertyId?.toLowerCase().includes(q) ||
+        p.signPhoneNumber?.toLowerCase().includes(q) ||
+        p.user?.fullName?.toLowerCase().includes(q) ||
+        p.user?.username?.toLowerCase().includes(q)
+      );
+    }
+    return [...result].sort((a, b) => new Date(b.createdAt || 0).getTime() - new Date(a.createdAt || 0).getTime());
   }, [propertiesToDisplay, listSearchQuery]);
 
   // State for user profile editing
   const [editingUserId, setEditingUserId] = useState<number | null>(null);
   const [editForm, setEditForm] = useState({ fullName: '', nickname: '', mobile: '', paymentMobile: '', username: '' });
+
+  const markAsPaidMutation = useMutation({
+    mutationFn: async (propertyId: string) => {
+      const response = await fetch(`/api/admin/properties/${propertyId}/paid`, {
+        method: 'POST',
+        credentials: 'include',
+      });
+      if (!response.ok) {
+        throw new Error('Error al marcar la propiedad como pagada');
+      }
+      return response.json();
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["/api/admin/properties"] });
+      toast({
+        title: "Propiedad actualizada",
+        description: "Se ha marcado como pagada exitosamente.",
+      });
+    },
+    onError: (error: Error) => {
+      toast({
+        title: "Error",
+        description: error.message,
+        variant: "destructive",
+      });
+    }
+  });
 
   const deleteUserMutation = useMutation({
     mutationFn: async (userId: number) => {
@@ -2149,13 +2179,24 @@ export default function AdminWebPage() {
                             >
                               {property.propertyId}
                             </button>
-                            <span className={`text-[10px] font-semibold px-1.5 py-0.5 rounded-full w-fit hidden sm:inline-block ${
-                              isPaid
-                                ? 'bg-blue-100 text-blue-700'
-                                : 'bg-red-100 text-red-700'
-                            }`}>
-                              {isPaid ? '✓ Pagado' : '● Por pagar'}
-                            </span>
+                            {isPaid ? (
+                              <span className="text-[10px] font-semibold px-1.5 py-0.5 rounded-full w-fit hidden sm:inline-block bg-blue-100 text-blue-700">
+                                ✓ Pagado
+                              </span>
+                            ) : (
+                              <button
+                                onClick={(e) => {
+                                  e.stopPropagation();
+                                  if (window.confirm(`¿Marcar la propiedad ${property.propertyId} como pagada?`)) {
+                                    markAsPaidMutation.mutate(property.propertyId);
+                                  }
+                                }}
+                                disabled={markAsPaidMutation.isPending}
+                                className="text-[10px] font-semibold px-1.5 py-0.5 rounded-full w-fit hidden sm:inline-block bg-red-100 text-red-700 hover:bg-red-200 hover:text-red-800 transition-colors cursor-pointer border-none"
+                              >
+                                {markAsPaidMutation.isPending ? '...' : '● Por pagar'}
+                              </button>
+                            )}
                           </div>
                         </TableCell>
                         <TableCell className={textColor}>

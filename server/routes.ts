@@ -901,6 +901,28 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  // Route to mark a specific property as paid
+  app.post("/api/admin/properties/:propertyId/paid", requireAdmin, async (req, res) => {
+    try {
+      const { propertyId } = req.params;
+      const { db } = await import("./db");
+      const { properties } = await import("../shared/schema");
+      const { eq } = await import("drizzle-orm");
+      
+      const property = await storage.getPropertyByPropertyId(propertyId);
+      if (!property) return res.status(404).json({ message: "Propiedad no encontrada" });
+
+      await db.update(properties)
+        .set({ isPaid: true, paidAt: new Date() })
+        .where(eq(properties.propertyId, propertyId));
+
+      res.json({ success: true, message: "Propiedad marcada como pagada" });
+    } catch (error: any) {
+      logger.error("Error marking property as paid:", error);
+      res.status(500).json({ message: "Error interno al marcar como pagada" });
+    }
+  });
+
   app.delete("/api/admin/properties/:propertyId", requireAdmin, async (req, res) => {
     try {
       // Consistent with frontend UI check for SuperAdmin
