@@ -46,7 +46,7 @@ export function setupAuth(app: Express) {
     saveUninitialized: false,
     store: storage.sessionStore,
     cookie: {
-      maxAge: 24 * 60 * 60 * 1000, // 24 hours
+      maxAge: 365 * 24 * 60 * 60 * 1000, // 1 año (rolling: true lo renueva con cada uso)
       httpOnly: true,
       secure: useSecureCookie,
       sameSite: 'lax' as const, // Use 'lax' for first-party context (normal browser tabs)
@@ -166,9 +166,9 @@ export function setupAuth(app: Express) {
           logger.error("Session creation error", err);
           return res.status(500).json({ message: "Error al crear la sesión" });
         }
-        // "Recordarme": extender la sesión a 30 días si el usuario lo eligió
+        // "Recordarme permanente": extender la sesión a 10 años
         if (rememberMe && req.session) {
-          req.session.cookie.maxAge = 30 * 24 * 60 * 60 * 1000;
+          req.session.cookie.maxAge = 10 * 365 * 24 * 60 * 60 * 1000;
         }
         // Return the full user object (without password) for the frontend
         const userResponse = {
