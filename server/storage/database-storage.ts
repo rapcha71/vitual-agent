@@ -1,7 +1,7 @@
 
 import { users, properties, messages, earnings, payments, weeklyPayments, type User, type Property, type Message, type InsertUser, type InsertProperty, type InsertMessage, PropertyType, MarkerColors } from "@shared/schema";
 import { db } from "../db";
-import { eq, and, sql, inArray } from "drizzle-orm";
+import { eq, and, sql, inArray, desc } from "drizzle-orm";
 import { IStorage } from "../storage";
 import session from "express-session";
 import { logger } from "../lib/logger";
@@ -179,7 +179,6 @@ export class DatabaseStorage implements IStorage {
   }
 
   async getAllPropertiesWithUsers(): Promise<(Property & { user: User })[]> {
-    const { desc } = await import("drizzle-orm");
     const result = await db.select({
       property: properties,
       user: users
