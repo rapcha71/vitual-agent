@@ -49,9 +49,6 @@ export default function PropertyEntry() {
     message: string;
     existingPropertyId?: string;
   } | null>(null);
-  const [showManualCoords, setShowManualCoords] = useState(false);
-  const [manualLat, setManualLat] = useState("");
-  const [manualLng, setManualLng] = useState("");
   const signFileInputRef = useRef<HTMLInputElement>(null);
   const propertyFileInputRef = useRef<HTMLInputElement>(null);
   const [selectedDistrict, setSelectedDistrict] = useState("");
@@ -469,63 +466,6 @@ export default function PropertyEntry() {
     event.target.value = "";
   };
 
-  const applyManualCoords = () => {
-    const lat = parseFloat(manualLat.replace(",", "."));
-    const lng = parseFloat(manualLng.replace(",", "."));
-    if (isNaN(lat) || isNaN(lng) || lat < -90 || lat > 90 || lng < -180 || lng > 180) {
-      toast({
-        title: "Coordenadas inválidas",
-        description: "Latitud debe estar entre -90 y 90. Longitud entre -180 y 180.",
-        variant: "destructive"
-      });
-      return;
-    }
-
-    // ── Blindaje: Detectar posible inversión lat/lng ───────────────────────────
-    // En Costa Rica lat es positiva (~8-11) y lng es negativa (~-82 a -85)
-    if (lat < 0 && lng > 0) {
-      toast({
-        title: "⚠️ Posible inversión de coordenadas",
-        description: `¿Invertiste lat y lng? En Costa Rica, la latitud es positiva (~9-10) y la longitud es negativa (~-84). Revisá y corregí antes de guardar.`,
-        variant: "destructive",
-        duration: 12000
-      });
-      return;
-    }
-
-    // ── Blindaje: Fuera de Costa Rica ─────────────────────────────────────────
-    const geoCheck = checkGeoSuspicion(lat, lng, form.getValues("district") || "");
-    if (geoCheck.suspicious) {
-      // Para coordenadas manuales, sí bloqueamos si está fuera de CR
-      const outsideCR = lat < CR_BOUNDS.lat.min || lat > CR_BOUNDS.lat.max ||
-                        lng < CR_BOUNDS.lng.min || lng > CR_BOUNDS.lng.max;
-      if (outsideCR) {
-        toast({
-          title: "❌ Coordenadas fuera de Costa Rica",
-          description: geoCheck.reason,
-          variant: "destructive",
-          duration: 12000
-        });
-        return;
-      }
-      // Solo alerta de cantón pero no bloquea
-      toast({
-        title: "⚠️ Ubicación sospechosa",
-        description: geoCheck.reason,
-        variant: "destructive",
-        duration: 12000
-      });
-    }
-
-    form.setValue("location", { lat, lng });
-    toast({
-      title: "📍 Ubicación guardada",
-      description: `Coordenadas: ${lat.toFixed(7)}, ${lng.toFixed(7)}`
-    });
-    setShowManualCoords(false);
-    setManualLat("");
-    setManualLng("");
-  };
 
   const capturePhoto = async () => {
     if (!videoRef.current || !canvasRef.current || !activeCamera) return;
@@ -750,11 +690,10 @@ export default function PropertyEntry() {
 
       toast({
         title: "Error de ubicación",
-        description: `${errorMessage} Podés usar "Coordenadas manuales" como alternativa.`,
+        description: `${errorMessage} Por favor, asegurate de estar en un lugar con buena señal GPS e intentá de nuevo.`,
         variant: "destructive",
         duration: 8000
       });
-      setShowManualCoords(true);
     }
   };
 
@@ -1102,52 +1041,24 @@ export default function PropertyEntry() {
                         </div>
                       </div>
 
+
                       <div className="space-y-3">
-                        <div className="flex gap-2 flex-wrap">
-                          <button
-                            type="button"
-                            className="flex-1 min-w-[140px] h-20 flex flex-col items-center justify-center border-2 border-gray-300 rounded-lg hover:border-[#F05023] transition-colors bg-white"
-                            onClick={captureLocation}
-                          >
-                            <MapPin className="h-6 w-6 mb-1" />
-                            <span>Capturar GPS</span>
-                          </button>
-                          <button
-                            type="button"
-                            className="flex-1 min-w-[140px] h-20 flex flex-col items-center justify-center border-2 border-[#F05023] rounded-lg hover:bg-[#F05023]/10 transition-colors bg-white text-[#F05023]"
-                            onClick={() => setShowManualCoords(!showManualCoords)}
-                          >
-                            <MapPin className="h-6 w-6 mb-1" />
-                            <span>Coordenadas manuales</span>
-                          </button>
-                        </div>
+                        <h3 className="text-lg font-medium">Ubicación GPS</h3>
+                        <button
+                          type="button"
+                          className="w-full h-20 flex flex-col items-center justify-center border-2 border-gray-300 rounded-lg hover:border-[#F05023] transition-colors bg-white"
+                          onClick={captureLocation}
+                        >
+                          <MapPin className="h-6 w-6 mb-1" />
+                          <span>Capturar Ubicación GPS</span>
+                        </button>
                         {form.watch("location.lat") !== 0 && (
-                          <p className="text-sm text-gray-600">
-                            Ubicación: {form.watch("location.lat").toFixed(7)}, {form.watch("location.lng").toFixed(7)}
+                          <p className="text-sm text-green-700 font-medium">
+                            ✅ GPS capturado: {form.watch("location.lat").toFixed(7)}, {form.watch("location.lng").toFixed(7)}
                           </p>
                         )}
-                        {showManualCoords && (
-                          <div className="p-4 bg-gray-50 rounded-lg space-y-2">
-                            <p className="text-sm text-gray-700">Buscá la ubicación en Google Maps y copiá las coordenadas</p>
-                            <div className="grid grid-cols-2 gap-2">
-                              <Input
-                                placeholder="Latitud (ej: 9.9319)"
-                                value={manualLat}
-                                onChange={(e) => setManualLat(e.target.value)}
-                                className="bg-white"
-                              />
-                              <Input
-                                placeholder="Longitud (ej: -84.0925)"
-                                value={manualLng}
-                                onChange={(e) => setManualLng(e.target.value)}
-                                className="bg-white"
-                              />
-                            </div>
-                            <Button type="button" onClick={applyManualCoords} className="w-full bg-[#F05023] hover:bg-[#E04015]">
-                              Aplicar coordenadas
-                            </Button>
-                          </div>
-                        )}
+
+
                       </div>
 
                       <button

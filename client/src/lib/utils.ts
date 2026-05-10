@@ -20,7 +20,8 @@ export async function compressImageForThumbnail(imageUrl: string): Promise<strin
     };
 
     // Compress the image
-    const compressedBlob = await imageCompression(blob, options);
+    const file = new File([blob], 'thumbnail.jpg', { type: blob.type || 'image/jpeg' });
+    const compressedBlob = await imageCompression(file, options);
 
     // Convert back to base64/URL
     return URL.createObjectURL(compressedBlob);

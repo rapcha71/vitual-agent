@@ -1534,7 +1534,7 @@ export default function AdminWebPage() {
       return response.json();
     },
     onSuccess: () => {
-      queryClient.invalidateQueries(['/api/admin/properties'])
+      queryClient.invalidateQueries({ queryKey: ['/api/admin/properties'] })
       toast({
         title: "Propiedad eliminada",
         description: "La propiedad ha sido eliminada exitosamente",
@@ -2709,7 +2709,7 @@ export default function AdminWebPage() {
                                           <Switch
                                             checked={adminUser.isSuperAdmin}
                                             onCheckedChange={(checked) =>
-                                              updateRoleMutation.mutate({ userId: adminUser.id, isAdmin: adminUser.isAdmin, isSuperAdmin: checked })
+                                              updateRoleMutation.mutate({ userId: adminUser.id, isAdmin: adminUser.isAdmin, isSuperAdmin: checked } as any)
                                             }
                                             disabled={updateRoleMutation.isPending}
                                             className="data-[state=checked]:bg-red-600"

@@ -4,7 +4,6 @@ import { createServer as createHttpsServer } from "https";
 import selfsigned from "selfsigned";
 import { setupAuth } from "./auth";
 import { storage } from "./storage";
-import webauthnRouter from "./routes/webauthn";
 import diagnosticsRouter from "./routes/diagnostics";
 import danielRouter from "./routes/daniel";
 import geoAuditRouter from "./routes/geo-audit";
@@ -38,7 +37,6 @@ const uploadMessageImage = multer({
 export async function registerRoutes(app: Express): Promise<Server> {
   setupAuth(app);
 
-  app.use("/api", webauthnRouter);
   app.use("/api/admin/diagnostics", diagnosticsRouter);
   app.use("/api/daniel", danielRouter);
   app.use("/api/admin/geo-audit", geoAuditRouter);
@@ -1198,7 +1196,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
   if (useHttps) {
     const attrs = [{ name: "commonName", value: "localhost" }];
-    const pems = selfsigned.generate(attrs, { days: 365, keySize: 2048 });
+    const pems = selfsigned.generate(attrs, { days: 365, keySize: 2048 } as any) as any;
     server = createHttpsServer(
       { key: pems.private, cert: pems.cert },
       app

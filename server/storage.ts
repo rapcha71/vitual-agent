@@ -19,12 +19,6 @@ export interface IStorage {
   updateUserRememberToken(userId: number, token: string | null): Promise<void>;
   updateLastLogin(userId: number): Promise<void>;
   updateUserRole(userId: number, isAdmin: boolean): Promise<User>;
-  updateUserBiometricCredentials(userId: number, credentials: {
-    credentialID: Uint8Array;
-    publicKey: Uint8Array;
-    counter: number;
-  }): Promise<void>;
-  updateUserBiometricCounter(userId: number, counter: number): Promise<void>;
   storePasswordResetCode(userId: number, code: string, expireTime: number): Promise<void>;
   verifyPasswordResetCode(userId: number, code: string): Promise<boolean>;
   updateUserPassword(userId: number, hashedPassword: string): Promise<void>;

@@ -27,8 +27,8 @@ try {
   }));
 
   const isProduction = process.env.NODE_ENV === 'production';
-  const allowedOrigins = isProduction 
-    ? [
+  const allowedOrigins: cors.CorsOptions['origin'] = isProduction 
+    ? ([
         process.env.APP_URL,
         /^https?:\/\/(www\.)?virtualagentcr\.com$/,
         process.env.REPLIT_DEV_DOMAIN,
@@ -38,7 +38,7 @@ try {
         /\.replit\.app$/,
         /\.railway\.app$/,
         /\.vercel\.app$/
-      ].filter(Boolean)
+      ].filter(Boolean) as (string | RegExp)[])
     : true;
 
   app.use(cors({

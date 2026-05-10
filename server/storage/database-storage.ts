@@ -149,11 +149,22 @@ export class DatabaseStorage implements IStorage {
         createdAt: properties.createdAt,
         viewedByAdmin: properties.viewedByAdmin,
         province: properties.province,
+        district: properties.district,
         isPaid: properties.isPaid,
         paidAt: properties.paidAt,
-        images: properties.images, 
+        images: properties.images,
         thumbnails: properties.thumbnails,
         blurhashes: properties.blurhashes,
+        tieneContrato: properties.tieneContrato,
+        wasiId: properties.wasiId,
+        precio: properties.precio,
+        danielSource: properties.danielSource,
+        areaM2: properties.areaM2,
+        anioConst: properties.anioConst,
+        habitaciones: properties.habitaciones,
+        banos: properties.banos,
+        cocheras: properties.cocheras,
+        numPisos: properties.numPisos,
       })
       .from(properties)
       .where(eq(properties.userId, userId))
@@ -192,32 +203,6 @@ export class DatabaseStorage implements IStorage {
     }));
   }
 
-  async updateUserBiometricCredentials(userId: number, credentials: {
-    credentialID: Buffer;
-    publicKey: Buffer;
-    counter: number;
-  }): Promise<void> {
-    logger.debug("Updating biometric credentials for user:", userId);
-    await db
-      .update(users)
-      .set({
-        biometricCredentialId: credentials.credentialID.toString('base64'),
-        biometricPublicKey: credentials.publicKey.toString('base64'),
-        biometricCounter: credentials.counter,
-        biometricEnabled: true
-      })
-      .where(eq(users.id, userId));
-    logger.debug("Biometric credentials updated successfully");
-  }
-
-  async updateUserBiometricCounter(userId: number, counter: number): Promise<void> {
-    logger.debug("Updating biometric counter for user:", userId);
-    await db
-      .update(users)
-      .set({ biometricCounter: counter })
-      .where(eq(users.id, userId));
-    logger.debug("Biometric counter updated successfully");
-  }
 
   async createMessage(message: InsertMessage & { senderId: number }): Promise<Message> {
     logger.debug("Creating new message:", message.content);

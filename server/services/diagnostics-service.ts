@@ -89,7 +89,7 @@ export class DiagnosticsService {
       // 3. Insertar en DB
       logs.push({ status: 'WAIT', message: 'Insertando propiedad test en Supabase/PostgreSQL...' });
       const t0 = Date.now();
-      const created = await storage.createProperty(testPayload);
+      const created = await storage.createProperty(testPayload as any);
       const insertMs = Date.now() - t0;
 
       logs.push({ status: 'OK', message: `Registro insertado en DB en ${insertMs}ms — ID: ${created.propertyId}` });
