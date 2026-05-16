@@ -1,7 +1,7 @@
 
 import { users, properties, messages, earnings, payments, weeklyPayments, type User, type Property, type Message, type InsertUser, type InsertProperty, type InsertMessage, PropertyType, MarkerColors } from "@shared/schema";
 import { db } from "../db";
-import { eq, and, sql, inArray, desc } from "drizzle-orm";
+import { eq, and, sql, inArray, desc, lt } from "drizzle-orm";
 import { IStorage } from "../storage";
 import session from "express-session";
 import { logger } from "../lib/logger";
@@ -578,13 +578,25 @@ export class DatabaseStorage implements IStorage {
     return property;
   }
 
-  async getUnpaidProperties(): Promise<(Property & { user: User })[]> {
+  /**
+   * Trae propiedades no pagadas.
+   * @param upToDate Si se especifica, solo trae propiedades creadas ANTES de esa fecha.
+   *                 Esto evita que propiedades de la semana actual se paguen antes de tiempo.
+   */
+  async getUnpaidProperties(upToDate?: Date): Promise<(Property & { user: User })[]> {
+    const conditions = [eq(properties.isPaid, false)];
+
+    if (upToDate) {
+      // Solo propiedades creadas estrictamente antes de upToDate
+      conditions.push(lt(properties.createdAt, upToDate.toISOString()));
+    }
+
     const result = await db.select({
       property: properties,
       user: users
     }).from(properties)
       .leftJoin(users, eq(properties.userId, users.id))
-      .where(eq(properties.isPaid, false));
+      .where(and(...conditions));
 
     return result.map(({ property, user }) => ({
       ...property,

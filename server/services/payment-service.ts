@@ -6,22 +6,54 @@ export class PaymentService {
   private static PAYRATE = 250;
 
   /**
+   * Calcula el inicio de la semana actual en Costa Rica (UTC-6).
+   * Costa Rica no tiene horario de verano, siempre UTC-6.
+   * La semana de pago va de Lunes 06:00 UTC (= Lunes 00:00 CR) a Domingo 05:59 UTC.
+   */
+  private static getCurrentWeekStart(): Date {
+    const now = new Date();
+    // Convertir a hora CR (UTC-6)
+    const crOffsetMs = -6 * 60 * 60 * 1000;
+    const crEquiv = new Date(now.getTime() + crOffsetMs);
+    
+    // Encontrar el lunes de esta semana en CR
+    const dayOfWeekCR = crEquiv.getUTCDay(); // 0=Dom, 1=Lun, ..., 6=Sáb
+    const daysToMonday = dayOfWeekCR === 0 ? 6 : dayOfWeekCR - 1;
+    
+    // Lunes 00:00 CR = Lunes 06:00 UTC
+    const weekStartUTC = new Date(Date.UTC(
+      crEquiv.getUTCFullYear(),
+      crEquiv.getUTCMonth(),
+      crEquiv.getUTCDate() - daysToMonday,
+      6, 0, 0, 0  // 06:00 UTC = 00:00 CR
+    ));
+    
+    return weekStartUTC;
+  }
+
+  /**
    * Procesa los pagos de los viernes.
    * Criterios:
    * 1. Solo propiedades con isPaid = false.
-   * 2. Calcula monto total por usuario (count * 250).
-   * 3. Crea registro en weekly_payments.
-   * 4. Crea registros en earnings para cada propiedad.
-   * 5. Marca propiedades como pagadas.
+   * 2. Solo propiedades creadas ANTES del inicio de la semana actual.
+   *    → Las propiedades ingresadas esta semana se pagan el SIGUIENTE viernes.
+   * 3. Calcula monto total por usuario (count * 250).
+   * 4. Crea registro en weekly_payments.
+   * 5. Crea registros en earnings para cada propiedad.
+   * 6. Marca propiedades como pagadas.
    */
   static async processWeeklyPayments() {
     logger.info("Iniciando proceso de pagos de los viernes...");
     
     try {
-      const unpaidProperties = await storage.getUnpaidProperties();
+      // Corte: solo propiedades de semanas anteriores (no la semana actual)
+      const currentWeekStart = this.getCurrentWeekStart();
+      logger.info(`Corte de pagos: propiedades creadas antes de ${currentWeekStart.toISOString()}`);
+      
+      const unpaidProperties = await storage.getUnpaidProperties(currentWeekStart);
       
       if (unpaidProperties.length === 0) {
-        logger.info("No hay propiedades pendientes de pago.");
+        logger.info("No hay propiedades pendientes de pago de semanas anteriores.");
         return { processed: 0, totalAmount: 0 };
       }
 

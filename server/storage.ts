@@ -53,7 +53,8 @@ export interface IStorage {
   getPropertyByPropertyId(propertyId: string): Promise<Property | undefined>;
   getPropertiesByPhone(phone: string): Promise<Property[]>;
   // Payment processing
-  getUnpaidProperties(): Promise<(Property & { user: User })[]>;
+  /** Solo trae propiedades no pagadas. Si se pasa upToDate, filtra solo las creadas antes de esa fecha. */
+  getUnpaidProperties(upToDate?: Date): Promise<(Property & { user: User })[]>;
   markPropertiesAsPaid(propertyIds: number[], weeklyPaymentId: number): Promise<void>;
   createWeeklyPayment(data: {
     userId: number;
