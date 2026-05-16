@@ -126,12 +126,12 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         return null;
       }
     },
-    staleTime: 5000,         // refresca máximo a los 5 s de inactividad
-    gcTime: 60000,           // limpia caché a los 60 s sin suscriptores
-    retry: 1,                // un reintento si hay error de red transitorio
-    refetchOnWindowFocus: true,
-    refetchOnMount: true,
-    refetchOnReconnect: true,
+    staleTime: 5 * 60 * 1000,   // 5 min — evita re-fetches innecesarios al navegar
+    gcTime: 10 * 60 * 1000,     // 10 min — mantiene la caché durante toda la sesión
+    retry: 1,                    // un reintento si hay error de red transitorio
+    refetchOnWindowFocus: false, // NO re-fetchar al cambiar de tab (evita pantalla en blanco)
+    refetchOnMount: false,       // NO re-fetchar si ya hay datos en caché válidos
+    refetchOnReconnect: true,    // Sí refrescar al recuperar conexión a internet
   });
 
   useEffect(() => {

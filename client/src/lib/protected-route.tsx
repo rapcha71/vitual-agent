@@ -14,8 +14,11 @@ export function ProtectedRoute({
   return (
     <Route path={path}>
       {isLoading ? (
-        <div className="flex items-center justify-center min-h-screen">
-          <Loader2 className="h-8 w-8 animate-spin text-border" />
+        <div className="flex items-center justify-center min-h-screen bg-gray-100">
+          <div className="flex flex-col items-center gap-3">
+            <Loader2 className="h-10 w-10 animate-spin text-[#F05023]" />
+            <p className="text-sm text-gray-500">Cargando...</p>
+          </div>
         </div>
       ) : !user ? (
         <Redirect to="/auth" />

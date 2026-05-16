@@ -8,24 +8,27 @@ import { BadgeHandler } from "./components/badge-handler";
 import { ErrorBoundary } from "./components/error-boundary";
 import { PwaInstallBanner } from "./components/pwa-install-banner";
 import { Loader2 } from "lucide-react";
+import { ProtectedRoute } from "./lib/protected-route";
+
+// Páginas pequeñas/esenciales — síncronas para carga inmediata
 import NotFound from "@/pages/not-found";
 import AuthPage from "@/pages/auth-page";
 import HomePage from "@/pages/home-page";
-import DashboardPage from "@/pages/dashboard-page";
 import PropertyConfirmation from "@/pages/property-confirmation";
-import PropertiesPage from "@/pages/properties-page";
-import ProfilePage from "@/pages/profile-page";
-import MessagesPage from "@/pages/messages-page";
-import { ProtectedRoute } from "./lib/protected-route";
 
-// Heavy pages: code-split so they don't bloat the initial bundle
-const AdminWebPage = lazy(() => import("@/pages/admin-web-page"));
-const PropertyEntry = lazy(() => import("@/pages/property-entry"));
+// Páginas pesadas — lazy para no inflar el bundle inicial y evitar pantalla en blanco
+const AdminWebPage    = lazy(() => import("@/pages/admin-web-page"));
+const PropertyEntry   = lazy(() => import("@/pages/property-entry"));
+const MessagesPage    = lazy(() => import("@/pages/messages-page"));
+const DashboardPage   = lazy(() => import("@/pages/dashboard-page"));
+const PropertiesPage  = lazy(() => import("@/pages/properties-page"));
+const ProfilePage     = lazy(() => import("@/pages/profile-page"));
 
 function PageFallback() {
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gray-100">
+    <div className="min-h-screen flex flex-col items-center justify-center bg-gray-100 gap-3">
       <Loader2 className="h-10 w-10 animate-spin text-[#F05023]" />
+      <p className="text-sm text-gray-500">Cargando...</p>
     </div>
   );
 }
